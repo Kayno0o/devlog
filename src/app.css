@@ -61,8 +61,13 @@
     @apply absolute top-0 left-0 z-100 -translate-y-full bg-base px-2 py-1 text-accent transition-transform focus:translate-y-0;
   }
 
+  /* In the flow on narrow screens; beside the post and sticky once there is room on its right. */
   .toc {
-    @apply mb-10 border-l-2 border-surface pl-4 text-sm;
+    @apply mb-10 xl:absolute xl:inset-y-0 xl:left-full xl:mb-0 xl:ml-10 xl:w-52;
+  }
+
+  .toc-list {
+    @apply border-l-2 border-surface pl-4 text-sm xl:sticky xl:top-8;
 
     & ol {
       @apply flex flex-col gap-1;

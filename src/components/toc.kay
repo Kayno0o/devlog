@@ -11,7 +11,8 @@ const sections = () => headings.filter(heading => heading.depth === 2)
 ---
 if sections().length >= 4
   nav.toc(aria-labelledby="toc-title")
-    h2#toc-title.mb-2.font-mono.text-sm.tracking-wide.text-muted.uppercase Contents
-    ol
-      for section of sections() key={section.id}
-        li: a(href={`#${section.id}`}) {section.text}
+    .toc-list
+      h2#toc-title.mb-2.font-mono.text-sm.tracking-wide.text-muted.uppercase Contents
+      ol
+        for section of sections() key={section.id}
+          li: a(href={`#${section.id}`}) {section.text}
