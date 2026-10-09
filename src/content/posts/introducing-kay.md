@@ -30,21 +30,44 @@ button(onClick={() => count.set(count + 1)}) Clicked {count} times
 
 ## Numbers
 
-The same products page, the same data and the same Elysia server for each framework, from kay's own bench.
+The same products page, the same data and the same Elysia server for each framework, from kay's own bench. Each one is written the way its own docs and its js-framework-benchmark entry write it.
 
-<Stats items={[{"value": "8.7 KB", "label": "JS shipped, gzip"}, {"value": "0.4 ms", "label": "script on load"}, {"value": "4788", "label": "server renders per second"}]} />
+### Where kay wins
 
-<BarChart title="Server rendering, products page" unit="renders/s" better="higher" highlight="kay" digits={0} rows={[{"label": "kay", "value": 4788}, {"label": "Svelte", "value": 3853}, {"label": "SolidJS", "value": 1754}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
+<Stats items={[{"value": "0.4 ms", "label": "script on load"}, {"value": "8.1 KB", "label": "HTML sent, gzip"}, {"value": "4788", "label": "server renders per second"}]} />
 
 <BarChart title="Main-thread script on load, products page" unit="ms" better="lower" highlight="kay" rows={[{"label": "kay", "value": 0.4}, {"label": "SolidJS", "value": 12.4}, {"label": "Svelte", "value": 15.6}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
 
+kay hydrates its islands only. SolidJS and Svelte hydrate the whole page, so they also send its data again as JSON.
+
 <BarChart title="HTML sent, products page, gzip" unit="KB" better="lower" highlight="kay" rows={[{"label": "kay", "value": 8.1}, {"label": "Svelte", "value": 15.6}, {"label": "SolidJS", "value": 21.6}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
 
-| Products page | kay | SolidJS | Svelte |
+<BarChart title="Server rendering, products page" unit="renders/s" better="higher" highlight="kay" digits={0} rows={[{"label": "kay", "value": 4788}, {"label": "Svelte", "value": 3853}, {"label": "SolidJS", "value": 1754}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
+
+### Where kay loses
+
+<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" highlight="kay" rows={[{"label": "SolidJS", "value": 8.0}, {"label": "kay", "value": 9.7}, {"label": "Svelte", "value": 21.8}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
+
+SolidJS ships less JavaScript, in one file where kay needs two. kay's in-place page navigation accounts for about 2.3 KB of it, listeners every page with an island carries, which the Solid app, having no router, does without.
+
+<BarChart title="Update every 10th row of 1,000" unit="ms" better="lower" highlight="kay" rows={[{"label": "Svelte", "value": 3.0}, {"label": "SolidJS", "value": 3.1}, {"label": "kay", "value": 3.6}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
+
+On the table benchmark kay is within 1 to 20% of the fastest, and last on partial updates and swaps: it replaces rows immutably under a keyed `for`, where Solid and Svelte write one signal per row.
+
+| Table operation, ms | kay | SolidJS | Svelte |
 | --- | --- | --- | --- |
-| JS shipped (gzip) | 8.7 KB | 8.0 KB | 21.8 KB |
-| HTML (gzip) | 8.1 KB | 21.6 KB | 15.6 KB |
-| JS heap | 1248 KB | 3008 KB | 3122 KB |
+| create 1,000 rows | 31.1 | 29.7 | 32.3 |
+| update every 10th row | 3.6 | 3.1 | 3.0 |
+| select row | 0.2 | 0.3 | 1.1 |
+| swap rows | 2.5 | 2.2 | 2.1 |
+| create 10,000 rows | 250 | 256 | 256 |
+
+Beyond the numbers:
+
+- **Young and alone.** One maintainer, no community, no ecosystem: every component library and integration is one I wrote.
+- **Bun only.** No Node, no Deno, no edge runtime.
+- **Slower builds.** `kay build` type-checks the whole project first, about half a second a cold build pays.
+- **Open gaps.** First paint on a phone still trails SvelteKit ([#132](https://git.kaynooo.fr/kaynooo/kayjs/issues/132)), and so does per-request overhead and memory ([#128](https://git.kaynooo.fr/kaynooo/kayjs/issues/128)).
 
 ## Built for LLMs too
 
