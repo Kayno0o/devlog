@@ -28,7 +28,7 @@ button(onClick={() => count.set(count + 1)}) Clicked {count} times
 3. An island renders on the server with hydration markers, then claims those nodes in the browser instead of rendering again.
 4. `kay build --static` writes the whole site as files, like this devlog, served by plain nginx.
 
-## Numbers
+## A synthetic bench
 
 The same products page, the same data and the same Elysia server for each framework, from kay's own bench. Each one is written the way its own docs and its js-framework-benchmark entry write it.
 
@@ -62,12 +62,36 @@ On the table benchmark kay is within 1 to 20% of the fastest, and last on partia
 | swap rows | 2.5 | 2.2 | 2.1 |
 | create 10,000 rows | 250 | 256 | 256 |
 
-Beyond the numbers:
+## A real site, ported from SvelteKit
+
+Benchmarks of a products table only go so far, so I moved a real site from SvelteKit to kay and measured both in one sitting, runs interleaved, on one desktop over loopback: the ratios carry over, the absolute numbers are optimistic.
+
+### What kay gains
+
+<Stats items={[{"value": "-46%", "label": "phone first paint, partner page"}, {"value": "16 vs 70 KB", "label": "client JS, brotli"}, {"value": "25 vs 65", "label": "requests, home page"}]} />
+
+<BarChart title="First paint on a phone, partner page" unit="ms" better="lower" highlight="kay, inlined styles" digits={0} rows={[{"label": "kay, inlined styles", "value": 407}, {"label": "SvelteKit", "value": 757}, {"label": "kay, linked styles", "value": 863}]} source="SvelteKit c860ae5 vs kay 1.14.0, Pixel 7 preset (slow 4G, 4x CPU), 2026-10-09" />
+
+<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" highlight="kay" rows={[{"label": "kay", "value": 16.1}, {"label": "SvelteKit", "value": 70.1}]} source="SvelteKit c860ae5 vs kay 1.13.0, 2026-10-09" />
+
+<BarChart title="Build, cold caches" unit="s" better="lower" highlight="kay" digits={2} rows={[{"label": "kay", "value": 2.22}, {"label": "SvelteKit", "value": 3.57}]} source="SvelteKit c860ae5 vs kay 1.13.0, 2026-10-09, hyperfine, 3 runs" />
+
+The home page a phone downloads drops from 706 to 547 KB, mostly images: kay serves AVIF at the width drawn. The Docker image goes from 228 to 184 MB, and the code from 3,037 to 2,590 lines.
+
+### What kay loses
+
+<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 37}, {"label": "kay", "value": 59}]} source="SvelteKit c860ae5 vs kay 1.13.0, 2026-10-09, RSS after start" />
+
+- **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.5 times at peak, 198 against 130 MiB under load. Bytecode explains 3 MiB of it; the rest is not traced yet.
+- **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay paints 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
+- **CPU on short pages.** kay serves rendered pages at 1.6 to 2 times SvelteKit's rate, yet spends 9 to 11% more CPU per short page, compressing with brotli where SvelteKit uses gzip. Those server figures were taken with linked stylesheets; with inlined ones each response is 2 to 5 times larger, which is not measured yet.
+
+## The rest of the bill
 
 - **Young and alone.** One maintainer, no community, no ecosystem: every component library and integration is one I wrote.
 - **Bun only.** No Node, no Deno, no edge runtime.
-- **Slower builds.** `kay build` type-checks the whole project first, about half a second a cold build pays.
-- **Open gaps.** First paint on a phone still trails SvelteKit ([#132](https://git.kaynooo.fr/kaynooo/kayjs/issues/132)), and so does per-request overhead and memory ([#128](https://git.kaynooo.fr/kaynooo/kayjs/issues/128)).
+- **Builds check first.** `kay build` type-checks the whole project before bundling, about half a second a cold build pays, though the site still builds faster than on SvelteKit.
+- **Open gap.** Per-request overhead and memory are tracked in [#128](https://git.kaynooo.fr/kaynooo/kayjs/issues/128).
 
 ## Built for LLMs too
 
