@@ -1,0 +1,13 @@
+---
+import Header from '../components/header.kay'
+import { feedPath } from '../site'
+import '../app.css'
+---
+head
+  link(rel="alternate" type="application/rss+xml" title="devlog" href={feedPath})
+a.skip-link(href="#main-content") Skip to main content
+Header
+main#main-content.w-full.grow.px-4.py-10.sm:px-8
+  slot
+footer.border-t-2.border-surface.px-4.py-4.text-sm.text-muted.sm:px-8
+  | Built with #[a(href="https://git.kaynooo.fr/kaynooo/kayjs") kay], served as static files.

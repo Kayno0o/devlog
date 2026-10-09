@@ -1,0 +1,8 @@
+services:
+  devlog:
+    build: .
+    container_name: devlog
+    restart: unless-stopped
+    ports:
+      # Behind the host nginx, on the site's own port.
+      - 127.0.0.1:37144:80

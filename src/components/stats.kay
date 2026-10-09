@@ -1,0 +1,8 @@
+---
+const { items } = props<{ items: { value: string, label: string }[] }>()
+---
+dl(class="stats grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4")
+  for item of items key={item.label}
+    .flex.flex-col-reverse.gap-1.border-l-2.border-accent.pl-3
+      dt.text-sm.text-subtext {item.label}
+      dd.text-2xl.font-semibold.tabular-nums {item.value}

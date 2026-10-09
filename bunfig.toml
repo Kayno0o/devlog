@@ -1,0 +1,2 @@
+[test]
+preload = [ "kay/test/preload" ]

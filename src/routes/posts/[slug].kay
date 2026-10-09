@@ -1,0 +1,28 @@
+--- server
+import { posts } from '../../content.config'
+import { formatDate } from '../../format'
+
+export const prerender = posts
+
+const post = await posts.get(ctx.params.slug) ?? ctx.notFound()
+const { Content } = post
+---
+---
+import ArrowLeft from '~icons/tabler/arrow-left'
+---
+head
+  title {post.data.title}
+  meta(name="description" content={post.data.description})
+  meta(property="og:type" content="article")
+article.mx-auto.max-w-3xl
+  a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
+    ArrowLeft.size-4
+    | All posts
+  header.mb-10
+    h1.mb-3.text-3xl.font-semibold.text-balance {post.data.title}
+    p.flex.flex-wrap.gap-x-4.font-mono.text-sm.text-muted
+      time(datetime={post.data.date.toISOString()}) {formatDate(post.data.date)}
+      for tag of post.data.tags key={tag}
+        span \#{tag}
+  .prose
+    Content

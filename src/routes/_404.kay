@@ -1,0 +1,5 @@
+head
+  title Nothing here
+.mx-auto.max-w-3xl
+  h1.mb-3.text-2xl.font-semibold Nothing here
+  a(href="/") Back to the posts

@@ -1,0 +1,127 @@
+@import 'tailwindcss';
+
+/* Catppuccin Latte and Mocha: light-dark() follows the reader's color scheme with no script. */
+@theme {
+  --color-base: light-dark(#eff1f5, #1e1e2e);
+  --color-mantle: light-dark(#e6e9ef, #181825);
+  --color-surface: light-dark(#ccd0da, #313244);
+  --color-muted: light-dark(#6c6f85, #9399b2);
+  --color-subtext: light-dark(#5c5f77, #bac2de);
+  --color-text: light-dark(#4c4f69, #cdd6f4);
+  --color-accent: light-dark(#8839ef, #cba6f7);
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  body {
+    @apply flex min-h-screen flex-col bg-base font-sans text-text antialiased;
+  }
+
+  a {
+    @apply underline decoration-accent underline-offset-4 hover:decoration-2 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
+  }
+
+  ::selection {
+    @apply bg-accent/25;
+  }
+}
+
+@layer components {
+  .skip-link {
+    @apply absolute top-0 left-0 z-100 -translate-y-full bg-base px-2 py-1 text-accent transition-transform focus:translate-y-0;
+  }
+
+  .prose {
+    @apply leading-relaxed;
+
+    & > * + * {
+      @apply mt-5;
+    }
+
+    & :is(h2, h3, h4) {
+      @apply mt-12 scroll-mt-6 font-semibold text-balance;
+
+      & a {
+        @apply no-underline hover:underline;
+      }
+    }
+
+    & h2 {
+      @apply text-2xl;
+    }
+
+    & h3 {
+      @apply text-xl;
+    }
+
+    & :is(ul, ol) {
+      @apply flex flex-col gap-1.5 pl-6;
+    }
+
+    & ul {
+      @apply list-disc;
+    }
+
+    & ol {
+      @apply list-decimal;
+    }
+
+    & li::marker {
+      @apply text-muted;
+    }
+
+    & blockquote {
+      @apply border-l-2 border-accent pl-4 text-subtext;
+    }
+
+    & hr {
+      @apply my-10 border-surface;
+    }
+
+    & :not(pre) > code {
+      @apply rounded bg-mantle px-1.5 py-0.5 font-mono text-[0.875em];
+    }
+
+    & pre {
+      @apply overflow-x-auto rounded border-2 border-surface p-4 font-mono text-sm leading-normal;
+
+      /* Shiki writes the theme's background inline; the code block sits on the mantle instead. */
+      background-color: var(--color-mantle) !important;
+    }
+
+    & table:not(.sr-only) {
+      @apply block w-full overflow-x-auto text-sm tabular-nums;
+
+      & :is(th, td) {
+        @apply border-b border-surface px-3 py-2 text-left;
+      }
+
+      & th {
+        @apply font-semibold;
+      }
+    }
+
+    & img {
+      @apply rounded;
+    }
+
+    & :is(.chart, .stats, .note) {
+      @apply my-8;
+    }
+
+    & .note > * + * {
+      @apply mt-2;
+    }
+  }
+}

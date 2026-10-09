@@ -1,0 +1,23 @@
+--- server
+import { posts } from '../content.config'
+import { formatDate } from '../format'
+
+const entries = await posts.all()
+---
+head
+  title(raw) devlog, notes on building kay
+.mx-auto.max-w-3xl
+  section.mb-12
+    h1.mb-3.text-3xl.font-semibold devlog
+    p.text-subtext Notes on building #[a(href="https://git.kaynooo.fr/kaynooo/kayjs") kay], a Bun web framework: how it works, what it costs, and the benchmarks behind it.
+  section(aria-labelledby="posts-title")
+    h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase Posts
+    ol.flex.flex-col.gap-6
+      for post of entries key={post.slug}
+        li
+          a.group.block.no-underline(href={`/posts/${post.slug}`})
+            time.font-mono.text-sm.text-muted(datetime={post.data.date.toISOString()}) {formatDate(post.data.date)}
+            h3.text-lg.font-semibold.group-hover:underline.group-hover:decoration-accent {post.data.title}
+            p.text-subtext {post.data.description}
+      else
+        li.text-subtext Nothing published yet.

@@ -1,0 +1,43 @@
+---
+import { formatNumber } from '../format'
+
+interface Row {
+  label: string
+  value: number
+}
+
+const { title, unit, rows, highlight, better, source, digits = 1 } = props<{
+  title: string
+  unit: string
+  rows: Row[]
+  highlight?: string | undefined
+  better?: 'lower' | 'higher' | undefined
+  source?: string | undefined
+  digits?: number | undefined
+}>()
+
+const max = () => Math.max(...rows.map(row => row.value))
+---
+figure.chart
+  figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
+    span.font-semibold {title}
+    if better
+      span.text-sm.text-muted {better} is better
+  div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2" aria-hidden="true")
+    for row of rows key={row.label}
+      span.text-sm(class={{ 'font-semibold': row.label === highlight, 'text-subtext': row.label !== highlight }}) {row.label}
+      .flex.min-w-0.items-center.gap-2
+        div(class={['h-3 min-w-0.5 rounded-r', row.label === highlight ? 'bg-accent' : 'bg-muted']} style={`width: calc((100% - 6rem) * ${row.value / max()})`})
+        span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
+  table.sr-only
+    thead
+      tr
+        th(scope="col") Name
+        th(scope="col") Value
+    tbody
+      for row of rows key={row.label}
+        tr
+          th(scope="row") {row.label}
+          td {formatNumber(row.value, digits)} {unit}
+  if source
+    p.mt-3.text-xs.text-muted Source: {source}
