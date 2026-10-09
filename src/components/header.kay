@@ -1,6 +1,5 @@
 ---
 import Rss from '~icons/tabler/rss'
-import { feedPath } from '../site'
 ---
 header.border-b-2.border-surface.px-4.py-4.sm:px-8
   nav.flex.items-center.justify-between.gap-4(aria-label="Main navigation")
@@ -8,6 +7,6 @@ header.border-b-2.border-surface.px-4.py-4.sm:px-8
     ul.flex.items-center.gap-5.text-sm
       li: a(href="https://git.kaynooo.fr/kaynooo/kayjs") kay
       li
-        a.inline-flex.items-center.gap-1(href={feedPath})
+        a.inline-flex.items-center.gap-1(href="/rss.xml")
           Rss.size-4
           | RSS

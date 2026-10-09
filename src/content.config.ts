@@ -4,7 +4,6 @@ import BarChart from './components/bar-chart.kay'
 import Note from './components/note.kay'
 import Stats from './components/stats.kay'
 import { highlight } from './highlight'
-import { feedPath } from './site'
 
 export const posts = collection('content/posts', {
   schema: t.Object({
@@ -19,7 +18,7 @@ export const posts = collection('content/posts', {
   draft: post => post.data.draft === true,
   sort: (a, b) => b.data.date.getTime() - a.data.date.getTime(),
   feed: {
-    path: feedPath,
+    path: '/rss.xml',
     title: 'devlog',
     description: 'Notes on building kay, a Bun web framework.',
     item: post => ({ title: post.data.title, path: `/posts/${post.slug}`, date: post.data.date, description: post.data.description }),
