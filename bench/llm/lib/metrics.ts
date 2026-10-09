@@ -42,6 +42,8 @@ export interface RunMetrics {
   docs: { calls: number, chars: number }
   /** Tool calls reaching outside the workspace or the network, which the prompt forbids. */
   outside: string[]
+  /** Bash calls running python, node or another package manager, where the prompt asks for bun only. */
+  otherRuntimes: string[]
   /** Lines that were not JSON, such as the last one of a transcript cut short by a kill. */
   skippedLines: number
 }
@@ -95,7 +97,28 @@ const remoteUrl = /https?:\/\/(?!localhost\b|127\.0\.0\.1\b|0\.0\.0\.0\b|\[::1\]
 const localHost = /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0)\b/
 const homePath = /(?:~|\/home\/)[^\s'"]*/g
 const parentCd = /(?:^|\s)cd\s+\.\.(?:\s|\/|$)/
+const heredocStart = /<<-?\s*['"]?(\w+)/
+const otherRuntime = /(?:^|[\s;&|(])(?:python3?|node|npx|npm|pnpm|yarn)(?=\s|$)/m
 const failedExit = /^Exit code [1-9]/
+
+// A heredoc's body is a file being written, whose `~/lib` imports or URLs in comments are not commands
+function withoutHeredocs(command: string): string {
+  const kept: string[] = []
+  let end: string | undefined
+
+  for (const line of command.split('\n')) {
+    if (end !== undefined) {
+      end = line.trim() === end ? undefined : end
+
+      continue
+    }
+
+    kept.push(line)
+    end = heredocStart.exec(line)?.[1]
+  }
+
+  return kept.join('\n')
+}
 
 export function countErrors(output: string): number {
   for (const summary of errorSummaries) {
@@ -120,11 +143,11 @@ function readsDocs(input: Record<string, unknown>): boolean {
 /** Paths and commands of a tool call that leave the workspace or use the network. */
 function outsideOf(name: string, input: Record<string, unknown>, cwd: string): string | undefined {
   if (name === 'Bash') {
-    const command = String(input.command ?? '')
+    const command = withoutHeredocs(String(input.command ?? ''))
     const network = networkCommand.test(command) && (remoteUrl.test(command) || !localHost.test(command))
     const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
 
-    return network || home || parentCd.test(command) ? `Bash: ${command}` : undefined
+    return network || home || parentCd.test(command) ? `Bash: ${String(input.command)}` : undefined
   }
 
   const path = String(input.file_path ?? input.path ?? '')
@@ -163,6 +186,7 @@ export function parseRun(text: string, cwd: string): RunMetrics {
     docs: { calls: 0, chars: 0 },
     outside: [],
     skippedLines: 0,
+    otherRuntimes: [],
   }
   // one API response arrives as one line per content block, each repeating the same id and usage
   const usageById = new Map<string, Usage>()
@@ -220,6 +244,10 @@ export function parseRun(text: string, cwd: string): RunMetrics {
         }
 
         const command = String(input.command ?? '')
+
+        if (name === 'Bash' && otherRuntime.test(withoutHeredocs(command))) {
+          metrics.otherRuntimes.push(command)
+        }
 
         if (block.id !== undefined && readsDocs(input)) {
           metrics.docs.calls++

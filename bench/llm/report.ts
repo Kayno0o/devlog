@@ -142,6 +142,14 @@ function header(first: string, columns: string[]): string[] {
 const groups = [...new Set(Object.values(measures).map(measure => measure.group))]
 const runColumns = ['outputTokens', 'inputTokens', 'cacheWriteTokens', 'cacheReadTokens', 'costUsd', 'minutes', 'turns', 'toolCalls', 'checkErrors', 'linesWritten']
 
+// A command's first line, enough to tell what it did; the result files keep it whole
+function firstLine(command: string): string {
+  const end = command.indexOf('\n')
+  const line = end === -1 ? command : command.slice(0, end)
+
+  return line.length > 100 || end !== -1 ? `${line.slice(0, 100)}...` : line
+}
+
 // What each session loaded besides its tools, and every call that left the workspace or used the network
 function isolation(): string[] {
   const mcp = results.filter(result => result.metrics.loaded.mcpServers.length > 0)
@@ -151,6 +159,7 @@ function isolation(): string[] {
   const differs = (a: Tokens, b: Tokens): boolean => inputKinds.some(key => Math.abs(a[key] - b[key]) > 0.01 * Math.max(1, b[key]))
   const mismatched = results.filter(result => result.metrics.resultTokens !== undefined && differs(result.metrics.tokens, result.metrics.resultTokens))
   const undercounted = results.filter(result => !result.metrics.outputExact)
+  const otherRuntimes = results.filter(result => result.metrics.otherRuntimes.length > 0)
   const cut = results.filter(result => result.metrics.skippedLines > 0)
 
   return [
@@ -161,7 +170,10 @@ function isolation(): string[] {
     ...plugins.length === 0 ? [] : [`- Plugins installed on the machine, listed by each session at start and kept off by \`--safe-mode\`: ${plugins.join(', ')}`],
     outside.length === 0
       ? '- No tool call left the workspace or used the network beyond package installs.'
-      : `- Tool calls outside the workspace or on the network: ${outside.map(result => `${result.framework} ${result.run}: ${result.metrics.outside.join('; ')}`).join('. ')}`,
+      : `- Tool calls outside the workspace or on the network: ${outside.map(result => `${result.framework} ${result.run}: ${result.metrics.outside.map(call => `\`${firstLine(call)}\``).join(', ')}`).join('. ')}`,
+    otherRuntimes.length === 0
+      ? '- Every agent ran its commands with bun alone.'
+      : `- Bash calls running python, node or another package manager despite the prompt: ${otherRuntimes.map(result => `${result.framework} ${result.run} (${result.metrics.otherRuntimes.length})`).join(', ')}`,
     configChanged.length === 0
       ? '- No agent changed its package.json scripts or tsconfig.json.'
       : `- Grading inputs an agent changed, worth reading before trusting its check: ${configChanged.map(result => `${result.framework} ${result.run} (${result.diff.gradingConfigChanged.join(', ')})`).join('; ')}`,

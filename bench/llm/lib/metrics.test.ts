@@ -1,3 +1,4 @@
+import type { RunMetrics } from './metrics'
 import { describe, expect, it } from 'bun:test'
 import { countErrors, parseRun } from './metrics'
 
@@ -77,6 +78,16 @@ describe('parseRun', () => {
     expect(bash('curl -s -H "Origin: http://localhost:4567" localhost:4567/contact')).toEqual([])
     expect(bash('curl -s http://127.0.0.1:4567/ && curl -s https://example.com')).toHaveLength(1)
     expect(bash('wget example.com')).toHaveLength(1)
+  })
+
+  it('reads past heredoc bodies, which are files being written', () => {
+    const run = (command: string): RunMetrics => parseRun(JSON.stringify({ type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Bash', input: { command } }] } }), cwd)
+    const written = run(`cat > src/a.ts <<'EOF'\nimport { x } from '~/lib/x'\n// see http://example.com, run curl or python\nEOF\nbun run check`)
+
+    expect(written.outside).toEqual([])
+    expect(written.otherRuntimes).toEqual([])
+    expect(run(`python3 - <<'EOF'\nprint(1)\nEOF`).otherRuntimes).toHaveLength(1)
+    expect(run('cat ~/.cache/ms-playwright/x').outside).toHaveLength(1)
   })
 })
 

@@ -37,6 +37,7 @@ function result(framework: string, run: number, output: number, passed: boolean)
       loaded: { tools: ['Bash', 'Read'], plugins: [], mcpServers: [] },
       outside: [],
       skippedLines: 0,
+      otherRuntimes: framework === 'kay' && run === 1 ? ['python3 - <<EOF'] : [],
     },
     diff: { files: 8, added: 300, removed: 10, dependenciesAdded: framework === 'sveltekit' ? ['marked'] : [], gradingConfigChanged: framework === 'kay' && run === 2 ? ['script check'] : [] },
     grade: { check: { ok: passed, errors: 0 }, build: { ok: true }, acceptance: { pass: passed ? 24 : 20, fail: passed ? 0 : 4, failures: passed ? [] : ['favorites > toggle'] }, passed },
@@ -73,6 +74,7 @@ it('sums up medians over passing runs and lists every run', async () => {
   expect(markdown).toContain('docs: fixture docs at abcdef1, 3 files, 2.5 MB; packages added by an agent: marked')
   expect(markdown).toContain('- No session started an MCP server.')
   expect(markdown).toContain('- No tool call left the workspace')
+  expect(markdown).toContain('despite the prompt: kay 1 (1)')
   expect(markdown).toContain('worth reading before trusting its check: kay 2 (script check)')
   expect(markdown).toContain('differ from the session\'s own totals by more than 1%: sveltekit 2')
   expect(markdown).toContain('- sveltekit run 2: success, check failed, build ok, failing: favorites > toggle')
