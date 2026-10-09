@@ -17,3 +17,11 @@ it('serves the feed', async () => {
   expect(feed.status).toBe(200)
   expect(feed.html).toContain('<title>devlog</title>')
 })
+
+it('serves the favicon and links it from every page', async () => {
+  const icon = await site.visit('/favicon.ico')
+  const home = await site.visit('/')
+
+  expect(icon.status).toBe(200)
+  expect(home.html).toContain('<link rel="icon" href="/favicon.ico"')
+})
