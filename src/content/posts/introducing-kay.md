@@ -107,33 +107,32 @@ Two small business sites moved to kay from Astro: a cattery and a house painter.
 
 ### What kay gains
 
-<Stats items={[{"value": "-28 to -36%", "label": "lines of code"}, {"value": "1.8 to 2.8x", "label": "less memory to build"}, {"value": "2.4 to 3.5x", "label": "smaller deploy"}]} />
+<Stats items={[{"value": "-32 to -37%", "label": "lines of code"}, {"value": "2.2 to 3.8x", "label": "faster cold start"}, {"value": "2.1 to 3.1x", "label": "smaller deploy"}]} />
 
-<BarChart title="Requests per second, a content page" unit="req/s" better="higher" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "kay, painter", "value": 41071}, {"label": "kay, cattery", "value": 40486}, {"label": "Astro, cattery", "value": 12523}, {"label": "Astro, painter", "value": 11376}]} source="Astro vs kay 1.4.0, 32 clients through nginx for 5 s, 2026-10-07" />
+<BarChart title="Requests per second, a content page" unit="req/s" better="higher" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "kay, painter", "value": 39118}, {"label": "kay, cattery", "value": 39090}, {"label": "Astro, cattery", "value": 12523}, {"label": "Astro, painter", "value": 11376}]} source="Astro (2026-10-07) vs kay 1.16.6 (2026-10-10), 32 clients through nginx for 5 s" />
 
 kay's figures there are a floor: the load client tops out near 40,000 requests a second. kay also sends its pages already compressed, so nginx spends about 20 µs on each instead of 470 to 540.
 
-<BarChart title="Server memory after load" unit="MB" better="lower" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "Astro, cattery", "value": 283}, {"label": "kay, cattery", "value": 135}, {"label": "Astro, painter", "value": 134}, {"label": "kay, painter", "value": 91}]} source="Astro vs kay 1.4.0, RSS after the load runs, 2026-10-07" />
+<BarChart title="Server memory after load" unit="MB" better="lower" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "Astro, cattery", "value": 283}, {"label": "kay, cattery", "value": 134}, {"label": "Astro, painter", "value": 134}, {"label": "kay, painter", "value": 95}]} source="Astro (2026-10-07) vs kay 1.16.6 (2026-10-10), RSS after the load runs" />
 
-<BarChart title="Deployed size" unit="MB" better="lower" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "Astro, painter", "value": 301}, {"label": "Astro, cattery", "value": 231}, {"label": "kay, cattery", "value": 95}, {"label": "kay, painter", "value": 87}]} source="Astro vs kay 1.4.0, dist and production node_modules against one executable, 2026-10-07" />
+<BarChart title="Deployed size" unit="MB" better="lower" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "Astro, painter", "value": 301}, {"label": "Astro, cattery", "value": 231}, {"label": "kay, cattery", "value": 109}, {"label": "kay, painter", "value": 98}]} source="Astro (2026-10-07) vs kay 1.16.6 (2026-10-10), dist and production node_modules against one executable" />
 
-- **Less CSS.** The cattery's stylesheet drops from 35.2 to 5.5 KB per page, the painter's from 9.3 to 7.0 KB.
-- **Lighter images on desktop**, 94 against 143 KB and 64 against 161 KB per page, served at the width drawn.
-- **Faster paints on the cattery**: on a phone, the largest paint lands at 1.75 s instead of 2.73 s.
-- **Builds that check.** `kay build` type-checks both sites before bundling, which `astro build` does not, and still finishes in about the same time: 2.14 against 1.94 s and 1.30 against 1.48 s.
+- **Less CSS.** The cattery's stylesheet drops from 35.2 to 5.3 KB per page, the painter's from 9.3 to 6.8 KB.
+- **Lighter images**, served as AVIF at the width drawn: 55 against 143 KB and 36 against 161 KB per page on desktop, 115 against 143 KB and 105 against 185 KB on a phone.
+- **Faster paints on the cattery**: on a phone, the largest paint lands at 1.76 s instead of 2.73 s, and a phone downloads 197 KB per page instead of 256.
+- **Faster cold starts**, 29 against 110 ms on the cattery and 23 against 52 ms on the painter.
 
 ### What kay loses
 
-<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" highlight={["kay, cattery", "kay, painter"]} rows={[{"label": "Astro, painter", "value": 0}, {"label": "Astro, cattery", "value": 4.8}, {"label": "kay, cattery", "value": 9.1}, {"label": "kay, painter", "value": 9.4}]} source="Astro vs kay 1.4.0, average over every page, 2026-10-07" />
+<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" highlight={["kay, cattery", "kay, painter"]} rows={[{"label": "Astro, painter", "value": 0}, {"label": "Astro, cattery", "value": 4.8}, {"label": "kay, cattery", "value": 10}, {"label": "kay, painter", "value": 10.3}]} source="Astro (2026-10-07) vs kay 1.16.6 (2026-10-10), average over every page" />
 
-- **More JavaScript.** The painter's site shipped none on Astro and ships 9.4 KB on kay, and the cattery's goes from 4.8 to 9.1 KB.
-- **A heavier painter site on phones.** A phone downloads 206 KB per page against 126 KB, mostly fonts, 107 against 35 KB, and that script. Its largest paint lands about 80 ms later on a phone and 40 ms later on desktop.
-- **Larger phone images on the cattery**, 200 against 143 KB: sized for the test phone's 3x screen.
-- **Cold start on the painter**, 67 ms against 52 ms, where the cattery starts faster on kay, 73 against 110 ms.
+- **More JavaScript.** The painter's site shipped none on Astro and ships 10.3 KB on kay, and the cattery's goes from 4.8 to 10.0 KB.
+- **A heavier painter site on phones.** A phone downloads 166 KB per page against 126 KB, mostly fonts, 107 against 35 KB, and that script. Its largest paint lands about 80 ms later on a phone and 45 ms later on desktop.
+- **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image at each width, and type-checks, which `astro build` does not: 12.6 against 1.9 s on the cattery and 7.3 against 1.5 s on the painter, the cattery's build peaking at 1.8 GB against 1.1.
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production, on 2026-10-07: Astro against kay 1.4.0. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
+One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production: Astro on 2026-10-07, kay 1.16.6 rerun alone on 2026-10-10. Sizes compare exactly; paints and throughput come from two sittings, so small gaps there are noise. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
 
 </Note>
 
