@@ -87,15 +87,15 @@ The home page a phone downloads drops from 706 to 547 KB, mostly images: kay ser
 
 ### What kay loses
 
-<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 37}, {"label": "kay", "value": 59}]} source="SvelteKit vs kay 1.13.0, RSS after start, 2026-10-09" />
+<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 36}, {"label": "kay", "value": 57}]} source="SvelteKit vs kay 1.16.5, RSS after start, 2026-10-09" />
 
-- **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.5 times at peak, 198 against 130 MiB under load.
+- **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and at peak, 212 against 130 MiB under load with inlined styles.
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay paints 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
-- **CPU on short pages.** kay serves rendered pages at 1.6 to 2 times SvelteKit's rate, yet spends 9 to 11% more CPU per short page, compressing with brotli where SvelteKit uses gzip. Those server figures were taken with linked stylesheets.
+- **Short pages with inlined styles.** Each response carries the whole stylesheet, so kay serves short pages at 0.9 to 0.95 times SvelteKit's rate for 1.3 to 1.45 times its CPU per request. Linked, they go at 1.8 to 1.9 times SvelteKit's rate, and the home page serves 1.4 to 1.5 times faster either way.
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3 canary, on 2026-10-09: SvelteKit against kay 1.13.0, and 1.14.0 for the paints. Paints come from Playwright under Lighthouse's phone and desktop presets, 3 runs each; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3 canary, on 2026-10-09: SvelteKit against kay 1.13.0, 1.14.0 for the paints and 1.16.5 for the server. Paints come from Playwright under Lighthouse's phone and desktop presets, 3 runs each; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 

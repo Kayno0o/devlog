@@ -4,7 +4,7 @@ A real site ported from SvelteKit to kay: a home page and content pages (the par
 
 ## Conditions (apply to everything below unless a row says otherwise)
 - **SvelteKit:** commit `c860ae5`, served by `bun build/index.ts` through the site's own Bun adapter. Pages are gzip only; static assets are precompressed br.
-- **kay:** the site on kay 1.13.0 (commit `c7e6417`) for build, server and size. Browser figures also on kay 1.14.0 with `inlineStyles: true` (commit `21d681f`, what the site ships now).
+- **kay:** the site on kay 1.13.0 (commit `c7e6417`) for build and size. Browser figures also on kay 1.14.0 with `inlineStyles: true` (commit `21d681f`, which the site has shipped since). Server figures on kay 1.16.5 (commit `2a592f8`), inlined and linked.
 - **Machine:** one desktop, Ryzen 5 7600 (12 threads), Linux, Bun 1.4.3 canary. Everything runs over loopback, so absolute figures are optimistic and only the ratios carry over.
 - **Date:** 9 Oct 2026. Both versions were measured in the same sitting, interleaved; figures from different sittings should not be compared, since paints drift 50 ms or more and memory a few MiB.
 
@@ -60,28 +60,34 @@ Tool: the repo's `tests-e2e/perf.e2e.ts` (Playwright, Chromium), throttled throu
 
 With `inlineStyles`, the HTML carries the 13.9 KB stylesheet, so it is no longer fetched separately.
 
-## Server (sitting 1, kay 1.13.0 with linked styles)
-Tool: oha 1.16 in Docker on the host network, `accept-encoding: gzip, deflate, br, zstd`. Latency is the p50 over 1,000 requests on one connection. Throughput is 10 s at 64 connections, after 300 warmup requests. CPU and RSS come from `/proc`. Every page is rendered per request on both, with no prerendering.
+## Server (sitting 3, kay 1.16.5, inlined and linked styles)
+Tool: oha 1.16 in Docker on the host network, `accept-encoding: gzip, deflate, br, zstd`. Latency is the p50 over 1,000 requests on one connection. Throughput is 10 s at 64 connections, after 300 warmup requests. CPU and RSS come from `/proc`. Every page is rendered per request on all three, with no prerendering. The same kay 1.16.5 build (commit `2a592f8`) was compiled once with `inlineStyles: true` and once without. Two rounds alternating the three servers; each figure is the mean of both. Other work kept the machine at a load of 2.3 to 3.6, so compare within this table only.
 
-| Endpoint | Metric | SvelteKit | kay | Unit |
-|---|---|---|---|---|
-| Home page | Requests per second | 778 | 1,241 | req/s |
-| Home page | CPU per request | 1.60 | 1.49 | ms |
-| Home page | TTFB p50, 1 connection | 1.25 | 1.35 | ms |
-| Home page, uncompressed | CPU per request | 1.03 | 0.58 | ms |
-| Partner page | Requests per second | 4,231 | 8,591 | req/s |
-| Legal notice | Requests per second | 5,202 | 10,235 | req/s |
-| 404 page | Requests per second | 5,266 | 9,939 | req/s |
-| Short pages (partner, legal, 404) | CPU per request | 0.21 to 0.26 | 0.23 to 0.29 | ms |
-| Hero image, WebP | Requests per second | 42,227 | 44,793 | req/s |
-| Hero image, AVIF | Requests per second | 45,919 | 46,738 | req/s |
-| Health check | Requests per second | 62,597 | 77,701 | req/s |
-| Cold start to first 200 | Median of 15 spawns | 23 | 24 | ms |
-| RSS after start | | 37 | 59 | MiB |
-| RSS peak over the load run | | 130 | 198 | MiB |
+| Endpoint | Metric | SvelteKit | kay inlined | kay linked | Unit |
+|---|---|---|---|---|---|
+| Home page | Body sent | 16.9 gzip | 34.8 gzip | 17.5 br | KB |
+| Home page | Requests per second | 781 | 1,112 | 1,163 | req/s |
+| Home page | CPU per request | 1.59 | 1.55 | 1.56 | ms |
+| Home page | TTFB p50, 1 connection | 1.23 | 1.51 | 1.39 | ms |
+| Partner page | Requests per second | 4,170 | 3,982 | 7,690 | req/s |
+| Legal notice | Requests per second | 5,058 | 4,614 | 9,803 | req/s |
+| 404 page | Requests per second | 5,131 | 4,566 | 9,334 | req/s |
+| Short pages (partner, legal, 404) | Body sent | 2.7 to 4.1 gzip | 19.4 to 20.6 gzip | 3.1 to 4.3 br | KB |
+| Short pages | CPU per request | 0.22 to 0.27 | 0.31 to 0.35 | 0.25 to 0.32 | ms |
+| Short pages | TTFB p50, 1 connection | 0.20 to 0.24 | 0.20 to 0.23 | 0.23 to 0.32 | ms |
+| Short pages | p50 under 64 connections | 12 to 15 | 14 to 16 | 6.4 to 8.0 | ms |
+| Hero image, WebP | Requests per second | 41,561 | 43,556 | 43,776 | req/s |
+| Hero image, AVIF | Requests per second | 45,829 | 45,274 | 45,420 | req/s |
+| Health check | Requests per second | 62,459 | 72,295 | 74,917 | req/s |
+| Cold start to first 200 | Median of 15 spawns per round | 22 to 23 | not measured | 23 to 25 | ms |
+| RSS after start | | 36 | 57 | 57 | MiB |
+| RSS peak over the load run | | 130 | 212 | 201 | MiB |
 
-- **Stale for the shipped config:** rendered-page throughput and CPU were measured with linked stylesheets. With `inlineStyles`, each page response is 2 to 5 times larger compressed, so per-request compression cost rises. Not measured.
-- Short pages cost kay 9 to 11% more CPU per request (brotli against SvelteKit's gzip), though they serve about twice the req/s.
+- **Inlined short pages** serve at 0.89 to 0.95 times SvelteKit's rate and half the linked rate, at 1.3 to 1.45 times SvelteKit's CPU per request: each response carries the 13.9 KB stylesheet. Under load the inlined process tops out at about 140% CPU against about 240% linked, which reads as the stylesheet splice running on the main thread while linked pages compress on the thread pool. Not profiled.
+- **Linked short pages** serve at 1.8 to 1.9 times SvelteKit's rate, at 1.15 to 1.2 times its CPU per request (brotli against SvelteKit's gzip).
+- **Home page:** 1.4 times SvelteKit's rate inlined, 1.5 times linked, at the same CPU per request on all three.
+- **Inlined bodies are gzip:** since kay 1.16.3, an inlined page is compressed around a stylesheet deflated once at start, so a brotli browser gets gzip.
+- **Earlier releases, inlined:** kay 1.16.0 served short pages at 1.8k to 2.2k req/s for 1.1 to 1.3 ms of CPU each, kay 1.16.3 at 2.1k to 2.2k req/s for 0.49 to 0.54 ms, both in their own sittings.
 - On images, SvelteKit serves static files, while kay serves resized variants through an image route.
 
 ## Build and deploy (sitting 1, kay 1.13.0)
@@ -117,4 +123,4 @@ Counted at kay 1.12.0's commit (`03a118f`); nothing counted has changed since.
 - Absolute server numbers: loopback on one desktop. Quote the ratios.
 - Comparisons of paint figures across sittings, and older kay versions' figures (1.10.x to 1.12.0).
 - The SvelteKit desktop home page whole-page weight moved between sittings (655 KB in one, 432 KB in another, lazy images loading differently). Only the phone weights are stable.
-- Memory: kay holds about 1.6 times SvelteKit's RSS at rest and 1.5 times at peak. The bytecode accounts for about 3 MiB; the rest was not traced.
+- Memory: kay holds about 1.6 times SvelteKit's RSS at rest and 1.5 to 1.6 times at peak. The bytecode accounts for about 3 MiB; the rest was not traced.
