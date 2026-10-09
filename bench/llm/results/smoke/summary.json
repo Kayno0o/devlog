@@ -1,0 +1,42 @@
+{
+  "label": "smoke",
+  "model": "claude-sonnet-5-5",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-09T22:21:30.079Z",
+  "to": "2026-10-09T22:21:30.079Z",
+  "frameworks": {
+    "kay": {
+      "runs": 1,
+      "passed": 0,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.16.5",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [],
+      "spent": {
+        "costUsd": 0.7062324,
+        "totalTokens": 1277464,
+        "minutes": 2.1988666666666665
+      },
+      "measures": {},
+      "failures": [
+        {
+          "run": 1,
+          "outcome": "success",
+          "check": true,
+          "build": true,
+          "failures": [
+            "contact > validates on the server without JavaScript"
+          ]
+        }
+      ]
+    }
+  }
+}
