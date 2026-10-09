@@ -4,7 +4,7 @@ import { defineConfig } from 'kay/server'
 
 export default defineConfig({
   lang: 'en',
-  site: process.env.SITE_URL ?? 'https://devlog.kaynooo.fr',
+  site: process.env.SITE_URL ?? 'https://log.kaynooo.fr',
   plugins: [tailwind],
   // Nothing here is interactive: pages load fully and ship no script.
   navigation: false,
