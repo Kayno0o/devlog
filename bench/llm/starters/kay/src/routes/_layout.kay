@@ -1,8 +1,2 @@
----
-import Header from '../components/header.kay'
-import '../app.css'
----
-a.skip-link(href="#main-content") Skip to main content
-Header
-main#main-content.mx-auto.w-full.max-w-5xl.grow.px-8.py-6
+main
   slot
