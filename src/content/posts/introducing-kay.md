@@ -1,6 +1,6 @@
 ---
 title: kay, a Bun web framework built to be fast to run and fast to write
-description: Why I built my own framework, how a .kay file becomes HTML and islands, and what it costs next to SolidJS and Svelte.
+description: Why I built my own framework, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte and Astro.
 date: 2026-10-09
 tags: [kay, benchmarks]
 draft: true
@@ -20,6 +20,15 @@ const count = signal(0)
 h1 {greeting}
 button(onClick={() => count.set(count + 1)}) Clicked {count} times
 ```
+
+## Where it comes from
+
+kay is a mix of what I liked in other tools, in one file format:
+
+- **Astro**: the TypeScript fence on top of the component, islands as the only JavaScript a page ships, and content collections.
+- **pug**: indented templates with no closing tags, short to write and quick to read.
+- **SolidJS**: signals and fine-grained updates, with no virtual DOM.
+- **Svelte and SvelteKit**: a compiler that does the work ahead of time, file-based routes with layouts, and typed form actions.
 
 ## How it works
 
@@ -52,15 +61,7 @@ SolidJS ships less JavaScript, in one file where kay needs two. kay's in-place p
 
 <BarChart title="Update every 10th row of 1,000" unit="ms" better="lower" highlight="kay" rows={[{"label": "Svelte", "value": 3.0}, {"label": "SolidJS", "value": 3.1}, {"label": "kay", "value": 3.6}]} source="kayjs bench/results.md, kay 1.3.0, 2026-10-07" />
 
-On the table benchmark kay is within 1 to 20% of the fastest, and last on partial updates and swaps: it replaces rows immutably under a keyed `for`, where Solid and Svelte write one signal per row.
-
-| Table operation, ms | kay | SolidJS | Svelte |
-| --- | --- | --- | --- |
-| create 1,000 rows | 31.1 | 29.7 | 32.3 |
-| update every 10th row | 3.6 | 3.1 | 3.0 |
-| select row | 0.2 | 0.3 | 1.1 |
-| swap rows | 2.5 | 2.2 | 2.1 |
-| create 10,000 rows | 250 | 256 | 256 |
+On the rest of the table benchmark kay is within 20% of the fastest, and first on selecting a row and on creating 10,000 rows. It is last on partial updates and swaps: it replaces rows immutably under a keyed `for`, where Solid and Svelte write one signal per row.
 
 ## A real site, ported from SvelteKit
 
@@ -85,6 +86,36 @@ The home page a phone downloads drops from 706 to 547 KB, mostly images: kay ser
 - **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.5 times at peak, 198 against 130 MiB under load.
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay paints 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
 - **CPU on short pages.** kay serves rendered pages at 1.6 to 2 times SvelteKit's rate, yet spends 9 to 11% more CPU per short page, compressing with brotli where SvelteKit uses gzip. Those server figures were taken with linked stylesheets.
+
+## Two sites, ported from Astro
+
+Two small business sites moved to kay from Astro: a cattery and a house painter. Each was built and served as it deploys, Astro's standalone server under Bun against kay's one executable, both behind nginx with HTTP/2, TLS and brotli.
+
+### What kay gains
+
+<Stats items={[{"value": "-28 to -36%", "label": "lines of code"}, {"value": "1.8 to 2.8x", "label": "less memory to build"}, {"value": "2.4 to 3.5x", "label": "smaller deploy"}]} />
+
+<BarChart title="Requests per second, a content page" unit="req/s" better="higher" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "kay, painter", "value": 41071}, {"label": "kay, cattery", "value": 40486}, {"label": "Astro, cattery", "value": 12523}, {"label": "Astro, painter", "value": 11376}]} source="Astro vs kay 1.4.0, 32 clients through nginx for 5 s, 2026-10-07" />
+
+kay's figures there are a floor: the load client tops out near 40,000 requests a second. kay also sends its pages already compressed, so nginx spends about 20 µs on each instead of 470 to 540.
+
+<BarChart title="Server memory after load" unit="MB" better="lower" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "Astro, cattery", "value": 283}, {"label": "kay, cattery", "value": 135}, {"label": "Astro, painter", "value": 134}, {"label": "kay, painter", "value": 91}]} source="Astro vs kay 1.4.0, RSS after the load runs, 2026-10-07" />
+
+<BarChart title="Deployed size" unit="MB" better="lower" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "Astro, painter", "value": 301}, {"label": "Astro, cattery", "value": 231}, {"label": "kay, cattery", "value": 95}, {"label": "kay, painter", "value": 87}]} source="Astro vs kay 1.4.0, dist and production node_modules against one executable, 2026-10-07" />
+
+- **Less CSS.** The cattery's stylesheet drops from 35.2 to 5.5 KB per page, the painter's from 9.3 to 7.0 KB.
+- **Lighter images on desktop**, 94 against 143 KB and 64 against 161 KB per page, served at the width drawn.
+- **Faster paints on the cattery**: on a phone, the largest paint lands at 1.75 s instead of 2.73 s.
+- **Builds that check.** `kay build` type-checks both sites before bundling, which `astro build` does not, and still finishes in about the same time: 2.14 against 1.94 s and 1.30 against 1.48 s.
+
+### What kay loses
+
+<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" highlight={["kay, cattery", "kay, painter"]} rows={[{"label": "Astro, painter", "value": 0}, {"label": "Astro, cattery", "value": 4.8}, {"label": "kay, cattery", "value": 9.1}, {"label": "kay, painter", "value": 9.4}]} source="Astro vs kay 1.4.0, average over every page, 2026-10-07" />
+
+- **More JavaScript.** The painter's site shipped none on Astro and ships 9.4 KB on kay, and the cattery's goes from 4.8 to 9.1 KB.
+- **A heavier painter site on phones.** A phone downloads 206 KB per page against 126 KB, mostly fonts, 107 against 35 KB, and that script. Its largest paint lands about 80 ms later on a phone and 40 ms later on desktop.
+- **Larger phone images on the cattery**, 200 against 143 KB: sized for the test phone's 3x screen.
+- **Cold start on the painter**, 67 ms against 52 ms, where the cattery starts faster on kay, 73 against 110 ms.
 
 ## What comes with it
 
