@@ -1,0 +1,159 @@
+{
+  "framework": "kay",
+  "run": 1,
+  "label": "smoke",
+  "startedAt": "2026-10-09T22:21:30.079Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.16.5",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 131932,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 131460,
+    "durationApiMs": 119540,
+    "turns": 31,
+    "costUsd": 0.7062324,
+    "tokens": {
+      "input": 50,
+      "output": 17100,
+      "cacheCreation": 74492,
+      "cacheRead": 1185822
+    },
+    "outputExact": true,
+    "thinkingTokens": 6187,
+    "apiCalls": 25,
+    "peakContextTokens": 74494,
+    "toolCalls": {
+      "Bash": 24,
+      "Read": 5,
+      "bash": 1
+    },
+    "toolErrors": 5,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/_layout.kay <<'EOF'\n--- server\nconst path = ctx.url.pathname\n---\n---\nimport Header from '../components/header.kay'\nimport '../app.css'\n---\na.skip-link(href=\"#main-content\") Skip to main content\nHeader(path={path})\nmain#main-content.mx-auto.w-full.max-w-5xl.grow.px-8.py-6\n  slot\nfooter.border-t-2.border-overlay0.px-8.py-3.text-center © Bookshelf\nEOF\ncat > src/components/header.kay <<'EOF'\n---\nconst { path } = props<{ path: string }>()\n\nconst links = [\n  { href: '/books', label: 'Books' },\n  { href: '/about', label: 'About' },\n  { href: '/contact', label: 'Contact' },\n]\n\nfunction current(href: string) {\n  return path === href || path.startsWith(`${href}/`) ? 'page' : undefined\n}\n---\nheader.border-b-2.border-overlay0.bg-base.px-8.py-3\n  .mx-auto.flex.max-w-5xl.items-center.justify-between.gap-4\n    a.text-xl.font-bold.no-underline(href=\"/\") Bookshelf\n    nav(aria-label=\"Main\")\n      ul.flex.gap-4\n        for link of links key={link.href}\n          li\n            a(href={link.href} aria-current={current(link.href)}) {link.label}\nEOF\ncat > src/routes/_404.kay <<'EOF'\nhead\n  title Not found | Bookshelf\nh1.text-2xl.font-bold Not found\na(href=\"/books\") Back to the books\nEOF\ncat > src/routes/index.kay <<'EOF'\n--- server\nimport { books } from '../content.config'\n\nconst top = (await books.all())\n  .toSorted((a, b) => b.data.rating - a.data.rating || a.data.title.localeCompare(b.data.title, 'en'))\n  .slice(0, 3)\n---\nhead\n  title Bookshelf\nh1.text-3xl.font-bold Bookshelf\np A small catalog of classic books.\nh2.mt-6.text-xl.font-bold Top rated\nol.list-decimal.pl-6\n  for book of top key={book.slug}\n    li: a(href={`/books/${book.slug}`}) {book.data.title}\nEOF\ncat > src/routes/about.kay <<'EOF'\nhead\n  title About | Bookshelf\nh1.text-2xl.font-bold About\np Bookshelf lists a few classic books worth reading.\nEOF\nmkdir -p src/routes/books\ncat > src/routes/books/index.kay <<'EOF'\n--- server\nimport { books } from '../../content.config'\n\nconst entries = (await books.all()).map(book => ({\n  slug: book.slug,\n  title: book.data.title,\n  author: book.data.author,\n  year: book.data.year,\n  tags: book.data.tags,\n}))\nconst tags = [...new Set(entries.flatMap(book => book.tags))].toSorted((a, b) => a.localeCompare(b, 'en'))\n---\n---\nimport BookList from '../../components/book-list.kay'\n---\nhead\n  title Books | Bookshelf\nh1.text-2xl.font-bold All books\nBookList(books={entries} tags={tags})\nEOF\ncat > src/components/book-list.kay <<'EOF'\n---\nimport { favorites } from '../favorites'\n\ninterface Entry { slug: string, title: string, author: string, year: number, tags: string[] }\n\nconst { books, tags } = props<{ books: Entry[], tags: string[] }>()\nconst selected = signal<string | null>(null)\nconst shown = memo(() => books.filter(book => selected() === null || book.tags.includes(selected()!)))\n---\n.my-4.flex.flex-wrap.gap-2(role=\"group\" aria-label=\"Filter by tag\")\n  button(type=\"button\" aria-pressed={selected === null ? 'true' : 'false'} onClick={() => selected.set(null)}) All\n  for tag of tags key={tag}\n    button(type=\"button\" aria-pressed={selected === tag ? 'true' : 'false'} onClick={() => selected.set(tag)}) {tag}\nul(aria-label=\"Books\")\n  for book of shown key={book.slug}\n    li.py-1\n      a(href={`/books/${book.slug}`}) {book.title}\n      |  {book.author}, {book.year}\n      if favorites().includes(book.slug)\n        |  \n        span Favorite\nEOF\ncat > src/components/favorite-button.kay <<'EOF'\n---\nimport { favorites, toggleFavorite } from '../favorites'\n\nconst { slug } = props<{ slug: string }>()\n---\nbutton(type=\"button\" onClick={() => toggleFavorite(slug)}) {favorites().includes(slug) ? 'Remove from favorites' : 'Add to favorites'}\nEOF\ncat > 'src/routes/books/[slug].kay' <<'EOF'\n--- server\nimport { books } from '../../content.config'\n\nconst book = await books.get(ctx.params.slug) ?? ctx.notFound()\nconst { Content } = book\n---\n---\nimport FavoriteButton from '../../components/favorite-button.kay'\n---\nhead\n  title {`${book.data.title} | Bookshelf`}\nh1.text-2xl.font-bold {book.data.title}\np by {book.data.author}\np Published in {book.data.year}\np Rating: {book.data.rating}/5\nul.flex.gap-2\n  for tag of book.data.tags key={tag}\n    li: a(href=\"/books\") {tag}\nFavoriteButton(slug={book.slug})\n.mt-4\n  Content\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { validateContact } from '../contact'\n\nexport const send = action(t.Object({ name: t.String(), email: t.String(), message: t.String() }), (fields, ctx) => {\n  const errors = validateContact(fields)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: fields.name.trim() }\n})\n---\n---\nimport ContactForm from '../components/contact-form.kay'\n---\nhead\n  title Contact | Bookshelf\nh1.text-2xl.font-bold Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { ActionError } from 'kay'\nimport { send } from '../routes/contact.kay'\nimport { validateContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst clientErrors = signal<ContactErrors | null>(null)\nconst sentName = signal<string | null>(null)\nconst errors = (): ContactErrors => clientErrors() ?? send.failed()?.data.errors ?? {}\nconst thanks = () => sentName() ?? send.succeeded()?.data.name ?? null\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n\n  const form = event.currentTarget as HTMLFormElement\n  const data = new FormData(form)\n  const found = validateContact({\n    name: String(data.get('name')),\n    email: String(data.get('email')),\n    message: String(data.get('message')),\n  })\n\n  clientErrors.set(found)\n  sentName.set(null)\n\n  if (Object.keys(found).length > 0)\n    return\n\n  try {\n    const result = await send(data, { refresh: false })\n\n    sentName.set(result.name)\n    form.reset()\n  }\n  catch (error) {\n    if (error instanceof ActionError)\n      clientErrors.set((error.data as { errors?: ContactErrors } | undefined)?.errors ?? {})\n    else\n      throw error\n  }\n}\n---\nif thanks()\n  p(role=\"status\") Thanks, {thanks()}! Your message has been sent.\nform.flex.max-w-lg.flex-col.gap-4(action={send} novalidate onSubmit={submit})\n  .flex.flex-col.gap-1\n    label(for=\"contact-name\") Name\n    input#contact-name(type=\"text\" name=\"name\")\n    if errors().name as message\n      p.text-red {message}\n  .flex.flex-col.gap-1\n    label(for=\"contact-email\") Email\n    input#contact-email(type=\"email\" name=\"email\")\n    if errors().email as message\n      p.text-red {message}\n  .flex.flex-col.gap-1\n    label(for=\"contact-message\") Message\n    textarea#contact-message(name=\"message\" rows=\"6\")\n    if errors().message as message\n      p.text-red {message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i 's/name: t.String(), email: t.String(), message: t.String()/name: t.String({ maxLength: 500 }), email: t.String({ maxLength: 500 }), message: t.String({ maxLength: 20000 })/' src/routes/contact.kay\nsed -i 's/send.failed()?.data.errors/send.failed()?.data?.errors/' src/components/contact-form.kay\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\nimport re\np='src/components/contact-form.kay'\ns=open(p).read()\ns=s.replace(\"const thanks = () => sentName() ?? send.succeeded()?.data.name ?? null\",\"const thanks = () => {\\n  const name = sentName() ?? send.succeeded()?.data.name\\n\\n  return name === undefined || name === null ? null : `Thanks, ${name}! Your message has been sent.`\\n}\")\ns=s.replace(\"p(role=\\\"status\\\") Thanks, {thanks()}! Your message has been sent.\",\"p(role=\\\"status\\\") {thanks()}\")\nopen(p,'w').write(s)\np='src/routes/books/[slug].kay'\ns=open(p).read()\ns=s.replace(\"p by {book.data.author}\",\"p {`by ${book.data.author}`}\").replace(\"p Published in {book.data.year}\",\"p {`Published in ${book.data.year}`}\").replace(\"p Rating: {book.data.rating}/5\",\"p {`Rating: ${book.data.rating}/5`}\")\nopen(p,'w').write(s)\np='src/components/book-list.kay'\ns=open(p).read()\ns=s.replace(\"      |  {book.author}, {book.year}\\n\",\"      span  {`${book.author}, ${book.year}`}\\n\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -20; bun test 2>&1 | tail -8\nbun -e \"\nimport {testSite} from 'kay/test'\nconst s=await testSite()\nfor (const p of ['/books','/books/dracula','/contact']) { const r=await s.visit(p); console.log(r.html.match(/<main.*<\\/main>/s)[0]) }\n\"",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i 's/form.flex.max-w-lg.flex-col.gap-4(action={send} novalidate onSubmit={submit})/form.flex.max-w-lg.flex-col.gap-4(action={send} novalidate data-reload onSubmit={submit})/' src/components/contact-form.kay\nbun run check 2>&1 | tail; bun run build 2>&1 | tail -15; bun test 2>&1 | tail -6\n(PORT=4567 bun run start > /tmp/kay.log 2>&1 &) ; sleep 2\nfor p in / /books /books/dracula /books/x /nope /contact; do curl -s -o /dev/null -w \"$p %{http_code}\\n\" localhost:4567$p; done\ncurl -s localhost:4567/books/x | grep -o '<title>[^<]*</title>'\ncurl -s -X POST -F name=Ada -F email=a@b.co -F \"message=hello hello hello hello hello\" -H \"Origin: http://localhost:4567\" -H \"Referer: http://localhost:4567/contact\" -L localhost:4567/_kay/action/src/routes/contact.kay/send -c /tmp/cj -b /tmp/cj | grep -o 'Thanks[^<]*'\ncurl -s -X POST -F name= -F email=zz -F \"message=hi\" -H \"Origin: http://localhost:4567\" -H \"Referer: http://localhost:4567/contact\" localhost:4567/_kay/action/src/routes/contact.kay/send -w '%{http_code}\\n' | grep -o 'is required.\\|valid email[^<]*\\|at least[^<]*\\|^[0-9]*$'\npkill -f \"src/server.ts\"; sleep 1; pgrep -fa \"server.ts\" || echo stopped",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "rm tests/islands.test.ts; bun remove @happy-dom/global-registrator 2>&1 | tail -2; bun run check 2>&1 | tail -3; bun run build 2>&1 | tail -3; bun test 2>&1 | tail -5; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 11,
+      "chars": 93627
+    },
+    "outside": [
+      "Read: /home/kaynooo/.cache/llm-bench/smoke/kay-1/docs/llms/islands.md"
+    ],
+    "skippedLines": 0,
+    "resultTokens": {
+      "input": 50,
+      "output": 17100,
+      "cacheCreation": 74492,
+      "cacheRead": 1185822
+    }
+  },
+  "diff": {
+    "files": 20,
+    "added": 290,
+    "removed": 70,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 23,
+      "fail": 1,
+      "failures": [
+        "contact > validates on the server without JavaScript"
+      ]
+    },
+    "passed": false
+  },
+  "docs": {
+    "source": "kay 1.16.5 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-09T21:48:54.055Z",
+    "files": 17,
+    "bytes": 181728
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/smoke/kay-1"
+}

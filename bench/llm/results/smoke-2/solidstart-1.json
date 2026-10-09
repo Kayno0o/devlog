@@ -1,0 +1,159 @@
+{
+  "framework": "solidstart",
+  "run": 1,
+  "label": "smoke-2",
+  "startedAt": "2026-10-09T23:22:25.784Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "@solidjs/start": "2.0.6",
+    "solid-js": "1.9.17",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 131648,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 130912,
+    "durationApiMs": 104735,
+    "turns": 25,
+    "costUsd": 0.49058339999999995,
+    "tokens": {
+      "input": 46,
+      "output": 15318,
+      "cacheCreation": 44949,
+      "cacheRead": 787577
+    },
+    "outputExact": true,
+    "thinkingTokens": 4414,
+    "apiCalls": 23,
+    "peakContextTokens": 50330,
+    "toolCalls": {
+      "Bash": 24
+    },
+    "toolErrors": 3,
+    "checkRuns": [
+      {
+        "command": "mkdir -p src/lib src/routes/books\ncat > src/app.css <<'EOF'\nbody {\n  font-family: system-ui, sans-serif;\n  margin: 0;\n  color: #222;\n}\nheader,\nfooter,\nmain {\n  max-width: 44rem;\n  margin: 0 auto;\n  padding: 1rem;\n}\nheader {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid #ddd;\n}\nnav a {\n  margin-left: 1rem;\n}\nnav a[aria-current=\"page\"] {\n  font-weight: bold;\n  text-decoration: none;\n}\nfooter {\n  border-top: 1px solid #ddd;\n  margin-top: 2rem;\n}\n.filters button {\n  margin-right: 0.5rem;\n}\n.filters button[aria-pressed=\"true\"] {\n  background: #335d92;\n  color: white;\n}\n.error {\n  color: #b00020;\n  margin: 0.25rem 0;\n}\nform div {\n  margin-bottom: 1rem;\n}\nform label,\nform input,\nform textarea {\n  display: block;\n}\nEOF\ncat > src/lib/validate.ts <<'EOF'\nexport type ContactValues = { name: string; email: string; message: string };\nexport type ContactErrors = Partial<Record<keyof ContactValues, string>>;\n\nexport function validateContact(input: ContactValues): {\n  values: ContactValues;\n  errors: ContactErrors;\n} {\n  const values = {\n    name: input.name.trim(),\n    email: input.email.trim(),\n    message: input.message.trim(),\n  };\n  const errors: ContactErrors = {};\n  if (!values.name) errors.name = \"Name is required.\";\n  if (!values.email) errors.email = \"Email is required.\";\n  else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(values.email))\n    errors.email = \"Enter a valid email address.\";\n  if (values.message.length < 20)\n    errors.message = \"Message must be at least 20 characters.\";\n  return { values, errors };\n}\nEOF\ncat > src/lib/books.ts <<'EOF'\nimport { marked } from \"marked\";\nimport { parse } from \"yaml\";\n\nexport type BookMeta = {\n  slug: string;\n  title: string;\n  author: string;\n  year: number;\n  rating: number;\n  tags: string[];\n};\nexport type Book = BookMeta & { html: string };\n\nconst files = import.meta.glob(\"/content/books/*.md\", {\n  query: \"?raw\",\n  import: \"default\",\n  eager: true,\n}) as Record<string, string>;\n\nfunction parseBook(path: string, raw: string): Book {\n  const slug = path.slice(path.lastIndexOf(\"/\") + 1).replace(/\\.md$/, \"\");\n  const match = /^---\\r?\\n([\\s\\S]*?)\\r?\\n---\\r?\\n?([\\s\\S]*)$/.exec(raw);\n  const data = match ? parse(match[1]) : {};\n  return {\n    slug,\n    title: String(data.title),\n    author: String(data.author),\n    year: Number(data.year),\n    rating: Number(data.rating),\n    tags: (data.tags ?? []).map(String),\n    html: marked.parse(match ? match[2] : raw, { async: false }),\n  };\n}\n\nconst books: Book[] = Object.entries(files)\n  .map(([path, raw]) => parseBook(path, raw))\n  .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0));\n\nexport function allBooks(): BookMeta[] {\n  return books.map(({ html: _html, ...meta }) => meta);\n}\n\nexport function findBook(slug: string): Book | null {\n  return books.find(b => b.slug === slug) ?? null;\n}\nEOF\ncat > src/lib/queries.ts <<'EOF'\nimport { query } from \"@solidjs/router\";\n\nexport const getBooks = query(async () => {\n  \"use server\";\n  const { allBooks } = await import(\"./books\");\n  return allBooks();\n}, \"books\");\n\nexport const getBook = query(async (slug: string) => {\n  \"use server\";\n  const { findBook } = await import(\"./books\");\n  return findBook(slug);\n}, \"book\");\nEOF\ncat > src/lib/favorites.ts <<'EOF'\nimport { createSignal } from \"solid-js\";\n\nconst KEY = \"bookshelf:favorites\";\nconst [favorites, setFavorites] = createSignal<string[]>([]);\nlet loaded = false;\n\nexport function loadFavorites() {\n  if (loaded) return;\n  loaded = true;\n  try {\n    const stored = JSON.parse(localStorage.getItem(KEY) ?? \"[]\");\n    if (Array.isArray(stored)) setFavorites(stored.map(String));\n  } catch {}\n}\n\nexport const isFavorite = (slug: string) => favorites().includes(slug);\n\nexport function toggleFavorite(slug: string) {\n  const next = isFavorite(slug)\n    ? favorites().filter(s => s !== slug)\n    : [...favorites(), slug];\n  setFavorites(next);\n  localStorage.setItem(KEY, JSON.stringify(next));\n}\nEOF\ncat > src/components/NotFoundContent.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { A } from \"@solidjs/router\";\nimport { HttpStatusCode } from \"@solidjs/start\";\n\nexport default function NotFoundContent() {\n  return (\n    <>\n      <Title>Not found | Bookshelf</Title>\n      <HttpStatusCode code={404} />\n      <h1>Not found</h1>\n      <A href=\"/books\">Back to the books</A>\n    </>\n  );\n}\nEOF\ncat > 'src/routes/[...404].tsx' <<'EOF'\nimport NotFoundContent from \"~/components/NotFoundContent\";\n\nexport default function NotFound() {\n  return <NotFoundContent />;\n}\nEOF\ncat > src/app.tsx <<'EOF'\nimport { MetaProvider } from \"@solidjs/meta\";\nimport { A, Router, useLocation } from \"@solidjs/router\";\nimport { FileRoutes } from \"@solidjs/start/router\";\nimport { Suspense } from \"solid-js\";\nimport \"./app.css\";\n\nfunction Layout(props: { children?: any }) {\n  const location = useLocation();\n  const current = (section: string) => {\n    const path = location.pathname.replace(/\\/+$/, \"\") || \"/\";\n    return path === section || path.startsWith(section + \"/\")\n      ? (\"page\" as const)\n      : undefined;\n  };\n  return (\n    <>\n      <header>\n        <A href=\"/\" end>Bookshelf</A>\n        <nav aria-label=\"Main\">\n          <A href=\"/books\" aria-current={current(\"/books\")}>Books</A>\n          <A href=\"/about\" aria-current={current(\"/about\")}>About</A>\n          <A href=\"/contact\" aria-current={current(\"/contact\")}>Contact</A>\n        </nav>\n      </header>\n      <main>\n        <Suspense>{props.children}</Suspense>\n      </main>\n      <footer>© Bookshelf</footer>\n    </>\n  );\n}\n\nexport default function App() {\n  return (\n    <MetaProvider>\n      <Router root={Layout}>\n        <FileRoutes />\n      </Router>\n    </MetaProvider>\n  );\n}\nEOF\ncat > src/routes/index.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { A, createAsync } from \"@solidjs/router\";\nimport { For } from \"solid-js\";\nimport { getBooks } from \"~/lib/queries\";\n\nexport const route = { preload: () => getBooks() };\n\nexport default function Home() {\n  const books = createAsync(() => getBooks(), { deferStream: true });\n  const top = () =>\n    [...(books() ?? [])]\n      .sort((a, b) => b.rating - a.rating || (a.title < b.title ? -1 : a.title > b.title ? 1 : 0))\n      .slice(0, 3);\n  return (\n    <>\n      <Title>Bookshelf</Title>\n      <h1>Bookshelf</h1>\n      <p>A small catalog of classic books.</p>\n      <h2>Top rated</h2>\n      <ol>\n        <For each={top()}>\n          {book => (\n            <li>\n              <A href={`/books/${book.slug}`}>{book.title}</A>\n            </li>\n          )}\n        </For>\n      </ol>\n    </>\n  );\n}\nEOF\ncat > src/routes/about.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\n\nexport default function About() {\n  return (\n    <>\n      <Title>About | Bookshelf</Title>\n      <h1>About</h1>\n      <p>Bookshelf lists a few classic books worth reading.</p>\n    </>\n  );\n}\nEOF\ncat > src/routes/books/index.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { A, createAsync } from \"@solidjs/router\";\nimport { createSignal, For, onMount, Show } from \"solid-js\";\nimport { isFavorite, loadFavorites } from \"~/lib/favorites\";\nimport { getBooks } from \"~/lib/queries\";\n\nexport const route = { preload: () => getBooks() };\n\nexport default function Books() {\n  const books = createAsync(() => getBooks(), { deferStream: true });\n  const [selected, setSelected] = createSignal<string | null>(null);\n  onMount(loadFavorites);\n\n  const tags = () =>\n    [...new Set((books() ?? []).flatMap(b => b.tags))].sort((a, b) =>\n      a < b ? -1 : a > b ? 1 : 0,\n    );\n  const visible = () =>\n    (books() ?? []).filter(b => selected() === null || b.tags.includes(selected()!));\n\n  return (\n    <>\n      <Title>Books | Bookshelf</Title>\n      <h1>All books</h1>\n      <div class=\"filters\" role=\"group\" aria-label=\"Filter by tag\">\n        <button type=\"button\" aria-pressed={selected() === null ? \"true\" : \"false\"} onClick={() => setSelected(null)}>\n          All\n        </button>\n        <For each={tags()}>\n          {tag => (\n            <button type=\"button\" aria-pressed={selected() === tag ? \"true\" : \"false\"} onClick={() => setSelected(tag)}>\n              {tag}\n            </button>\n          )}\n        </For>\n      </div>\n      <ul aria-label=\"Books\">\n        <For each={visible()}>\n          {book => (\n            <li>\n              <A href={`/books/${book.slug}`}>{book.title}</A>{\" \"}\n              <span>{book.author}, {book.year}</span>\n              <Show when={isFavorite(book.slug)}>\n                {\" \"}\n                <strong>Favorite</strong>\n              </Show>\n            </li>\n          )}\n        </For>\n      </ul>\n    </>\n  );\n}\nEOF\ncat > 'src/routes/books/[slug].tsx' <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { A, createAsync, useParams } from \"@solidjs/router\";\nimport { For, onMount, Show } from \"solid-js\";\nimport NotFoundContent from \"~/components/NotFoundContent\";\nimport { isFavorite, loadFavorites, toggleFavorite } from \"~/lib/favorites\";\nimport { getBook } from \"~/lib/queries\";\n\nexport const route = {\n  preload: ({ params }: { params: { slug: string } }) => getBook(params.slug),\n};\n\nexport default function BookPage() {\n  const params = useParams<{ slug: string }>();\n  const book = createAsync(() => getBook(params.slug), { deferStream: true });\n  onMount(loadFavorites);\n\n  return (\n    <Show when={book()} fallback={<NotFoundContent />}>\n      {b => (\n        <>\n          <Title>{`${b().title} | Bookshelf`}</Title>\n          <h1>{b().title}</h1>\n          <p>by {b().author}</p>\n          <p>Published in {b().year}</p>\n          <p>Rating: {b().rating}/5</p>\n          <ul aria-label=\"Tags\">\n            <For each={b().tags}>\n              {tag => (\n                <li>\n                  <A href=\"/books\">{tag}</A>\n                </li>\n              )}\n            </For>\n          </ul>\n          <div innerHTML={b().html} />\n          <button type=\"button\" onClick={() => toggleFavorite(b().slug)}>\n            {isFavorite(b().slug) ? \"Remove from favorites\" : \"Add to favorites\"}\n          </button>\n        </>\n      )}\n    </Show>\n  );\n}\nEOF\ncat > src/routes/contact.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { action, useSubmission } from \"@solidjs/router\";\nimport { createSignal, Show } from \"solid-js\";\nimport { validateContact, type ContactErrors } from \"~/lib/validate\";\n\ntype Result = {\n  ok: boolean;\n  values: { name: string; email: string; message: string };\n  errors: ContactErrors;\n};\n\nconst sendContact = action(async (formData: FormData): Promise<Result> => {\n  \"use server\";\n  const { validateContact } = await import(\"~/lib/validate\");\n  const field = (k: string) => formData.get(k)?.toString() ?? \"\";\n  const { values, errors } = validateContact({\n    name: field(\"name\"),\n    email: field(\"email\"),\n    message: field(\"message\"),\n  });\n  return { ok: Object.keys(errors).length === 0, values, errors };\n}, \"contact\");\n\nexport default function Contact() {\n  const submission = useSubmission(sendContact);\n  const [clientErrors, setClientErrors] = createSignal<ContactErrors | undefined>();\n\n  const result = () => submission.result as Result | undefined;\n  const errors = (): ContactErrors => clientErrors() ?? result()?.errors ?? {};\n  const values = () => result()?.values;\n  const success = () => {\n    const r = result();\n    return r && r.ok && !clientErrors() ? r : undefined;\n  };\n\n  const onSubmit = (e: SubmitEvent) => {\n    const form = e.currentTarget as HTMLFormElement;\n    const data = new FormData(form);\n    const field = (k: string) => data.get(k)?.toString() ?? \"\";\n    const { errors } = validateContact({\n      name: field(\"name\"),\n      email: field(\"email\"),\n      message: field(\"message\"),\n    });\n    if (Object.keys(errors).length) {\n      e.preventDefault();\n      setClientErrors(errors);\n    } else {\n      setClientErrors(undefined);\n    }\n  };\n\n  return (\n    <>\n      <Title>Contact | Bookshelf</Title>\n      <h1>Contact</h1>\n      <Show when={success()}>\n        {r => <p>Thanks, {r().values.name}! Your message has been sent.</p>}\n      </Show>\n      <form action={sendContact} method=\"post\" novalidate onSubmit={onSubmit}>\n        <div>\n          <label for=\"name\">Name</label>\n          <input id=\"name\" name=\"name\" type=\"text\" value={values()?.name ?? \"\"} />\n          <Show when={errors().name}>{m => <p class=\"error\">{m()}</p>}</Show>\n        </div>\n        <div>\n          <label for=\"email\">Email</label>\n          <input id=\"email\" name=\"email\" type=\"email\" value={values()?.email ?? \"\"} />\n          <Show when={errors().email}>{m => <p class=\"error\">{m()}</p>}</Show>\n        </div>\n        <div>\n          <label for=\"message\">Message</label>\n          <textarea id=\"message\" name=\"message\" value={values()?.message ?? \"\"} />\n          <Show when={errors().message}>{m => <p class=\"error\">{m()}</p>}</Show>\n        </div>\n        <button type=\"submit\">Send</button>\n      </form>\n    </>\n  );\n}\nEOF\nbun run check 2>&1 | tail -20; bun run build 2>&1 | tail -15",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \".output/server\" ; bun run check 2>&1 | tail; bun run build 2>&1 | grep -i \"error\" ; (PORT=3457 bun run start > /tmp/srv.log 2>&1 &) ; sleep 2\nID=$(curl -s localhost:3457/contact | grep -o 'action=\"[^\"]*\"' | cut -d'\"' -f2); echo $ID\ncurl -s -i -X POST \"localhost:3457$ID\" --data-urlencode 'name= ' --data-urlencode 'email=bad' --data-urlencode 'message=short' -c /tmp/cj | grep -i \"^HTTP\\|location\"\ncurl -s -b /tmp/cj localhost:3457/contact | grep -o '<form.*</form>'",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "bun run check 2>&1 | tail; bun run build 2>&1 | grep -i \"error\"; (PORT=3457 bun run start > /tmp/srv.log 2>&1 &) ; sleep 2\nID=$(curl -s localhost:3457/contact | grep -o 'action=\"[^\"]*\"' | cut -d'\"' -f2); echo $ID\ncurl -s -i -X POST \"localhost:3457$ID\" --data-urlencode 'name= ' --data-urlencode 'email=bad' --data-urlencode 'message=short' -c /tmp/cj | grep -i \"^HTTP\\|location\"\nsed -i 's/#HttpOnly_//' /tmp/cj; sed -i 's/TRUE\\tTRUE/TRUE\\tFALSE/' /tmp/cj; cat /tmp/cj | cut -c1-80",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"output/server/index\" ; bun remove playwright-core 2>&1 | tail -1; git status --short; bun run check 2>&1 | tail -3 && bun run build 2>&1 | tail -2; sleep 1; (PORT=3458 bun run start >/dev/null 2>&1 &); sleep 2; curl -s -o /dev/null -w \"%{http_code}\\n\" localhost:3458/; pkill -f \"output/server/index\"; sleep 1; curl -s -o /dev/null -w \"%{http_code}\\n\" localhost:3458/ localhost:3457/",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "pkill -f \"[o]utput/server/index\"; bun remove playwright-core 2>&1 | tail -1; git status --short; bun run check 2>&1 | tail -3 && bun run build 2>&1 | tail -2",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 2,
+    "docs": {
+      "calls": 8,
+      "chars": 50496
+    },
+    "outside": [
+      "Bash: python3 - <<'EOF'\nimport re\np='src/routes/contact.tsx'\ns=open(p).read()\ns=s.replace('import { action, useSubmission }','import { action, json, useSubmission }')\ns=s.replace('''  return { ok: Object.keys(errors).length === 0, values, errors };\n}, \"contact\");''','''  const result: Result = { ok: Object.keys(errors).length === 0, values, errors };\n  // Without JavaScript the framework redirects back after a post; name the page\n  // explicitly so it does not depend on the Referer header.\n  return json(result, { headers: { Location: \"/contact\" }, revalidate: [] });\n}, \"contact\");''')\ns=s.replace('const sendContact = action(async (formData: FormData): Promise<Result> => {','const sendContact = action(async (formData: FormData) => {')\ns=s.replace('<textarea id=\"message\" name=\"message\" value={values()?.message ?? \"\"} />','<textarea id=\"message\" name=\"message\">{values()?.message ?? \"\"}</textarea>')\nopen(p,'w').write(s)\nEOF\nwhich chromium chromium-browser google-chrome firefox; ls ~/.cache/ms-playwright 2>/dev/null; bun pm ls 2>/dev/null | grep -i \"playwright\\|puppeteer\"",
+      "Bash: cp package.json /tmp/pkg.bak; cp bun.lock /tmp/lock.bak; bun add -d playwright-core 2>&1 | tail -2\nls ~/.cache/ms-playwright/chromium-1234/*/ | head\ncat > /tmp/t.mjs <<'EOF'\nimport { chromium } from \"/home/kaynooo/.cache/llm-bench/smoke-2/solidstart-1/site/node_modules/playwright-core/index.mjs\";\nconst b = await chromium.launch();\nconst mk = async (js=true)=> (await b.newContext({javaScriptEnabled:js})).newPage();\nconst base=\"http://localhost:3457\";\nlet p = await mk();\np.on(\"pageerror\", e=>console.log(\"PAGEERR\", e.message));\np.on(\"console\", m=>m.type()===\"error\"&&console.log(\"CONSOLE\", m.text()));\nawait p.goto(base+\"/books\"); await p.waitForTimeout(500);\nawait p.click(\"text=gothic\");\nconsole.log(await p.locator(\"ul[aria-label=Books] li\").allInnerTexts());\nawait p.click(\"text=Dracula\"); await p.waitForTimeout(500);\nconsole.log(await p.title(), await p.locator(\"nav [aria-current]\").allInnerTexts());\nawait p.click(\"text=Add to favorites\"); \nconsole.log(await p.locator(\"button:last-of-type\").last().innerText());\nawait p.reload(); await p.waitForTimeout(500);\nconsole.log(await p.locator(\"main button\").innerText());\nawait p.goto(base+\"/books\"); await p.waitForTimeout(500);\nconsole.log(await p.locator(\"ul[aria-label=Books] li\").allInnerTexts());\n// contact\nawait p.goto(base+\"/contact\"); await p.waitForTimeout(500);\nawait p.click(\"text=Send\");\nconsole.log(await p.locator(\".error\").allInnerTexts());\nawait p.fill(\"#name\",\" Ann \"); await p.fill(\"#email\",\"a@b.co\"); await p.fill(\"#message\",\"x\".repeat(25));\nawait p.click(\"text=Send\"); await p.waitForTimeout(800);\nconsole.log(await p.locator(\"main\").innerText(), p.url());\n// no js\np = await mk(false);\nawait p.goto(base+\"/contact\");\nawait p.fill(\"#name\",\"Bob\"); await p.fill(\"#email\",\"bad\"); await p.fill(\"#message\",\"short\");\nawait p.click(\"text=Send\"); await p.waitForTimeout(500);\nconsole.log(p.url(), await p.locator(\".error\").allInnerTexts(), await p.inputValue(\"#name\"), await p.inputValue(\"#message\"));\nawait p.fill(\"#email\",\"bob@x.io\"); await p.fill(\"#message\",\"y\".repeat(30));\nawait p.click(\"text=Send\"); await p.waitForTimeout(500);\nconsole.log(await p.locator(\"main p\").first().innerText());\nawait b.close();\nEOF\nbun /tmp/t.mjs",
+      "Bash: sed -i 's|chromium.launch()|chromium.launch({executablePath:\"/home/kaynooo/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome\"})|' /tmp/t.mjs; ls ~/.cache/ms-playwright/chromium-1234/; "
+    ],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\nimport re\np='src/routes/contact.tsx'\ns=open(p).read()\ns=s.replace('import { action, useSubmission }','import { action, json, useSubmission }')\ns=s.replace('''  return { ok: Object.keys(errors).length === 0, values, errors };\n}, \"contact\");''','''  const result: Result = { ok: Object.keys(errors).length === 0, values, errors };\n  // Without JavaScript the framework redirects back after a post; name the page\n  // explicitly so it does not depend on the Referer header.\n  return json(result, { headers: { Location: \"/contact\" }, revalidate: [] });\n}, \"contact\");''')\ns=s.replace('const sendContact = action(async (formData: FormData): Promise<Result> => {','const sendContact = action(async (formData: FormData) => {')\ns=s.replace('<textarea id=\"message\" name=\"message\" value={values()?.message ?? \"\"} />','<textarea id=\"message\" name=\"message\">{values()?.message ?? \"\"}</textarea>')\nopen(p,'w').write(s)\nEOF\nwhich chromium chromium-browser google-chrome firefox; ls ~/.cache/ms-playwright 2>/dev/null; bun pm ls 2>/dev/null | grep -i \"playwright\\|puppeteer\""
+    ],
+    "resultTokens": {
+      "input": 46,
+      "output": 15318,
+      "cacheCreation": 44949,
+      "cacheRead": 787577
+    }
+  },
+  "diff": {
+    "files": 16,
+    "added": 404,
+    "removed": 111,
+    "dependenciesAdded": [
+      "marked",
+      "yaml"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://docs.solidjs.com/llms.txt and the pages it links",
+    "fetchedAt": "2026-10-09T23:06:44.633Z",
+    "files": 272,
+    "bytes": 839181
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/smoke-2/solidstart-1"
+}

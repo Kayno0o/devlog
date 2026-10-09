@@ -1,0 +1,157 @@
+{
+  "framework": "sveltekit",
+  "run": 1,
+  "label": "smoke-2",
+  "startedAt": "2026-10-09T23:19:41.122Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "@sveltejs/kit": "3.0.1",
+    "svelte": "5.57.2",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 144342,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 143886,
+    "durationApiMs": 105579,
+    "turns": 36,
+    "costUsd": 0.4803456000000001,
+    "tokens": {
+      "input": 70,
+      "output": 14852,
+      "cacheCreation": 36883,
+      "cacheRead": 920768
+    },
+    "outputExact": true,
+    "thinkingTokens": 3204,
+    "apiCalls": 35,
+    "peakContextTokens": 42264,
+    "toolCalls": {
+      "Bash": 35
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "bun add marked yaml 2>&1 | tail -3\nmkdir -p src/lib/server src/routes/books/\\[slug\\] src/routes/about src/routes/contact\ncat > src/lib/server/books.ts <<'EOF'\nimport { marked } from 'marked';\nimport { parse } from 'yaml';\n\nexport type BookSummary = {\n\tslug: string;\n\ttitle: string;\n\tauthor: string;\n\tyear: number;\n\trating: number;\n\ttags: string[];\n};\n\nexport type Book = BookSummary & { html: string };\n\nconst files = import.meta.glob('/content/books/*.md', {\n\tquery: '?raw',\n\timport: 'default',\n\teager: true\n}) as Record<string, string>;\n\nfunction parseBook(path: string, raw: string): Book {\n\tconst slug = path.split('/').pop()!.replace(/\\.md$/, '');\n\tconst match = /^---\\r?\\n([\\s\\S]*?)\\r?\\n---\\r?\\n?([\\s\\S]*)$/.exec(raw);\n\tconst data = match ? parse(match[1]) : {};\n\treturn {\n\t\tslug,\n\t\ttitle: String(data.title),\n\t\tauthor: String(data.author),\n\t\tyear: Number(data.year),\n\t\trating: Number(data.rating),\n\t\ttags: Array.isArray(data.tags) ? data.tags.map(String) : [],\n\t\thtml: marked.parse(match ? match[2] : raw, { async: false })\n\t};\n}\n\nconst books: Book[] = Object.entries(files).map(([path, raw]) => parseBook(path, raw));\n\nconst byTitle = (a: { title: string }, b: { title: string }) =>\n\ta.title < b.title ? -1 : a.title > b.title ? 1 : 0;\n\nfunction summary({ html: _html, ...rest }: Book): BookSummary {\n\treturn rest;\n}\n\nexport function listBooks(): BookSummary[] {\n\treturn [...books].sort(byTitle).map(summary);\n}\n\nexport function topRated(count: number): BookSummary[] {\n\treturn [...books]\n\t\t.sort((a, b) => b.rating - a.rating || byTitle(a, b))\n\t\t.slice(0, count)\n\t\t.map(summary);\n}\n\nexport function getBook(slug: string): Book | undefined {\n\treturn books.find((b) => b.slug === slug);\n}\nEOF\ncat > src/lib/contact.ts <<'EOF'\nexport type ContactValues = { name: string; email: string; message: string };\nexport type ContactErrors = Partial<Record<keyof ContactValues, string>>;\n\nexport function validateContact(values: ContactValues): ContactErrors {\n\tconst errors: ContactErrors = {};\n\tconst name = values.name.trim();\n\tconst email = values.email.trim();\n\tconst message = values.message.trim();\n\tif (!name) errors.name = 'Name is required.';\n\tif (!email) errors.email = 'Email is required.';\n\telse if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) errors.email = 'Enter a valid email address.';\n\tif (message.length < 20) errors.message = 'Message must be at least 20 characters.';\n\treturn errors;\n}\nEOF\ncat > src/lib/favorites.svelte.ts <<'EOF'\nimport { browser } from '$app/environment';\n\nconst KEY = 'bookshelf:favorites';\n\nfunction load(): string[] {\n\tif (!browser) return [];\n\ttry {\n\t\tconst value = JSON.parse(localStorage.getItem(KEY) ?? '[]');\n\t\treturn Array.isArray(value) ? value.map(String) : [];\n\t} catch {\n\t\treturn [];\n\t}\n}\n\nlet slugs = $state<string[]>(load());\n\nexport const favorites = {\n\thas: (slug: string) => slugs.includes(slug),\n\ttoggle(slug: string) {\n\t\tslugs = slugs.includes(slug) ? slugs.filter((s) => s !== slug) : [...slugs, slug];\n\t\tlocalStorage.setItem(KEY, JSON.stringify(slugs));\n\t}\n};\nEOF\ncat > src/routes/+layout.svelte <<'EOF'\n<script lang=\"ts\">\n\timport { page } from '$app/state';\n\timport favicon from '#lib/assets/favicon.svg';\n\timport type { LayoutProps } from './$types';\n\n\tlet { children }: LayoutProps = $props();\n\n\tconst links = [\n\t\t{ href: '/books', label: 'Books' },\n\t\t{ href: '/about', label: 'About' },\n\t\t{ href: '/contact', label: 'Contact' }\n\t];\n\n\tfunction current(href: string) {\n\t\tif (page.error) return false;\n\t\tconst path = page.url.pathname;\n\t\treturn path === href || path.startsWith(href + '/');\n\t}\n</script>\n\n<svelte:head>\n\t<link rel=\"icon\" href={favicon} />\n</svelte:head>\n\n<header>\n\t<a href=\"/\">Bookshelf</a>\n\t<nav aria-label=\"Main\">\n\t\t{#each links as link (link.href)}\n\t\t\t<a href={link.href} aria-current={current(link.href) ? 'page' : undefined}>{link.label}</a>\n\t\t{/each}\n\t</nav>\n</header>\n\n<main>\n\t{@render children()}\n</main>\n\n<footer>© Bookshelf</footer>\n\n<style>\n\t:global(body) {\n\t\tfont-family: system-ui, sans-serif;\n\t\tmax-width: 48rem;\n\t\tmargin: 0 auto;\n\t\tpadding: 1rem;\n\t}\n\theader {\n\t\tdisplay: flex;\n\t\tjustify-content: space-between;\n\t\talign-items: center;\n\t\tborder-bottom: 1px solid #ccc;\n\t\tpadding-bottom: 0.5rem;\n\t}\n\tnav {\n\t\tdisplay: flex;\n\t\tgap: 1rem;\n\t}\n\ta[aria-current='page'] {\n\t\tfont-weight: bold;\n\t}\n\tfooter {\n\t\tborder-top: 1px solid #ccc;\n\t\tmargin-top: 2rem;\n\t\tpadding-top: 0.5rem;\n\t}\n</style>\nEOF\ncat > src/routes/+error.svelte <<'EOF'\n<svelte:head>\n\t<title>Not found | Bookshelf</title>\n</svelte:head>\n\n<h1>Not found</h1>\n<a href=\"/books\">Back to the books</a>\nEOF\ncat > src/routes/+page.server.ts <<'EOF'\nimport { topRated } from '$lib/server/books';\n\nexport function load() {\n\treturn { top: topRated(3) };\n}\nEOF\ncat > src/routes/+page.svelte <<'EOF'\n<script lang=\"ts\">\n\timport type { PageProps } from './$types';\n\n\tlet { data }: PageProps = $props();\n</script>\n\n<svelte:head>\n\t<title>Bookshelf</title>\n</svelte:head>\n\n<h1>Bookshelf</h1>\n<p>A small catalog of classic books.</p>\n\n<h2>Top rated</h2>\n<ol>\n\t{#each data.top as book (book.slug)}\n\t\t<li><a href=\"/books/{book.slug}\">{book.title}</a></li>\n\t{/each}\n</ol>\nEOF\ncat > src/routes/about/+page.svelte <<'EOF'\n<svelte:head>\n\t<title>About | Bookshelf</title>\n</svelte:head>\n\n<h1>About</h1>\n<p>Bookshelf lists a few classic books worth reading.</p>\nEOF\ncat > src/routes/books/+page.server.ts <<'EOF'\nimport { listBooks } from '$lib/server/books';\n\nexport function load() {\n\treturn { books: listBooks() };\n}\nEOF\ncat > src/routes/books/+page.svelte <<'EOF'\n<script lang=\"ts\">\n\timport { favorites } from '$lib/favorites.svelte';\n\timport type { PageProps } from './$types';\n\n\tlet { data }: PageProps = $props();\n\n\tlet selected = $state<string | null>(null);\n\n\tconst tags = $derived([...new Set(data.books.flatMap((b) => b.tags))].sort());\n\tconst visible = $derived(\n\t\tselected === null ? data.books : data.books.filter((b) => b.tags.includes(selected!))\n\t);\n</script>\n\n<svelte:head>\n\t<title>Books | Bookshelf</title>\n</svelte:head>\n\n<h1>All books</h1>\n\n<div role=\"group\" aria-label=\"Filter by tag\">\n\t<button type=\"button\" aria-pressed={selected === null} onclick={() => (selected = null)}>\n\t\tAll\n\t</button>\n\t{#each tags as tag (tag)}\n\t\t<button type=\"button\" aria-pressed={selected === tag} onclick={() => (selected = tag)}>\n\t\t\t{tag}\n\t\t</button>\n\t{/each}\n</div>\n\n<ul aria-label=\"Books\">\n\t{#each visible as book (book.slug)}\n\t\t<li>\n\t\t\t<a href=\"/books/{book.slug}\">{book.title}</a>\n\t\t\t<span>{book.author}, {book.year}</span>\n\t\t\t{#if favorites.has(book.slug)}\n\t\t\t\t<strong>Favorite</strong>\n\t\t\t{/if}\n\t\t</li>\n\t{/each}\n</ul>\nEOF\ncat > \"src/routes/books/[slug]/+page.server.ts\" <<'EOF'\nimport { error } from '@sveltejs/kit';\nimport { getBook } from '$lib/server/books';\n\nexport function load({ params }) {\n\tconst book = getBook(params.slug);\n\tif (!book) error(404, 'Not found');\n\treturn { book };\n}\nEOF\ncat > \"src/routes/books/[slug]/+page.svelte\" <<'EOF'\n<script lang=\"ts\">\n\timport { favorites } from '$lib/favorites.svelte';\n\timport type { PageProps } from './$types';\n\n\tlet { data }: PageProps = $props();\n\tconst book = $derived(data.book);\n</script>\n\n<svelte:head>\n\t<title>{book.title} | Bookshelf</title>\n</svelte:head>\n\n<h1>{book.title}</h1>\n<p>by {book.author}</p>\n<p>Published in {book.year}</p>\n<p>Rating: {book.rating}/5</p>\n\n<ul aria-label=\"Tags\">\n\t{#each book.tags as tag (tag)}\n\t\t<li><a href=\"/books\">{tag}</a></li>\n\t{/each}\n</ul>\n\n<div>\n\t<!-- eslint-disable-next-line svelte/no-at-html-tags -->\n\t{@html book.html}\n</div>\n\n<button type=\"button\" onclick={() => favorites.toggle(book.slug)}>\n\t{favorites.has(book.slug) ? 'Remove from favorites' : 'Add to favorites'}\n</button>\nEOF\ncat > src/routes/contact/+page.server.ts <<'EOF'\nimport { fail } from '@sveltejs/kit';\nimport { validateContact } from '$lib/contact';\n\nexport const actions = {\n\tdefault: async ({ request }) => {\n\t\tconst data = await request.formData();\n\t\tconst values = {\n\t\t\tname: String(data.get('name') ?? ''),\n\t\t\temail: String(data.get('email') ?? ''),\n\t\t\tmessage: String(data.get('message') ?? '')\n\t\t};\n\t\tconst errors = validateContact(values);\n\t\tif (Object.keys(errors).length > 0) return fail(400, { values, errors });\n\t\treturn { success: true, name: values.name.trim() };\n\t}\n};\nEOF\ncat > src/routes/contact/+page.svelte <<'EOF'\n<script lang=\"ts\">\n\timport { enhance } from '$app/forms';\n\timport { validateContact, type ContactErrors } from '$lib/contact';\n\timport type { PageProps } from './$types';\n\n\tlet { form }: PageProps = $props();\n\n\tlet clientErrors = $state<ContactErrors | null>(null);\n\tlet sent = $state<string | null>(null);\n\n\tconst errors = $derived<ContactErrors>(clientErrors ?? (form && 'errors' in form ? form.errors : {}));\n\tconst success = $derived(\n\t\tsent ?? (form && 'success' in form && form.success ? form.name : null)\n\t);\n\tconst values = $derived(form && 'values' in form ? form.values : undefined);\n</script>\n\n<svelte:head>\n\t<title>Contact | Bookshelf</title>\n</svelte:head>\n\n<h1>Contact</h1>\n\n{#if success !== null}\n\t<p role=\"status\">Thanks, {success}! Your message has been sent.</p>\n{/if}\n\n<form\n\tmethod=\"POST\"\n\tnovalidate\n\tuse:enhance={({ formData, cancel }) => {\n\t\tconst submitted = {\n\t\t\tname: String(formData.get('name') ?? ''),\n\t\t\temail: String(formData.get('email') ?? ''),\n\t\t\tmessage: String(formData.get('message') ?? '')\n\t\t};\n\t\tconst found = validateContact(submitted);\n\t\tif (Object.keys(found).length > 0) {\n\t\t\tclientErrors = found;\n\t\t\tsent = null;\n\t\t\tcancel();\n\t\t\treturn;\n\t\t}\n\t\tclientErrors = null;\n\t\treturn async ({ result, update }) => {\n\t\t\tif (result.type === 'success') sent = submitted.name.trim();\n\t\t\tawait update();\n\t\t};\n\t}}\n>\n\t<p>\n\t\t<label for=\"name\">Name</label>\n\t\t<input id=\"name\" name=\"name\" type=\"text\" value={values?.name ?? ''} />\n\t\t{#if errors.name}<span class=\"error\">{errors.name}</span>{/if}\n\t</p>\n\t<p>\n\t\t<label for=\"email\">Email</label>\n\t\t<input id=\"email\" name=\"email\" type=\"email\" value={values?.email ?? ''} />\n\t\t{#if errors.email}<span class=\"error\">{errors.email}</span>{/if}\n\t</p>\n\t<p>\n\t\t<label for=\"message\">Message</label>\n\t\t<textarea id=\"message\" name=\"message\">{values?.message ?? ''}</textarea>\n\t\t{#if errors.message}<span class=\"error\">{errors.message}</span>{/if}\n\t</p>\n\t<button type=\"submit\">Send</button>\n</form>\n\n<style>\n\t.error {\n\t\tcolor: #b00020;\n\t}\n</style>\nEOF\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i \"/import { browser }/d; s/if (!browser)/if (typeof localStorage === 'undefined')/\" src/lib/favorites.svelte.ts\ngrep -rl '\\$lib' src | xargs sed -i \"s#\\$lib/#\\#lib/#g\"\nsed -i \"s/let selected = \\$state<string | null>(null);/let selected: string | null = \\$state(null);/\" src/routes/books/+page.svelte\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i \"s#'\\#lib/server/books'#'../lib/server/books'#\" src/routes/+page.server.ts\nsed -i \"s#'\\#lib/server/books'#'../../lib/server/books'#; s#'\\#lib/favorites.svelte'#'../../lib/favorites.svelte'#\" src/routes/books/+page.server.ts src/routes/books/+page.svelte\nsed -i \"s#'\\#lib/server/books'#'../../../lib/server/books'#; s#'\\#lib/favorites.svelte'#'../../../lib/favorites.svelte'#\" \"src/routes/books/[slug]/\"*\nsed -i \"s#'\\#lib/contact'#'../../lib/contact'#\" src/routes/contact/*\nsed -i \"s#'../lib/server/books'#'../lib/server/books'#\" src/routes/+page.server.ts\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i \"s/form.errors : {}/form.errors ?? {} : {}/\" src/routes/contact/+page.svelte\nbun run check 2>&1 | tail -5 && bun run build 2>&1 | tail -5\nPORT=4567 bun run start > /tmp/s.log 2>&1 &\nsleep 2\nfor p in / /books /books/dracula /books/nope /about /contact /xyz; do echo \"== $p\"; curl -s -o /tmp/o.html -w \"%{http_code}\\n\" localhost:4567$p; grep -o \"<title>[^<]*</title>\" /tmp/o.html; done\ncurl -s localhost:4567/ | grep -o \"<ol>.*</ol>\"\ncurl -s localhost:4567/books/frankenstein | grep -o \"<main.*</main>\" | head -c 1500\necho; curl -s localhost:4567/books/xyz | grep -o 'aria-current=\"page\"'\ncurl -s -X POST -d \"name=+Bob+&email=bad&message=short\" localhost:4567/contact -H \"origin: http://localhost:4567\" | grep -o \"<main.*</main>\"\ncurl -s -X POST -d \"name=+Bob+&email=a@b.co&message=long+enough+message+here+ok\" localhost:4567/contact -H \"origin: http://localhost:4567\" | grep -o \"Thanks[^<]*\"\nkill %1",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/routes/contact/+page.svelte'\ns=open(p).read()\ns=s.replace(\"\"\"\tconst success = $derived(\n\t\tsent ?? (form && 'success' in form && form.success ? form.name : null)\n\t);\"\"\",\"\"\"\tconst success = $derived(\n\t\tclientErrors ? null : (sent ?? (form && 'success' in form && form.success ? form.name : null))\n\t);\"\"\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -2; bun run build 2>&1 | tail -2; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 9,
+      "chars": 27779
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='src/routes/contact/+page.svelte'\ns=open(p).read()\ns=s.replace(\"\"\"\tconst success = $derived(\n\t\tsent ?? (form && 'success' in form && form.success ? form.name : null)\n\t);\"\"\",\"\"\"\tconst success = $derived(\n\t\tclientErrors ? null : (sent ?? (form && 'success' in form && form.success ? form.name : null))\n\t);\"\"\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -2; bun run build 2>&1 | tail -2; git status --short"
+    ],
+    "resultTokens": {
+      "input": 70,
+      "output": 14852,
+      "cacheCreation": 36883,
+      "cacheRead": 920768
+    }
+  },
+  "diff": {
+    "files": 16,
+    "added": 379,
+    "removed": 4,
+    "dependenciesAdded": [
+      "marked",
+      "yaml"
+    ],
+    "gradingConfigChanged": [
+      "script start"
+    ]
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://svelte.dev/llms.txt and the files it links",
+    "fetchedAt": "2026-10-09T23:06:44.633Z",
+    "files": 8,
+    "bytes": 3446023
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/smoke-2/sveltekit-1"
+}
