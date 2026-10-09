@@ -13,3 +13,9 @@ it('scales bars to the largest value and highlights one row', async () => {
   expect(html).toContain('higher is better')
   expect(html).toContain('<td>4,788 renders/s</td>')
 })
+
+it('highlights every row a list names', async () => {
+  const html = await renderToString(BarChart, { title: 'Memory', unit: 'MB', rows: [...rows, { label: 'Astro', value: 3000 }], highlight: ['kay', 'Svelte'] })
+
+  expect(html.match(/chart-bar-highlight/g)).toHaveLength(2)
+})

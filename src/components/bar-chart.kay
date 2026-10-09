@@ -10,12 +10,13 @@ const { title, unit, rows, highlight, better, source, digits = 1 } = props<{
   title: string
   unit: string
   rows: Row[]
-  highlight?: string | undefined
+  highlight?: string | string[] | undefined
   better?: 'lower' | 'higher' | undefined
   source?: string | undefined
   digits?: number | undefined
 }>()
 
+const highlighted = new Set([highlight ?? []].flat())
 const max = () => Math.max(...rows.map(row => row.value))
 ---
 figure.chart
@@ -25,9 +26,9 @@ figure.chart
       span.text-sm.text-muted {better} is better
   div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2" aria-hidden="true")
     for row, i of rows key={row.label}
-      span.text-sm(class={{ 'font-semibold': row.label === highlight, 'text-subtext': row.label !== highlight }}) {row.label}
+      span.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }}) {row.label}
       .flex.min-w-0.items-center.gap-2
-        .chart-bar(class={{ 'chart-bar-highlight': row.label === highlight }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
+        .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
         span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
   table.sr-only
     thead
