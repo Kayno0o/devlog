@@ -66,6 +66,7 @@ const measures: Record<string, { group: string, title: string, read: (result: Re
   cacheWriteTokens: { group: 'Tokens', title: 'Cache write tokens', read: r => r.metrics.tokens.cacheCreation, digits: 0 },
   cacheReadTokens: { group: 'Tokens', title: 'Cache read tokens', read: r => r.metrics.tokens.cacheRead, digits: 0 },
   outputTokens: { group: 'Tokens', title: 'Output tokens', read: r => r.metrics.tokens.output, digits: 0 },
+  thinkingTokens: { group: 'Tokens', title: 'Thinking tokens, part of output', read: r => r.metrics.thinkingTokens, digits: 0 },
   totalTokens: { group: 'Tokens', title: 'All tokens', read: total, digits: 0 },
   peakContextTokens: { group: 'Tokens', title: 'Largest context of one call', read: r => r.metrics.peakContextTokens, digits: 0 },
   costUsd: { group: 'Tokens', title: 'Cost (USD, API prices)', read: r => r.metrics.costUsd, digits: 2 },
@@ -91,6 +92,8 @@ const measures: Record<string, { group: string, title: string, read: (result: Re
   linesRemoved: { group: 'Code', title: 'Lines removed', read: r => r.diff.removed, digits: 0 },
   packagesAdded: { group: 'Code', title: 'Packages added', read: r => r.diff.dependenciesAdded.length, digits: 0 },
 }
+
+const inputKinds = ['input', 'cacheCreation', 'cacheRead'] as const satisfies (keyof Tokens)[]
 
 const known = ['kay', 'sveltekit', 'solidstart', 'astro']
 const frameworks = [...new Set(results.map(result => result.framework))].toSorted((a, b) => known.indexOf(a) - known.indexOf(b))
@@ -141,17 +144,21 @@ const runColumns = ['outputTokens', 'inputTokens', 'cacheWriteTokens', 'cacheRea
 
 // What each session loaded besides its tools, and every call that left the workspace or used the network
 function isolation(): string[] {
-  const loaded = results.filter(result => result.metrics.loaded.plugins.length + result.metrics.loaded.mcpServers.length > 0)
+  const mcp = results.filter(result => result.metrics.loaded.mcpServers.length > 0)
+  const plugins = [...new Set(results.flatMap(result => result.metrics.loaded.plugins))]
   const outside = results.filter(result => result.metrics.outside.length > 0)
   const configChanged = results.filter(result => result.diff.gradingConfigChanged.length > 0)
-  const differs = (a: Tokens, b: Tokens): boolean => Object.keys(a).some(key => Math.abs(a[key as keyof Tokens] - b[key as keyof Tokens]) > 0.01 * Math.max(1, b[key as keyof Tokens]))
+  const differs = (a: Tokens, b: Tokens): boolean => inputKinds.some(key => Math.abs(a[key] - b[key]) > 0.01 * Math.max(1, b[key]))
   const mismatched = results.filter(result => result.metrics.resultTokens !== undefined && differs(result.metrics.tokens, result.metrics.resultTokens))
+  const undercounted = results.filter(result => !result.metrics.outputExact)
   const cut = results.filter(result => result.metrics.skippedLines > 0)
 
   return [
-    loaded.length === 0
-      ? '- No session loaded a plugin or an MCP server.'
-      : `- Sessions that loaded more than their tools: ${loaded.map(result => `${result.framework} ${result.run} (${[...result.metrics.loaded.plugins, ...result.metrics.loaded.mcpServers].join(', ')})`).join('; ')}`,
+    mcp.length === 0
+      ? '- No session started an MCP server.'
+      : `- Sessions that started MCP servers: ${mcp.map(result => `${result.framework} ${result.run} (${result.metrics.loaded.mcpServers.join(', ')})`).join('; ')}`,
+    // a session lists the machine's plugins at start whether or not they run; --safe-mode keeps their hooks, skills and servers off
+    ...plugins.length === 0 ? [] : [`- Plugins installed on the machine, listed by each session at start and kept off by \`--safe-mode\`: ${plugins.join(', ')}`],
     outside.length === 0
       ? '- No tool call left the workspace or used the network beyond package installs.'
       : `- Tool calls outside the workspace or on the network: ${outside.map(result => `${result.framework} ${result.run}: ${result.metrics.outside.join('; ')}`).join('. ')}`,
@@ -159,8 +166,9 @@ function isolation(): string[] {
       ? '- No agent changed its package.json scripts or tsconfig.json.'
       : `- Grading inputs an agent changed, worth reading before trusting its check: ${configChanged.map(result => `${result.framework} ${result.run} (${result.diff.gradingConfigChanged.join(', ')})`).join('; ')}`,
     mismatched.length === 0
-      ? '- Token counts summed per API call match the totals each finished session reported.'
-      : `- Token counts summed per API call differ from the session's own totals by more than 1%: ${mismatched.map(result => `${result.framework} ${result.run}`).join(', ')}`,
+      ? '- Input and cache tokens summed per API call match the totals each finished session reported.'
+      : `- Input and cache tokens summed per API call differ from the session's own totals by more than 1%: ${mismatched.map(result => `${result.framework} ${result.run}`).join(', ')}`,
+    ...undercounted.length === 0 ? [] : [`- Sessions that never reported their totals, their output tokens undercounted: ${undercounted.map(result => `${result.framework} ${result.run}`).join(', ')}`],
     ...cut.length === 0 ? [] : [`- Transcripts cut short, their last line skipped: ${cut.map(result => `${result.framework} ${result.run}`).join(', ')}`],
   ]
 }

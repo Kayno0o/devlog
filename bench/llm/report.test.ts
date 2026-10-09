@@ -24,7 +24,9 @@ function result(framework: string, run: number, output: number, passed: boolean)
       turns: 40,
       costUsd: 1.5,
       tokens: { input: 100, output, cacheCreation: 2000, cacheRead: 30_000 },
-      resultTokens: { input: 100, output: framework === 'sveltekit' && run === 2 ? 1 : output, cacheCreation: 2000, cacheRead: 30_000 },
+      outputExact: true,
+      thinkingTokens: output / 2,
+      resultTokens: { input: framework === 'sveltekit' && run === 2 ? 1 : 100, output, cacheCreation: 2000, cacheRead: 30_000 },
       apiCalls: 40,
       peakContextTokens: 50_000,
       toolCalls: { Read: 10, Bash: 5 },
@@ -69,7 +71,7 @@ it('sums up medians over passing runs and lists every run', async () => {
   expect(summary.frameworks.sveltekit?.spent.totalTokens).toBe(32_100 * 2 + 5000 + 9000)
   expect(markdown).toContain('| sveltekit 2 | no | 9,000 |')
   expect(markdown).toContain('docs: fixture docs at abcdef1, 3 files, 2.5 MB; packages added by an agent: marked')
-  expect(markdown).toContain('- No session loaded a plugin or an MCP server.')
+  expect(markdown).toContain('- No session started an MCP server.')
   expect(markdown).toContain('- No tool call left the workspace')
   expect(markdown).toContain('worth reading before trusting its check: kay 2 (script check)')
   expect(markdown).toContain('differ from the session\'s own totals by more than 1%: sveltekit 2')

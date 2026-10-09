@@ -82,6 +82,14 @@ const plain = (text: string): string => text.replaceAll(curlySingle, '\'').repla
 
 const texts = async (locator: Locator): Promise<string[]> => (await locator.allTextContents()).map(text => plain(text.trim()))
 
+// A cross-document view transition, such as kay's starter CSS enables, covers the page until it ends, and under automation it only advances while the page is left idle, so a click waits it out
+async function click(locator: Locator): Promise<void> {
+  await locator.page().evaluate(async () => {
+    await (document as Document & { activeViewTransition?: ViewTransition | null }).activeViewTransition?.finished
+  })
+  await locator.click()
+}
+
 const h1 = (page: Page): Locator => page.getByRole('heading', { level: 1 })
 
 async function poll<T>(read: () => Promise<T>, expected: T): Promise<void> {
@@ -170,12 +178,12 @@ describeSite('books', () => {
         }
       })
       for (const tag of ['sea', 'gothic']) {
-        await page.getByRole('button', { name: tag, exact: true }).click()
+        await click(page.getByRole('button', { name: tag, exact: true }))
         await poll(async () => visibleTitles(page), books.filter(book => book.tags.includes(tag)).map(book => book.title))
         await poll(async () => page.getByRole('button', { name: tag, exact: true }).getAttribute('aria-pressed'), 'true')
         expect(await page.getByRole('button', { name: 'All', exact: true }).getAttribute('aria-pressed')).toBe('false')
       }
-      await page.getByRole('button', { name: 'All', exact: true }).click()
+      await click(page.getByRole('button', { name: 'All', exact: true }))
       await poll(async () => visibleTitles(page), books.map(book => book.title))
       expect(requests).toEqual([])
     })
@@ -217,14 +225,14 @@ describeSite('favorites', () => {
       const marks = async (): Promise<string[]> =>
         texts(page.getByRole('list', { name: 'Books' }).locator(':scope > li').filter({ visible: true }).filter({ has: page.getByText('Favorite', { exact: true }).filter({ visible: true }) }).getByRole('link'))
 
-      await page.getByRole('button', { name: 'Add to favorites', exact: true }).click()
+      await click(page.getByRole('button', { name: 'Add to favorites', exact: true }))
       await page.getByRole('button', { name: 'Remove from favorites', exact: true }).waitFor()
       await page.reload({ waitUntil: 'networkidle' })
       await page.getByRole('button', { name: 'Remove from favorites', exact: true }).waitFor()
       await page.goto(`${base}/books`, { waitUntil: 'networkidle' })
       await poll(marks, ['Dracula'])
       await page.goto(`${base}/books/dracula`, { waitUntil: 'networkidle' })
-      await page.getByRole('button', { name: 'Remove from favorites', exact: true }).click()
+      await click(page.getByRole('button', { name: 'Remove from favorites', exact: true }))
       await page.getByRole('button', { name: 'Add to favorites', exact: true }).waitFor()
       await page.goto(`${base}/books`, { waitUntil: 'networkidle' })
       await poll(marks, [])
@@ -255,7 +263,7 @@ describeSite('contact', () => {
   // a design may repeat a message, in a summary or a live region, so one visible match is enough
   const shown = async (page: Page, text: string): Promise<boolean> => await page.getByText(text, { exact: true }).filter({ visible: true }).count() > 0
   const appears = async (page: Page, text: string): Promise<void> => page.getByText(text, { exact: true }).filter({ visible: true }).first().waitFor()
-  const send = async (page: Page): Promise<void> => page.getByRole('button', { name: 'Send', exact: true }).click()
+  const send = async (page: Page): Promise<void> => click(page.getByRole('button', { name: 'Send', exact: true }))
 
   async function fill(page: Page, name: string, email: string, message: string): Promise<void> {
     await page.getByLabel('Name', { exact: true }).fill(name)

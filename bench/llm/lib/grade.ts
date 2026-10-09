@@ -52,8 +52,11 @@ export async function grade(site: string, firstPort: number): Promise<Grade> {
     result.acceptance = {
       pass: Number(passCount.exec(suite.output)?.[1] ?? 0),
       fail: Number(failCount.exec(suite.output)?.[1] ?? 0),
-      failures: [...suite.output.matchAll(failedTest)].map(match => match[1] ?? ''),
+      // bun test prints each failure twice, as it happens and again in the summary
+      failures: [...new Set([...suite.output.matchAll(failedTest)].map(match => match[1] ?? ''))],
     }
+    // the failures' messages, next to the workspace, for reading why a run failed
+    await Bun.write(join(site, '..', 'acceptance.log'), suite.output)
 
     if (suite.code !== 0 && result.acceptance.fail === 0) {
       result.acceptance.failures.push(`suite exited with ${suite.code}`)

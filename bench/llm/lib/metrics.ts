@@ -23,7 +23,12 @@ export interface RunMetrics {
   durationApiMs: number
   turns: number
   costUsd: number
+  /** Input and cache counts summed per API call; output from the result line, since each call's line carries the usage of its first streamed chunk, before its output. */
   tokens: Tokens
+  /** False when the session never reached its result line, so `tokens.output` only sums those first-chunk counts and undercounts. */
+  outputExact: boolean
+  /** Thinking tokens, part of output: the result line's count, else the CLI's estimate while streaming. */
+  thinkingTokens: number
   /** The totals the result line reports, kept to cross-check `tokens`, summed from each API call; absent when the session never finished. */
   resultTokens?: Tokens
   apiCalls: number
@@ -46,6 +51,7 @@ interface Usage {
   output_tokens?: number
   cache_creation_input_tokens?: number
   cache_read_input_tokens?: number
+  output_tokens_details?: { thinking_tokens?: number }
 }
 
 interface Block {
@@ -64,6 +70,7 @@ interface Line {
   model?: string
   version?: string
   claude_code_version?: string
+  estimated_tokens_delta?: number
   tools?: string[]
   plugins?: { name: string }[]
   mcp_servers?: { name: string }[]
@@ -83,6 +90,9 @@ const errorSummaries = [/Found (\d+) errors?/, /svelte-check found (\d+) errors?
 const errorLine = /^error\b|\berror\[|\berror TS\d+|^Error:|\berror during build/i
 const docsPath = /(?:^|[\s/"'])docs(?:\/|\s|$)/
 const networkCommand = /\b(?:curl|wget)\b/
+// a curl at the agent's own server is fine, so only a remote URL or no local host at all counts as the network
+const remoteUrl = /https?:\/\/(?!localhost\b|127\.0\.0\.1\b|0\.0\.0\.0\b|\[::1\])/
+const localHost = /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0)\b/
 const homePath = /(?:~|\/home\/)[^\s'"]*/g
 const parentCd = /(?:^|\s)cd\s+\.\.(?:\s|\/|$)/
 const failedExit = /^Exit code [1-9]/
@@ -111,7 +121,7 @@ function readsDocs(input: Record<string, unknown>): boolean {
 function outsideOf(name: string, input: Record<string, unknown>, cwd: string): string | undefined {
   if (name === 'Bash') {
     const command = String(input.command ?? '')
-    const network = networkCommand.test(command)
+    const network = networkCommand.test(command) && (remoteUrl.test(command) || !localHost.test(command))
     const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
 
     return network || home || parentCd.test(command) ? `Bash: ${command}` : undefined
@@ -142,6 +152,8 @@ export function parseRun(text: string, cwd: string): RunMetrics {
     turns: 0,
     costUsd: 0,
     tokens: { input: 0, output: 0, cacheCreation: 0, cacheRead: 0 },
+    outputExact: false,
+    thinkingTokens: 0,
     apiCalls: 0,
     peakContextTokens: 0,
     toolCalls: {},
@@ -156,6 +168,8 @@ export function parseRun(text: string, cwd: string): RunMetrics {
   const usageById = new Map<string, Usage>()
   const pendingChecks = new Map<string, string>()
   const pendingDocs = new Set<string>()
+  let thinkingEstimate = 0
+  let thinkingExact: number | undefined
 
   for (const raw of text.split('\n')) {
     if (raw.trim() === '') {
@@ -181,6 +195,10 @@ export function parseRun(text: string, cwd: string): RunMetrics {
         plugins: (line.plugins ?? []).map(plugin => plugin.name),
         mcpServers: (line.mcp_servers ?? []).map(server => server.name),
       }
+    }
+
+    if (line.type === 'system' && line.subtype === 'thinking_tokens') {
+      thinkingEstimate += line.estimated_tokens_delta ?? 0
     }
 
     const content = Array.isArray(line.message?.content) ? line.message.content : []
@@ -244,6 +262,7 @@ export function parseRun(text: string, cwd: string): RunMetrics {
 
       if (line.usage) {
         metrics.resultTokens = tokensOf(line.usage)
+        thinkingExact = line.usage.output_tokens_details?.thinking_tokens
       }
     }
   }
@@ -259,6 +278,13 @@ export function parseRun(text: string, cwd: string): RunMetrics {
 
     metrics.peakContextTokens = Math.max(metrics.peakContextTokens, context)
   }
+
+  if (metrics.resultTokens) {
+    metrics.tokens.output = metrics.resultTokens.output
+    metrics.outputExact = true
+  }
+
+  metrics.thinkingTokens = thinkingExact ?? thinkingEstimate
   metrics.apiCalls = usageById.size
   metrics.checkErrors = metrics.checkRuns.reduce((sum, run) => sum + run.errors, 0)
 

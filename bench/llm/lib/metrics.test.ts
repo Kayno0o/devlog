@@ -7,6 +7,8 @@ const lines = [
   { type: 'system', subtype: 'init', model: 'claude-opus-5-5', claude_code_version: '2.1.289', tools: ['Bash', 'Read'], plugins: [], mcp_servers: [] },
   { type: 'assistant', message: { id: 'm1', usage: { input_tokens: 10, output_tokens: 5, cache_creation_input_tokens: 100, cache_read_input_tokens: 0 }, content: [{ type: 'text', text: 'Reading the spec' }] } },
   { type: 'assistant', message: { id: 'm1', usage: { input_tokens: 10, output_tokens: 40, cache_creation_input_tokens: 100, cache_read_input_tokens: 0 }, content: [{ type: 'tool_use', id: 't1', name: 'Read', input: { file_path: `${cwd}/SPEC.md` } }] } },
+  { type: 'system', subtype: 'thinking_tokens', estimated_tokens: 50, estimated_tokens_delta: 50 },
+  { type: 'system', subtype: 'thinking_tokens', estimated_tokens: 70, estimated_tokens_delta: 20 },
   { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't1', content: '# Bookshelf' }] } },
   { type: 'assistant', message: { id: 'm2', usage: { input_tokens: 2, output_tokens: 30, cache_creation_input_tokens: 20, cache_read_input_tokens: 100 }, content: [{ type: 'tool_use', id: 't2', name: 'Bash', input: { command: 'bun run check' } }] } },
   { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't2', is_error: true, content: 'Exit code 1\nerror[TS2322]: Type string\n --> src/a.ts:1:7\n\n2 errors' }] } },
@@ -14,7 +16,7 @@ const lines = [
   { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't3', content: '0 errors' }, { type: 'tool_result', tool_use_id: 't4', content: 'kay' }] } },
   { type: 'assistant', message: { id: 'm4', usage: { input_tokens: 1, output_tokens: 3, cache_creation_input_tokens: 0, cache_read_input_tokens: 130 }, content: [{ type: 'tool_use', id: 't5', name: 'Bash', input: { command: 'curl -s https://example.com' } }, { type: 'tool_use', id: 't6', name: 'Read', input: { file_path: `${cwd}/docs/llms.txt` } }, { type: 'tool_use', id: 't7', name: 'Grep', input: { pattern: 'form', path: 'docs' } }] } },
   { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't5', content: 'ok' }, { type: 'tool_result', tool_use_id: 't6', content: '# Kay docs' }, { type: 'tool_result', tool_use_id: 't7', content: [{ type: 'text', text: 'docs/actions.md' }] }] } },
-  { type: 'result', subtype: 'success', duration_ms: 61_000, duration_api_ms: 50_000, num_turns: 5, total_cost_usd: 0.42, usage: { input_tokens: 14, output_tokens: 81, cache_creation_input_tokens: 120, cache_read_input_tokens: 350 } },
+  { type: 'result', subtype: 'success', duration_ms: 61_000, duration_api_ms: 50_000, num_turns: 5, total_cost_usd: 0.42, usage: { input_tokens: 14, output_tokens: 900, output_tokens_details: { thinking_tokens: 400 }, cache_creation_input_tokens: 120, cache_read_input_tokens: 350 } },
 ]
 
 describe('parseRun', () => {
@@ -29,19 +31,23 @@ describe('parseRun', () => {
     expect(metrics.costUsd).toBe(0.42)
   })
 
-  it('counts each API response once, with its last usage', () => {
+  it('counts each API response once, output taken from the result line', () => {
     expect(metrics.apiCalls).toBe(4)
-    expect(metrics.tokens).toEqual({ input: 14, output: 81, cacheCreation: 120, cacheRead: 350 })
+    expect(metrics.tokens).toEqual({ input: 14, output: 900, cacheCreation: 120, cacheRead: 350 })
+    expect(metrics.outputExact).toBe(true)
     expect(metrics.peakContextTokens).toBe(131)
     expect(metrics.resultTokens).toEqual(metrics.tokens)
+    expect(metrics.thinkingTokens).toBe(400)
   })
 
   it('skips a line cut short by a kill', () => {
-    const cut = parseRun(`${JSON.stringify(lines[0])}\n{"type":"assis`, cwd)
+    const cut = parseRun(`${lines.filter(line => line.type !== 'result').map(line => JSON.stringify(line)).join('\n')}\n{"type":"assis`, cwd)
 
     expect(cut.skippedLines).toBe(1)
     expect(cut.model).toBe('claude-opus-5-5')
     expect(cut.resultTokens).toBeUndefined()
+    expect(cut.outputExact).toBe(false)
+    expect(cut.thinkingTokens).toBe(70)
   })
 
   it('counts the docs the agent read', () => {
@@ -63,6 +69,14 @@ describe('parseRun', () => {
 
   it('flags reads outside the workspace and network use', () => {
     expect(metrics.outside).toEqual(['Read: /home/me/Workspace/kayjs/README.md', 'Bash: curl -s https://example.com'])
+  })
+
+  it('lets a curl at the agent\'s own server through', () => {
+    const bash = (command: string): string[] => parseRun(JSON.stringify({ type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Bash', input: { command } }] } }), cwd).outside
+
+    expect(bash('curl -s -H "Origin: http://localhost:4567" localhost:4567/contact')).toEqual([])
+    expect(bash('curl -s http://127.0.0.1:4567/ && curl -s https://example.com')).toHaveLength(1)
+    expect(bash('wget example.com')).toHaveLength(1)
   })
 })
 
