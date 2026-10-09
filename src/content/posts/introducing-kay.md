@@ -64,34 +64,32 @@ On the table benchmark kay is within 1 to 20% of the fastest, and last on partia
 
 ## A real site, ported from SvelteKit
 
-Benchmarks of a products table only go so far, so I moved a real site from SvelteKit to kay and measured both in one sitting, runs interleaved, on one desktop over loopback: the ratios carry over, the absolute numbers are optimistic.
+Benchmarks of a products table only go so far, so I ported a real site from SvelteKit to kay: a home page and content pages, about 3,000 lines of code over 22 Svelte components. Both versions were measured in one sitting, runs interleaved, on one desktop over loopback: the ratios carry over, the absolute numbers are optimistic.
 
 ### What kay gains
 
-<Stats items={[{"value": "-46%", "label": "phone first paint, partner page"}, {"value": "16 vs 70 KB", "label": "client JS, brotli"}, {"value": "25 vs 65", "label": "requests, home page"}]} />
+<Stats items={[{"value": "-46%", "label": "phone first paint, content page"}, {"value": "16 vs 70 KB", "label": "client JS, brotli"}, {"value": "25 vs 65", "label": "requests, home page"}]} />
 
-<BarChart title="First paint on a phone, partner page" unit="ms" better="lower" highlight="kay, inlined styles" digits={0} rows={[{"label": "kay, inlined styles", "value": 407}, {"label": "SvelteKit", "value": 757}, {"label": "kay, linked styles", "value": 863}]} source="SvelteKit c860ae5 vs kay 1.14.0, Pixel 7 preset (slow 4G, 4x CPU), 2026-10-09" />
+<BarChart title="First paint on a phone, content page" unit="ms" better="lower" highlight="kay, inlined styles" digits={0} rows={[{"label": "kay, inlined styles", "value": 407}, {"label": "SvelteKit", "value": 757}, {"label": "kay, linked styles", "value": 863}]} source="SvelteKit vs kay 1.14.0, Lighthouse Pixel 7 preset (slow 4G, 4x CPU), 3 runs each, 2026-10-09" />
 
-<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" highlight="kay" rows={[{"label": "kay", "value": 16.1}, {"label": "SvelteKit", "value": 70.1}]} source="SvelteKit c860ae5 vs kay 1.13.0, 2026-10-09" />
+<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" highlight="kay" rows={[{"label": "kay", "value": 16.1}, {"label": "SvelteKit", "value": 70.1}]} source="SvelteKit vs kay 1.13.0, 2026-10-09" />
 
-<BarChart title="Build, cold caches" unit="s" better="lower" highlight="kay" digits={2} rows={[{"label": "kay", "value": 2.22}, {"label": "SvelteKit", "value": 3.57}]} source="SvelteKit c860ae5 vs kay 1.13.0, 2026-10-09, hyperfine, 3 runs" />
+<BarChart title="Build, cold caches" unit="s" better="lower" highlight="kay" digits={2} rows={[{"label": "kay", "value": 2.22}, {"label": "SvelteKit", "value": 3.57}]} source="SvelteKit vs kay 1.13.0, hyperfine, 3 runs, 2026-10-09" />
 
 The home page a phone downloads drops from 706 to 547 KB, mostly images: kay serves AVIF at the width drawn. The Docker image goes from 228 to 184 MB, and the code from 3,037 to 2,590 lines.
 
 ### What kay loses
 
-<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 37}, {"label": "kay", "value": 59}]} source="SvelteKit c860ae5 vs kay 1.13.0, 2026-10-09, RSS after start" />
+<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 37}, {"label": "kay", "value": 59}]} source="SvelteKit vs kay 1.13.0, RSS after start, 2026-10-09" />
 
-- **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.5 times at peak, 198 against 130 MiB under load. Bytecode explains 3 MiB of it; the rest is not traced yet.
+- **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.5 times at peak, 198 against 130 MiB under load.
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay paints 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
-- **CPU on short pages.** kay serves rendered pages at 1.6 to 2 times SvelteKit's rate, yet spends 9 to 11% more CPU per short page, compressing with brotli where SvelteKit uses gzip. Those server figures were taken with linked stylesheets; with inlined ones each response is 2 to 5 times larger, which is not measured yet.
+- **CPU on short pages.** kay serves rendered pages at 1.6 to 2 times SvelteKit's rate, yet spends 9 to 11% more CPU per short page, compressing with brotli where SvelteKit uses gzip. Those server figures were taken with linked stylesheets.
 
-## The rest of the bill
+## What comes with it
 
-- **Young and alone.** One maintainer, no community, no ecosystem: every component library and integration is one I wrote.
-- **Bun only.** No Node, no Deno, no edge runtime.
-- **Builds check first.** `kay build` type-checks the whole project before bundling, about half a second a cold build pays, though the site still builds faster than on SvelteKit.
-- **Open gap.** Per-request overhead and memory are tracked in [#128](https://git.kaynooo.fr/kaynooo/kayjs/issues/128).
+- **Bun underneath.** One fast runtime for the server, the bundler, the test runner and the database driver, and the whole site compiles into a single executable.
+- **Builds check first.** `kay build` type-checks the whole project, templates included, before it bundles anything, so a broken prop or a mistyped link never ships. The port above still builds faster than it did on SvelteKit.
 
 ## Built for LLMs too
 
