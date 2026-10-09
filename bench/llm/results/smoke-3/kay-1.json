@@ -1,0 +1,162 @@
+{
+  "framework": "kay",
+  "run": 1,
+  "label": "smoke-3",
+  "startedAt": "2026-10-09T23:35:38.816Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.17.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 107451,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 106965,
+    "durationApiMs": 93239,
+    "turns": 29,
+    "costUsd": 0.5962643999999999,
+    "tokens": {
+      "input": 50,
+      "output": 12736,
+      "cacheCreation": 59093,
+      "cacheRead": 1162162
+    },
+    "outputExact": true,
+    "thinkingTokens": 4404,
+    "apiCalls": 25,
+    "peakContextTokens": 64474,
+    "toolCalls": {
+      "Bash": 22,
+      "Read": 6
+    },
+    "toolErrors": 2,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { validateContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nexport const send = action(t.Object({ name: t.String(), email: t.String(), message: t.String() }), ({ name, email, message }, ctx) => {\n  const errors = validateContact({ name, email, message })\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: name.trim() }\n})\n\nconst failed = ctx.failed(send)\nconst succeeded = ctx.succeeded(send)\nconst values = { name: failed?.values.name ?? '', email: failed?.values.email ?? '', message: failed?.values.message ?? '' }\nconst errors = failed?.data.errors ?? {}\nconst sentName = succeeded?.data.name\n---\nhead\n  title Contact\nh1 Contact\nContactForm(values={values} errors={errors} sentName={sentName})\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { send } from '../routes/contact.kay'\nimport { validateContact } from '../contact'\nimport type { ContactErrors, ContactValues } from '../contact'\n\nconst { values, errors: initialErrors, sentName } = props<{ values: ContactValues, errors: ContactErrors, sentName?: string }>()\nconst name = signal(values.name)\nconst email = signal(values.email)\nconst message = signal(values.message)\nconst errors = signal<ContactErrors>(initialErrors)\nconst sent = signal<string | undefined>(sentName)\n\nasync function submit(event: SubmitEvent) {\n  const form = event.currentTarget as HTMLFormElement\n  event.preventDefault()\n  sent.set(undefined)\n\n  const found = validateContact({ name: name(), email: email(), message: message() })\n  errors.set(found)\n\n  if (Object.keys(found).length > 0)\n    return\n\n  try {\n    const result = await send(new FormData(form), { refresh: false })\n    sent.set(result.name)\n    name.set('')\n    email.set('')\n    message.set('')\n  }\n  catch {\n    errors.set({ message: 'Could not send your message.' })\n  }\n}\n---\nif sent\n  p.success Thanks, {sent}! Your message has been sent.\nform(action={send} method=\"post\" novalidate onSubmit={submit})\n  div\n    label(for=\"contact-name\") Name\n    input#contact-name(type=\"text\" name=\"name\" bind:value={name})\n    if errors.name\n      span.error {errors.name}\n  div\n    label(for=\"contact-email\") Email\n    input#contact-email(type=\"email\" name=\"email\" bind:value={email})\n    if errors.email\n      span.error {errors.email}\n  div\n    label(for=\"contact-message\") Message\n    textarea#contact-message(name=\"message\" bind:value={message})\n    if errors.message\n      span.error {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/routes/contact.kay'\ns=open(p).read()\ns=s.replace(\"t.Object({ name: t.String(), email: t.String(), message: t.String() })\",\"t.Object({ name: t.String({ maxLength: 200 }), email: t.String({ maxLength: 320 }), message: t.String({ maxLength: 10000 }) })\")\ns=s.replace(\"failed?.data.errors ?? {}\",\"failed?.data?.errors ?? {}\")\ns=s.replace(\"sentName?: string\",\"\")\ns=s.replace(\"const sentName = succeeded?.data.name\",\"const sentName = succeeded?.data?.name ?? ''\").replace(\"sentName={sentName}\",\"sentName={sentName}\")\nopen(p,'w').write(s)\np='src/components/contact-form.kay'\ns=open(p).read()\ns=s.replace(\"sentName?: string }\",\"sentName: string }\").replace(\"signal<string | undefined>(sentName)\",\"signal<string>(sentName)\").replace(\"sent.set(undefined)\",\"sent.set('')\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -15; (PORT=4567 bun run start > /tmp/s.log 2>&1 &); sleep 3; \nfor p in / /books /books/dracula /books/nope /about /contact /zzz; do echo \"== $p\"; curl -s -o /tmp/o.html -w \"%{http_code}\\n\" localhost:4567$p; grep -o '<title>[^<]*</title>' /tmp/o.html; done\ncurl -s localhost:4567/ | sed 's/></>\\n</g' | grep -v \"^<script\\|^<link\" | head -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"src/server.ts\"; bun run build 2>&1 | tail -2; (PORT=4567 bun run start > /tmp/s.log 2>&1 &); sleep 3\ncurl -s localhost:4567/books/dracula | tr '\\n' ' ' | grep -o \"<header.*</footer>\" | sed 's/data-props=\"[^\"]*\"/data-props=…/'\necho; curl -s localhost:4567/books/nope | grep -o \"<header.*</footer>\"\necho ---POST; curl -s -i -X POST localhost:4567/_kay/action/contact/send -H 'Origin: http://localhost:4567' -H 'Referer: http://localhost:4567/contact' -d 'name=+&email=bad&message=short' | tr '\\n' ' ' | sed 's/data-props=\"[^\"]*\"/data-props=…/' | cut -c1-2500",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "bun run build 2>&1 | tail -2; (PORT=4567 setsid bun run start > /tmp/s.log 2>&1 &); sleep 3; curl -s localhost:4567/about | head -c 100",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"bun src/server\" ; sleep 1; bun run check 2>&1 | tail -3; bun run build 2>&1 | tail -2; (PORT=4568 setsid bun run start >/tmp/s2.log 2>&1 &); sleep 3; curl -s -o /dev/null -w \"%{http_code}\\n\" localhost:4568/books; pkill -f \"bun src/server\"; sleep 1; pgrep -fa \"src/server\" ; git status --short | head -20",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "pgrep -fa \"[s]rc/server\" ; pkill -f \"[b]un src/server\"; sleep 1; bun run check 2>&1 | tail -3; bun run build 2>&1 | tail -2",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 2,
+    "docs": {
+      "calls": 10,
+      "chars": 99283
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='src/routes/contact.kay'\ns=open(p).read()\ns=s.replace(\"t.Object({ name: t.String(), email: t.String(), message: t.String() })\",\"t.Object({ name: t.String({ maxLength: 200 }), email: t.String({ maxLength: 320 }), message: t.String({ maxLength: 10000 }) })\")\ns=s.replace(\"failed?.data.errors ?? {}\",\"failed?.data?.errors ?? {}\")\ns=s.replace(\"sentName?: string\",\"\")\ns=s.replace(\"const sentName = succeeded?.data.name\",\"const sentName = succeeded?.data?.name ?? ''\").replace(\"sentName={sentName}\",\"sentName={sentName}\")\nopen(p,'w').write(s)\np='src/components/contact-form.kay'\ns=open(p).read()\ns=s.replace(\"sentName?: string }\",\"sentName: string }\").replace(\"signal<string | undefined>(sentName)\",\"signal<string>(sentName)\").replace(\"sent.set(undefined)\",\"sent.set('')\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -40"
+    ],
+    "resultTokens": {
+      "input": 50,
+      "output": 12736,
+      "cacheCreation": 59093,
+      "cacheRead": 1162162
+    }
+  },
+  "diff": {
+    "files": 23,
+    "added": 336,
+    "removed": 3,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.17.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-09T23:06:44.633Z",
+    "files": 17,
+    "bytes": 183844
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/smoke-3/kay-1"
+}
