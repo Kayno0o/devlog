@@ -47,8 +47,4 @@ bun run build   # static site into dist/
 
 ## Running it
 
-```sh
-docker compose up -d --build
-```
-
-`.env` points `COMPOSE_FILE` at `compose.prod.yaml`, so nginx serves `dist` on `127.0.0.1:37144`, with the precompressed `.gz` copies. `SITE_URL` (default `https://log.kaynooo.fr`) sets the origin the feed, sitemap and canonical links use.
+`bun run build` writes the site to `dist/`, with precompressed `.gz` copies, for the host nginx to serve directly: `try_files $uri $uri.html $uri/index.html =404`, `gzip_static on`, `error_page 404 /404.html`, and an immutable cache on `/_kay/`. `SITE_URL` (default `https://log.kaynooo.fr`) sets the origin the feed, sitemap and canonical links use.
