@@ -1,10 +1,10 @@
 --- server
 import { posts } from '../content.config'
-import { formatDate } from '../format'
-import { readingMinutes } from '../reading-time'
 
 const entries = await posts.all()
-const minutes = new Map(await Promise.all(entries.map(async post => [post.slug, await readingMinutes(post.file)] as const)))
+---
+---
+import PostMeta from '../components/post-meta.kay'
 ---
 head
   title(raw) devlog, notes on building kay
@@ -18,9 +18,7 @@ head
       for post of entries key={post.slug}
         li
           a.group.block.no-underline(href={`/posts/${post.slug}`})
-            p.flex.gap-x-4.font-mono.text-sm.text-muted
-              time(datetime={post.data.date.toISOString()}) {formatDate(post.data.date)}
-              span {minutes.get(post.slug)} min read
+            PostMeta(date={post.data.date} file={post.file})
             h3.text-lg.font-semibold.group-hover:underline.group-hover:decoration-accent {post.data.title}
             p.text-subtext {post.data.description}
       else

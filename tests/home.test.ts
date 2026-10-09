@@ -11,6 +11,14 @@ it('lists the posts, leaving drafts out', async () => {
   expect(home.html).not.toContain('fast to run and fast to write')
 })
 
+it('names its author, and gives contact links in the footer', async () => {
+  const home = await site.visit('/')
+
+  expect(home.html).toContain('Written by kaynooo')
+  expect(home.html).toContain('href="mailto:contact@kaynooo.fr"')
+  expect(home.html).toContain('href="https://git.kaynooo.fr/kaynooo/devlog"')
+})
+
 it('serves the feed', async () => {
   const feed = await site.visit('/rss.xml')
 

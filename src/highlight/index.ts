@@ -11,16 +11,16 @@ const highlighter = await createHighlighter({
 
 const languages = new Set(highlighter.getLoadedLanguages())
 
-const labelled: ShikiTransformer = {
-  pre(node) {
-    if (this.options.lang !== 'text')
-      node.properties['data-language'] = this.options.lang
-  },
-}
-
 // Runs at build time only; light-dark() lets the page's color-scheme pick the theme with no script, and app.css labels a block from data-language.
 export function highlight(code: string, language: string | undefined): string {
   const lang = language !== undefined && languages.has(language) ? language : 'text'
+  // Inside the function: kay caches compiled posts by its source, so a change here recompiles them.
+  const labelled: ShikiTransformer = {
+    pre(node) {
+      if (lang !== 'text')
+        node.properties['data-language'] = lang
+    },
+  }
 
   return highlighter.codeToHtml(code, { lang, themes: { light: 'catppuccin-latte', dark: 'catppuccin-mocha' }, defaultColor: 'light-dark()', transformers: [labelled] })
 }

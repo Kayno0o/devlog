@@ -1,17 +1,15 @@
 --- server
 import { posts } from '../../content.config'
-import { formatDate } from '../../format'
-import { readingMinutes } from '../../reading-time'
 
 export const prerender = posts
 
 const post = await posts.get(ctx.params.slug) ?? ctx.notFound()
 const { Content } = post
-const minutes = await readingMinutes(post.file)
 ---
 ---
 import ArrowLeft from '~icons/tabler/arrow-left'
 import Pencil from '~icons/tabler/pencil'
+import PostMeta from '../../components/post-meta.kay'
 import Toc from '../../components/toc.kay'
 ---
 head
@@ -25,13 +23,7 @@ article.relative.mx-auto.max-w-2xl
     | All posts
   header.mb-10
     h1.mb-3.text-3xl.font-semibold.text-balance {post.data.title}
-    p.flex.flex-wrap.gap-x-4.font-mono.text-sm.text-muted
-      time(datetime={post.data.date.toISOString()}) {formatDate(post.data.date)}
-      if post.data.updated
-        span updated #[time(datetime={post.data.updated.toISOString()}) {formatDate(post.data.updated)}]
-      span {minutes} min read
-      for tag of post.data.tags key={tag}
-        span \#{tag}
+    PostMeta(date={post.data.date} updated={post.data.updated} file={post.file} tags={post.data.tags})
   Toc(headings={post.headings})
   .prose
     Content

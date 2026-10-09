@@ -65,7 +65,7 @@ On the rest of the table benchmark kay is within 20% of the fastest, and first o
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2 and headless Chromium 151, on 2026-10-07: kay 1.3.0, solid-js 1.9.15 and svelte 5.57.1. Server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://git.kaynooo.fr/kaynooo/kayjs/src/branch/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
+One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2 and headless Chromium 151, on 2026-10-07: kay 1.3.0, solid-js 1.9.15 and svelte 5.57.1. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://git.kaynooo.fr/kaynooo/kayjs/src/branch/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
 
 </Note>
 
@@ -95,7 +95,7 @@ The home page a phone downloads drops from 706 to 547 KB, mostly images: kay ser
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3, on 2026-10-09: SvelteKit against kay 1.13.0, and 1.14.0 for the paints. Paints come from Playwright under Lighthouse's phone preset, 3 runs each; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections. Every figure and its conditions are in [bench/sveltekit-port.md](https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/bench/sveltekit-port.md).
+One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3 canary, on 2026-10-09: SvelteKit against kay 1.13.0, and 1.14.0 for the paints. Paints come from Playwright under Lighthouse's phone and desktop presets, 3 runs each; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections. The site's code is private, so the record is [bench/sveltekit-port.md](https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
@@ -131,7 +131,7 @@ kay's figures there are a floor: the load client tops out near 40,000 requests a
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production, on 2026-10-07: Astro against kay 1.4.0. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. Every figure is in [bench/astro-ports.md](https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/bench/astro-ports.md).
+One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production, on 2026-10-07: Astro against kay 1.4.0. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/bench/astro-ports.md), every figure with its conditions.
 
 </Note>
 

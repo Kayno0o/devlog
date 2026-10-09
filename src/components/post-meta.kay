@@ -1,0 +1,18 @@
+---
+import { formatDate } from '../format'
+import { readingMinutes } from '../reading-time'
+
+const { date, updated, file, tags = [] } = props<{
+  date: Date
+  updated?: Date | undefined
+  file: string
+  tags?: string[] | undefined
+}>()
+---
+p.flex.flex-wrap.gap-x-4.font-mono.text-sm.text-muted
+  time(datetime={date.toISOString()}) {formatDate(date)}
+  if updated
+    span updated #[time(datetime={updated.toISOString()}) {formatDate(updated)}]
+  span {readingMinutes(file)} min read
+  for tag of tags key={tag}
+    span \#{tag}

@@ -1,10 +1,15 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
+import PostMeta from '../src/components/post-meta.kay'
 import Toc from '../src/components/toc.kay'
 import { highlight } from '../src/highlight'
 import { readingMinutes } from '../src/reading-time'
 
 const heading = (depth: number, text: string) => ({ depth, id: text.toLowerCase(), text })
+const post = `${import.meta.dir}/../.kay/reading-time.md`
+
+// 460 words of text: 2 minutes, where the frontmatter or the tag counted would make 3.
+await Bun.write(post, `---\ntitle: ${'word '.repeat(300)}\n---\n<Stats items={[{"value": "1", "label": "${'word '.repeat(300)}"}]} />\n\n${'word '.repeat(460)}`)
 
 it('lists a long post\'s sections, and nothing for a short one', async () => {
   const long = await renderToString(Toc, { headings: [heading(2, 'One'), heading(3, 'Inner'), heading(2, 'Two'), heading(2, 'Three'), heading(2, 'Four')] })
@@ -15,12 +20,18 @@ it('lists a long post\'s sections, and nothing for a short one', async () => {
   expect(short).not.toContain('Contents')
 })
 
-it('reads a post at 230 words a minute, leaving its frontmatter and component tags out', async () => {
-  const file = `${import.meta.dir}/../.kay/reading-time.md`
+it('reads a post at 230 words a minute, leaving its frontmatter and component tags out', () => {
+  expect(readingMinutes(post)).toBe(2)
+})
 
-  await Bun.write(file, `---\ntitle: ${'word '.repeat(500)}\n---\n<Stats items={[{"value": "1", "label": "x"}]} />\n\n${'word '.repeat(460)}`)
+it('shows a post\'s date, its update, its reading time and its tags', async () => {
+  const meta = await renderToString(PostMeta, { date: new Date('2026-10-09'), updated: new Date('2026-10-12'), file: post, tags: ['kay'] })
+  const plain = await renderToString(PostMeta, { date: new Date('2026-10-09'), file: post })
 
-  expect(await readingMinutes(file)).toBe(2)
+  expect(meta).toContain('updated <time datetime="2026-10-12T00:00:00.000Z">Oct 12, 2026</time>')
+  expect(meta).toContain('2 min read')
+  expect(meta).toContain('#kay')
+  expect(plain).not.toContain('updated')
 })
 
 it('labels a code block with its language, and a plain one with none', () => {

@@ -16,7 +16,7 @@ draft: true
 ---
 ```
 
-A draft shows in `bun run dev` only, never in the build or the feed. Code blocks are highlighted at build time by Shiki, `kay` fences included.
+A draft shows in `bun run dev` only, never in the build or the feed. An optional `updated: <date>` shows beside the date once a post is revised. Code blocks are highlighted at build time by Shiki, `kay` fences included.
 
 Components usable in a post, each tag on its own line, attributes as JSON in braces:
 
