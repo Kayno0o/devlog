@@ -16,7 +16,7 @@ it('names its author, and gives contact links in the footer', async () => {
 
   expect(home.html).toContain('Written by kaynooo')
   expect(home.html).toContain('href="mailto:contact@kaynooo.fr"')
-  expect(home.html).toContain('href="https://git.kaynooo.fr/kaynooo/devlog"')
+  expect(home.html).toContain('href="https://github.com/Kayno0o/devlog"')
 })
 
 it('serves the feed', async () => {

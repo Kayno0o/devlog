@@ -5,7 +5,7 @@ header.border-b-2.border-surface.px-4.py-4.sm:px-8
   nav.flex.items-center.justify-between.gap-4(aria-label="Main navigation")
     a.font-mono.text-lg.font-semibold.no-underline(href="/") devlog
     ul.flex.items-center.gap-5.text-sm
-      li: a(href="https://git.kaynooo.fr/kaynooo/kayjs") kay
+      li: a(href="https://github.com/Kayno0o/kayjs") kay
       li
         a.inline-flex.items-center.gap-1(href="/rss.xml")
           Rss.size-4

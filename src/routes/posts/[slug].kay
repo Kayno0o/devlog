@@ -28,6 +28,6 @@ article.relative.mx-auto.max-w-2xl
   .prose
     Content
   footer.mt-12.border-t-2.border-surface.pt-4.text-sm.text-muted
-    a.inline-flex.items-center.gap-1(href={`https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/${post.file}`})
+    a.inline-flex.items-center.gap-1(href={`https://github.com/Kayno0o/devlog/blob/main/${post.file}`})
       Pencil.size-4
       | Suggest a fix to this post

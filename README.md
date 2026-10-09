@@ -1,6 +1,6 @@
 # devlog
 
-A minimalist devlog built with [kay](https://git.kaynooo.fr/kaynooo/kayjs) as a static site: no server, no JavaScript shipped, light and dark themes from the reader's system setting.
+A minimalist devlog built with [kay](https://github.com/Kayno0o/kayjs) as a static site: no server, no JavaScript shipped, light and dark themes from the reader's system setting.
 
 ## Writing a post
 

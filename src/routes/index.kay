@@ -11,7 +11,7 @@ head
 .mx-auto.max-w-2xl
   section.mb-12
     h1.mb-3.text-3xl.font-semibold devlog
-    p.text-subtext Notes on building #[a(href="https://git.kaynooo.fr/kaynooo/kayjs") kay], a Bun web framework: how it works, what it costs, and the benchmarks behind it. Written by kaynooo, kay's author.
+    p.text-subtext Notes on building #[a(href="https://github.com/Kayno0o/kayjs") kay], a Bun web framework: how it works, what it costs, and the benchmarks behind it. Written by kaynooo, kay's author.
   section(aria-labelledby="posts-title")
     h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase Posts
     ol.flex.flex-col.gap-6
