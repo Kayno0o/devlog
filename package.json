@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "kay dev",
-    "build": "kay build --static && rsync -a --delete dist/ /opt/web/apps/devlog/",
+    "build": "kay build --static && rsync -a dist/ /opt/web/apps/devlog/",
     "check": "kay check --deny-warnings",
     "lint": "keslint --cache",
     "lint:fix": "keslint --fix --cache",
