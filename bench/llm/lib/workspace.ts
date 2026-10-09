@@ -1,6 +1,7 @@
 import { cpSync, existsSync, readdirSync, readlinkSync, rmSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import process from 'node:process'
+import { killGroup } from './site'
 
 export const benchDir = join(import.meta.dir, '..')
 
@@ -12,13 +13,22 @@ const processId = /^\d+$/
 export interface Command {
   code: number
   output: string
+  timedOut: boolean
 }
 
-export async function run(command: string[], cwd: string, env: Record<string, string | undefined> = process.env): Promise<Command> {
-  const child = Bun.spawn(command, { cwd, env, stdout: 'pipe', stderr: 'pipe', stdin: 'ignore' })
+/** Runs a command in its own process group, killed with everything it started once `timeoutMs` runs out. */
+export async function run(command: string[], cwd: string, env: Record<string, string | undefined> = process.env, timeoutMs = 15 * 60_000): Promise<Command> {
+  const child = Bun.spawn(['setsid', ...command], { cwd, env, stdout: 'pipe', stderr: 'pipe', stdin: 'ignore' })
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    void killGroup(child)
+  }, timeoutMs)
   const [stdout, stderr, code] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited])
 
-  return { code, output: `${stdout}${stderr}` }
+  clearTimeout(timer)
+
+  return { code, output: `${stdout}${stderr}${timedOut ? `\nkilled after ${timeoutMs} ms` : ''}`, timedOut }
 }
 
 async function must(command: string[], cwd: string): Promise<void> {
@@ -47,13 +57,15 @@ export async function prepare(framework: string, site: string): Promise<void> {
   await must(['git', '-c', 'user.name=bench', '-c', 'user.email=bench@localhost', 'commit', '-qm', 'starter'], site)
 }
 
+const isInside = (path: string, dir: string): boolean => path === dir || path.startsWith(`${dir}/`)
+
 /** Kills every process still running from inside `dir`, such as a dev server the agent left behind. */
 export function sweep(dir: string): number {
   let killed = 0
 
   for (const pid of readdirSync('/proc').filter(name => processId.test(name))) {
     try {
-      if (readlinkSync(`/proc/${pid}/cwd`).startsWith(dir) && Number(pid) !== process.pid) {
+      if (isInside(readlinkSync(`/proc/${pid}/cwd`), dir) && Number(pid) !== process.pid) {
         process.kill(Number(pid), 'SIGKILL')
         killed++
       }
@@ -71,6 +83,8 @@ export interface Diff {
   added: number
   removed: number
   dependenciesAdded: string[]
+  /** Grading inputs the agent changed: its package.json scripts or tsconfig.json, which could weaken `check`. */
+  gradingConfigChanged: string[]
 }
 
 /** What the agent wrote: lines against the starter commit, lockfile, docs and content left out. */
@@ -82,11 +96,19 @@ export async function diff(site: string): Promise<Diff> {
   const after = await Bun.file(join(site, 'package.json')).json() as Record<string, Record<string, string> | undefined>
   const names = (pkg: typeof before): Set<string> => new Set([...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})])
   const had = names(before)
+  const tsconfigBefore = (await run(['git', 'show', 'HEAD:tsconfig.json'], site)).output
+  const tsconfigFile = Bun.file(join(site, 'tsconfig.json'))
+  const tsconfigAfter = await tsconfigFile.exists() ? await tsconfigFile.text() : ''
+  const gradingConfigChanged = [
+    ...Object.keys({ ...before.scripts, ...after.scripts }).filter(name => before.scripts?.[name] !== after.scripts?.[name]).map(name => `script ${name}`),
+    ...tsconfigBefore === tsconfigAfter ? [] : ['tsconfig.json'],
+  ]
 
   return {
     files: rows.length,
     added: rows.reduce((sum, [added]) => sum + (Number(added) || 0), 0),
     removed: rows.reduce((sum, [, removed]) => sum + (Number(removed) || 0), 0),
     dependenciesAdded: [...names(after)].filter(name => !had.has(name)).toSorted(),
+    gradingConfigChanged,
   }
 }

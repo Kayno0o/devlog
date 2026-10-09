@@ -14,7 +14,7 @@ const lines = [
   { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't3', content: '0 errors' }, { type: 'tool_result', tool_use_id: 't4', content: 'kay' }] } },
   { type: 'assistant', message: { id: 'm4', usage: { input_tokens: 1, output_tokens: 3, cache_creation_input_tokens: 0, cache_read_input_tokens: 130 }, content: [{ type: 'tool_use', id: 't5', name: 'Bash', input: { command: 'curl -s https://example.com' } }, { type: 'tool_use', id: 't6', name: 'Read', input: { file_path: `${cwd}/docs/llms.txt` } }, { type: 'tool_use', id: 't7', name: 'Grep', input: { pattern: 'form', path: 'docs' } }] } },
   { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't5', content: 'ok' }, { type: 'tool_result', tool_use_id: 't6', content: '# Kay docs' }, { type: 'tool_result', tool_use_id: 't7', content: [{ type: 'text', text: 'docs/actions.md' }] }] } },
-  { type: 'result', subtype: 'success', duration_ms: 61_000, duration_api_ms: 50_000, num_turns: 5, total_cost_usd: 0.42 },
+  { type: 'result', subtype: 'success', duration_ms: 61_000, duration_api_ms: 50_000, num_turns: 5, total_cost_usd: 0.42, usage: { input_tokens: 14, output_tokens: 81, cache_creation_input_tokens: 120, cache_read_input_tokens: 350 } },
 ]
 
 describe('parseRun', () => {
@@ -33,6 +33,15 @@ describe('parseRun', () => {
     expect(metrics.apiCalls).toBe(4)
     expect(metrics.tokens).toEqual({ input: 14, output: 81, cacheCreation: 120, cacheRead: 350 })
     expect(metrics.peakContextTokens).toBe(131)
+    expect(metrics.resultTokens).toEqual(metrics.tokens)
+  })
+
+  it('skips a line cut short by a kill', () => {
+    const cut = parseRun(`${JSON.stringify(lines[0])}\n{"type":"assis`, cwd)
+
+    expect(cut.skippedLines).toBe(1)
+    expect(cut.model).toBe('claude-opus-5-5')
+    expect(cut.resultTokens).toBeUndefined()
   })
 
   it('counts the docs the agent read', () => {

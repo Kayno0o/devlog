@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import process from 'node:process'
 import { countErrors } from './metrics'
-import { startSite } from './site'
+import { freePort, startSite } from './site'
 import { benchDir, run } from './workspace'
 
 export interface Grade {
@@ -20,7 +20,7 @@ const failedTest = /^\(fail\) (.+?)(?: \[[\d.]+m?s\])?$/gm
 const repoRoot = join(benchDir, '../..')
 
 /** Checks and builds the agent's site, then runs the hidden acceptance suite against its production server. */
-export async function grade(site: string, port: number): Promise<Grade> {
+export async function grade(site: string, firstPort: number): Promise<Grade> {
   const check = await run(['bun', 'run', 'check'], site)
   const build = await run(['bun', 'run', 'build'], site)
   const result: Grade = {
@@ -37,7 +37,7 @@ export async function grade(site: string, port: number): Promise<Grade> {
   let server
 
   try {
-    server = await startSite(site, port)
+    server = await startSite(site, freePort(firstPort))
   }
   catch (error) {
     result.acceptance.failures.push(`site did not start: ${String(error)}`)
@@ -47,7 +47,7 @@ export async function grade(site: string, port: number): Promise<Grade> {
 
   try {
     // from the repo root, so the suite resolves playwright-core and the fixtures from here, never from the agent's project
-    const suite = await run(['bun', 'test', './bench/llm/acceptance/site.test.ts'], repoRoot, { ...process.env, SITE_URL: server.url })
+    const suite = await run(['bun', 'test', './bench/llm/acceptance/site.test.ts'], repoRoot, { ...process.env, SITE_URL: server.url }, 10 * 60_000)
 
     result.acceptance = {
       pass: Number(passCount.exec(suite.output)?.[1] ?? 0),

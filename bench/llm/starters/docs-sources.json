@@ -2,22 +2,26 @@
   "kay": {
     "source": "kay 1.16.5 package (llms.txt, llms/)",
     "fetchedAt": "2026-10-09T21:48:54.055Z",
-    "files": 17
+    "files": 17,
+    "bytes": 181728
   },
   "sveltekit": {
     "source": "https://svelte.dev/llms.txt and the files it links",
     "fetchedAt": "2026-10-09T21:48:54.055Z",
-    "files": 8
+    "files": 8,
+    "bytes": 3446023
   },
   "solidstart": {
     "source": "https://docs.solidjs.com/llms.txt and the pages it links",
     "fetchedAt": "2026-10-09T21:48:54.055Z",
-    "files": 272
+    "files": 272,
+    "bytes": 839181
   },
   "astro": {
     "source": "https://github.com/withastro/docs src/content/docs/en",
     "revision": "bf9e538c64a51cd6ae7b212e0bcfdbf537dc6430",
     "fetchedAt": "2026-10-09T21:48:54.055Z",
-    "files": 424
+    "files": 424,
+    "bytes": 2984973
   }
 }

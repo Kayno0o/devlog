@@ -9,6 +9,8 @@ interface Source {
   revision?: string
   fetchedAt: string
   files: number
+  /** What the agent could read, which differs between frameworks in kind as much as in size. */
+  bytes: number
 }
 
 async function mirror(index: string, out: string): Promise<number> {
@@ -71,6 +73,10 @@ async function astro(out: string): Promise<{ files: number, revision: string }> 
   return { files, revision }
 }
 
+function bytesIn(dir: string): number {
+  return [...new Bun.Glob('**/*').scanSync(dir)].reduce((sum, path) => sum + Bun.file(join(dir, path)).size, 0)
+}
+
 const sources: Record<string, Source> = {}
 const fetchedAt = new Date().toISOString()
 
@@ -87,19 +93,19 @@ for (const framework of ['kay', 'sveltekit', 'solidstart', 'astro']) {
     cpSync(join(kay, 'llms'), join(out, 'llms'), { recursive: true })
     const { version } = await Bun.file(join(kay, 'package.json')).json() as { version: string }
 
-    sources.kay = { source: `kay ${version} package (llms.txt, llms/)`, fetchedAt, files: 1 + [...new Bun.Glob('*.md').scanSync(join(out, 'llms'))].length }
+    sources.kay = { source: `kay ${version} package (llms.txt, llms/)`, fetchedAt, files: 1 + [...new Bun.Glob('*.md').scanSync(join(out, 'llms'))].length, bytes: bytesIn(out) }
   }
   else if (framework === 'sveltekit') {
-    sources.sveltekit = { source: 'https://svelte.dev/llms.txt and the files it links', fetchedAt, files: await mirror('https://svelte.dev/llms.txt', out) }
+    sources.sveltekit = { source: 'https://svelte.dev/llms.txt and the files it links', fetchedAt, files: await mirror('https://svelte.dev/llms.txt', out), bytes: bytesIn(out) }
   }
   else if (framework === 'solidstart') {
-    sources.solidstart = { source: 'https://docs.solidjs.com/llms.txt and the pages it links', fetchedAt, files: await mirror('https://docs.solidjs.com/llms.txt', out) }
+    sources.solidstart = { source: 'https://docs.solidjs.com/llms.txt and the pages it links', fetchedAt, files: await mirror('https://docs.solidjs.com/llms.txt', out), bytes: bytesIn(out) }
   }
   else {
     // Astro dropped its llms.txt in April 2026, so its docs are the English Markdown source of docs.astro.build
     const { files, revision } = await astro(out)
 
-    sources.astro = { source: 'https://github.com/withastro/docs src/content/docs/en', revision, fetchedAt, files }
+    sources.astro = { source: 'https://github.com/withastro/docs src/content/docs/en', revision, fetchedAt, files, bytes: bytesIn(out) }
   }
 
   console.log(`${framework}: ${sources[framework]?.files} files`)

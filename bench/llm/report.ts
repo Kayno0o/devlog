@@ -1,8 +1,8 @@
-import type { Grade } from './lib/grade'
-import type { RunMetrics } from './lib/metrics'
-import type { Diff } from './lib/workspace'
 // Sums up one benchmark label: results/<label>/results.md for people, summary.json for the post's charts.
 // bun bench/llm/report.ts <label>, or a results directory
+import type { Grade } from './lib/grade'
+import type { RunMetrics, Tokens } from './lib/metrics'
+import type { Diff } from './lib/workspace'
 import { basename, join } from 'node:path'
 import process from 'node:process'
 
@@ -12,10 +12,11 @@ interface Result {
   startedAt: string
   requested: { model: string, effort: string, budgetUsd: number, minutes: number }
   versions: Record<string, string>
+  session?: { timedOut: boolean, wallMs?: number }
   metrics: RunMetrics
   diff: Diff
   grade: Grade
-  docs?: { source: string, revision?: string, files: number }
+  docs?: { source: string, revision?: string, files: number, bytes?: number }
 }
 
 interface Spread {
@@ -57,6 +58,8 @@ function spread(values: number[]): Spread | undefined {
 }
 
 // Each measure read off one run; only runs that passed count toward them
+// a killed session has no result line, so the runner's own clock comes first
+const wallMs = (r: Result): number => r.session?.wallMs ?? r.metrics.durationMs
 const total = (r: Result): number => r.metrics.tokens.input + r.metrics.tokens.cacheCreation + r.metrics.tokens.cacheRead + r.metrics.tokens.output
 const measures: Record<string, { group: string, title: string, read: (result: Result) => number, digits: number }> = {
   inputTokens: { group: 'Tokens', title: 'Input tokens, uncached', read: r => r.metrics.tokens.input, digits: 0 },
@@ -66,7 +69,7 @@ const measures: Record<string, { group: string, title: string, read: (result: Re
   totalTokens: { group: 'Tokens', title: 'All tokens', read: total, digits: 0 },
   peakContextTokens: { group: 'Tokens', title: 'Largest context of one call', read: r => r.metrics.peakContextTokens, digits: 0 },
   costUsd: { group: 'Tokens', title: 'Cost (USD, API prices)', read: r => r.metrics.costUsd, digits: 2 },
-  minutes: { group: 'Time', title: 'Wall time (minutes)', read: r => r.metrics.durationMs / 60_000, digits: 1 },
+  minutes: { group: 'Time', title: 'Wall time (minutes)', read: r => wallMs(r) / 60_000, digits: 1 },
   apiMinutes: { group: 'Time', title: 'Time waiting on the API (minutes)', read: r => r.metrics.durationApiMs / 60_000, digits: 1 },
   turns: { group: 'Agent', title: 'Turns', read: r => r.metrics.turns, digits: 0 },
   apiCalls: { group: 'Agent', title: 'API calls', read: r => r.metrics.apiCalls, digits: 0 },
@@ -107,8 +110,14 @@ const summary = {
       passed: passed.length,
       versions: runs[0]?.versions,
       dependenciesAdded: [...new Set(runs.flatMap(result => result.diff.dependenciesAdded))].toSorted(),
+      // what every run cost, failed ones included, since a framework that fails often costs more than its passing median shows
+      spent: {
+        costUsd: runs.reduce((sum, result) => sum + result.metrics.costUsd, 0),
+        totalTokens: runs.reduce((sum, result) => sum + total(result), 0),
+        minutes: runs.reduce((sum, result) => sum + wallMs(result), 0) / 60_000,
+      },
       measures: Object.fromEntries(Object.entries(measures).map(([key, measure]) => [key, spread(passed.map(measure.read))])),
-      failures: runs.filter(result => !result.grade.passed).map(result => ({ run: result.run, outcome: result.metrics.outcome, check: result.grade.check.ok, build: result.grade.build.ok, failures: result.grade.acceptance.failures })),
+      failures: runs.filter(result => !result.grade.passed).map(result => ({ run: result.run, outcome: result.session?.timedOut === true ? 'timed out' : result.metrics.outcome, check: result.grade.check.ok, build: result.grade.build.ok, failures: result.grade.acceptance.failures })),
     }]
   })),
 }
@@ -134,6 +143,10 @@ const runColumns = ['outputTokens', 'inputTokens', 'cacheWriteTokens', 'cacheRea
 function isolation(): string[] {
   const loaded = results.filter(result => result.metrics.loaded.plugins.length + result.metrics.loaded.mcpServers.length > 0)
   const outside = results.filter(result => result.metrics.outside.length > 0)
+  const configChanged = results.filter(result => result.diff.gradingConfigChanged.length > 0)
+  const differs = (a: Tokens, b: Tokens): boolean => Object.keys(a).some(key => Math.abs(a[key as keyof Tokens] - b[key as keyof Tokens]) > 0.01 * Math.max(1, b[key as keyof Tokens]))
+  const mismatched = results.filter(result => result.metrics.resultTokens !== undefined && differs(result.metrics.tokens, result.metrics.resultTokens))
+  const cut = results.filter(result => result.metrics.skippedLines > 0)
 
   return [
     loaded.length === 0
@@ -142,18 +155,28 @@ function isolation(): string[] {
     outside.length === 0
       ? '- No tool call left the workspace or used the network beyond package installs.'
       : `- Tool calls outside the workspace or on the network: ${outside.map(result => `${result.framework} ${result.run}: ${result.metrics.outside.join('; ')}`).join('. ')}`,
+    configChanged.length === 0
+      ? '- No agent changed its package.json scripts or tsconfig.json.'
+      : `- Grading inputs an agent changed, worth reading before trusting its check: ${configChanged.map(result => `${result.framework} ${result.run} (${result.diff.gradingConfigChanged.join(', ')})`).join('; ')}`,
+    mismatched.length === 0
+      ? '- Token counts summed per API call match the totals each finished session reported.'
+      : `- Token counts summed per API call differ from the session's own totals by more than 1%: ${mismatched.map(result => `${result.framework} ${result.run}`).join(', ')}`,
+    ...cut.length === 0 ? [] : [`- Transcripts cut short, their last line skipped: ${cut.map(result => `${result.framework} ${result.run}`).join(', ')}`],
   ]
 }
 
 const lines = [
   `# LLM benchmark, ${label}`,
   '',
-  `Each run is one headless Claude Code session (\`claude -p --safe-mode\`, no CLAUDE.md, hooks, plugins or MCP servers) building [the same site](../../spec.md) from [the same prompt](../../prompt.md) in a fresh copy of the framework's starter, with the framework's docs offline in \`docs/\`. A run passes when \`bun run check\`, \`bun run build\` and every test of the hidden [acceptance suite](../../acceptance/site.test.ts) pass.`,
+  `Each run is one headless Claude Code session (\`claude -p --safe-mode\`, no CLAUDE.md, hooks, plugins or MCP servers) building [the same site](../../spec.md) from [the same prompt](../../prompt.md) in a fresh copy of the framework's starter, with the framework's docs offline in \`docs/\`. A run passes when \`bun run check\`, \`bun run build\` and every test of the hidden [acceptance suite](../../acceptance/site.test.ts) pass. \`check\` is each starter's own script: kay's \`kay check --deny-warnings\` also fails on warnings, the others' (\`svelte-check\`, \`tsc --noEmit\`, \`astro check\`) on errors only.`,
   '',
   `Model ${summary.model}, effort ${summary.requested?.effort}, Claude Code ${summary.claude}, runs from ${summary.from} to ${summary.to}. Every measure is the median of the runs that passed, with the lowest and highest in brackets. Input tokens, cache writes and cache reads are what the model read; output tokens, thinking included, what it wrote.`,
   '',
   ...header('Runs', frameworks),
   `| Passed | ${frameworks.map(framework => `${summary.frameworks[framework]?.passed} of ${summary.frameworks[framework]?.runs}`).join(' | ')} |`,
+  `| Cost of every run, failed ones included (USD) | ${frameworks.map(framework => number(summary.frameworks[framework]?.spent.costUsd ?? 0, 2)).join(' | ')} |`,
+  `| Tokens of every run | ${frameworks.map(framework => number(summary.frameworks[framework]?.spent.totalTokens ?? 0, 0)).join(' | ')} |`,
+  `| Minutes of every run | ${frameworks.map(framework => number(summary.frameworks[framework]?.spent.minutes ?? 0, 0)).join(' | ')} |`,
   '',
   ...groups.flatMap(group => [
     `## ${group}`,
@@ -174,7 +197,7 @@ const lines = [
   ...frameworks.map((framework) => {
     const docs = results.find(result => result.framework === framework)?.docs
 
-    return `- ${framework}: ${Object.entries(summary.frameworks[framework]?.versions ?? {}).map(([name, version]) => `${name} ${version}`).join(', ')}; docs: ${docs ? `${docs.source}${docs.revision === undefined ? '' : ` at ${docs.revision.slice(0, 7)}`}, ${docs.files} files` : 'unknown'}; packages added by an agent: ${(summary.frameworks[framework]?.dependenciesAdded ?? []).join(', ') || 'none'}`
+    return `- ${framework}: ${Object.entries(summary.frameworks[framework]?.versions ?? {}).map(([name, version]) => `${name} ${version}`).join(', ')}; docs: ${docs ? `${docs.source}${docs.revision === undefined ? '' : ` at ${docs.revision.slice(0, 7)}`}, ${docs.files} files${docs.bytes === undefined ? '' : `, ${number(docs.bytes / 1_000_000, 1)} MB`}` : 'unknown'}; packages added by an agent: ${(summary.frameworks[framework]?.dependenciesAdded ?? []).join(', ') || 'none'}`
   }),
   '',
   '## Isolation',

@@ -40,7 +40,7 @@ Page titles (the document `<title>`) are given with each page.
 - Title "{title} | Bookshelf".
 - An `h1` with the book's title.
 - Each on an element of its own: "by {author}", "Published in {year}", "Rating: {rating}/5".
-- The book's tags, each as a link to `/books`.
+- The book's tags, each as a link to `/books` whose text is the tag itself.
 - The book's body rendered as HTML.
 - A favorite button: "Add to favorites" when the book is not a favorite, "Remove from favorites" when it is. Clicking it toggles the book's favorite state, which is kept in the browser (for example in `localStorage`) and survives a reload. The books list reads the same state for its "Favorite" marks.
 - A slug that matches no book answers with the 404 page.

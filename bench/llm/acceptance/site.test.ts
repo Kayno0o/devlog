@@ -1,7 +1,8 @@
+// The spec's acceptance suite, hidden from the agents. It runs against SITE_URL, or against the reference site when none is given, which is how `bun run test` proves the suite itself.
 import type { Browser, BrowserContext, Locator, Page } from 'playwright-core'
 import type { Site } from '../lib/site'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
-// The spec's acceptance suite, hidden from the agents. It runs against SITE_URL, or against the reference site when none is given, which is how `bun run test` proves the suite itself.
 import process from 'node:process'
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
 import { chromium } from 'playwright-core'
@@ -12,13 +13,23 @@ const books = await loadBooks()
 const timeout = 30_000
 
 const trailingSlash = /(.)\/$/
+const curlySingle = /[\u2018\u2019]/g
+const curlyDouble = /[\u201C\u201D]/g
 const boldText = /\*\*(.+?)\*\*/
 
 let base = process.env.SITE_URL ?? ''
 let reference: Site | undefined
-let browser: Browser
+let browser: Browser | undefined
+
+// With no browser installed, as on the CI runner, the proof against the reference is skipped; grading a run always sets SITE_URL and needs one
+const skipped = base === '' && !existsSync(chromium.executablePath())
+const describeSite = skipped ? describe.skip : describe
 
 beforeAll(async () => {
+  if (skipped) {
+    return
+  }
+
   if (base === '') {
     reference = await startSite(join(import.meta.dir, '../reference'), 4390)
     base = reference.url
@@ -28,11 +39,15 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await browser.close()
+  await browser?.close()
   await reference?.stop()
 })
 
 async function open(path: string, javaScriptEnabled = true): Promise<{ page: Page, context: BrowserContext }> {
+  if (!browser) {
+    throw new Error('no browser')
+  }
+
   const context = await browser.newContext({ javaScriptEnabled })
 
   // below the test timeout, so a missing element fails its own test instead of timing it out
@@ -62,7 +77,10 @@ async function hrefs(links: Locator): Promise<string[]> {
   return Promise.all((await links.all()).map(async link => pathOf(await link.getAttribute('href'))))
 }
 
-const texts = async (locator: Locator): Promise<string[]> => (await locator.allTextContents()).map(text => text.trim())
+// Typographic quotes count as straight ones: Astro's Markdown turns ' into a curly quote by default, which the spec does not forbid
+const plain = (text: string): string => text.replaceAll(curlySingle, '\'').replaceAll(curlyDouble, '"')
+
+const texts = async (locator: Locator): Promise<string[]> => (await locator.allTextContents()).map(text => plain(text.trim()))
 
 const h1 = (page: Page): Locator => page.getByRole('heading', { level: 1 })
 
@@ -78,7 +96,7 @@ async function poll<T>(read: () => Promise<T>, expected: T): Promise<void> {
   expect<T>(last).toEqual(expected)
 }
 
-describe('layout', () => {
+describeSite('layout', () => {
   const pages = [
     { path: '/', current: [] },
     { path: '/books', current: ['Books'] },
@@ -104,7 +122,7 @@ describe('layout', () => {
   }
 })
 
-describe('home', () => {
+describeSite('home', () => {
   test('shows the intro and the three top rated books in order', async () => {
     await withPage('/', async (page) => {
       expect(await page.title()).toBe('Bookshelf')
@@ -120,7 +138,7 @@ describe('home', () => {
   }, timeout)
 })
 
-describe('books', () => {
+describeSite('books', () => {
   const items = (page: Page): Locator => page.getByRole('list', { name: 'Books' }).locator(':scope > li')
   const visibleTitles = async (page: Page): Promise<string[]> =>
     texts(items(page).filter({ visible: true }).getByRole('link'))
@@ -164,7 +182,7 @@ describe('books', () => {
   }, timeout)
 })
 
-describe('book pages', () => {
+describeSite('book pages', () => {
   for (const book of books) {
     test(`/books/${book.slug} shows the book`, async () => {
       await withPage(`/books/${book.slug}`, async (page) => {
@@ -185,13 +203,13 @@ describe('book pages', () => {
         const end = book.body.indexOf('\n\n')
         const firstParagraph = end === -1 ? book.body : book.body.slice(0, end)
 
-        expect(await main.textContent()).toContain(firstParagraph)
+        expect(plain(await main.textContent() ?? '')).toContain(firstParagraph)
       })
     }, timeout)
   }
 })
 
-describe('favorites', () => {
+describeSite('favorites', () => {
   test('toggle on the book page, survive a reload and show on the books list', async () => {
     const { page, context } = await open('/books/dracula')
 
@@ -217,7 +235,7 @@ describe('favorites', () => {
   }, timeout)
 })
 
-describe('about', () => {
+describeSite('about', () => {
   test('shows its text', async () => {
     await withPage('/about', async (page) => {
       expect(await page.title()).toBe('About | Bookshelf')
@@ -227,14 +245,16 @@ describe('about', () => {
   }, timeout)
 })
 
-describe('contact', () => {
+describeSite('contact', () => {
   const errors = {
     name: 'Name is required.',
     email: 'Email is required.',
     emailFormat: 'Enter a valid email address.',
     message: 'Message must be at least 20 characters.',
   }
-  const shown = async (page: Page, text: string): Promise<boolean> => page.getByText(text, { exact: true }).isVisible()
+  // a design may repeat a message, in a summary or a live region, so one visible match is enough
+  const shown = async (page: Page, text: string): Promise<boolean> => await page.getByText(text, { exact: true }).filter({ visible: true }).count() > 0
+  const appears = async (page: Page, text: string): Promise<void> => page.getByText(text, { exact: true }).filter({ visible: true }).first().waitFor()
   const send = async (page: Page): Promise<void> => page.getByRole('button', { name: 'Send', exact: true }).click()
 
   async function fill(page: Page, name: string, email: string, message: string): Promise<void> {
@@ -256,14 +276,14 @@ describe('contact', () => {
   test('validates on the server without JavaScript', async () => {
     await withPage('/contact', async (page) => {
       await send(page)
-      await page.getByText(errors.name, { exact: true }).waitFor()
+      await appears(page, errors.name)
       for (const text of [errors.name, errors.email, errors.message]) {
         expect(await shown(page, text)).toBe(true)
       }
 
       await fill(page, 'Ada', 'not-an-email', 'Too short')
       await send(page)
-      await page.getByText(errors.emailFormat, { exact: true }).waitFor()
+      await appears(page, errors.emailFormat)
       expect(await shown(page, errors.message)).toBe(true)
       expect(await shown(page, errors.name)).toBe(false)
       expect(await page.getByLabel('Name', { exact: true }).inputValue()).toBe('Ada')
@@ -272,7 +292,7 @@ describe('contact', () => {
 
       await fill(page, '  Ada Lovelace ', 'ada@example.com', 'I would like to suggest a book for the shelf.')
       await send(page)
-      await page.getByText('Thanks, Ada Lovelace! Your message has been sent.', { exact: true }).waitFor()
+      await appears(page, 'Thanks, Ada Lovelace! Your message has been sent.')
     }, false)
   }, timeout)
 
@@ -287,19 +307,19 @@ describe('contact', () => {
       })
       await fill(page, ' ', 'ada@', 'Too short')
       await send(page)
-      await page.getByText(errors.name, { exact: true }).waitFor()
+      await appears(page, errors.name)
       expect(await shown(page, errors.emailFormat)).toBe(true)
       expect(await shown(page, errors.message)).toBe(true)
       expect(posts).toEqual([])
 
       await fill(page, 'Ada', 'ada@example.com', 'I would like to suggest a book for the shelf.')
       await send(page)
-      await page.getByText('Thanks, Ada! Your message has been sent.', { exact: true }).waitFor()
+      await appears(page, 'Thanks, Ada! Your message has been sent.')
     })
   }, timeout)
 })
 
-describe('not found', () => {
+describeSite('not found', () => {
   for (const path of ['/books/no-such-book', '/no-such-page']) {
     test(`${path} answers 404 with the 404 page`, async () => {
       expect((await fetch(base + path)).status).toBe(404)

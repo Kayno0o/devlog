@@ -24,6 +24,8 @@ export interface RunMetrics {
   turns: number
   costUsd: number
   tokens: Tokens
+  /** The totals the result line reports, kept to cross-check `tokens`, summed from each API call; absent when the session never finished. */
+  resultTokens?: Tokens
   apiCalls: number
   /** The largest context one API call read: uncached input, cache writes and cache reads together. */
   peakContextTokens: number
@@ -35,6 +37,8 @@ export interface RunMetrics {
   docs: { calls: number, chars: number }
   /** Tool calls reaching outside the workspace or the network, which the prompt forbids. */
   outside: string[]
+  /** Lines that were not JSON, such as the last one of a transcript cut short by a kill. */
+  skippedLines: number
 }
 
 interface Usage {
@@ -68,6 +72,7 @@ interface Line {
   duration_api_ms?: number
   num_turns?: number
   total_cost_usd?: number | null
+  usage?: Usage
 }
 
 const checkCommand = /\b(?:bun run (?:check|build)|kay (?:check|build)|svelte-check|svelte-kit sync|tsc|astro (?:check|build)|vite build)\b/
@@ -117,6 +122,15 @@ function outsideOf(name: string, input: Record<string, unknown>, cwd: string): s
   return path.startsWith('/') && !path.startsWith(cwd) ? `${name}: ${path}` : undefined
 }
 
+function tokensOf(usage: Usage): Tokens {
+  return {
+    input: usage.input_tokens ?? 0,
+    output: usage.output_tokens ?? 0,
+    cacheCreation: usage.cache_creation_input_tokens ?? 0,
+    cacheRead: usage.cache_read_input_tokens ?? 0,
+  }
+}
+
 export function parseRun(text: string, cwd: string): RunMetrics {
   const metrics: RunMetrics = {
     model: '',
@@ -136,6 +150,7 @@ export function parseRun(text: string, cwd: string): RunMetrics {
     checkErrors: 0,
     docs: { calls: 0, chars: 0 },
     outside: [],
+    skippedLines: 0,
   }
   // one API response arrives as one line per content block, each repeating the same id and usage
   const usageById = new Map<string, Usage>()
@@ -147,7 +162,16 @@ export function parseRun(text: string, cwd: string): RunMetrics {
       continue
     }
 
-    const line = JSON.parse(raw) as Line
+    let line: Line
+
+    try {
+      line = JSON.parse(raw) as Line
+    }
+    catch {
+      metrics.skippedLines++
+
+      continue
+    }
 
     if (line.type === 'system' && line.subtype === 'init') {
       metrics.model = line.model ?? ''
@@ -217,15 +241,21 @@ export function parseRun(text: string, cwd: string): RunMetrics {
       metrics.durationApiMs = line.duration_api_ms ?? 0
       metrics.turns = line.num_turns ?? 0
       metrics.costUsd = line.total_cost_usd ?? 0
+
+      if (line.usage) {
+        metrics.resultTokens = tokensOf(line.usage)
+      }
     }
   }
 
   for (const usage of usageById.values()) {
-    metrics.tokens.input += usage.input_tokens ?? 0
-    metrics.tokens.output += usage.output_tokens ?? 0
-    metrics.tokens.cacheCreation += usage.cache_creation_input_tokens ?? 0
-    metrics.tokens.cacheRead += usage.cache_read_input_tokens ?? 0
-    const context = (usage.input_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0)
+    const call = tokensOf(usage)
+
+    metrics.tokens.input += call.input
+    metrics.tokens.output += call.output
+    metrics.tokens.cacheCreation += call.cacheCreation
+    metrics.tokens.cacheRead += call.cacheRead
+    const context = call.input + call.cacheCreation + call.cacheRead
 
     metrics.peakContextTokens = Math.max(metrics.peakContextTokens, context)
   }
