@@ -1,8 +1,7 @@
 import type { LanguageRegistration } from 'shiki'
+import kayGrammar from 'kay/kay.tmLanguage.json'
 import { createHighlighter } from 'shiki'
-import kayGrammar from './kay.tmLanguage.json'
 
-// Copied from kayjs's editors/vscode/syntaxes, which the published package does not ship.
 const kay: LanguageRegistration = { ...kayGrammar, name: 'kay', embeddedLangs: ['typescript'] }
 
 const highlighter = await createHighlighter({
