@@ -28,7 +28,7 @@ jobs:
 
       # The build checks the project and writes the types the lint of .kay files reads.
       - name: Build
-        run: bun run build:dist
+        run: bun run build
 
       - name: Lint
         run: bun run lint

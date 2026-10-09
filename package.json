@@ -4,13 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "kay dev",
-    "build": "kay build --static && rsync -a dist/ /opt/web/apps/devlog/",
+    "build": "kay build --static",
     "check": "kay check --deny-warnings",
     "lint": "keslint --cache",
     "lint:fix": "keslint --fix --cache",
     "fmt": "kay fmt",
-    "test": "bun test",
-    "build:dist": "kay build --static"
+    "test": "bun test"
   },
   "dependencies": {
     "elysia": "^1.4.30",

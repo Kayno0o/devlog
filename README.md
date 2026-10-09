@@ -42,10 +42,9 @@ bun run dev     # http://localhost:3000, drafts included
 bun run check   # kay check
 bun run test
 bun run lint
-bun run build   # static site into dist/, then copied to /opt/web/apps/devlog, live at once
-bun run build:dist # static site into dist/ only
+bun run build   # static site into dist/, which the host nginx serves
 ```
 
 ## Running it
 
-`bun run build` builds the site into `dist/`, with precompressed `.gz` copies, then copies it to `/opt/web/apps/devlog`, the root the host nginx serves, since its container only mounts `/opt/web` and `/var/www`. The site there takes `try_files $uri $uri.html $uri/index.html =404`, `gzip_static on`, `error_page 404 /404.html`, and an immutable cache on `/_kay/`. `SITE_URL` (default `https://log.kaynooo.fr`) sets the origin the feed, sitemap and canonical links use.
+`bun run build` writes the site to `dist/`, with precompressed `.gz` copies, which the host nginx serves directly from its read-only mount of the workspace, so a build is live at once. The site takes `try_files $uri $uri.html $uri/index.html =404`, `gzip_static on`, `error_page 404 /404.html`, and an immutable cache on `/_kay/`. `SITE_URL` (default `https://log.kaynooo.fr`) sets the origin the feed, sitemap and canonical links use.
