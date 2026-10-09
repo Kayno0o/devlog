@@ -24,10 +24,10 @@ figure.chart
     if better
       span.text-sm.text-muted {better} is better
   div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2" aria-hidden="true")
-    for row of rows key={row.label}
+    for row, i of rows key={row.label}
       span.text-sm(class={{ 'font-semibold': row.label === highlight, 'text-subtext': row.label !== highlight }}) {row.label}
       .flex.min-w-0.items-center.gap-2
-        .chart-bar(class={{ 'chart-bar-highlight': row.label === highlight }} style={`width: calc((100% - 6rem) * ${row.value / max()})`})
+        .chart-bar(class={{ 'chart-bar-highlight': row.label === highlight }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
         span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
   table.sr-only
     thead

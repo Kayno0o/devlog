@@ -46,17 +46,14 @@
     background-image: linear-gradient(to bottom right, color-mix(in oklab, var(--color-accent) 55%, var(--color-base)), var(--color-accent));
   }
 
-  @media (prefers-reduced-motion: no-preference) {
+  /* public/charts.js adds in-view once a chart shows, so the bars grow then; with scripting off they render at full width. */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
     .chart-bar {
-      animation: chart-bar-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+      transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--row) * 80ms);
     }
 
-    /* Where scroll-driven animations exist, each bar grows as it scrolls into view rather than on load. */
-    @supports (animation-timeline: view()) {
-      .chart-bar {
-        animation-timeline: view();
-        animation-range: entry 10% cover 30%;
-      }
+    .chart:not(.in-view) .chart-bar {
+      width: 0 !important;
     }
   }
 
@@ -145,11 +142,5 @@
     & .note > * + * {
       @apply mt-2;
     }
-  }
-}
-
-@keyframes chart-bar-grow {
-  from {
-    width: 0;
   }
 }

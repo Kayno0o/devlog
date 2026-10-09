@@ -14,6 +14,7 @@ head
   title {post.data.title}
   meta(name="description" content={post.data.description})
   meta(property="og:type" content="article")
+  script(src="/charts.js" type="module")
 article.mx-auto.max-w-3xl
   a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
     ArrowLeft.size-4
