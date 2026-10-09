@@ -38,6 +38,28 @@
 }
 
 @layer components {
+  .chart-bar {
+    @apply h-3 min-w-0.5 rounded-r bg-muted;
+  }
+
+  .chart-bar-highlight {
+    background-image: linear-gradient(to bottom right, color-mix(in oklab, var(--color-accent) 55%, var(--color-base)), var(--color-accent));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chart-bar {
+      animation: chart-bar-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* Where scroll-driven animations exist, each bar grows as it scrolls into view rather than on load. */
+    @supports (animation-timeline: view()) {
+      .chart-bar {
+        animation-timeline: view();
+        animation-range: entry 10% cover 30%;
+      }
+    }
+  }
+
   .skip-link {
     @apply absolute top-0 left-0 z-100 -translate-y-full bg-base px-2 py-1 text-accent transition-transform focus:translate-y-0;
   }
@@ -123,5 +145,11 @@
     & .note > * + * {
       @apply mt-2;
     }
+  }
+}
+
+@keyframes chart-bar-grow {
+  from {
+    width: 0;
   }
 }

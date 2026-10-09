@@ -9,7 +9,7 @@ it('scales bars to the largest value and highlights one row', async () => {
 
   expect(html).toContain('width: calc((100% - 6rem) * 1)')
   expect(html).toContain(`width: calc((100% - 6rem) * ${3853 / 4788})`)
-  expect(html).toContain('bg-accent')
+  expect(html).toContain('chart-bar-highlight')
   expect(html).toContain('higher is better')
   expect(html).toContain('<td>4,788 renders/s</td>')
 })

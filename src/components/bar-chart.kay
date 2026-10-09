@@ -27,7 +27,7 @@ figure.chart
     for row of rows key={row.label}
       span.text-sm(class={{ 'font-semibold': row.label === highlight, 'text-subtext': row.label !== highlight }}) {row.label}
       .flex.min-w-0.items-center.gap-2
-        div(class={['h-3 min-w-0.5 rounded-r', row.label === highlight ? 'bg-accent' : 'bg-muted']} style={`width: calc((100% - 6rem) * ${row.value / max()})`})
+        .chart-bar(class={{ 'chart-bar-highlight': row.label === highlight }} style={`width: calc((100% - 6rem) * ${row.value / max()})`})
         span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
   table.sr-only
     thead
