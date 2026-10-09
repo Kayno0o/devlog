@@ -1,0 +1,10 @@
+{
+  "name": "reference",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check": "true",
+    "build": "true",
+    "start": "bun server.ts"
+  }
+}

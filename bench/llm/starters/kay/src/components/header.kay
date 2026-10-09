@@ -1,0 +1,13 @@
+---
+import AccentPicker from './accent-picker.kay'
+
+const links = [{ href: '/', label: 'Home' }]
+---
+header.border-b-2.border-overlay0.bg-base.px-8.py-3
+  nav.mx-auto.flex.max-w-5xl.items-center.justify-between.gap-4(aria-label="Main navigation")
+    a.text-xl.font-bold.no-underline(href="/") kay
+    ul.flex.gap-4
+      for link of links
+        li
+          a(href={link.href}) {link.label}
+    AccentPicker

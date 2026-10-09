@@ -21,6 +21,7 @@
     "@kaynooo/eslint": "^6.1.2",
     "@types/bun": "^1.4.2",
     "bun-plugin-tailwind": "^0.1.2",
+    "playwright-core": "1.62.0",
     "tailwindcss": "^4.3.3"
   }
 }

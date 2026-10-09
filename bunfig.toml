@@ -1,2 +1,4 @@
 [test]
 preload = [ "kay/test/preload" ]
+# the benchmark starters are separate projects with tests of their own
+pathIgnorePatterns = [ "bench/llm/starters/**" ]

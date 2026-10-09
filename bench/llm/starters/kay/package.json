@@ -1,0 +1,27 @@
+{
+  "name": "site",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "kay dev",
+    "build": "kay build",
+    "compile": "kay build --compile server",
+    "start": "NODE_ENV=production bun src/server.ts",
+    "check": "kay check --deny-warnings",
+    "lint": "keslint --cache",
+    "lint:fix": "keslint --fix --cache",
+    "fmt": "kay fmt",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "elysia": "^1.4.30",
+    "kay": "npm:@kaynooo/kayjs@~1.16.5"
+  },
+  "devDependencies": {
+    "@iconify-json/tabler": "^1.2.41",
+    "@kaynooo/eslint": "^6.1.0",
+    "@types/bun": "^1.4.2",
+    "bun-plugin-tailwind": "^0.1.2",
+    "tailwindcss": "^4.3.3"
+  }
+}

@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: debian
+    steps:
+      - name: Install unzip and git
+        run: apt-get update && apt-get install -y unzip git
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check
+        run: bun run check
+
+      # After the check, which writes the types the lint of .kay files reads.
+      - name: Lint
+        run: bun run lint
+
+      - name: Test
+        run: bun run test
