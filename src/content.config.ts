@@ -10,6 +10,7 @@ export const posts = collection('content/posts', {
     title: t.String(),
     description: t.String(),
     date: t.Date(),
+    updated: t.Optional(t.Date()),
     tags: t.Array(t.String(), { default: [] }),
     draft: t.Optional(t.Boolean()),
   }),

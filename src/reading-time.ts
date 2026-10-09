@@ -1,0 +1,12 @@
+const FRONTMATTER = /^---\n[\s\S]*?\n---\n/
+const TAG = /<[^>]+>/g
+const SPACE = /\s+/
+const WORDS_PER_MINUTE = 230
+
+// Minutes a post's Markdown takes to read, its frontmatter and component tags left out.
+export async function readingMinutes(file: string): Promise<number> {
+  const text = (await Bun.file(file).text()).replace(FRONTMATTER, '').replace(TAG, ' ')
+  const words = text.split(SPACE).filter(word => word !== '').length
+
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE))
+}

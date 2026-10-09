@@ -63,6 +63,12 @@ SolidJS ships less JavaScript, in one file where kay needs two. kay's in-place p
 
 On the rest of the table benchmark kay is within 20% of the fastest, and first on selecting a row and on creating 10,000 rows. It is last on partial updates and swaps: it replaces rows immutably under a keyed `for`, where Solid and Svelte write one signal per row.
 
+<Note title="How it was measured">
+
+One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2 and headless Chromium 151, on 2026-10-07: kay 1.3.0, solid-js 1.9.15 and svelte 5.57.1. Server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://git.kaynooo.fr/kaynooo/kayjs/src/branch/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
+
+</Note>
+
 ## A real site, ported from SvelteKit
 
 Benchmarks of a products table only go so far, so I ported a real site from SvelteKit to kay: a home page and content pages, about 3,000 lines of code over 22 Svelte components. Both versions were measured in one sitting, runs interleaved, on one desktop over loopback: the ratios carry over, the absolute numbers are optimistic.
@@ -86,6 +92,12 @@ The home page a phone downloads drops from 706 to 547 KB, mostly images: kay ser
 - **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.5 times at peak, 198 against 130 MiB under load.
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay paints 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
 - **CPU on short pages.** kay serves rendered pages at 1.6 to 2 times SvelteKit's rate, yet spends 9 to 11% more CPU per short page, compressing with brotli where SvelteKit uses gzip. Those server figures were taken with linked stylesheets.
+
+<Note title="How it was measured">
+
+One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3, on 2026-10-09: SvelteKit against kay 1.13.0, and 1.14.0 for the paints. Paints come from Playwright under Lighthouse's phone preset, 3 runs each; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections. Every figure and its conditions are in [bench/sveltekit-port.md](https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/bench/sveltekit-port.md).
+
+</Note>
 
 ## Two sites, ported from Astro
 
@@ -116,6 +128,12 @@ kay's figures there are a floor: the load client tops out near 40,000 requests a
 - **A heavier painter site on phones.** A phone downloads 206 KB per page against 126 KB, mostly fonts, 107 against 35 KB, and that script. Its largest paint lands about 80 ms later on a phone and 40 ms later on desktop.
 - **Larger phone images on the cattery**, 200 against 143 KB: sized for the test phone's 3x screen.
 - **Cold start on the painter**, 67 ms against 52 ms, where the cattery starts faster on kay, 73 against 110 ms.
+
+<Note title="How it was measured">
+
+One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production, on 2026-10-07: Astro against kay 1.4.0. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. Every figure is in [bench/astro-ports.md](https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/bench/astro-ports.md).
+
+</Note>
 
 ## What comes with it
 

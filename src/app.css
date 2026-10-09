@@ -61,6 +61,14 @@
     @apply absolute top-0 left-0 z-100 -translate-y-full bg-base px-2 py-1 text-accent transition-transform focus:translate-y-0;
   }
 
+  .toc {
+    @apply mb-10 border-l-2 border-surface pl-4 text-sm;
+
+    & ol {
+      @apply flex flex-col gap-1;
+    }
+  }
+
   .prose {
     @apply leading-relaxed;
 
@@ -72,7 +80,18 @@
       @apply mt-12 scroll-mt-6 font-semibold text-balance;
 
       & a {
-        @apply no-underline hover:underline;
+        @apply relative no-underline hover:underline;
+
+        /* kay links each heading to itself; the mark shows the link is there. */
+        &::before {
+          @apply absolute right-full pr-2 text-accent opacity-0;
+
+          content: '#';
+        }
+
+        &:is(:hover, :focus-visible)::before {
+          @apply opacity-100;
+        }
       }
     }
 
@@ -117,6 +136,12 @@
 
       /* Shiki writes the theme's background inline; the code block sits on the mantle instead. */
       background-color: var(--color-mantle) !important;
+
+      &[data-language]::before {
+        @apply mb-2 block font-sans text-xs text-muted;
+
+        content: attr(data-language);
+      }
     }
 
     & table:not(.sr-only) {

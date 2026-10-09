@@ -1,21 +1,25 @@
 --- server
 import { posts } from '../../content.config'
 import { formatDate } from '../../format'
+import { readingMinutes } from '../../reading-time'
 
 export const prerender = posts
 
 const post = await posts.get(ctx.params.slug) ?? ctx.notFound()
 const { Content } = post
+const minutes = await readingMinutes(post.file)
 ---
 ---
 import ArrowLeft from '~icons/tabler/arrow-left'
+import Pencil from '~icons/tabler/pencil'
+import Toc from '../../components/toc.kay'
 ---
 head
   title {post.data.title}
   meta(name="description" content={post.data.description})
   meta(property="og:type" content="article")
   script(src="/charts.js" type="module")
-article.mx-auto.max-w-3xl
+article.mx-auto.max-w-2xl
   a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
     ArrowLeft.size-4
     | All posts
@@ -23,7 +27,15 @@ article.mx-auto.max-w-3xl
     h1.mb-3.text-3xl.font-semibold.text-balance {post.data.title}
     p.flex.flex-wrap.gap-x-4.font-mono.text-sm.text-muted
       time(datetime={post.data.date.toISOString()}) {formatDate(post.data.date)}
+      if post.data.updated
+        span updated #[time(datetime={post.data.updated.toISOString()}) {formatDate(post.data.updated)}]
+      span {minutes} min read
       for tag of post.data.tags key={tag}
         span \#{tag}
+  Toc(headings={post.headings})
   .prose
     Content
+  footer.mt-12.border-t-2.border-surface.pt-4.text-sm.text-muted
+    a.inline-flex.items-center.gap-1(href={`https://git.kaynooo.fr/kaynooo/devlog/src/branch/main/${post.file}`})
+      Pencil.size-4
+      | Suggest a fix to this post
