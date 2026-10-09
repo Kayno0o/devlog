@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "elysia": "^1.4.30",
-    "kay": "npm:@kaynooo/kayjs@~1.16.2",
+    "kay": "npm:@kaynooo/kayjs@~1.16.5",
     "shiki": "^4.5.0"
   },
   "devDependencies": {
