@@ -96,8 +96,10 @@ const networkCommand = /\b(?:curl|wget)\b/
 // a curl at the agent's own server is fine, so only a remote URL or no local host at all counts as the network
 const remoteUrl = /https?:\/\/(?!localhost\b|127\.0\.0\.1\b|0\.0\.0\.0\b|\[::1\])/
 const localHost = /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0)\b/
-// a header such as `Origin: http://evil.com` in a curl at the agent's own server names a site without reaching it
-const headerArg = /(?:-H|--header)\s+(?:'[^']*'|"[^"]*"|\S+)/g
+// a header such as `Origin: http://evil.com`, or a `-w` output format, names a site without reaching it
+const nonTargetArg = /(?:-H|--header|-w|--write-out)\s+(?:'[^']*'|"[^"]*"|\S+)/g
+// a `for o in http://evil.com ...` list whose variable only ever fills such an argument
+const forList = /\bfor\s+(\w+)\s+in\s+[^;\n]*/g
 const pathSeparators = /[/.]/g
 // downloading a browser to test with reaches the network beyond a package install
 const browserDownload = /\b(?:playwright(?:-core)?\s+install|puppeteer\s+browsers\s+install)\b/
@@ -147,6 +149,10 @@ function readsDocs(input: Record<string, unknown>): boolean {
   return [input.file_path, input.path, input.command, input.pattern].some(value => typeof value === 'string' && docsPath.test(value))
 }
 
+function withoutNonTargetLoops(command: string): string {
+  return command.replaceAll(forList, (loop, name: string) => new RegExp(String.raw`\$\{?${name}\b`).test(command.replace(loop, '')) ? loop : '')
+}
+
 /** Whether the command's `cd`s leave the workspace, following the folder the Bash tool keeps from one call to the next in `shell.dir`. */
 function leaves(command: string, cwd: string, shell: { dir: string }): boolean {
   let left = false
@@ -171,7 +177,7 @@ function leaves(command: string, cwd: string, shell: { dir: string }): boolean {
 function outsideOf(name: string, input: Record<string, unknown>, cwd: string, shell: { dir: string }): string | undefined {
   if (name === 'Bash') {
     const command = withoutHeredocs(String(input.command ?? ''))
-    const target = command.replaceAll(headerArg, '')
+    const target = withoutNonTargetLoops(command.replaceAll(nonTargetArg, ''))
     const network = networkCommand.test(command) && (remoteUrl.test(target) || !localHost.test(target))
     const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
 
