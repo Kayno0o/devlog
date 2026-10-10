@@ -246,9 +246,9 @@ kay is meant to be as easy for a coding agent to write as for me:
 
 To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network, and a hidden suite of browser tests grades the site.
 
-<Screenshot src="/llm-bench/books.jpg" dark="/llm-bench/books-dark.jpg" alt="The books page: the Bookshelf header with its Books, About and Contact links, the heading All books, a row of tag buttons with All selected, and the eight books with their authors and years" />
+<Embed src="/llm-bench/bookshelf/books" title="The Bookshelf site kay's agent built" />
 
-Every agent built this same page; here is kay's, in this devlog's colors. Styling was left free and was not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so each site's own styles are swapped out here, and the line counts below leave styles out.
+That is the site kay's agent built, running: filter the books, open one, mark it a favorite. It is the run of median cost, exported to static files with four changes that needs: a base path, the list of book pages to export, a stylesheet in this devlog's colors, and no contact form, since its action needs a server. Styling was left free and was not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
 
 ### What kay gains
 

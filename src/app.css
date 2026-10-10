@@ -57,6 +57,10 @@
     }
   }
 
+  .embed {
+    @apply block h-[36rem] w-full rounded;
+  }
+
   .skip-link {
     @apply absolute top-0 left-0 z-100 -translate-y-full bg-base px-2 py-1 text-accent transition-transform focus:translate-y-0;
   }
@@ -194,7 +198,7 @@
       @apply rounded;
     }
 
-    & :is(.chart, .stats, .note, .tabs) {
+    & :is(.chart, .stats, .note, .tabs, .embed) {
       @apply my-8;
     }
 

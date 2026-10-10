@@ -1,7 +1,7 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
+import Embed from '../src/components/embed.kay'
 import PostMeta from '../src/components/post-meta.kay'
-import Screenshot from '../src/components/screenshot.kay'
 import Tab from '../src/components/tab.kay'
 import Toc from '../src/components/toc.kay'
 import { highlight } from '../src/highlight'
@@ -50,9 +50,8 @@ it('ties a tab\'s label to its radio, checked only when asked', async () => {
   expect(other).not.toContain('checked')
 })
 
-it('swaps a screenshot for its dark twin under a dark color scheme', async () => {
-  const html = await renderToString(Screenshot, { src: '/a.jpg', dark: '/a-dark.jpg', alt: 'A page' })
+it('frames a page lazily, named for screen readers', async () => {
+  const html = await renderToString(Embed, { src: '/llm-bench/bookshelf/books', title: 'The bookshelf' })
 
-  expect(html).toContain('<source media="(prefers-color-scheme: dark)" srcset="/a-dark.jpg">')
-  expect(html).toContain('src="/a.jpg" alt="A page"')
+  expect(html).toContain('src="/llm-bench/bookshelf/books" title="The bookshelf" loading="lazy"')
 })
