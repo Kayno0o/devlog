@@ -43,6 +43,7 @@ it('serves a feed per language', async () => {
 
   expect(feed.status).toBe(200)
   expect(feed.html).toContain('<title>devlog</title>')
+  expect(feed.html).toMatch(/<link>https?:\/\/[^<]+\/fr<\/link>/)
 })
 
 it('writes a post\'s dates, reading time and chart in French', async () => {
