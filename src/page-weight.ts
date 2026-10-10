@@ -6,21 +6,28 @@ const tag = /<(img|script|link)\b[^>]*>/g
 const src = /\bsrc="([^"]+)"/
 const href = /\bhref="([^"]+)"/
 const rel = /\brel="([^"]+)"/
-const scriptType = /\btype="([^"]+)"/
+const type = /\btype="([^"]+)"/
 const compressed = /\.(?:css|m?js|svg|json|xml|txt|html)$/
 // what a browser fetches on a first visit; touch icons, the manifest and feeds wait for the visitor to ask
-const fetchedRels = new Set(['stylesheet', 'icon', 'modulepreload'])
+const fetchedRels = new Set(['stylesheet', 'modulepreload'])
 const javascriptTypes = new Set(['module', 'text/javascript'])
 
 function linkedUrls(html: string): { urls: Set<string>, javascript: boolean } {
   const urls = new Set<string>()
+  const icons: string[] = []
+  let svgIcon: string | undefined
   let javascript = false
 
   for (const [element, name] of html.matchAll(tag)) {
     if (name === 'link') {
       const url = href.exec(element)?.[1]
+      const relation = rel.exec(element)?.[1] ?? ''
 
-      if (url !== undefined && fetchedRels.has(rel.exec(element)?.[1] ?? '')) {
+      if (url !== undefined && relation === 'icon') {
+        icons.push(url)
+        svgIcon ??= type.exec(element)?.[1] === 'image/svg+xml' ? url : undefined
+      }
+      else if (url !== undefined && fetchedRels.has(relation)) {
         urls.add(url)
       }
 
@@ -28,9 +35,9 @@ function linkedUrls(html: string): { urls: Set<string>, javascript: boolean } {
     }
 
     if (name === 'script') {
-      const type = scriptType.exec(element)?.[1]
+      const scriptType = type.exec(element)?.[1]
 
-      javascript ||= type === undefined || javascriptTypes.has(type)
+      javascript ||= scriptType === undefined || javascriptTypes.has(scriptType)
     }
 
     const url = src.exec(element)?.[1]
@@ -38,6 +45,11 @@ function linkedUrls(html: string): { urls: Set<string>, javascript: boolean } {
     if (url !== undefined) {
       urls.add(url)
     }
+  }
+
+  // a browser drawing SVG icons fetches the SVG one alone; the others are for browsers that do not
+  for (const icon of svgIcon === undefined ? icons : [svgIcon]) {
+    urls.add(icon)
   }
 
   return { urls, javascript }
