@@ -2,6 +2,7 @@
 // bun bench/llm/post.ts <label>
 import { join } from 'node:path'
 import process from 'node:process'
+import { benchSource } from '../../src/benches'
 import { benchDir } from './lib/workspace'
 
 interface Spread {
@@ -32,16 +33,22 @@ const passed = frameworks.reduce((sum, [, framework]) => sum + framework.passed,
 const model = summary.model.replace(modelId, (_, family: string, major: string, minor: string) => `${family[0]?.toUpperCase()}${family.slice(1)} ${major}.${minor}`)
 const source = `LLM benchmark, ${model}, effort ${summary.requested.effort}, median of the passing runs, ${summary.to.slice(0, 10)}`
 
+if (benchSource('llm', undefined) !== source) {
+  console.error(`benches.llm in src/benches.ts should read: ${source}`)
+}
+
 function chart(title: string, unit: string, key: string, digits: number, { scale = 1, lowerIsBetter = true } = {}): string {
   const rows = frameworks.map(([framework]) => ({ label: names[framework] ?? framework, value: Number((median(framework, key) / scale).toFixed(digits)) })).toSorted((a, b) => a.value - b.value)
 
-  return `<BarChart title="${title}" unit="${unit}" ${lowerIsBetter ? 'better="lower" ' : ''}highlight="kay" digits={${digits}} rows={${JSON.stringify(rows)}} source="${source}" />`
+  return `<BarChart title="${title}" unit="${unit}" ${lowerIsBetter ? 'better="lower" ' : ''}digits={${digits}} rows={${JSON.stringify(rows)}} bench="llm" />`
 }
+
+const others = frameworks.filter(([framework]) => framework !== 'kay').map(([framework]) => median(framework, 'outputTokens'))
+const thousands = (value: number): string => `${Math.round(value / 1000)}K`
 
 const stats = [
   { value: `${passed} of ${runs}`, label: 'runs passing every check and test' },
-  { value: `${median('kay', 'minutes').toFixed(1)} min`, label: 'kay, time to build the site' },
-  { value: String(median('kay', 'linesWritten')), label: 'kay, lines of code for the site' },
+  { value: `${thousands(median('kay', 'outputTokens'))} vs ${thousands(Math.min(...others))} to ${thousands(Math.max(...others))}`, label: 'tokens written, kay against the others' },
 ]
 
 console.log([
