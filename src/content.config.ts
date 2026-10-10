@@ -1,4 +1,4 @@
-import { t } from 'kay'
+import { s } from 'kay'
 import { collection } from 'kay/content'
 import BarChart from './components/bar-chart.kay'
 import Embed from './components/embed.kay'
@@ -10,13 +10,13 @@ import { highlight } from './highlight'
 
 export const posts = collection('content/posts', {
   localized: true,
-  schema: t.Object({
-    title: t.String(),
-    description: t.String(),
-    date: t.Date(),
-    updated: t.Optional(t.Date()),
-    tags: t.Array(t.String(), { default: [] }),
-    draft: t.Optional(t.Boolean()),
+  schema: s.Object({
+    title: s.String(),
+    description: s.String(),
+    date: s.Date(),
+    updated: s.Optional(s.Date()),
+    tags: s.Array(s.String(), { default: [] }),
+    draft: s.Optional(s.Boolean()),
   }),
   components: { BarChart, Embed, Note, Stats, Tab, Tabs },
   highlight,
