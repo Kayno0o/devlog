@@ -9,13 +9,29 @@
     background-image: linear-gradient(to bottom right, color-mix(in oklab, var(--color-accent) 55%, var(--color-base)), var(--color-accent));
   }
 
+  /* A row with a spread of runs: its bar fills to the median run, the track carries on in gray to the far end, and a tick stands at the near end. */
+  .chart-range {
+    @apply relative h-3 min-w-0.5 rounded-r;
+
+    background-color: color-mix(in oklab, var(--color-muted) 30%, transparent);
+  }
+
+  .chart-range > .chart-bar {
+    @apply h-full;
+  }
+
+  .chart-range-tick {
+    @apply absolute -inset-y-1 -ml-px w-0.5 rounded-full bg-text;
+  }
+
   /* public/charts.js adds in-view once a chart shows, so the bars grow then; with scripting off they render at full width. */
   @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-    .chart-bar {
+    .chart-bar:not(.chart-range > *),
+    .chart-range {
       transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--row) * 80ms);
     }
 
-    .chart:not(.in-view) .chart-bar {
+    .chart:not(.in-view) :is(.chart-bar:not(.chart-range > *), .chart-range) {
       width: 0 !important;
     }
   }

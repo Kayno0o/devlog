@@ -40,3 +40,21 @@ it('puts each framework\'s logo before its name, a site after the comma included
   expect(html.match(/<svg/g)).toHaveLength(1)
   expect(html).toMatch(/<img[^>]*class="size-4"/)
 })
+
+it('fills a ranged row to its median, scales it to the highest run and ticks its lowest', async () => {
+  const html = await renderToString(BarChart, { title: 'Time', unit: 'min', better: 'lower', rows: [{ label: 'kay', value: 2, range: [1, 4] }, { label: 'Astro', value: 3, range: [2, 8] }] })
+
+  expect(html).toContain('width: calc((100% - 6rem) * 0.5)')
+  expect(html).toContain('width: calc((100% - 6rem) * 1)')
+  expect(html).toContain('width: 50%')
+  expect(html).toContain('left: 25%')
+  expect(html).toContain('<td>1 to 4 min</td>')
+  expect(html).toContain('gray carries on to the worst, the tick marks the best')
+})
+
+it('leaves the runs column and the legend out when no row has a range', async () => {
+  const html = await renderToString(BarChart, { title: 'Renders', unit: 'renders/s', rows })
+
+  expect(html).not.toContain('chart-range')
+  expect(html).not.toContain('Runs')
+})

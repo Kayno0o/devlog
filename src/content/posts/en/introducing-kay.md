@@ -262,25 +262,25 @@ That is the site kay's agent built, running: filter the books, open one, mark it
 
 ### What kay gains
 
-<Stats items={[{"value":"16K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
+<Stats items={[{"value":"13K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
-<BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.1},{"label":"Astro","value":2.6},{"label":"SvelteKit","value":4.5},{"label":"SolidStart","value":9.3}]} bench="llm" />
+<BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.6,"range":[1.9,2.8]},{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
 
-<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":334},{"label":"Astro","value":463},{"label":"SvelteKit","value":472},{"label":"SolidStart","value":537}]} bench="llm" />
+<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":348,"range":[333,360]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]}]} bench="llm" />
 
-kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site fastest, in 28 to 38% fewer lines than the others.
+kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site as fast as Astro and faster than the other two, in 25 to 35% fewer lines than any of them.
 
 ### What kay loses
 
-<BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78},{"label":"kay","value":1.2},{"label":"SvelteKit","value":1.52},{"label":"SolidStart","value":1.94}]} bench="llm" />
+<BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.88,1.11]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
-<BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Astro","value":29},{"label":"SolidStart","value":52},{"label":"SvelteKit","value":89},{"label":"kay","value":90}]} bench="llm" />
+<BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":96,"range":[83,116]}]} bench="llm" />
 
 Astro builds the site for less. The model already knows Astro, while it learns kay from its docs, reading three times as much, and every call after those reads pays for them again. kay still costs less than SvelteKit and SolidStart, which the model knows too.
 
 <Note title="How it was measured">
 
-kay 1.18.0. Each run is one headless Claude Code session, Opus 5.5 at high effort, with no project instructions, hooks or plugins, in a fresh copy of the framework's starter under bubblewrap, so it cannot see the tests, the other runs or anything else on the machine. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus/results.md).
+kay 1.27.0, its runs a few hours after the others, with the same model and Claude Code. Each run is one headless Claude Code session, Opus 5.5 at high effort, with no project instructions, hooks or plugins, in a fresh copy of the framework's starter under bubblewrap, so it cannot see the tests, the other runs or anything else on the machine. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
 

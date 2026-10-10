@@ -8,6 +8,8 @@ import { benchDir } from './lib/workspace'
 
 interface Spread {
   median: number
+  min: number
+  max: number
 }
 
 interface Summary {
@@ -28,7 +30,8 @@ const summary = await Bun.file(join(benchDir, 'results', label, 'summary.json'))
 const modelId = /^claude-(\w+)-(\d+)-(\d+)$/
 const names: Record<string, string> = { kay: 'kay', sveltekit: 'SvelteKit', solidstart: 'SolidStart', astro: 'Astro' }
 const frameworks = Object.entries(summary.frameworks)
-const median = (framework: string, key: string): number => summary.frameworks[framework]?.measures[key]?.median ?? 0
+const spread = (framework: string, key: string): Spread => summary.frameworks[framework]?.measures[key] ?? { median: 0, min: 0, max: 0 }
+const median = (framework: string, key: string): number => spread(framework, key).median
 const runs = frameworks.reduce((sum, [, framework]) => sum + framework.runs, 0)
 const passed = frameworks.reduce((sum, [, framework]) => sum + framework.passed, 0)
 const model = summary.model.replace(modelId, (_, family: string, major: string, minor: string) => `${family[0]?.toUpperCase()}${family.slice(1)} ${major}.${minor}`)
@@ -39,7 +42,12 @@ if (`${messages.benches.llm}, ${benches.llm.date}` !== source) {
 }
 
 function chart(title: string, unit: string, key: string, digits: number, { scale = 1, lowerIsBetter = true } = {}): string {
-  const rows = frameworks.map(([framework]) => ({ label: names[framework] ?? framework, value: Number((median(framework, key) / scale).toFixed(digits)) })).toSorted((a, b) => a.value - b.value)
+  const round = (value: number): number => Number((value / scale).toFixed(digits))
+  const rows = frameworks.map(([framework]) => {
+    const { median, min, max } = spread(framework, key)
+
+    return { label: names[framework] ?? framework, value: round(median), range: [round(min), round(max)] }
+  }).toSorted((a, b) => a.value - b.value)
 
   return `<BarChart title="${title}" unit="${unit}" ${lowerIsBetter ? 'better="lower" ' : ''}digits={${digits}} rows={${JSON.stringify(rows)}} bench="llm" />`
 }

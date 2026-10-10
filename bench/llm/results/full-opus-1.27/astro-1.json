@@ -1,0 +1,173 @@
+{
+  "framework": "astro",
+  "run": 1,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T02:24:05.854Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "astro": "7.3.8",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 216518,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 216328,
+    "durationApiMs": 188322,
+    "turns": 31,
+    "costUsd": 1.1243354000000003,
+    "tokens": {
+      "input": 58,
+      "output": 23862,
+      "cacheCreation": 53684,
+      "cacheRead": 1086957
+    },
+    "outputExact": true,
+    "thinkingTokens": 5693,
+    "apiCalls": 29,
+    "peakContextTokens": 58940,
+    "toolCalls": {
+      "Bash": 29,
+      "Write": 1
+    },
+    "toolErrors": 3,
+    "checkRuns": [
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site\nsed -i \"/button.setAttribute('aria-pressed', String(favorite));/d\" 'src/pages/books/[slug].astro'\ncat > src/pages/contact.astro <<'EOF'\n---\nimport Layout from '../layouts/Layout.astro';\nimport {\n  readContact,\n  successMessage,\n  validateContact,\n  type ContactErrors,\n  type ContactValues,\n} from '../lib/contact';\n\nlet values: ContactValues = { name: '', email: '', message: '' };\nlet errors: ContactErrors = {};\nlet success: string | undefined;\n\nfunction isSameOrigin(request: Request, url: URL): boolean {\n  if (request.headers.get('sec-fetch-site') === 'cross-site') return false;\n  const origin = request.headers.get('origin');\n  if (!origin || origin === 'null') return true;\n  const allowed = new Set([url.origin]);\n  if (process.env.ORIGIN) allowed.add(new URL(process.env.ORIGIN).origin);\n  return allowed.has(origin);\n}\n\nif (Astro.request.method === 'POST') {\n  if (!isSameOrigin(Astro.request, Astro.url)) {\n    return new Response('Cross-site POST form submissions are forbidden', { status: 403 });\n  }\n  let data: FormData;\n  try {\n    data = await Astro.request.formData();\n  } catch {\n    data = new FormData();\n  }\n  values = readContact(data);\n  errors = validateContact(values);\n  if (Object.keys(errors).length === 0) {\n    success = successMessage(values.name);\n    values = { name: '', email: '', message: '' };\n  } else {\n    Astro.response.status = 400;\n  }\n}\n---\n\n<Layout title=\"Contact | Bookshelf\" section=\"contact\">\n  <h1>Contact</h1>\n  <div id=\"contact\">\n    <p class=\"success\" role=\"status\" hidden={!success}>{success}</p>\n    <form method=\"post\" action=\"/contact\" novalidate>\n      <div class=\"field\">\n        <label for=\"name\">Name</label>\n        <input\n          id=\"name\"\n          name=\"name\"\n          type=\"text\"\n          autocomplete=\"name\"\n          value={values.name}\n          aria-invalid={errors.name ? 'true' : undefined}\n          aria-describedby=\"name-error\"\n        />\n        <p class=\"error\" id=\"name-error\" hidden={!errors.name}>{errors.name}</p>\n      </div>\n      <div class=\"field\">\n        <label for=\"email\">Email</label>\n        <input\n          id=\"email\"\n          name=\"email\"\n          type=\"email\"\n          autocomplete=\"email\"\n          value={values.email}\n          aria-invalid={errors.email ? 'true' : undefined}\n          aria-describedby=\"email-error\"\n        />\n        <p class=\"error\" id=\"email-error\" hidden={!errors.email}>{errors.email}</p>\n      </div>\n      <div class=\"field\">\n        <label for=\"message\">Message</label>\n        <textarea\n          id=\"message\"\n          name=\"message\"\n          rows=\"6\"\n          aria-invalid={errors.message ? 'true' : undefined}\n          aria-describedby=\"message-error\">{values.message}</textarea>\n        <p class=\"error\" id=\"message-error\" hidden={!errors.message}>{errors.message}</p>\n      </div>\n      <button type=\"submit\">Send</button>\n    </form>\n  </div>\n</Layout>\n\n<script>\n  import { readContact, validateContact, type ContactField } from '../lib/contact';\n\n  const fields: ContactField[] = ['name', 'email', 'message'];\n  const container = document.querySelector<HTMLDivElement>('#contact');\n\n  function showErrors(form: HTMLFormElement, errors: Partial<Record<ContactField, string>>) {\n    for (const field of fields) {\n      const control = form.elements.namedItem(field);\n      const error = document.getElementById(`${field}-error`);\n      const message = errors[field];\n      if (error) {\n        error.textContent = message ?? '';\n        error.hidden = !message;\n      }\n      if (control instanceof HTMLElement) {\n        if (message) control.setAttribute('aria-invalid', 'true');\n        else control.removeAttribute('aria-invalid');\n      }\n    }\n  }\n\n  function bind() {\n    const form = container?.querySelector('form');\n    if (!form) return;\n    form.addEventListener('submit', async (event) => {\n      event.preventDefault();\n      const success = container?.querySelector<HTMLElement>('.success');\n      if (success) success.hidden = true;\n      const data = new FormData(form);\n      const errors = validateContact(readContact(data));\n      showErrors(form, errors);\n      const firstInvalid = fields.find((field) => errors[field]);\n      if (firstInvalid) {\n        document.getElementById(firstInvalid)?.focus();\n        return;\n      }\n      const button = form.querySelector('button');\n      if (button) button.disabled = true;\n      try {\n        const response = await fetch(form.action, { method: 'POST', body: new URLSearchParams(data as unknown as Record<string, string>) });\n        const html = await response.text();\n        const next = new DOMParser().parseFromString(html, 'text/html').querySelector('#contact');\n        if (!container || !next) throw new Error('Unexpected response');\n        container.innerHTML = next.innerHTML;\n        bind();\n      } catch {\n        form.submit();\n      } finally {\n        if (button) button.disabled = false;\n      }\n    });\n  }\n\n  bind();\n</script>\n\n<style>\n  form {\n    display: grid;\n    gap: 1rem;\n    max-width: 32rem;\n  }\n  .field {\n    display: grid;\n    gap: 0.25rem;\n  }\n  label {\n    font-weight: bold;\n  }\n  input,\n  textarea {\n    font: inherit;\n    padding: 0.4rem 0.5rem;\n    border: 1px solid var(--line);\n    border-radius: 0.3rem;\n  }\n  [aria-invalid='true'] {\n    border-color: #b00020;\n  }\n  .error {\n    margin: 0;\n    color: #b00020;\n  }\n  .success {\n    padding: 0.75rem 1rem;\n    border: 1px solid #2e7d32;\n    background: #edf7ee;\n    color: #1b5e20;\n    border-radius: 0.3rem;\n  }\n  button[type='submit'] {\n    justify-self: start;\n  }\n</style>\nEOF\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; grep -n \"getSecret\" -r docs/reference/modules/astro-env.mdx | head -5\npython3 - <<'EOF'\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"\"\"import Layout from '../layouts/Layout.astro';\nimport {\"\"\",\"\"\"import { getSecret } from 'astro:env/server';\nimport Layout from '../layouts/Layout.astro';\nimport {\"\"\",1)\ns=s.replace(\"\"\"  if (process.env.ORIGIN) allowed.add(new URL(process.env.ORIGIN).origin);\"\"\",\"\"\"  const publicOrigin = getSecret('ORIGIN');\n  if (publicOrigin && URL.canParse(publicOrigin)) allowed.add(new URL(publicOrigin).origin);\"\"\")\ns=s.replace(\"body: new URLSearchParams(data as unknown as Record<string, string>)\",\"body: data\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -8",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; bun run build 2>&1 | tail -15; (PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &); sleep 2; for p in / /books /books/frankenstein /books/nope /nope /about /contact /books/a/b; do echo \"$p $(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4701$p)\"; done; cat /tmp/srv.log",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; pkill -f 'dist/server/entry.mjs'; sleep 0.5; bun run build >/dev/null 2>&1 && echo built; (PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &); sleep 1.5\ncat > /tmp/ui.test.mjs <<'EOF'\nimport { Browser } from 'happy-dom';\nconst browser = new Browser({ settings: { disableJavaScriptFileLoading: false, disableJavaScriptEvaluation: false } });\nconst page = browser.newPage();\nconst B = 'http://127.0.0.1:4701';\nconst wait = () => page.waitUntilComplete().then(() => new Promise(r => setTimeout(r, 300)));\nconst doc = () => page.mainFrame.document;\nconst visible = () => [...doc().querySelectorAll('ul[aria-label=Books] li')].filter(li => !li.hidden).map(li => li.textContent);\n\nawait page.goto(B + '/books'); await wait();\nconsole.log('initial', visible().length);\n[...doc().querySelectorAll('button')].find(b => b.textContent === 'sea').click();\nconsole.log('sea', visible(), [...doc().querySelectorAll('button[aria-pressed=true]')].map(b=>b.textContent));\n[...doc().querySelectorAll('button')].find(b => b.textContent === 'All').click();\nconsole.log('all', visible().length);\n\nawait page.goto(B + '/books/dracula'); await wait();\nlet btn = doc().querySelector('.favorite-toggle'); console.log('btn', btn.textContent); btn.click(); console.log('after', btn.textContent);\nawait page.goto(B + '/books/dracula'); await wait();\nconsole.log('reload', doc().querySelector('.favorite-toggle').textContent);\nawait page.goto(B + '/books'); await wait();\nconsole.log('fav', visible().filter(t => t.includes('Favorite')));\n\nawait page.goto(B + '/contact'); await wait();\nconst f = doc().querySelector('form');\ndoc().querySelector('#email').value = 'bad';\nf.querySelector('button').click(); await new Promise(r => setTimeout(r, 300));\nconsole.log('errors', [...doc().querySelectorAll('.error')].filter(e => !e.hidden).map(e => e.textContent), page.mainFrame.url);\ndoc().querySelector('#name').value = ' Zed ';\ndoc().querySelector('#email').value = 'z@z.io';\ndoc().querySelector('#message').value = 'Hello there, this is long enough.';\ndoc().querySelector('form button').click(); await new Promise(r => setTimeout(r, 1000));\nconsole.log('success', doc().querySelector('.success').hidden, doc().querySelector('.success').textContent, page.mainFrame.url);\nawait browser.close();\nEOF\ncp /tmp/ui.test.mjs ./ui.test.mjs && bun ui.test.mjs; rm ui.test.mjs; tail -3 /tmp/srv.log",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; pgrep -af entry.mjs; bun run build >/dev/null 2>&1 && echo built",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; ls node_modules/happy-dom 2>/dev/null | head -1; printf -- '---\\ntitle: A Test Book\\nauthor: Tess Ter\\nyear: 1900\\nrating: 5\\ntags: [zzz]\\n---\\n\\nBody **bold**.\\n' > content/books/a-test-book.md\nfor p in $(pgrep -f 'bun dist/server/entry.mjs'); do kill $p; done; sleep 0.5\nbun run build >/dev/null 2>&1; (PORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &); sleep 1.5\ncurl -s http://127.0.0.1:4702/ | grep -o '<ol>.*</ol>'; curl -s -o /dev/null -w '%{http_code}\\n' http://127.0.0.1:4702/books/a-test-book; curl -s http://127.0.0.1:4702/books | grep -o 'data-tag=\"zzz\"'\nfor p in $(pgrep -f 'bun dist/server/entry.mjs'); do kill $p; done\nrm content/books/a-test-book.md\nbun run check 2>&1 | tail -4 && bun run build 2>&1 | tail -2\n(PORT=4703 HOST=127.0.0.1 ORIGIN=http://localhost:4703 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &); sleep 1.5; curl -s -o /dev/null -w '%{http_code}\\n' http://127.0.0.1:4703/books/a-test-book; for p in $(pgrep -f 'bun dist/server/entry.mjs'); do kill $p; done; sleep 0.5; pgrep -af 'entry.mjs' | grep -v pgrep | grep -v bash; git status --short",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; rm -rf node_modules/happy-dom\nbun run build >/dev/null 2>&1; PORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun dist/server/entry.mjs > /tmp/srv.log 2>&1 & PID=$!; sleep 1.5\ncurl -s http://127.0.0.1:4702/ | grep -o '<ol>.*</ol>'; curl -s -o /dev/null -w '%{http_code}\\n' http://127.0.0.1:4702/books/a-test-book; curl -s http://127.0.0.1:4702/books | grep -o 'data-tag=\"zzz\"'\nkill $PID; wait $PID 2>/dev/null\nrm content/books/a-test-book.md\nbun run check 2>&1 | tail -4 && bun run build 2>&1 | tail -2\nPORT=4703 HOST=127.0.0.1 ORIGIN=http://localhost:4703 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 & PID=$!; sleep 1.5\ncurl -s -o /dev/null -w '%{http_code} ' http://127.0.0.1:4703/books/a-test-book; curl -s -o /dev/null -w '%{http_code}\\n' http://127.0.0.1:4703/\npkill -P $PID; kill $PID 2>/dev/null; sleep 0.5; ps -eo pid,args | grep '[d]ist/server/entry'; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 2,
+    "docs": {
+      "calls": 2,
+      "chars": 7688
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site; grep -n \"getSecret\" -r docs/reference/modules/astro-env.mdx | head -5\npython3 - <<'EOF'\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"\"\"import Layout from '../layouts/Layout.astro';\nimport {\"\"\",\"\"\"import { getSecret } from 'astro:env/server';\nimport Layout from '../layouts/Layout.astro';\nimport {\"\"\",1)\ns=s.replace(\"\"\"  if (process.env.ORIGIN) allowed.add(new URL(process.env.ORIGIN).origin);\"\"\",\"\"\"  const publicOrigin = getSecret('ORIGIN');\n  if (publicOrigin && URL.canParse(publicOrigin)) allowed.add(new URL(publicOrigin).origin);\"\"\")\ns=s.replace(\"body: new URLSearchParams(data as unknown as Record<string, string>)\",\"body: data\")\nopen(p,'w').write(s)\nEOF\nbun run check 2>&1 | tail -8",
+      "cd /home/kaynooo/.cache/llm-bench/full-opus/astro-1/site\npython3 - <<'EOF'\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"\"\"    values = { name: '', email: '', message: '' };\n  } else {\n    Astro.response.status = 400;\n  }\"\"\",\"\"\"    values = { name: '', email: '', message: '' };\n  }\"\"\")\nopen(p,'w').write(s)\np='src/pages/books/[slug].astro'\ns=open(p).read()\ns=s.replace(\"import { getEntry, render } from 'astro:content';\",\"import { getCollection, render } from 'astro:content';\")\ns=s.replace(\"const book = slug ? await getEntry('books', slug) : undefined;\",\"const book = (await getCollection('books')).find((entry) => entry.id === slug);\")\nopen(p,'w').write(s)\nEOF\ngit status --short; cp package.json /tmp/pkg.bak; cp bun.lock /tmp/lock.bak; bun add -d happy-dom 2>&1 | tail -2"
+    ],
+    "resultTokens": {
+      "input": 58,
+      "output": 23862,
+      "cacheCreation": 53684,
+      "cacheRead": 1086957
+    }
+  },
+  "diff": {
+    "files": 12,
+    "added": 608,
+    "removed": 15,
+    "testLines": 0,
+    "styleLines": 168,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://github.com/withastro/docs src/content/docs/en",
+    "revision": "bf9e538c64a51cd6ae7b212e0bcfdbf537dc6430",
+    "fetchedAt": "2026-10-10T01:14:03.245Z",
+    "files": 424,
+    "bytes": 2984973
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/astro-1"
+}
