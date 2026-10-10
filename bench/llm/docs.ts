@@ -1,6 +1,8 @@
 // Writes each starter's offline docs/ folder from its framework's official docs, and records where they came from in starters/docs-sources.json.
+// bun bench/llm/docs.ts [--frameworks kay,sveltekit,solidstart,astro]
 import { cpSync, mkdirSync, rmSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { parseArgs } from 'node:util'
 
 const starters = join(import.meta.dir, 'starters')
 
@@ -77,10 +79,13 @@ function bytesIn(dir: string): number {
   return [...new Bun.Glob('**/*').scanSync(dir)].reduce((sum, path) => sum + Bun.file(join(dir, path)).size, 0)
 }
 
-const sources: Record<string, Source> = {}
+const { values } = parseArgs({ options: { frameworks: { type: 'string', default: 'kay,sveltekit,solidstart,astro' } } })
+const sourcesFile = join(starters, 'docs-sources.json')
+// refreshing some frameworks keeps what the others' docs were fetched from
+const sources = await Bun.file(sourcesFile).exists() ? await Bun.file(sourcesFile).json() as Record<string, Source> : {}
 const fetchedAt = new Date().toISOString()
 
-for (const framework of ['kay', 'sveltekit', 'solidstart', 'astro']) {
+for (const framework of (values.frameworks ?? '').split(',').filter(Boolean)) {
   const out = join(starters, framework, 'docs')
 
   rmSync(out, { recursive: true, force: true })
@@ -111,4 +116,4 @@ for (const framework of ['kay', 'sveltekit', 'solidstart', 'astro']) {
   console.log(`${framework}: ${sources[framework]?.files} files`)
 }
 
-await Bun.write(join(starters, 'docs-sources.json'), `${JSON.stringify(sources, null, 2)}\n`)
+await Bun.write(sourcesFile, `${JSON.stringify(sources, null, 2)}\n`)
