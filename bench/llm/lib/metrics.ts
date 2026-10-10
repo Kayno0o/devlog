@@ -1,4 +1,5 @@
 // Reads one agent run out of `claude -p --output-format stream-json --verbose` lines.
+import { resolve } from 'node:path'
 
 export interface Tokens {
   input: number
@@ -101,7 +102,8 @@ const pathSeparators = /[/.]/g
 // downloading a browser to test with reaches the network beyond a package install
 const browserDownload = /\b(?:playwright(?:-core)?\s+install|puppeteer\s+browsers\s+install)\b/
 const homePath = /(?:~|\/home\/)[^\s'"]*/g
-const parentCd = /(?:^|\s)cd\s+\.\.(?:\s|\/|$)/
+// a subshell's `(cd ..)` is read as one the shell keeps, which only matters if it left
+const cdCommand = /(?:^|&&|\|\||[\n;(])\s*cd\s+([^\s;&|)]+)/g
 const heredocStart = /<<-?\s*['"]?(\w+)/
 const otherRuntime = /(?:^|[\s;&|(])(?:python3?|node|npx|npm|pnpm|yarn)(?=\s|$)/m
 const failedExit = /^Exit code [1-9]/
@@ -145,15 +147,35 @@ function readsDocs(input: Record<string, unknown>): boolean {
   return [input.file_path, input.path, input.command, input.pattern].some(value => typeof value === 'string' && docsPath.test(value))
 }
 
+/** Whether the command's `cd`s leave the workspace, following the folder the Bash tool keeps from one call to the next in `shell.dir`. */
+function leaves(command: string, cwd: string, shell: { dir: string }): boolean {
+  let left = false
+
+  for (const [, target = ''] of command.matchAll(cdCommand)) {
+    const dir = target.startsWith('~') ? target : resolve(shell.dir, target)
+
+    if (dir === cwd || dir.startsWith(`${cwd}/`)) {
+      shell.dir = dir
+    }
+    else {
+      // Claude Code puts a shell that left the project back at its root
+      left = true
+      shell.dir = cwd
+    }
+  }
+
+  return left
+}
+
 /** Paths and commands of a tool call that leave the workspace or use the network. */
-function outsideOf(name: string, input: Record<string, unknown>, cwd: string): string | undefined {
+function outsideOf(name: string, input: Record<string, unknown>, cwd: string, shell: { dir: string }): string | undefined {
   if (name === 'Bash') {
     const command = withoutHeredocs(String(input.command ?? ''))
     const target = command.replaceAll(headerArg, '')
     const network = networkCommand.test(command) && (remoteUrl.test(target) || !localHost.test(target))
     const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
 
-    return network || home || parentCd.test(command) || browserDownload.test(command) ? `Bash: ${String(input.command)}` : undefined
+    return leaves(command, cwd, shell) || network || home || browserDownload.test(command) ? `Bash: ${String(input.command)}` : undefined
   }
 
   const path = String(input.file_path ?? input.path ?? '')
@@ -199,6 +221,7 @@ export function parseRun(text: string, cwd: string): RunMetrics {
   }
   // one API response arrives as one line per content block, each repeating the same id and usage
   const usageById = new Map<string, Usage>()
+  const shell = { dir: cwd }
   const pendingChecks = new Map<string, string>()
   const pendingDocs = new Set<string>()
   let thinkingEstimate = 0
@@ -246,7 +269,7 @@ export function parseRun(text: string, cwd: string): RunMetrics {
         const input = block.input ?? {}
 
         metrics.toolCalls[name] = (metrics.toolCalls[name] ?? 0) + 1
-        const outside = outsideOf(name, input, cwd)
+        const outside = outsideOf(name, input, cwd, shell)
 
         if (outside !== undefined) {
           metrics.outside.push(outside)
