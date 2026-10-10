@@ -123,13 +123,7 @@ Je tiens à la vitesse partout : la rapidité avec laquelle une page se charge 
 
 Je tiens aussi à la quantité de code. J'ai deux applications à moi, une en SvelteKit d'environ 27 000 lignes et une en SolidJS d'environ 34 000, lignes vides et commentaires exclus : à cette taille, chaque ligne qu'un framework économise est une ligne de moins à écrire, à relire et à maintenir en état de marche. Aucune n'est encore migrée vers kay, et ça aura son propre article.
 
-J'adore la vitesse d'exécution de SolidJS et de Svelte, mais je n'aime pas la syntaxe de Svelte, et SolidJS seul rend dans le navigateur : le rendu serveur et l'export statique viennent avec SolidStart. Astro rend côté serveur et laisse les composants dynamiques à un autre framework. Astro avec SolidJS dedans a donc été mon choix pendant un temps, des pages rapides pour peu de code, au prix de deux frameworks et de deux façons d'écrire un composant dans un même projet. kay, c'est ce que j'ai construit pour tout avoir au même endroit.
-
-Je voulais aussi laisser Vite derrière moi : SvelteKit, SolidStart et Astro reposent tous dessus, et il rend parfois les builds et les tests unitaires lents. kay build et teste avec Bun seul, et profite de la vitesse de Bun pour les deux.
-
-## D'où il vient
-
-kay mélange ce que j'ai aimé ailleurs dans un seul format de fichier :
+Pendant un temps, j'ai utilisé Astro avec SolidJS dedans : des pages rapides pour peu de code, au prix de deux frameworks et de deux façons d'écrire un composant dans un même projet. SvelteKit, SolidStart et Astro reposent aussi tous sur Vite, qui rend parfois les builds et les tests unitaires lents. kay, c'est ce que j'ai construit pour tout avoir au même endroit, avec Bun seul pour le build et les tests. Il mélange ce que j'ai aimé dans chacun :
 
 - **Astro** : le bloc TypeScript en haut, les islands comme seul JavaScript qu'une page embarque, les content collections.
 - **pug** : des templates indentés sans balises fermantes. J'ai adoré pug il y a longtemps et je n'ai jamais vu un framework le supporter. C'est court à écrire, rapide à lire, et moins de tokens pour un agent.
@@ -181,34 +175,23 @@ Un tableau de produits ne mène pas bien loin, alors j'ai porté un vrai site de
 
 ### Ce que kay gagne
 
-<Stats items={[{"value": "-85 %", "label": "CPU serveur par visiteur"}, {"value": "-55 %", "label": "requêtes sur la page d'accueil"}, {"value": "-19 %", "label": "image Docker"}, {"value": "-16 %", "label": "lignes de code"}]} />
+<Stats items={[{"value": "-46 %", "label": "premier rendu sur mobile, page de contenu"}, {"value": "40x", "label": "requêtes par seconde, page d'accueil"}, {"value": "-85 %", "label": "CPU serveur par visiteur"}, {"value": "-36 %", "label": "JavaScript côté client"}, {"value": "-55 %", "label": "requêtes sur la page d'accueil"}, {"value": "-31 %", "label": "build, caches froids"}, {"value": "-19 %", "label": "image Docker"}, {"value": "-16 %", "label": "lignes de code"}]} />
 
-<BarChart title="Premier rendu sur mobile, page de contenu" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 404}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="preset Lighthouse Pixel 7 (4G lente, CPU 4x), médiane de 3 exécutions" />
+Une page ne charge de ce JavaScript que la partie dont ses islands ont besoin : 15 Ko sur une page de contenu.
 
-<BarChart title="JavaScript côté client, brotli" unit="Ko" better="lower" rows={[{"label": "kay", "value": 45.1}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="tous les fichiers écrits par le build" />
-
-Une page ne charge que la partie dont ses islands ont besoin : 15 Ko sur une page de contenu.
-
-La page d'accueil est prérendue, et son formulaire de contact, la seule partie qui diffère selon le visiteur, est une server island différée : le navigateur la récupère environ un écran avant qu'elle n'entre dans la vue, tandis que kay sert la page elle-même depuis la mémoire.
-
-<BarChart title="Requêtes par seconde, page d'accueil" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 31872}, {"label": "SvelteKit", "value": 798}]} bench="sveltekit" source="oha, 64 connexions pendant 10 s, 2 passes, la plus lente de kay" />
-
-L'essentiel de cet écart vient du prérendu, pas de la vitesse de rendu : quand kay rendait toute la page à chaque requête, comme SvelteKit, il la servait à environ deux fois le débit de SvelteKit.
-
-<BarChart title="Build, caches froids" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.48}, {"label": "SvelteKit", "value": 3.62}]} bench="sveltekit" source="hyperfine, médiane de 3 exécutions" />
+La page d'accueil est prérendue, et son formulaire de contact, la seule partie qui diffère selon le visiteur, est une server island différée : le navigateur la récupère environ un écran avant qu'elle n'entre dans la vue, tandis que kay sert la page elle-même depuis la mémoire. L'essentiel de l'écart de requêtes par seconde vient du prérendu, pas de la vitesse de rendu : quand kay rendait toute la page à chaque requête, comme SvelteKit, il la servait à environ deux fois le débit de SvelteKit.
 
 Sous charge, kay culmine à 87 Mio de mémoire contre 135 pour SvelteKit. La page d'accueil téléchargée par un mobile passe de 706 à 557 Ko, surtout grâce aux images : kay sert de l'AVIF à la largeur affichée.
 
 ### Ce que kay perd
 
-<BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 40}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS après le démarrage" />
-
+- **Plus de mémoire au repos.** 61 Mio après le démarrage, contre 40 pour SvelteKit.
 - **Le réglage par défaut n'est pas le chemin rapide.** Le rendu sur mobile ci-dessus demande `inlineStyles`, qui est optionnel : avec la feuille de styles liée, comme kay le fait par défaut, kay rendait de 85 à 140 ms derrière SvelteKit. L'inlining coûte environ 2 Ko par page, et la feuille de styles n'est plus mise en cache d'une page à l'autre.
 - **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,3 à 1,4 fois son CPU par requête. Avec la feuille liée, kay les servait à 1,8 à 2,2 fois le débit de SvelteKit.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.24.4 sur Bun 1.4.3 canary. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
+kay 1.24.4 sur Bun 1.4.3 canary. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le JavaScript côté client compte tous les fichiers écrits par le build, en brotli. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
 
 </Note>
 
@@ -287,10 +270,6 @@ kay 1.27.0, ses exécutions quelques heures après celles des autres, avec le m�
 ## Faut-il l'utiliser ?
 
 Pour un projet perso, un site personnel ou un site de petite entreprise, si ce que vous avez vu plus haut vous plaît : foncez, et dites-moi ce qui casse. Pour tout ce qui vous ferait réveiller la nuit, pas encore. kay est un projet d'une seule personne, il n'a pas d'écosystème à proprement parler, et une version mineure peut encore casser votre code : le tilde dans sa plage de versions n'est pas là pour rien. Lisez le changelog avant chaque mise à jour, ou profitez de la surprise.
-
-## La suite
-
-kay est toujours expérimental, et je fais pas mal de changements cassants pour l'instant. Ensuite, je migrerai les deux applications ci-dessus vers lui, et j'écrirai sur la façon dont ça s'est passé.
 
 ## Essayer
 
