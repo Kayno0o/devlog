@@ -1,0 +1,32 @@
+@reference '../app.css';
+
+@layer components {
+  /* Radio buttons pick the tab with no script; panels follow every label, so the labels line up above them. */
+  .tabs {
+    @apply flex flex-wrap gap-x-1;
+
+    & > .tab-label {
+      @apply cursor-pointer rounded-t px-3 py-1 text-sm text-subtext hover:text-text;
+    }
+
+    & > .tab-input:checked + .tab-label {
+      @apply bg-mantle text-text;
+    }
+
+    & > .tab-input:focus-visible + .tab-label {
+      @apply outline-2 outline-offset-2 outline-accent;
+    }
+
+    & > .tab-panel {
+      @apply order-1 hidden w-full;
+
+      & > * + * {
+        @apply mt-5;
+      }
+    }
+
+    & > .tab-input:checked + .tab-label + .tab-panel {
+      @apply block;
+    }
+  }
+}

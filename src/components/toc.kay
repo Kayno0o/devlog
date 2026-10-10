@@ -1,4 +1,6 @@
 ---
+import './toc.css'
+
 interface Heading {
   depth: number
   id: string

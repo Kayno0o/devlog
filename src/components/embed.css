@@ -1,0 +1,7 @@
+@reference '../app.css';
+
+@layer components {
+  .embed {
+    @apply block h-[36rem] w-full rounded;
+  }
+}
