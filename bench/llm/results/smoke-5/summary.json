@@ -1,0 +1,200 @@
+{
+  "label": "smoke-5",
+  "model": "claude-sonnet-5-5",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-10T00:37:23.241Z",
+  "to": "2026-10-10T00:39:43.955Z",
+  "frameworks": {
+    "kay": {
+      "runs": 3,
+      "passed": 2,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.17.4",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [],
+      "spent": {
+        "costUsd": 0.9169606000000001,
+        "totalTokens": 1292425,
+        "minutes": 2.7276333333333334
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 29,
+          "min": 28,
+          "max": 30
+        },
+        "cacheWriteTokens": {
+          "median": 42917,
+          "min": 39738,
+          "max": 46096
+        },
+        "cacheReadTokens": {
+          "median": 421937.5,
+          "min": 412432,
+          "max": 431443
+        },
+        "outputTokens": {
+          "median": 7745.5,
+          "min": 7644,
+          "max": 7847
+        },
+        "thinkingTokens": {
+          "median": 2029,
+          "min": 1964,
+          "max": 2094
+        },
+        "totalTokens": {
+          "median": 472629,
+          "min": 460047,
+          "max": 485211
+        },
+        "peakContextTokens": {
+          "median": 48298,
+          "min": 45119,
+          "max": 51477
+        },
+        "costUsd": {
+          "median": 0.33356850000000005,
+          "min": 0.31996840000000004,
+          "max": 0.3471686
+        },
+        "minutes": {
+          "median": 0.965625,
+          "min": 0.9398833333333333,
+          "max": 0.9913666666666666
+        },
+        "apiMinutes": {
+          "median": 0.893375,
+          "min": 0.87025,
+          "max": 0.9165
+        },
+        "turns": {
+          "median": 16.5,
+          "min": 16,
+          "max": 17
+        },
+        "apiCalls": {
+          "median": 14.5,
+          "min": 14,
+          "max": 15
+        },
+        "toolCalls": {
+          "median": 15.5,
+          "min": 15,
+          "max": 16
+        },
+        "toolRead": {
+          "median": 2.5,
+          "min": 0,
+          "max": 5
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 13,
+          "min": 11,
+          "max": 15
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 9,
+          "min": 9,
+          "max": 9
+        },
+        "docsChars": {
+          "median": 83064.5,
+          "min": 74097,
+          "max": 92032
+        },
+        "checkRuns": {
+          "median": 3,
+          "min": 2,
+          "max": 4
+        },
+        "failedCheckRuns": {
+          "median": 0.5,
+          "min": 0,
+          "max": 1
+        },
+        "checkErrors": {
+          "median": 0.5,
+          "min": 0,
+          "max": 1
+        },
+        "filesChanged": {
+          "median": 22,
+          "min": 22,
+          "max": 22
+        },
+        "linesWritten": {
+          "median": 293,
+          "min": 290,
+          "max": 296
+        },
+        "linesRemoved": {
+          "median": 3,
+          "min": 3,
+          "max": 3
+        },
+        "packagesAdded": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "failures": [
+        {
+          "run": 1,
+          "outcome": "success",
+          "check": true,
+          "build": true,
+          "failures": [
+            "books > lists every book by title with its author and year",
+            "book pages > /books/around-the-world-in-eighty-days shows the book",
+            "book pages > /books/dracula shows the book",
+            "book pages > /books/frankenstein shows the book",
+            "book pages > /books/moby-dick shows the book",
+            "book pages > /books/pride-and-prejudice shows the book",
+            "book pages > /books/the-picture-of-dorian-gray shows the book",
+            "book pages > /books/the-time-machine shows the book",
+            "book pages > /books/treasure-island shows the book",
+            "about > shows its text",
+            "contact > has the form",
+            "not found > /books/no-such-book answers 404 with the 404 page",
+            "not found > /no-such-page answers 404 with the 404 page"
+          ]
+        }
+      ]
+    }
+  }
+}
