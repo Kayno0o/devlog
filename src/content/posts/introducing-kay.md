@@ -246,21 +246,21 @@ That is the site kay's agent built, running: filter the books, open one, mark it
 
 ### What kay gains
 
-<Stats items={[{"value":"15 of 15","label":"runs passing every check and test"},{"value":"14K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
+<Stats items={[{"value":"20 of 20","label":"runs passing every check and test"},{"value":"16K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
 <BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.1},{"label":"Astro","value":2.6},{"label":"SvelteKit","value":4.5},{"label":"SolidStart","value":9.3}]} bench="llm" />
 
-<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":335},{"label":"Astro","value":458},{"label":"SvelteKit","value":473},{"label":"SolidStart","value":534}]} bench="llm" />
+<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":334},{"label":"Astro","value":463},{"label":"SvelteKit","value":472},{"label":"SolidStart","value":537}]} bench="llm" />
 
-kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site fastest, in a quarter to a third fewer lines than the others.
+kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site fastest, in 28 to 38% fewer lines than the others.
 
 ### What kay loses
 
-<BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.79},{"label":"kay","value":1.03},{"label":"SvelteKit","value":1.53},{"label":"SolidStart","value":1.94}]} bench="llm" />
+<BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78},{"label":"kay","value":1.2},{"label":"SvelteKit","value":1.52},{"label":"SolidStart","value":1.94}]} bench="llm" />
 
-<BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Astro","value":30},{"label":"SolidStart","value":38},{"label":"kay","value":67},{"label":"SvelteKit","value":70}]} bench="llm" />
+<BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Astro","value":29},{"label":"SolidStart","value":52},{"label":"SvelteKit","value":89},{"label":"kay","value":90}]} bench="llm" />
 
-Astro builds the site for less. The model already knows Astro, while it learns kay from its docs, reading about twice as much, and every call after those reads pays for them again. kay still costs less than SvelteKit and SolidStart, which the model knows too.
+Astro builds the site for less. The model already knows Astro, while it learns kay from its docs, reading three times as much, and every call after those reads pays for them again. kay still costs less than SvelteKit and SolidStart, which the model knows too.
 
 <Note title="How it was measured">
 
