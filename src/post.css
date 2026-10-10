@@ -116,5 +116,9 @@
     & .note > * + * {
       @apply mt-2;
     }
+
+    & .note :not(pre) > code {
+      @apply bg-surface;
+    }
   }
 }
