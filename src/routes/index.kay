@@ -7,7 +7,7 @@ const entries = await posts.all()
 import Github from '~icons/simple-icons/github'
 import IconLink from '../components/icon-link.kay'
 import PostMeta from '../components/post-meta.kay'
-import kay from '../kay-logo.png'
+import kay from '../kay-logo.svg'
 ---
 head
   title(raw) devlog, notes on building software
