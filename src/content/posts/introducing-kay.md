@@ -23,7 +23,7 @@ button(onClick={() => count.set(count + 1)}) Clicked {count} times
 
 ## Why I built it
 
-I care about speed everywhere: how fast a page loads and runs, how fast the server answers, and how fast a build or a test run finishes.
+I care about speed everywhere: how fast a page loads and runs, how fast the server answers, and how fast a build or a test run finishes. And about how little the server needs: the memory it holds and what it takes to deploy.
 
 I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and SolidJS has no static export and no server rendering. Astro renders on the server, but has nothing easy for dynamic components or pages unless you bring in SolidJS.
 
