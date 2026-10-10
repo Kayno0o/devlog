@@ -45,7 +45,7 @@ figure.chart
     for row, i of rows key={row.label}
       span.flex.items-center.gap-1.5.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
         if logo(row.label) === 'kay'
-          img.size-4.rounded-sm(src={kay} sizes="16px" alt="")
+          img.size-4(src={kay} sizes="16px" alt="")
         else if logo(row.label) === 'svelte'
           Svelte.size-4.shrink-0
         else if logo(row.label) === 'solid'
