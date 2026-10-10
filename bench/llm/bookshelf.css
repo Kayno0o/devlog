@@ -1,13 +1,13 @@
-/* A plain stylesheet in the devlog's colors, swapped in for the screenshotted site's own styles; screenshots.ts prepends the --color-* tokens of src/app.css. */
+/* A plain stylesheet in the devlog's colors for the site embed.ts exports, which prepends the --color-* tokens of src/app.css. */
 :root {
   color-scheme: light dark;
+  background: var(--color-mantle);
 }
 
 body {
   max-width: 46rem;
   margin: 0 auto;
   padding: 0 1.5rem;
-  background: var(--color-base);
   color: var(--color-text);
   font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
@@ -61,7 +61,7 @@ button {
   padding: 0.25rem 0.75rem;
   border: 0;
   border-radius: 0.25rem;
-  background: var(--color-mantle);
+  background: var(--color-base);
   color: var(--color-subtext);
   font: inherit;
   font-size: 0.875rem;

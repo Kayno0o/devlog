@@ -1,0 +1,1 @@
+{"name":"Bookshelf","short_name":"Bookshelf","description":"A small catalog of classic books.","icons":[{"src":"/llm-bench/bookshelf/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/llm-bench/bookshelf/icon-512.png","sizes":"512x512","type":"image/png"}],"start_url":"/llm-bench/bookshelf/"}

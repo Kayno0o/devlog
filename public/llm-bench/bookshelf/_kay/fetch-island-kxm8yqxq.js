@@ -1,0 +1,1 @@
+var e="kay_island",s="x-kay-island";async function i(a){let r=new URL(location.href);r.searchParams.set(e,a.dataset.kayServer??""),r.hash="";let t=await fetch(r,{headers:{[s]:"1"}});if(!t.ok)throw Error(`kay: the server island ${a.dataset.kayServer} of ${location.pathname} answered ${t.status}`);a.innerHTML=await t.text(),a.removeAttribute("inert")}export{i as fetchServerIsland};
