@@ -6,7 +6,7 @@
       "name": "site",
       "dependencies": {
         "elysia": "^1.4.30",
-        "kay": "npm:@kaynooo/kayjs@~1.26.0",
+        "kay": "npm:@kaynooo/kayjs@~1.27.0",
       },
       "devDependencies": {
         "@types/bun": "^1.4.2",
@@ -100,7 +100,7 @@
 
     "jsesc": ["jsesc@3.1.0", "", { "bin": { "jsesc": "bin/jsesc" } }, "sha512-/sM3dO2FOzXjKQhJuo0Q173wf2KOo8t4I8vHy6lF9poUp7bKT0/NHE8fPX23PwfhnykfqnC2xRxOnVw5XuGIaA=="],
 
-    "kay": ["@kaynooo/kayjs@1.26.0", "https://git.kaynooo.fr/api/packages/kaynooo/npm/%40kaynooo%2Fkayjs/-/1.26.0/kayjs-1.26.0.tgz", { "dependencies": { "@babel/parser": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jsquash/avif": "2.1.1", "@kaynooo/utils": "^2.29.0", "@typescript/native-preview": "^7.0.0-dev.20260707.2", "axe-core": "^4.14.0", "devalue": "^6.0.2", "elysia": "^1.4.30" }, "peerDependencies": { "@types/bun": "^1.4.2" }, "bin": { "kay": "src/cli.ts" } }, "sha512-QiIBi69nFy4jcZqUaZ9bKSLslW2e9nxejl/LbAGCzYpbvXXgXr4+j7BbN7mssEZ9Q49DMAZ6LsB7z5CvdyXLFw=="],
+    "kay": ["@kaynooo/kayjs@1.27.0", "https://git.kaynooo.fr/api/packages/kaynooo/npm/%40kaynooo%2Fkayjs/-/1.27.0/kayjs-1.27.0.tgz", { "dependencies": { "@babel/parser": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jsquash/avif": "2.1.1", "@kaynooo/utils": "^2.29.0", "@typescript/native-preview": "^7.0.0-dev.20260707.2", "axe-core": "^4.14.0", "devalue": "^6.0.2", "elysia": "^1.4.30" }, "peerDependencies": { "@types/bun": "^1.4.2" }, "bin": { "kay": "src/cli.ts" } }, "sha512-3dDurxf/jQ38UTxoAb20hjJxXuuQb5Leb+ogrWQ7w3aLCQ52xsBGhn5j7EAgs16z636XB9m3LRaNgXwDD/deog=="],
 
     "memoirist": ["memoirist@0.4.0", "", {}, "sha512-zxTgA0mSYELa66DimuNQDvyLq36AwDlTuVRbnQtB+VuTcKWm5Qc4z3WkSpgsFWHNhexqkIooqpv4hdcqrX5Nmg=="],
 
