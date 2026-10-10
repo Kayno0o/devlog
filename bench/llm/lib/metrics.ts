@@ -95,6 +95,9 @@ const networkCommand = /\b(?:curl|wget)\b/
 // a curl at the agent's own server is fine, so only a remote URL or no local host at all counts as the network
 const remoteUrl = /https?:\/\/(?!localhost\b|127\.0\.0\.1\b|0\.0\.0\.0\b|\[::1\])/
 const localHost = /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0)\b/
+// a header such as `Origin: http://evil.com` in a curl at the agent's own server names a site without reaching it
+const headerArg = /(?:-H|--header)\s+(?:'[^']*'|"[^"]*"|\S+)/g
+const pathSeparators = /[/.]/g
 const homePath = /(?:~|\/home\/)[^\s'"]*/g
 const parentCd = /(?:^|\s)cd\s+\.\.(?:\s|\/|$)/
 const heredocStart = /<<-?\s*['"]?(\w+)/
@@ -144,7 +147,8 @@ function readsDocs(input: Record<string, unknown>): boolean {
 function outsideOf(name: string, input: Record<string, unknown>, cwd: string): string | undefined {
   if (name === 'Bash') {
     const command = withoutHeredocs(String(input.command ?? ''))
-    const network = networkCommand.test(command) && (remoteUrl.test(command) || !localHost.test(command))
+    const target = command.replaceAll(headerArg, '')
+    const network = networkCommand.test(command) && (remoteUrl.test(target) || !localHost.test(target))
     const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
 
     return network || home || parentCd.test(command) ? `Bash: ${String(input.command)}` : undefined
@@ -152,7 +156,10 @@ function outsideOf(name: string, input: Record<string, unknown>, cwd: string): s
 
   const path = String(input.file_path ?? input.path ?? '')
 
-  return path.startsWith('/') && !path.startsWith(cwd) ? `${name}: ${path}` : undefined
+  // Claude Code keeps a long tool output in a file of the session's own project folder, which the agent then reads
+  const ownOutput = `/.claude/projects/${cwd.replaceAll(pathSeparators, '-')}/`
+
+  return path.startsWith('/') && !path.startsWith(cwd) && !path.includes(ownOutput) ? `${name}: ${path}` : undefined
 }
 
 function tokensOf(usage: Usage): Tokens {

@@ -1,0 +1,156 @@
+{
+  "framework": "astro",
+  "run": 1,
+  "label": "opus-probe",
+  "startedAt": "2026-10-10T00:51:48.124Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "astro": "7.3.8",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 177868,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 174677,
+    "durationApiMs": 158084,
+    "turns": 24,
+    "costUsd": 0.7943347999999999,
+    "tokens": {
+      "input": 44,
+      "output": 18440,
+      "cacheCreation": 38189,
+      "cacheRead": 599234
+    },
+    "outputExact": true,
+    "thinkingTokens": 3362,
+    "apiCalls": 22,
+    "peakContextTokens": 43445,
+    "toolCalls": {
+      "Bash": 22,
+      "Write": 1
+    },
+    "toolErrors": 3,
+    "checkRuns": [
+      {
+        "command": "sed -i \"/button.setAttribute('aria-pressed', String(favorite));/d\" 'src/pages/books/[slug].astro'\ncat > src/pages/contact.astro <<'EOF'\n---\nimport Layout from '../layouts/Layout.astro';\nimport {\n  successMessage,\n  trimValues,\n  validateContact,\n  type ContactErrors,\n  type ContactValues,\n} from '../lib/contact';\n\nexport const prerender = false;\n\nlet values: ContactValues = { name: '', email: '', message: '' };\nlet errors: ContactErrors = {};\nlet success = '';\n\nif (Astro.request.method === 'POST') {\n  let data: FormData | undefined;\n  try {\n    data = await Astro.request.formData();\n  } catch {\n    data = undefined;\n  }\n  const field = (key: string) => {\n    const value = data?.get(key);\n    return typeof value === 'string' ? value : '';\n  };\n  values = { name: field('name'), email: field('email'), message: field('message') };\n  errors = validateContact(values);\n  const ok = Object.keys(errors).length === 0;\n  if (ok) success = successMessage(values.name);\n\n  if (Astro.request.headers.get('accept')?.includes('application/json')) {\n    return Response.json(\n      ok ? { ok, message: success } : { ok, errors },\n      { status: ok ? 200 : 400 },\n    );\n  }\n\n  if (ok) values = { name: '', email: '', message: '' };\n  else Astro.response.status = 400;\n}\n\nconst trimmed = trimValues(values);\n---\n\n<Layout title=\"Contact | Bookshelf\">\n  <h1>Contact</h1>\n  <p id=\"contact-success\" class=\"success\" role=\"status\" hidden={!success}>{success}</p>\n  <form method=\"post\" action=\"/contact\" novalidate id=\"contact-form\">\n    <div class=\"field\">\n      <label for=\"name\">Name</label>\n      <input\n        type=\"text\"\n        id=\"name\"\n        name=\"name\"\n        value={trimmed.name}\n        aria-describedby=\"name-error\"\n        aria-invalid={errors.name ? 'true' : undefined}\n      />\n      <p class=\"error\" id=\"name-error\" hidden={!errors.name}>{errors.name}</p>\n    </div>\n    <div class=\"field\">\n      <label for=\"email\">Email</label>\n      <input\n        type=\"email\"\n        id=\"email\"\n        name=\"email\"\n        value={trimmed.email}\n        aria-describedby=\"email-error\"\n        aria-invalid={errors.email ? 'true' : undefined}\n      />\n      <p class=\"error\" id=\"email-error\" hidden={!errors.email}>{errors.email}</p>\n    </div>\n    <div class=\"field\">\n      <label for=\"message\">Message</label>\n      <textarea\n        id=\"message\"\n        name=\"message\"\n        rows=\"6\"\n        aria-describedby=\"message-error\"\n        aria-invalid={errors.message ? 'true' : undefined}>{trimmed.message}</textarea>\n      <p class=\"error\" id=\"message-error\" hidden={!errors.message}>{errors.message}</p>\n    </div>\n    <button type=\"submit\">Send</button>\n  </form>\n</Layout>\n\n<script>\n  import { successMessage, validateContact, type ContactField } from '../lib/contact';\n\n  const form = document.querySelector<HTMLFormElement>('#contact-form');\n  const status = document.querySelector<HTMLElement>('#contact-success');\n  const fields: ContactField[] = ['name', 'email', 'message'];\n\n  function showErrors(errors: Partial<Record<ContactField, string>>) {\n    for (const field of fields) {\n      const input = document.getElementById(field);\n      const error = document.getElementById(`${field}-error`);\n      const message = errors[field] ?? '';\n      if (error) {\n        error.textContent = message;\n        error.hidden = !message;\n      }\n      if (message) input?.setAttribute('aria-invalid', 'true');\n      else input?.removeAttribute('aria-invalid');\n    }\n  }\n\n  form?.addEventListener('submit', async (event) => {\n    event.preventDefault();\n    if (status) {\n      status.hidden = true;\n      status.textContent = '';\n    }\n    const data = new FormData(form);\n    const values = {\n      name: String(data.get('name') ?? ''),\n      email: String(data.get('email') ?? ''),\n      message: String(data.get('message') ?? ''),\n    };\n    const errors = validateContact(values);\n    showErrors(errors);\n    if (Object.keys(errors).length > 0) return;\n\n    const submit = form.querySelector<HTMLButtonElement>('button[type=\"submit\"]');\n    if (submit) submit.disabled = true;\n    try {\n      const response = await fetch(form.action, {\n        method: 'POST',\n        body: data,\n        headers: { Accept: 'application/json' },\n      });\n      const result = await response.json();\n      if (result.ok) {\n        form.reset();\n        if (status) {\n          status.textContent = result.message ?? successMessage(values.name);\n          status.hidden = false;\n        }\n      } else {\n        showErrors(result.errors ?? {});\n      }\n    } catch {\n      if (status) {\n        status.textContent = 'Something went wrong. Please try again.';\n        status.hidden = false;\n      }\n    } finally {\n      if (submit) submit.disabled = false;\n    }\n  });\n</script>\n\n<style>\n  .field {\n    display: flex;\n    flex-direction: column;\n    gap: 0.25rem;\n    margin-bottom: 1rem;\n  }\n  input,\n  textarea {\n    font: inherit;\n    padding: 0.4rem;\n    max-width: 30rem;\n  }\n  .error {\n    color: #b00020;\n    margin: 0;\n  }\n  .success {\n    color: #116329;\n    font-weight: 600;\n  }\n  button {\n    font: inherit;\n    padding: 0.4rem 1rem;\n    cursor: pointer;\n  }\n</style>\nEOF\nbun run check 2>&1 | tail -20 && bun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"dist/server/entry.mjs\"; bun run build >/dev/null 2>&1 && (PORT=4567 bun run start > /tmp/bookshelf.log 2>&1 &) ; sleep 2\ncat > /tmp/e2e.mjs <<'EOF'\nimport { chromium } from 'playwright-core';\nimport { readdirSync } from 'node:fs';\nconst root = process.env.HOME + '/.cache/ms-playwright/chromium_headless_shell-1234/';\nconst exe = root + readdirSync(root)[0] + '/chrome-headless-shell';\nconst B = 'http://localhost:4567';\nconst browser = await chromium.launch({ executablePath: exe });\nconst page = await browser.newPage();\nconst log = (...a) => console.log(...a);\npage.on('pageerror', (e) => log('PAGEERROR', e.message));\nlet requests = 0;\npage.on('request', (r) => { if (r.method() === 'POST') requests++; });\n\nawait page.goto(B + '/books');\nconst visible = async () => page.locator('ul[aria-label=\"Books\"] li:visible a').allTextContents();\nlog('all', (await visible()).length);\nawait page.getByRole('button', { name: 'sea', exact: true }).click();\nlog('sea', await visible(), await page.getByRole('button', { name: 'sea' }).getAttribute('aria-pressed'), await page.getByRole('button', { name: 'All' }).getAttribute('aria-pressed'));\nawait page.getByRole('button', { name: 'gothic' }).click();\nlog('gothic', await visible());\nawait page.getByRole('button', { name: 'All' }).click();\nlog('all again', (await visible()).length, page.url());\nlog('favorites before', await page.locator('li:visible:has-text(\"Favorite\")').count());\n\nawait page.goto(B + '/books/dracula');\nconst fav = page.locator('#favorite');\nlog('btn', await fav.textContent());\nawait fav.click();\nlog('btn after click', await fav.textContent());\nawait page.reload();\nlog('btn after reload', await fav.textContent());\nawait page.goto(B + '/books');\nlog('fav items', await page.locator('ul[aria-label=\"Books\"] li:has(strong:visible)').allTextContents());\nawait page.goto(B + '/books/dracula');\nawait page.locator('#favorite').click();\nlog('btn toggled back', await page.locator('#favorite').textContent());\nawait page.goto(B + '/books');\nlog('fav items now', await page.locator('ul[aria-label=\"Books\"] li:has(strong:visible)').count());\n\nawait page.goto(B + '/contact');\nawait page.getByRole('button', { name: 'Send' }).click();\nlog('errors', await page.locator('.error:visible').allTextContents(), 'posts', requests);\nawait page.getByLabel('Name').fill('  Grace  ');\nawait page.getByLabel('Email').fill('grace@example');\nawait page.getByLabel('Message').fill('Hello there, this is long enough.');\nawait page.getByRole('button', { name: 'Send' }).click();\nlog('errors2', await page.locator('.error:visible').allTextContents(), 'posts', requests);\nawait page.getByLabel('Email').fill('grace@example.com');\nawait page.getByRole('button', { name: 'Send' }).click();\nawait page.waitForSelector('#contact-success:visible');\nlog('success', await page.locator('#contact-success').textContent(), 'posts', requests, 'errors', await page.locator('.error:visible').count());\n\nconst ctx = await browser.newContext({ javaScriptEnabled: false });\nconst p2 = await ctx.newPage();\nawait p2.goto(B + '/contact');\nawait p2.getByLabel('Email').fill('x');\nawait p2.getByRole('button', { name: 'Send' }).click();\nlog('nojs errors', await p2.locator('.error:visible').allTextContents(), await p2.getByLabel('Email').inputValue(), p2.url());\nawait p2.getByLabel('Name').fill('Bob');\nawait p2.getByLabel('Email').fill('bob@ex.com');\nawait p2.getByLabel('Message').fill('A message of decent length.');\nawait p2.getByRole('button', { name: 'Send' }).click();\nlog('nojs success', await p2.locator('#contact-success').textContent());\nawait browser.close();\nEOF\ncp /tmp/e2e.mjs ./e2e.tmp.mjs && bun e2e.tmp.mjs; rm e2e.tmp.mjs",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "bun run build >/dev/null 2>&1 && echo built; PORT=4567 bun run start > /tmp/bookshelf.log 2>&1 & \nsleep 2; cp /tmp/e2e.mjs ./e2e.tmp.mjs && bun e2e.tmp.mjs; rm e2e.tmp.mjs",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "printf -- '---\\ntitle: A Test Book\\nauthor: Tess Ter\\nyear: 1900\\nrating: 5\\ntags: [zzz]\\n---\\n\\nBody **bold**.\\n' > content/books/a-test-book.md\nbun run build >/dev/null 2>&1; ls dist/client/books/; grep -o 'A Test Book' dist/client/index.html; grep -o 'data-tag=\"zzz\"' dist/client/books/index.html\nrm content/books/a-test-book.md",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "kill $(ss -ltnp | grep ':4567' | grep -o 'pid=[0-9]*' | cut -d= -f2) 2>&1; rm e2e.tmp.mjs; bun remove playwright-core >/dev/null 2>&1; cmp package.json /tmp/pkg.bak && echo pkg-restored; git diff --stat bun.lock; bun run check 2>&1 | grep -A3 Result; bun run build 2>&1 | tail -1; sleep 1; ss -ltn | grep 4567 || echo \"no server\"; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 2,
+    "docs": {
+      "calls": 2,
+      "chars": 10335
+    },
+    "outside": [
+      "Bash: cd /home/kaynooo/.cache/llm-bench/opus-probe/astro-1/site\npython3 - <<'EOF'\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"  if (ok) values = { name: '', email: '', message: '' };\\n  else Astro.response.status = 400;\\n\",\"  if (ok) values = { name: '', email: '', message: '' };\\n\")\ns=s.replace(\"const trimmed = trimValues(values);\\n\",\"\")\ns=s.replace(\"{trimmed.\",\"{values.\")\ns=s.replace(\"  successMessage,\\n  trimValues,\\n\",\"  successMessage,\\n\")\nopen(p,'w').write(s)\nEOF\ngrep -n \"trimmed\\|trimValues\\|status = 400\" src/pages/contact.astro; which chromium chromium-browser google-chrome firefox 2>/dev/null; ls ~/.cache/ms-playwright 2>/dev/null",
+      "Bash: cp package.json /tmp/pkg.bak && cp bun.lock /tmp/lock.bak && bun add -d playwright-core 2>&1 | tail -2; ls ~/.cache/ms-playwright/chromium_headless_shell-1234/*/"
+    ],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "cd /home/kaynooo/.cache/llm-bench/opus-probe/astro-1/site\npython3 - <<'EOF'\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"  if (ok) values = { name: '', email: '', message: '' };\\n  else Astro.response.status = 400;\\n\",\"  if (ok) values = { name: '', email: '', message: '' };\\n\")\ns=s.replace(\"const trimmed = trimValues(values);\\n\",\"\")\ns=s.replace(\"{trimmed.\",\"{values.\")\ns=s.replace(\"  successMessage,\\n  trimValues,\\n\",\"  successMessage,\\n\")\nopen(p,'w').write(s)\nEOF\ngrep -n \"trimmed\\|trimValues\\|status = 400\" src/pages/contact.astro; which chromium chromium-browser google-chrome firefox 2>/dev/null; ls ~/.cache/ms-playwright 2>/dev/null"
+    ],
+    "resultTokens": {
+      "input": 44,
+      "output": 18440,
+      "cacheCreation": 38189,
+      "cacheRead": 599234
+    }
+  },
+  "diff": {
+    "files": 11,
+    "added": 570,
+    "removed": 13,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://github.com/withastro/docs src/content/docs/en",
+    "revision": "bf9e538c64a51cd6ae7b212e0bcfdbf537dc6430",
+    "fetchedAt": "2026-10-10T00:36:28.549Z",
+    "files": 424,
+    "bytes": 2984973
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/opus-probe/astro-1"
+}
