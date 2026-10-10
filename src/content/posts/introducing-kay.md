@@ -71,7 +71,9 @@ export default function Counter() {
   return (
     <>
       <h1>{greeting()}</h1>
-      <button onClick={() => setCount(count() + 1)}>Clicked {count()} times</button>
+      <button onClick={() => setCount(count() + 1)}>
+        Clicked {count()} times
+      </button>
     </>
   )
 }
