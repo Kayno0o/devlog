@@ -1,0 +1,158 @@
+{
+  "framework": "kay",
+  "run": 2,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T02:47:13.423Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.18.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 101542,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 101336,
+    "durationApiMs": 95014,
+    "turns": 23,
+    "costUsd": 0.7213974000000002,
+    "tokens": {
+      "input": 44,
+      "output": 11510,
+      "cacheCreation": 44839,
+      "cacheRead": 661547
+    },
+    "outputExact": true,
+    "thinkingTokens": 2853,
+    "apiCalls": 22,
+    "peakContextTokens": 50095,
+    "toolCalls": {
+      "Bash": 22
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst contactMessage = t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n})\n\nexport const contact = action(contactMessage, (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { contact } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(contact.failed()?.data?.errors ?? {})\nconst thanked = signal(contact.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    thanked.set((await contact(fields, { refresh: false })).name)\n    form.reset()\n  }\n}\n---\nif thanked\n  p(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={contact} method=\"post\" novalidate onSubmit={submit})\n  div\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error#name-error {errors.name}\n  div\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error#email-error {errors.email}\n  div\n    label(for=\"message\") Message\n    textarea#message(name=\"message\")\n    if errors.message\n      p.error#message-error {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -15 && (PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &) && sleep 2 && for p in / /books /books/frankenstein /books/nope /about /contact /zzz; do echo \"== $p\"; curl -s -o /tmp/out.html -w \"%{http_code}\\n\" http://127.0.0.1:4701$p; sed -e 's/<script.*<\\/script>//g' /tmp/out.html | grep -o '<title>.*</title>\\|<body.*' | head -c 2500; echo; done",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > src/server.ts <<'EOF'\nimport process from 'node:process'\nimport { Elysia } from 'elysia'\nimport { pages } from 'kay/server'\n\n// kay reads the site's own URL from `SITE_URL`; the deployment gives it as `ORIGIN`.\nif (process.env.SITE_URL === undefined && process.env.ORIGIN !== undefined)\n  process.env.SITE_URL = process.env.ORIGIN\n\n// Exported for `kay check`, which checks links against the routes it serves besides the pages and types `ctx.locals` from its plugins.\nexport const app = new Elysia().use(await pages()).listen({\n  port: Number(process.env.PORT ?? 3000),\n  hostname: process.env.HOST ?? '0.0.0.0',\n})\n\nconsole.log(`Listening on http://${app.server?.hostname}:${app.server?.port}`)\nEOF\npkill -f \"bun src/server.ts\"; sleep 0.5; bun run check && (PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &) && sleep 2; cd /tmp; rm -f jar; A=/_kay/action/src/routes/contact.kay/contact\ncurl -s -X POST -H 'Origin: http://localhost:4701' -H 'Referer: http://localhost:4701/contact' -w \"\\n%{http_code}\\n\" --data-urlencode 'name=  ' --data-urlencode 'email=bad' --data-urlencode 'message=short' \"http://127.0.0.1:4701$A\" | sed -e 's/<script.*<\\/script>//g' | grep -o '<main>.*</main>\\|^[0-9]*$'\ncurl -s -X POST -H 'Origin: http://localhost:4701' -H 'Referer: http://localhost:4701/contact' -w \"\\n%{http_code}\\n\" --data-urlencode 'name=Ann' --data-urlencode 'email=' --data-urlencode 'message=short' \"http://127.0.0.1:4701$A\" | sed -e 's/<script.*<\\/script>//g' | grep -o '<main>.*</main>\\|^[0-9]*$'\ncurl -s -X POST -H 'Origin: http://localhost:4701' -H 'Referer: http://localhost:4701/contact' -w \"\\n%{http_code} %{redirect_url}\\n\" --data-urlencode 'name= Ann ' --data-urlencode 'email=a@b.co' --data-urlencode 'message=this is a long enough message' \"http://127.0.0.1:4701$A\" -c jar -L -b jar | sed -e 's/<script.*<\\/script>//g' | grep -o '<main>.*</main>\\|^[0-9].*$'; cat /tmp/srv.log",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "pgrep -af \"src/server.ts\"; bun run check",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "curl -s http://127.0.0.1:4701/books/frankenstein | tr '\\n' ' ' | grep -o '<div class=\"body\">.*</article>'; pkill -f \"^bun src/server.ts\" ; sleep 0.5; pgrep -af \"server.ts\" | grep -v pgrep; bun run check && bun run build | head -1; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 11,
+      "chars": 69157
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [],
+    "resultTokens": {
+      "input": 44,
+      "output": 11510,
+      "cacheCreation": 44839,
+      "cacheRead": 661547
+    }
+  },
+  "diff": {
+    "files": 23,
+    "added": 335,
+    "removed": 6,
+    "testLines": 0,
+    "styleLines": 0,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.18.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-10T02:45:14.970Z",
+    "files": 18,
+    "bytes": 208261
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/kay-2"
+}

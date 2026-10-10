@@ -1,0 +1,168 @@
+{
+  "framework": "kay",
+  "run": 1,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T04:21:20.882Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.18.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 128107,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 154320,
+    "durationApiMs": 144404,
+    "turns": 31,
+    "costUsd": 1.2976081999999995,
+    "tokens": {
+      "input": 78,
+      "output": 17126,
+      "cacheCreation": 80890,
+      "cacheRead": 2154850
+    },
+    "outputExact": true,
+    "thinkingTokens": 5336,
+    "apiCalls": 39,
+    "peakContextTokens": 83201,
+    "toolCalls": {
+      "Bash": 38
+    },
+    "toolErrors": 2,
+    "checkRuns": [
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-1/site\ncat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst contactInput = t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n})\n\nexport const contact = action(contactInput, (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { contact } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(contact.failed()?.data?.errors ?? {})\nconst thanked = signal(contact.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    thanked.set((await contact(fields, { refresh: false })).name)\n    form.reset()\n  }\n}\n---\nif thanked\n  p(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={contact} novalidate onSubmit={submit})\n  .field\n    label(for=\"contact-name\") Name\n    input#contact-name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error {errors.name}\n  .field\n    label(for=\"contact-email\") Email\n    input#contact-email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error {errors.email}\n  .field\n    label(for=\"contact-message\") Message\n    textarea#contact-message(name=\"message\")\n    if errors.message\n      p.error {errors.message}\n  button(type=\"submit\") Send\nEOF\ncat > src/server.ts <<'EOF'\nimport process from 'node:process'\nimport { Elysia } from 'elysia'\nimport { pages } from 'kay/server'\n\n// Exported for `kay check`, which checks links against the routes it serves besides the pages and types `ctx.locals` from its plugins.\nexport const app = new Elysia().use(await pages()).listen({\n  port: Number(process.env.PORT ?? 3000),\n  hostname: process.env.HOST ?? '0.0.0.0',\n})\n\nconsole.log(`Listening on http://${app.server?.hostname}:${app.server?.port}`)\nEOF\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -15; (PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/kay-server.log 2>&1 &) ; sleep 2; cat /tmp/kay-server.log; curl -s http://127.0.0.1:4701/",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > tests/site.test.ts <<'EOF'\nimport { expect, it } from 'bun:test'\nimport { testSite } from 'kay/test'\nimport { contact } from '../src/routes/contact.kay'\n\nconst site = await testSite()\n\nit('answers 404 for an unknown book', async () => {\n  const page = await site.visit('/books/nope')\n  expect(page.status).toBe(404)\n  expect(page.html).toContain('Back to the books')\n  expect(page.html).not.toContain('aria-current')\n})\n\nit('accepts a valid message from an island call', async () => {\n  const result = await site.call(contact, { name: ' Ada ', email: 'ada@example.com', message: 'A message long enough to send.' })\n  expect(result.name).toBe('Ada')\n})\n\nit('thanks the sender without JavaScript', async () => {\n  const page = await site.submit(contact, { name: 'Ada', email: 'ada@example.com', message: 'A message long enough to send.' }, { from: '/contact' })\n  expect(page.html).toContain('Thanks, <!--[-->Ada<!--]-->! Your message has been sent.')\n})\nEOF\nbun test 2>&1 | tail -6; bun run check 2>&1 | tail -5; bun run build 2>&1 | head -2",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/components/contact-form.kay'\ns=open(p).read()\ns=s.replace(\"\"\"---\nimport { send }\"\"\",\"\"\"---\nimport { ActionError } from 'kay'\nimport { send }\"\"\")\ns=s.replace(\"\"\"    const result = await send(fields, { refresh: false })\n    thanked.set(result.name)\n    form.reset()\n\"\"\",\"\"\"    try {\n      const result = await send(fields, { refresh: false })\n      thanked.set(result.name)\n      form.reset()\n    }\n    catch (error) {\n      if (!(error instanceof ActionError))\n        throw error\n\n      const data = error.data as { errors?: ContactErrors } | undefined\n      errors.set({ ...error.errors, ...data?.errors })\n    }\n\"\"\")\nopen(p,'w').write(s)\nEOF\ncat > tests/pages.test.ts <<'EOF'\nimport { expect, it } from 'bun:test'\nimport { testSite } from 'kay/test'\nimport { send } from '../src/routes/contact.kay'\n\nconst site = await testSite()\n\nit('marks the current section', async () => {\n  const current = async (path: string) => (await site.visit(path)).find('nav[aria-label=\"Main\"] a[aria-current=\"page\"]').map(a => a.text)\n\n  expect(await current('/')).toEqual([])\n  expect(await current('/books')).toEqual(['Books'])\n  expect(await current('/books/dracula')).toEqual(['Books'])\n  expect(await current('/books/nope')).toEqual([])\n  expect(await current('/about')).toEqual(['About'])\n  expect(await current('/contact')).toEqual(['Contact'])\n})\n\nit('answers unknown paths with the 404 page', async () => {\n  for (const path of ['/nope', '/books/nope']) {\n    const page = await site.visit(path)\n    expect(page.status).toBe(404)\n    expect(page.title()).toBe('Not found | Bookshelf')\n  }\n})\n\nit('lists the top rated books', async () => {\n  const page = await site.visit('/')\n  expect(page.title()).toBe('Bookshelf')\n  expect(page.find('ol li a').map(a => a.text)).toEqual(['Frankenstein', 'Pride and Prejudice', 'Dracula'])\n})\n\nit('checks the contact form on the server', async () => {\n  const refused = await site.submit(send, { name: '', email: '', message: 'short' }, { from: '/contact' })\n  expect(refused.find('.error').map(p => p.text)).toEqual(['Name is required.', 'Email is required.', 'Message must be at least 20 characters.'])\n\n  const sent = await site.submit(send, { name: ' Ann ', email: 'ann@example.com', message: 'A message long enough to pass.' }, { from: '/contact' })\n  expect(sent.find('p[role=\"status\"]')[0]?.text).toBe('Thanks, Ann! Your message has been sent.')\n\n  const data = new FormData()\n  data.set('name', 'Bo')\n  data.set('email', 'bo@example.com')\n  data.set('message', 'Another message long enough.')\n  expect(await site.call(send, data)).toEqual({ name: 'Bo' })\n})\nEOF\nbun test 2>&1 | tail -8; bun run check 2>&1 | tail -5",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f 'bun src/server.ts'; sleep 1; bun run build 2>&1 | tail -2; (PORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/kay-server.log 2>&1 &); sleep 2; for p in / /books /books/treasure-island /about /contact /x /books/x; do echo \"$p $(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4702$p)\"; done; curl -s -o /dev/null -w 'action %{http_code}\\n' -H 'Origin: http://localhost:4702' -H 'Host: localhost:4702' -H 'Referer: http://localhost:4702/contact' -F name=A -F email=a@b.co -F 'message=abcdefghijklmnopqrstuvwxyz' http://127.0.0.1:4702/_kay/action/src/routes/contact.kay/send; pkill -f 'bun src/server.ts'; sleep 1; pgrep -af 'bun src/server.ts' || echo stopped; git status --short",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "bun run build 2>&1 | tail -1; PORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/kay-server.log 2>&1 &\nPID=$!; sleep 2; for p in / /books /books/treasure-island /about /contact /x /books/x; do echo \"$p $(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4702$p)\"; done; curl -s -o /dev/null -w 'action %{http_code}\\n' -H 'Origin: http://localhost:4702' -H 'Host: localhost:4702' -H 'Referer: http://localhost:4702/contact' -F name=A -F email=a@b.co -F 'message=abcdefghijklmnopqrstuvwxyz' http://127.0.0.1:4702/_kay/action/src/routes/contact.kay/send; kill $PID; pkill -P $PID 2>/dev/null; sleep 1; ss -ltn | grep 4702 || echo stopped; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 12,
+      "chars": 113431
+    },
+    "outside": [],
+    "skippedLines": 1,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='tests/islands.test.ts'\ns=open(p).read()\nstart=s.index(\"it('filters books by tag'\")\nmid=s.index(\"it('toggles a favorite\")\nend=s.index(\"it('checks the contact form\")\nfilt=s[start:mid]; fav=s[mid:end]\nfav=fav.replace(\"\"\"  const list = await mount('src/components/book-list.kay', { books })\n  await settle()\n  expect(items(list.root)).toEqual(['Alpha A Author, 1800 Favorite', 'Beta B Author, 1900'])\n  list.unmount()\n\n\"\"\",\"\").replace(\"  console.log('storage', JSON.stringify({ ...localStorage }))\\n\",\"\")\nfav=fav.replace(\"\"\"  again.root.querySelector('button')?.click()\n  await settle()\n  expect(again.root.querySelector('button')?.textContent).toBe('Add to favorites')\n  again.unmount()\"\"\",\"\"\"  again.unmount()\"\"\")\nfilt=filt.replace(\"\"\"  expect(items(root)).toEqual(['Alpha A Author, 1800', 'Beta B Author, 1900'])\"\"\",\"\"\"  expect(items(root)).toEqual(['Alpha A Author, 1800 Favorite', 'Beta B Author, 1900'])\"\"\").replace(\"\"\"  expect(items(root)).toEqual(['Alpha A Author, 1800'])\"\"\",\"\"\"  expect(items(root)).toEqual(['Alpha A Author, 1800 Favorite'])\"\"\")\ns=s[:start]+fav+filt+s[end:]\nopen(p,'w').write(s)\nEOF\nbun test 2>&1 | tail -8",
+      "python3 - <<'EOF'\np='src/components/contact-form.kay'\ns=open(p).read()\ns=s.replace(\"\"\"---\nimport { send }\"\"\",\"\"\"---\nimport { ActionError } from 'kay'\nimport { send }\"\"\")\ns=s.replace(\"\"\"    const result = await send(fields, { refresh: false })\n    thanked.set(result.name)\n    form.reset()\n\"\"\",\"\"\"    try {\n      const result = await send(fields, { refresh: false })\n      thanked.set(result.name)\n      form.reset()\n    }\n    catch (error) {\n      if (!(error instanceof ActionError))\n        throw error\n\n      const data = error.data as { errors?: ContactErrors } | undefined\n      errors.set({ ...error.errors, ...data?.errors })\n    }\n\"\"\")\nopen(p,'w').write(s)\nEOF\ncat > tests/pages.test.ts <<'EOF'\nimport { expect, it } from 'bun:test'\nimport { testSite } from 'kay/test'\nimport { send } from '../src/routes/contact.kay'\n\nconst site = await testSite()\n\nit('marks the current section', async () => {\n  const current = async (path: string) => (await site.visit(path)).find('nav[aria-label=\"Main\"] a[aria-current=\"page\"]').map(a => a.text)\n\n  expect(await current('/')).toEqual([])\n  expect(await current('/books')).toEqual(['Books'])\n  expect(await current('/books/dracula')).toEqual(['Books'])\n  expect(await current('/books/nope')).toEqual([])\n  expect(await current('/about')).toEqual(['About'])\n  expect(await current('/contact')).toEqual(['Contact'])\n})\n\nit('answers unknown paths with the 404 page', async () => {\n  for (const path of ['/nope', '/books/nope']) {\n    const page = await site.visit(path)\n    expect(page.status).toBe(404)\n    expect(page.title()).toBe('Not found | Bookshelf')\n  }\n})\n\nit('lists the top rated books', async () => {\n  const page = await site.visit('/')\n  expect(page.title()).toBe('Bookshelf')\n  expect(page.find('ol li a').map(a => a.text)).toEqual(['Frankenstein', 'Pride and Prejudice', 'Dracula'])\n})\n\nit('checks the contact form on the server', async () => {\n  const refused = await site.submit(send, { name: '', email: '', message: 'short' }, { from: '/contact' })\n  expect(refused.find('.error').map(p => p.text)).toEqual(['Name is required.', 'Email is required.', 'Message must be at least 20 characters.'])\n\n  const sent = await site.submit(send, { name: ' Ann ', email: 'ann@example.com', message: 'A message long enough to pass.' }, { from: '/contact' })\n  expect(sent.find('p[role=\"status\"]')[0]?.text).toBe('Thanks, Ann! Your message has been sent.')\n\n  const data = new FormData()\n  data.set('name', 'Bo')\n  data.set('email', 'bo@example.com')\n  data.set('message', 'Another message long enough.')\n  expect(await site.call(send, data)).toEqual({ name: 'Bo' })\n})\nEOF\nbun test 2>&1 | tail -8; bun run check 2>&1 | tail -5"
+    ],
+    "resultTokens": {
+      "input": 58,
+      "output": 17126,
+      "cacheCreation": 78692,
+      "cacheRead": 1626601
+    }
+  },
+  "diff": {
+    "files": 27,
+    "added": 416,
+    "removed": 5,
+    "testLines": 82,
+    "styleLines": 0,
+    "dependenciesAdded": [
+      "@happy-dom/global-registrator"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.18.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-10T02:45:14.970Z",
+    "files": 18,
+    "bytes": 208261
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/kay-1"
+}

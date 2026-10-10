@@ -1,0 +1,169 @@
+{
+  "framework": "sveltekit",
+  "run": 1,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T02:09:07.341Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "@sveltejs/kit": "3.0.1",
+    "svelte": "5.57.2",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 297144,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 296858,
+    "durationApiMs": 260789,
+    "turns": 40,
+    "costUsd": 1.5405534000000003,
+    "tokens": {
+      "input": 78,
+      "output": 29418,
+      "cacheCreation": 71664,
+      "cacheRead": 1892847
+    },
+    "outputExact": true,
+    "thinkingTokens": 8767,
+    "apiCalls": 39,
+    "peakContextTokens": 76920,
+    "toolCalls": {
+      "Bash": 38,
+      "Read": 1
+    },
+    "toolErrors": 3,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/contact/+page.server.ts <<'EOF'\nimport { fail } from '@sveltejs/kit';\nimport { read_contact, validate_contact } from '#lib/contact.ts';\nimport type { Actions } from './$types';\n\nexport const actions: Actions = {\n\tdefault: async ({ request }) => {\n\t\tconst values = read_contact(await request.formData());\n\t\tconst errors = validate_contact(values);\n\n\t\tif (Object.keys(errors).length > 0) {\n\t\t\treturn fail(400, { values, errors });\n\t\t}\n\n\t\t// Nothing is stored: the message is only acknowledged.\n\t\treturn { success: true as const, name: values.name };\n\t}\n};\nEOF\ncat > src/routes/contact/+page.svelte <<'EOF'\n<script lang=\"ts\">\n\timport { enhance } from '$app/forms';\n\timport {\n\t\tread_contact,\n\t\tvalidate_contact,\n\t\ttype ContactErrors,\n\t\ttype ContactValues\n\t} from '#lib/contact.ts';\n\timport type { PageProps, SubmitFunction } from './$types';\n\n\tlet { form }: PageProps = $props();\n\n\t// Errors found in the browser, before anything is sent.\n\tlet client_errors = $state<ContactErrors | null>(null);\n\n\tlet errors: ContactErrors = $derived(\n\t\tclient_errors ?? (form && 'errors' in form ? form.errors : {}) ?? {}\n\t);\n\tlet values: Partial<ContactValues> = $derived(form && 'values' in form ? form.values : {});\n\tlet sent_name = $derived(\n\t\t!client_errors && form && 'success' in form && form.success ? form.name : null\n\t);\n\n\tconst submit: SubmitFunction = ({ formData, cancel }) => {\n\t\tconst found = validate_contact(read_contact(formData));\n\t\tif (Object.keys(found).length > 0) {\n\t\t\tclient_errors = found;\n\t\t\tcancel();\n\t\t\treturn;\n\t\t}\n\t\tclient_errors = null;\n\t};\n</script>\n\n<svelte:head>\n\t<title>Contact | Bookshelf</title>\n</svelte:head>\n\n<h1>Contact</h1>\n\n{#if sent_name !== null}\n\t<p class=\"success\" role=\"status\">Thanks, {sent_name}! Your message has been sent.</p>\n{/if}\n\n<form method=\"POST\" novalidate use:enhance={submit}>\n\t<div class=\"field\">\n\t\t<label for=\"name\">Name</label>\n\t\t<input\n\t\t\tid=\"name\"\n\t\t\tname=\"name\"\n\t\t\ttype=\"text\"\n\t\t\tvalue={values.name ?? ''}\n\t\t\taria-invalid={errors.name ? 'true' : undefined}\n\t\t\taria-describedby={errors.name ? 'name-error' : undefined}\n\t\t/>\n\t\t{#if errors.name}\n\t\t\t<p class=\"error\" id=\"name-error\">{errors.name}</p>\n\t\t{/if}\n\t</div>\n\n\t<div class=\"field\">\n\t\t<label for=\"email\">Email</label>\n\t\t<input\n\t\t\tid=\"email\"\n\t\t\tname=\"email\"\n\t\t\ttype=\"email\"\n\t\t\tvalue={values.email ?? ''}\n\t\t\taria-invalid={errors.email ? 'true' : undefined}\n\t\t\taria-describedby={errors.email ? 'email-error' : undefined}\n\t\t/>\n\t\t{#if errors.email}\n\t\t\t<p class=\"error\" id=\"email-error\">{errors.email}</p>\n\t\t{/if}\n\t</div>\n\n\t<div class=\"field\">\n\t\t<label for=\"message\">Message</label>\n\t\t<textarea\n\t\t\tid=\"message\"\n\t\t\tname=\"message\"\n\t\t\trows=\"5\"\n\t\t\tvalue={values.message ?? ''}\n\t\t\taria-invalid={errors.message ? 'true' : undefined}\n\t\t\taria-describedby={errors.message ? 'message-error' : undefined}\n\t\t></textarea>\n\t\t{#if errors.message}\n\t\t\t<p class=\"error\" id=\"message-error\">{errors.message}</p>\n\t\t{/if}\n\t</div>\n\n\t<button type=\"submit\">Send</button>\n</form>\n\n<style>\n\t.field {\n\t\tdisplay: flex;\n\t\tflex-direction: column;\n\t\tgap: 0.25rem;\n\t\tmargin-bottom: 1rem;\n\t}\n\n\tinput,\n\ttextarea {\n\t\tfont: inherit;\n\t\tpadding: 0.4rem;\n\t}\n\n\t.error {\n\t\tmargin: 0;\n\t\tcolor: #b00020;\n\t}\n\n\t.success {\n\t\tcolor: #1b5e20;\n\t}\n</style>\nEOF\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd src/routes/contact && python3 - <<'EOF'\np='+page.svelte'\ns=open(p).read()\ns=s.replace(\"\"\"\tlet errors: ContactErrors = $derived(\n\t\tclient_errors ?? (form && 'errors' in form ? form.errors : {}) ?? {}\n\t);\n\tlet values: Partial<ContactValues> = $derived(form && 'values' in form ? form.values : {});\n\tlet sent_name = $derived(\n\t\t!client_errors && form && 'success' in form && form.success ? form.name : null\n\t);\"\"\",\"\"\"\tlet errors = $derived<ContactErrors>(client_errors ?? form?.errors ?? {});\n\tlet values = $derived<Partial<ContactValues>>(form?.values ?? {});\n\tlet sent_name = $derived(!client_errors && form?.success ? form.name : null);\"\"\")\nopen(p,'w').write(s)\nEOF\ncd ../../.. && bun run check 2>&1 | tail -5",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -15",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "rm -rf .domtest && bun remove happy-dom @happy-dom/global-registrator 2>&1 | tail -1\nprintf -- '---\\ntitle: A Test Book\\nauthor: Some One\\nyear: 1900\\nrating: 5\\ntags: [zeta]\\n---\\n\\nHello **bold**.\\n' > content/books/a-test-book.md\nbun run build >/dev/null 2>&1 && echo built\nkill %1 2>/dev/null; sleep 0.5\nPORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/bookshelf.log 2>&1 &\nsleep 1.5; B=http://localhost:4702\ncurl -s $B/ | grep -o '<ol>.*</ol>' | sed 's/<!--[^>]*-->//g'\ncurl -s $B/books | grep -o 'zeta\\|A Test Book' | sort -u\ncurl -s $B/books/a-test-book | grep -o '<strong>bold</strong>\\|<title>[^<]*'\nkill %1; sleep 0.5\nrm content/books/a-test-book.md; bun run build >/dev/null 2>&1 && echo rebuilt; git status --short",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run check 2>&1 | tail -1; bun run build 2>&1 | tail -1\nPORT=4703 HOST=127.0.0.1 ORIGIN=http://localhost:4703 NODE_ENV=production bun run start > /tmp/bookshelf.log 2>&1 &\nsleep 1.5; for p in / /books /books/dracula /about /contact /x /books/x; do printf '%s %s\\n' $p $(curl -s -o /dev/null -w '%{http_code}' http://localhost:4703$p); done\ncurl -s http://localhost:4703/about | grep -o '<title>[^<]*\\|aria-current=\"page\">[^<]*'\nkill %1; sleep 0.5; ss -ltnp 2>/dev/null | grep -c ':470' ; rm -f /tmp/bookshelf.log",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 12,
+      "chars": 51807
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "cd src/routes/contact && python3 - <<'EOF'\np='+page.svelte'\ns=open(p).read()\ns=s.replace(\"\"\"\tlet errors: ContactErrors = $derived(\n\t\tclient_errors ?? (form && 'errors' in form ? form.errors : {}) ?? {}\n\t);\n\tlet values: Partial<ContactValues> = $derived(form && 'values' in form ? form.values : {});\n\tlet sent_name = $derived(\n\t\t!client_errors && form && 'success' in form && form.success ? form.name : null\n\t);\"\"\",\"\"\"\tlet errors = $derived<ContactErrors>(client_errors ?? form?.errors ?? {});\n\tlet values = $derived<Partial<ContactValues>>(form?.values ?? {});\n\tlet sent_name = $derived(!client_errors && form?.success ? form.name : null);\"\"\")\nopen(p,'w').write(s)\nEOF\ncd ../../.. && bun run check 2>&1 | tail -5",
+      "bun add -d @happy-dom/global-registrator 2>&1 | tail -1\ncd .domtest && python3 - <<'EOF'\np='test.ts'; s=open(p).read()\ns=s.replace(\"\"\"await submit();\nforms.set_result({ type: 'success', data: { success: true, name: 'Ann' } });\nassert(\"\"\",\"\"\"forms.set_result({ type: 'success', data: { success: true, name: 'Ann' } });\nawait submit();\nconsole.log(target.querySelector('.success')?.textContent);\nassert(target.querySelector('.success')?.textContent === 'Thanks, Ann! Your message has been sent.', 'success shows');\nassert(\"\"\")\nopen(p,'w').write(s)\nEOF\ncd .. && bun --conditions=browser --preload ./.domtest/plugin.ts .domtest/test.ts",
+      "cd .domtest && python3 - <<'EOF'\np='plugin.ts'; s=open(p).read()\ns=s.replace(\"\"\"\t\t\treturn { contents: js.code, loader: 'js' };\n\t\t});\n\t\tbuild.onLoad({ filter: /\\\\.svelte\\\\.ts$/ }\"\"\",\"\"\"\t\t\tconst code = js.code.replace(/'\\\\$app\\\\/(state|forms)'/g, (_, m) => `'${here}/mocks/${m}.ts'`);\n\t\t\treturn { contents: code, loader: 'js' };\n\t\t});\n\t\tbuild.onLoad({ filter: /\\\\.svelte\\\\.ts$/ }\"\"\")\nopen(p,'w').write(s)\nEOF\ngrep -n \"mocks\" plugin.ts; cd .. && bun --conditions=browser --preload ./.domtest/plugin.ts .domtest/test.ts"
+    ],
+    "resultTokens": {
+      "input": 78,
+      "output": 29418,
+      "cacheCreation": 71664,
+      "cacheRead": 1892847
+    }
+  },
+  "diff": {
+    "files": 16,
+    "added": 579,
+    "removed": 4,
+    "testLines": 0,
+    "styleLines": 117,
+    "dependenciesAdded": [
+      "marked",
+      "yaml"
+    ],
+    "gradingConfigChanged": [
+      "script start"
+    ]
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://svelte.dev/llms.txt and the files it links",
+    "fetchedAt": "2026-10-10T01:14:03.245Z",
+    "files": 8,
+    "bytes": 3446023
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/sveltekit-1"
+}

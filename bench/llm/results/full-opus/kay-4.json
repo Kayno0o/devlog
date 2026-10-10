@@ -1,0 +1,158 @@
+{
+  "framework": "kay",
+  "run": 4,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T03:10:46.045Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.18.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 94924,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 94688,
+    "durationApiMs": 86606,
+    "turns": 20,
+    "costUsd": 0.7534386,
+    "tokens": {
+      "input": 38,
+      "output": 10171,
+      "cacheCreation": 51528,
+      "cacheRead": 688213
+    },
+    "outputExact": true,
+    "thinkingTokens": 2966,
+    "apiCalls": 19,
+    "peakContextTokens": 56784,
+    "toolCalls": {
+      "Bash": 19
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst contactInput = t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n})\n\nexport const send = action(contactInput, (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { send } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(send.failed()?.data?.errors ?? {})\nconst thanked = signal(send.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    try {\n      thanked.set((await send(fields, { refresh: false })).name)\n      form.reset()\n    }\n    catch (error) {\n      const data = (error as { data?: { errors?: ContactErrors } }).data\n      errors.set(data?.errors ?? {})\n    }\n  }\n}\n---\nif thanked\n  p(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={send} novalidate onSubmit={submit})\n  .field\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error {errors.name}\n  .field\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error {errors.email}\n  .field\n    label(for=\"message\") Message\n    textarea#message(name=\"message\")\n    if errors.message\n      p.error {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > src/server.ts <<'EOF'\nimport process from 'node:process'\nimport { Elysia } from 'elysia'\nimport { pages } from 'kay/server'\n\n// Exported for `kay check`, which checks links against the routes it serves besides the pages and types `ctx.locals` from its plugins.\nexport const app = new Elysia().use(await pages()).listen({\n  port: Number(process.env.PORT ?? 3000),\n  hostname: process.env.HOST ?? '0.0.0.0',\n})\n\nconsole.log(`Listening on http://${app.server?.hostname}:${app.server?.port}`)\nEOF\nbun run check 2>&1 | tail -5\nPORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/kay-server.log 2>&1 &\nsleep 2; cat /tmp/kay-server.log\nfor p in / /books /books/frankenstein /about /contact /nope /books/nope; do echo \"== $p\"; curl -s -o /tmp/out.html -w '%{http_code}\\n' http://127.0.0.1:4701$p; sed -e 's/<script[^>]*>[^<]*<\\/script>//g' /tmp/out.html | grep -o '<title>.*</title>\\|<body.*' | head -c 3000; echo; done",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "kill %1 2>/dev/null; pkill -f \"bun src/server.ts\"; bun run fmt 2>&1 | tail -3; bun run check 2>&1 | tail -3 && bun run build 2>&1 | head -2; git status --short; pgrep -fa \"src/server.ts\" || echo \"no server running\"",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "bun run fmt 2>&1 | tail -3; bun run check 2>&1 | tail -3 && bun run build 2>&1 | head -2; git status --short; ps aux | grep \"[s]rc/server.ts\" || echo \"no server running\"",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 9,
+      "chars": 90344
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [],
+    "resultTokens": {
+      "input": 38,
+      "output": 10171,
+      "cacheCreation": 51528,
+      "cacheRead": 688213
+    }
+  },
+  "diff": {
+    "files": 15,
+    "added": 238,
+    "removed": 5,
+    "testLines": 0,
+    "styleLines": 0,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.18.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-10T02:45:14.970Z",
+    "files": 18,
+    "bytes": 208261
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/kay-4"
+}

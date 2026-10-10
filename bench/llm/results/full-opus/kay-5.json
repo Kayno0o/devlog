@@ -1,0 +1,170 @@
+{
+  "framework": "kay",
+  "run": 5,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T03:51:49.693Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.18.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 155523,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 155047,
+    "durationApiMs": 144875,
+    "turns": 31,
+    "costUsd": 1.2022251999999998,
+    "tokens": {
+      "input": 50,
+      "output": 15681,
+      "cacheCreation": 75979,
+      "cacheRead": 1402866
+    },
+    "outputExact": true,
+    "thinkingTokens": 4110,
+    "apiCalls": 25,
+    "peakContextTokens": 81235,
+    "toolCalls": {
+      "Bash": 22,
+      "Read": 8
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site\nsed -i \"s/^\\(\\s*\\)| $/\\1| {' '}/\" src/components/book-list.kay; cat -A src/components/book-list.kay | grep \"|\"\ncat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkMessage } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst fields = t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n})\n\nexport const send = action(fields, (input, ctx) => {\n  const errors = checkMessage(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { ActionError } from 'kay'\nimport { send } from '../routes/contact.kay'\nimport { checkMessage } from '../contact'\nimport type { MessageErrors } from '../contact'\n\nconst errors = signal<MessageErrors>(send.failed()?.data?.errors ?? {})\nconst thanked = signal(send.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkMessage({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length > 0)\n    return\n\n  try {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n  catch (error) {\n    if (error instanceof ActionError && error.data !== undefined)\n      errors.set((error.data as { errors?: MessageErrors }).errors ?? {})\n    else\n      throw error\n  }\n}\n---\nif thanked\n  p(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={send} novalidate onSubmit={submit})\n  div\n    label(for=\"contact-name\") Name\n    input#contact-name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error(id=\"contact-name-error\") {errors.name}\n  div\n    label(for=\"contact-email\") Email\n    input#contact-email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error(id=\"contact-email-error\") {errors.email}\n  div\n    label(for=\"contact-message\") Message\n    textarea#contact-message(name=\"message\")\n    if errors.message\n      p.error(id=\"contact-message-error\") {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site\nbun run build 2>&1 | tail -20\n(PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/kay-server.log 2>&1 &)\nsleep 2; cat /tmp/kay-server.log\nfor p in / /books /books/frankenstein /about /contact /books/nope /nope; do echo \"== $p\"; curl -s -o /dev/null -w \"%{http_code}\\n\" localhost:4701$p; done",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site; python3 - <<'EOF'\np='tests/islands.test.ts'\ns=open(p).read()\ns=s.replace(\"localStorage.setItem('favorites', JSON.stringify(['b']))\",\"localStorage.setItem('favorites', '[[1],\\\"b\\\"]')\")\ns=s.replace(\"  console.log(root.innerHTML)\\n  expect(items(root).length).toBe(3)\\n\",\"  expect(items(root)).toEqual(['A X, 1', 'B Y, 2 Favorite', 'C Z, 3'])\\n\")\ns=s.replace(\"  console.log(items(root))\\n\",\"\")\ns=s.replace(\"  console.log(localStorage.getItem('favorites'))\\n\",\"\")\nopen(p,'w').write(s)\nEOF\nbun test 2>&1 | tail -8; bun run check",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site; cat > tests/site.test.ts <<'EOF'\nimport { expect, it } from 'bun:test'\nimport { testSite } from 'kay/test'\nimport { send } from '../src/routes/contact.kay'\n\nconst site = await testSite()\n\nit('refuses an invalid message with every error and the values sent', async () => {\n  const page = await site.submit(send, { name: ' ', email: '', message: 'too short' }, { from: '/contact' })\n\n  expect(page.status).toBe(422)\n  expect(page.html).toContain('Name is required.')\n  expect(page.html).toContain('Email is required.')\n  expect(page.html).toContain('Message must be at least 20 characters.')\n  expect(page.html).toContain('>too short</textarea>')\n})\n\nit('thanks the sender', async () => {\n  const page = await site.submit(send, { name: '  Ann  ', email: 'ann@example.com', message: 'A message long enough to pass.' }, { from: '/contact' })\n\n  expect(page.html).toContain('Thanks, <!--[-->Ann<!--]-->! Your message has been sent.')\n})\n\nit('answers an island call', async () => {\n  const fields = new FormData()\n  fields.set('name', ' Bo ')\n  fields.set('email', 'bo@example.com')\n  fields.set('message', 'Another message long enough.')\n\n  expect(await site.call(send, fields)).toEqual({ name: 'Bo' })\n})\n\nit('marks the current section', async () => {\n  const book = await site.visit('/books/dracula')\n  expect(book.html).toContain('<a href=\"/books\" aria-current=\"page\">Books</a>')\n\n  const missing = await site.visit('/books/missing')\n  expect(missing.status).toBe(404)\n  expect(missing.html).not.toContain('aria-current')\n\n  const home = await site.visit('/')\n  expect(home.html).not.toContain('aria-current')\n})\nEOF\nbun test 2>&1 | tail -8; bun run check",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site; pkill -f \"bun src/server.ts\"; \nsed -i \"s|.listen(Number(process.env.PORT ?? 3000))|.listen({ port: Number(process.env.PORT ?? 3000), hostname: process.env.HOST ?? '0.0.0.0' })|\" src/server.ts\nsed -i 's|\"fmt\": \"kay fmt\"|\"fmt\": \"kay fmt\",\\n    \"test\": \"bun test\"|' package.json\nbun run fmt >/dev/null; git status --short; bun run check && bun run build | head -1 && bun test 2>&1 | grep -E \"pass|fail\"\n(PORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/kay-server.log 2>&1 &)\nsleep 2; cat /tmp/kay-server.log; for p in / /books /books/moby-dick /about /contact /x /books/x; do curl -s -o /dev/null -w \"$p %{http_code}\\n\" 127.0.0.1:4702$p; done\ncurl -s 127.0.0.1:4702/about | grep -o '<title>.*</title>\\|<main>.*</main>'\npkill -f \"bun src/server.ts\"; sleep 0.5; pgrep -af \"src/server.ts\" || echo stopped",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site\nsed -i \"s|.listen(Number(process.env.PORT ?? 3000))|.listen({ port: Number(process.env.PORT ?? 3000), hostname: process.env.HOST ?? '0.0.0.0' })|\" src/server.ts\nsed -i 's|\"fmt\": \"kay fmt\"|\"fmt\": \"kay fmt\",\\n    \"test\": \"bun test\"|' package.json\nbun run fmt 2>&1 | tail -2; git diff --stat; bun run check && bun run build | head -1 && bun test 2>&1 | grep -E \"pass|fail\"",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 14,
+      "chars": 134244
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "cd /home/kaynooo/.cache/llm-bench/full-opus/kay-5/site; python3 - <<'EOF'\np='tests/islands.test.ts'\ns=open(p).read()\ns=s.replace(\"localStorage.setItem('favorites', JSON.stringify(['b']))\",\"localStorage.setItem('favorites', '[[1],\\\"b\\\"]')\")\ns=s.replace(\"  console.log(root.innerHTML)\\n  expect(items(root).length).toBe(3)\\n\",\"  expect(items(root)).toEqual(['A X, 1', 'B Y, 2 Favorite', 'C Z, 3'])\\n\")\ns=s.replace(\"  console.log(items(root))\\n\",\"\")\ns=s.replace(\"  console.log(localStorage.getItem('favorites'))\\n\",\"\")\nopen(p,'w').write(s)\nEOF\nbun test 2>&1 | tail -8; bun run check"
+    ],
+    "resultTokens": {
+      "input": 50,
+      "output": 15681,
+      "cacheCreation": 75979,
+      "cacheRead": 1402866
+    }
+  },
+  "diff": {
+    "files": 28,
+    "added": 458,
+    "removed": 5,
+    "testLines": 107,
+    "styleLines": 0,
+    "dependenciesAdded": [
+      "@happy-dom/global-registrator"
+    ],
+    "gradingConfigChanged": [
+      "script test"
+    ]
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.18.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-10T02:45:14.970Z",
+    "files": 18,
+    "bytes": 208261
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/kay-5"
+}
