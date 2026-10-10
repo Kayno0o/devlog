@@ -1,4 +1,6 @@
 ---
+import type { BenchId } from '../benches'
+import { benchSource } from '../benches'
 import { formatNumber } from '../format'
 
 interface Row {
@@ -6,17 +8,20 @@ interface Row {
   value: number
 }
 
-const { title, unit, rows, highlight, better, source, digits = 1 } = props<{
+const { title, unit, rows, highlight, better, bench, source, digits = 1 } = props<{
   title: string
   unit: string
   rows: Row[]
   highlight?: string | string[] | undefined
   better?: 'lower' | 'higher' | undefined
+  bench?: BenchId | undefined
   source?: string | undefined
   digits?: number | undefined
 }>()
 
-const highlighted = new Set([highlight ?? []].flat())
+// Without `highlight`, kay's own rows stand out: `kay`, or `kay, painter` when one chart compares several sites.
+const highlighted = new Set(highlight === undefined ? rows.map(row => row.label).filter(label => label === 'kay' || label.startsWith('kay, ')) : [highlight].flat())
+const caption = bench === undefined ? source : benchSource(bench, source)
 const max = () => Math.max(...rows.map(row => row.value))
 ---
 figure.chart
@@ -40,5 +45,5 @@ figure.chart
         tr
           th(scope="row") {row.label}
           td {formatNumber(row.value, digits)} {unit}
-  if source
-    p.mt-3.text-xs.text-muted Source: {source}
+  if caption
+    p.mt-3.text-xs.text-muted Source: {caption}

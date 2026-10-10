@@ -19,3 +19,17 @@ it('highlights every row a list names', async () => {
 
   expect(html.match(/chart-bar-highlight/g)).toHaveLength(2)
 })
+
+it('highlights kay\'s own rows when no highlight is given', async () => {
+  const html = await renderToString(BarChart, { title: 'Memory', unit: 'MB', rows: [{ label: 'kay, cattery', value: 142 }, { label: 'kay, painter', value: 104 }, { label: 'Astro, cattery', value: 283 }] })
+
+  expect(html.match(/chart-bar-highlight/g)).toHaveLength(2)
+})
+
+it('opens a bench\'s source with its name and ends it with its date', async () => {
+  const detailed = await renderToString(BarChart, { title: 'Build', unit: 's', rows, bench: 'sveltekit', source: 'hyperfine, 3 runs' })
+  const plain = await renderToString(BarChart, { title: 'Build', unit: 's', rows, bench: 'synthetic' })
+
+  expect(detailed).toContain('Source: SvelteKit port, hyperfine, 3 runs, 2026-10-10')
+  expect(plain).toContain('Source: kay\'s bench, 2026-10-07')
+})
