@@ -175,34 +175,34 @@ A products table only goes so far, so I ported a real site from SvelteKit to kay
 
 ### What kay gains
 
-<Stats items={[{"value": "-87%", "label": "server CPU per visitor"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-86%", "label": "server CPU per visitor"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
 
-<BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 408}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
+<BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 400}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
 
-<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 45.9}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="every file the build writes" />
+<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 46.2}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="every file the build writes" />
 
 A page loads only the part its islands need: 16 KB on a content page.
 
 The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
 
-<BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 37793}, {"label": "SvelteKit", "value": 790}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
+<BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 37538}, {"label": "SvelteKit", "value": 772}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
 
 Most of that gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
 
-<BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 3.04}, {"label": "SvelteKit", "value": 4.25}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
+<BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.87}, {"label": "SvelteKit", "value": 3.79}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
 
-Under load, kay peaks at 79 MiB of memory against SvelteKit's 136 to 142. The home page a phone downloads drops from 706 to 558 KB, mostly images: kay serves AVIF at the width drawn.
+Under load, kay peaks at 80 MiB of memory against SvelteKit's 132 to 133. The home page a phone downloads drops from 706 to 558 KB, mostly images: kay serves AVIF at the width drawn.
 
 ### What kay loses
 
-<BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 42}, {"label": "kay", "value": 51}]} bench="sveltekit" source="RSS after start" />
+<BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 39}, {"label": "kay", "value": 51}]} bench="sveltekit" source="RSS after start" />
 
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
-- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.1 to 1.2 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
+- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.1 times SvelteKit's rate, for 1.0 to 1.2 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
 
 <Note title="How it was measured">
 
-kay 1.28.0 on Bun 1.4.4 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.30.0 on Bun 1.4.4 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
