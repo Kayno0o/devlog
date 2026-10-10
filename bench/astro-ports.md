@@ -16,13 +16,15 @@ Average over every page: text as brotli at quality 11 sends it, images as served
 
 |  | cattery astro | cattery kay | painter astro | painter kay |
 | --- | --- | --- | --- | --- |
-| HTML | 5.1 KB | 5.2 KB | 6.8 KB | 6.9 KB |
+| HTML | 4.7 KB | 5.1 KB | 6.4 KB | 6.8 KB |
 | CSS | 35.2 KB | 5.3 KB | 9.3 KB | 6.8 KB |
-| JS | 4.8 KB | 10.0 KB | 0.0 KB | 10.3 KB |
+| JS | 5.2 KB | 10.1 KB | 0.4 KB | 10.4 KB |
 | JS files | 1.0 | 2.0 | 0.0 | 5.0 |
 | images, desktop | 142.5 KB | 55.2 KB | 160.8 KB | 36.4 KB |
 | images, phone | 142.5 KB | 114.5 KB | 185.3 KB | 105.2 KB |
 | fonts | 109.5 KB | 109.5 KB | 35.2 KB | 106.6 KB |
+
+Inline `<script>` bodies count as JS, weighed as what they add to the page's brotli (kayjs #158): Astro inlines the painter's scripts in its pages, which an earlier count put under HTML. These rows were corrected from the cached builds of the same commits; the cattery's home page is not prerendered, so its share is the average of its other pages'.
 
 ## In a browser
 

@@ -126,9 +126,9 @@ kay's figures there are a floor: the load client tops out near 40,000 requests a
 
 ### What kay loses
 
-<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" highlight={["kay, cattery", "kay, painter"]} rows={[{"label": "Astro, painter", "value": 0}, {"label": "Astro, cattery", "value": 4.8}, {"label": "kay, cattery", "value": 10}, {"label": "kay, painter", "value": 10.3}]} source="Astro (2026-10-07) vs kay 1.16.6 (2026-10-10), average over every page" />
+<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" highlight={["kay, cattery", "kay, painter"]} rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 10.1}, {"label": "kay, painter", "value": 10.4}]} source="Astro (2026-10-07) vs kay 1.16.6 (2026-10-10), average over every page" />
 
-- **More JavaScript.** The painter's site shipped none on Astro and ships 10.3 KB on kay, and the cattery's goes from 4.8 to 10.0 KB.
+- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 10.4 KB on kay, most of it the runtime its islands and in-place navigation need; the cattery's goes from 5.2 to 10.1 KB.
 - **A heavier painter site on phones.** A phone downloads 166 KB per page against 126 KB, mostly fonts, 107 against 35 KB, and that script. Its largest paint lands about 80 ms later on a phone and 45 ms later on desktop.
 - **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image at each width, and type-checks, which `astro build` does not: 12.6 against 1.9 s on the cattery and 7.3 against 1.5 s on the painter, the cattery's build peaking at 1.8 GB against 1.1.
 
