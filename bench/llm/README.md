@@ -9,7 +9,7 @@ The same site built by a coding agent in kay, SvelteKit, SolidStart and Astro, m
 - `run.ts`: one headless `claude -p --safe-mode` session per framework and run (no CLAUDE.md, hooks, plugins or MCP servers), in a fresh copy of the starter under `~/.cache/llm-bench/<label>/`, run on the Claude account `account use` made active, as fish's `claude` function does, and under `bwrap` (bubblewrap, required) with `~/Workspace`, `~/.claude/projects`, `~/.cache/claude-tmp`, the other runs and the Playwright browsers hidden, and a private `/tmp` and process list, so the agent cannot read the acceptance suite, the reference site, past transcripts or another run, nor test in the grader's browser; then graded: `bun run check`, `bun run build`, then the suite against `bun run start`. Runs are interleaved across frameworks, and a run already in `results/<label>/` is skipped, so a stopped benchmark resumes.
 - `report.ts`: writes `results/<label>/results.md` and `summary.json` from the run files.
 - `post.ts`: prints the Stats and BarChart lines of the post from `summary.json`.
-- `screenshots.ts`: screenshots the books page of each framework's passing run of median cost into `public/llm-bench/`, for the post; run it once no benchmark is running.
+- `screenshots.ts`: screenshots the books page of each framework's passing run of median cost into `public/llm-bench/`, for the post, or of the runs named after the label (`kay-3`); run it once no benchmark is running.
 
 ## Running it
 
