@@ -2,6 +2,7 @@ import { expect, it } from 'bun:test'
 import { testSite } from 'kay/test'
 
 const site = await testSite()
+const linkOpening = /<a [^>]*>(?:<svg|<img)?/g
 
 it('lists the posts, leaving drafts out', async () => {
   const home = await site.visit('/')
@@ -14,7 +15,7 @@ it('lists the posts, leaving drafts out', async () => {
 it('names its author, and gives contact links in the footer', async () => {
   const home = await site.visit('/')
 
-  expect(home.html).toMatch(/I'm <a href="https:\/\/github\.com\/Kayno0o">Kévyn<\/a>/)
+  expect(home.html).toMatch(/I'm <a [^>]*href="https:\/\/github\.com\/Kayno0o"><svg.*?<\/svg>Kévyn<\/a>/)
   expect(home.html).toContain('href="mailto:contact@kaynooo.fr"')
   expect(home.html).toContain('href="https://github.com/Kayno0o/devlog"')
 })
@@ -33,6 +34,15 @@ it('links the about page from the intro and from the header on every page', asyn
   expect(about.status).toBe(200)
   expect(about.html).toContain('href="/about"')
   expect(about.html).toContain('How I got here')
+})
+
+it('opens every link of the about page on its icon', async () => {
+  const about = await site.visit('/about')
+  const article = about.html.slice(about.html.indexOf('<article'), about.html.indexOf('</article>'))
+  const links = article.match(linkOpening) ?? []
+
+  expect(links.length).toBeGreaterThan(10)
+  expect(links.filter(link => !link.endsWith('<svg') && !link.endsWith('<img'))).toEqual([])
 })
 
 it('serves the feed', async () => {
