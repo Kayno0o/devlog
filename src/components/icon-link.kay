@@ -1,0 +1,11 @@
+---
+import type { IconProps } from 'kay/icons'
+
+const { href, icon, image } = props<{ href: string, icon?: IconProps, image?: string }>()
+---
+a.whitespace-nowrap(href={href})
+  if icon
+    svg({...icon} class="mr-1 inline-block align-[-0.125em]")
+  else if image
+    img(src={image} sizes="16px" alt="" class="mr-1 inline-block size-[1em] align-[-0.125em]")
+  slot

@@ -1,24 +1,40 @@
+---
+import Arduino from '~icons/simple-icons/arduino'
+import Claude from '~icons/simple-icons/claude'
+import Eslint from '~icons/simple-icons/eslint'
+import Forgejo from '~icons/simple-icons/forgejo'
+import Gamepad from '~icons/tabler/device-gamepad-2'
+import Github from '~icons/simple-icons/github'
+import Godot from '~icons/simple-icons/godotengine'
+import Mail from '~icons/tabler/mail'
+import Mcp from '~icons/simple-icons/modelcontextprotocol'
+import Nuxt from '~icons/simple-icons/nuxt'
+import Php from '~icons/simple-icons/php'
+import Processing from '~icons/simple-icons/processingfoundation'
+import Symfony from '~icons/simple-icons/symfony'
+import IconLink from '../components/icon-link.kay'
+---
 head
   title About
   meta(name="description" content="Kévyn, a full-stack developer from Bordeaux: how I got into coding, and what I care about in it.")
 article.mx-auto.max-w-2xl
   h1.mb-10.text-3xl.font-semibold About
   .prose
-    p I'm Kévyn, a full-stack developer from Bordeaux, France. I build web apps for a living, and Minecraft mods, tools and #[a(href="https://godotengine.org") Godot] projects for fun.
+    p I'm Kévyn, a full-stack developer from Bordeaux, France. I build web apps for a living, and Minecraft mods, tools and #[IconLink(href="https://godotengine.org" icon={Godot}) Godot] projects for fun.
     h2 How I got here
-    p It started with an #[a(href="https://www.arduino.cc") Arduino], discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, a lot of #[a(href="https://processing.org") Processing], and Discord bots hosted on Glitch. A friend saw one of those bots and asked me for a custom one, then bought me a VPS, my first real server: it taught me a lot about Linux and how to host things on the internet.
+    p It started with an #[IconLink(href="https://www.arduino.cc" icon={Arduino}) Arduino], discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, a lot of #[IconLink(href="https://processing.org" icon={Processing}) Processing], and Discord bots hosted on Glitch. A friend saw one of those bots and asked me for a custom one, then bought me a VPS, my first real server: it taught me a lot about Linux and how to host things on the internet.
     p Processing came back in seconde, my first year of high school, when a class asked us to use it. I handed in a platform game, and the teacher had a hard time believing I had made it myself, though one look at the code would have settled it: it was a mess that would burn my eyes today. Around the same time, I wrote a Discord bot for a YouTuber, who paid for another VPS so I could run it there.
-    p All of that made a real difference once I got to my computer science IUT, where, I admit, I spent more classes than I should have playing #[a(href="https://www.dofus.com") Dofus], and even more playing video games once Covid moved classes online and nobody could see my screen. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years. There, I build large #[a(href="https://nuxt.com") Nuxt] and #[a(href="https://symfony.com") Symfony] projects over several months, then maintain them, migrating to new versions to keep them secure.
-    p I also still host my own things, on my own server running #[a(href="https://forgejo.org") Forgejo], this blog and a few personal tools. My data stays mine, it costs little, the footprint stays small, and I keep learning from it, which is half the fun.
+    p All of that made a real difference once I got to my computer science IUT, where, I admit, I spent more classes than I should have playing #[IconLink(href="https://www.dofus.com" icon={Gamepad}) Dofus], and even more playing video games once Covid moved classes online and nobody could see my screen. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years. There, I build large #[IconLink(href="https://nuxt.com" icon={Nuxt}) Nuxt] and #[IconLink(href="https://symfony.com" icon={Symfony}) Symfony] projects over several months, then maintain them, migrating to new versions to keep them secure.
+    p I also still host my own things, on my own server running #[IconLink(href="https://forgejo.org" icon={Forgejo}) Forgejo], this blog and a few personal tools. My data stays mine, it costs little, the footprint stays small, and I keep learning from it, which is half the fun.
     h2 What I care about
     p Developer experience, performance and accessibility, and the footprint of what I build: the smaller it is, the less it costs, both to the people using it and to the planet, which never asked for a 2 MB JavaScript bundle.
-    p I'm also picky about code itself, and about formatting most of all: code should breathe. I started #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset] as a layer over #[a(href="https://github.com/antfu/eslint-config") antfu's], and ended up rewriting it from scratch. At work, I set up a very strict #[a(href="https://cs.symfony.com") PHP CS Fixer] config, half to annoy my coworkers, half so I stop grumbling when I read their code.
+    p I'm also picky about code itself, and about formatting most of all: code should breathe. I started #[IconLink(href="https://github.com/Kayno0o/eslint" icon={Eslint}) my own ESLint ruleset] as a layer over #[IconLink(href="https://github.com/antfu/eslint-config" icon={Github}) antfu's], and ended up rewriting it from scratch. At work, I set up a very strict #[IconLink(href="https://cs.symfony.com" icon={Php}) PHP CS Fixer] config, half to annoy my coworkers, half so I stop grumbling when I read their code.
     h2 What I use
-    p I code with #[a(href="https://claude.com/product/claude-code") Claude Code], extended with my own memory server (an #[a(href="https://modelcontextprotocol.io") MCP] server), hooks and mods, so it remembers how I like my code to breathe. The rest of my setup:
+    p I code with #[IconLink(href="https://claude.com/product/claude-code" icon={Claude}) Claude Code], extended with my own memory server (an #[IconLink(href="https://modelcontextprotocol.io" icon={Mcp}) MCP] server), hooks and mods, so it remembers how I like my code to breathe. The rest of my setup:
     ul
       li I use Arch, btw (and Manjaro)
       li KDE Plasma on Wayland
       li fish, in kitty with tmux
       li Brave
     h2 Get in touch
-    p Contributions to kay are welcome, and so are questions: open an issue on #[a(href="https://github.com/Kayno0o/kayjs") kay's repository], or write to me at #[a(href="mailto:contact@kaynooo.fr") contact@kaynooo.fr].
+    p Contributions to kay are welcome, and so are questions: open an issue on #[IconLink(href="https://github.com/Kayno0o/kayjs" icon={Github}) kay's repository], or write to me at #[IconLink(href="mailto:contact@kaynooo.fr" icon={Mail}) contact@kaynooo.fr].
