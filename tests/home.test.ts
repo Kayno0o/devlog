@@ -19,6 +19,12 @@ it('names its author, and gives contact links in the footer', async () => {
   expect(home.html).toContain('href="https://github.com/Kayno0o/devlog"')
 })
 
+it('links kay\'s docs site from the header, on kay\'s mark', async () => {
+  const home = await site.visit('/')
+
+  expect(home.html).toMatch(/<a[^>]*href="https:\/\/kayjs\.kaynooo\.fr"[^>]*><img[^>]*kay-logo/)
+})
+
 it('serves the feed', async () => {
   const feed = await site.visit('/rss.xml')
 
