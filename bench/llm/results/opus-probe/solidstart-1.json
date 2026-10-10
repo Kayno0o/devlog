@@ -1,0 +1,151 @@
+{
+  "framework": "solidstart",
+  "run": 1,
+  "label": "opus-probe",
+  "startedAt": "2026-10-10T01:03:35.541Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "@solidjs/start": "2.0.6",
+    "solid-js": "1.9.17",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 191939,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 191463,
+    "durationApiMs": 165583,
+    "turns": 26,
+    "costUsd": 0.9051062000000002,
+    "tokens": {
+      "input": 52,
+      "output": 18624,
+      "cacheCreation": 45640,
+      "cacheRead": 836491
+    },
+    "outputExact": true,
+    "thinkingTokens": 5086,
+    "apiCalls": 26,
+    "peakContextTokens": 50896,
+    "toolCalls": {
+      "Bash": 25
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "cd /home/kaynooo/.cache/llm-bench/opus-probe/solidstart-1/site && cat > src/app.css <<'EOF'\nbody {\n  font-family: system-ui, sans-serif;\n  line-height: 1.5;\n  max-width: 48rem;\n  margin: 0 auto;\n  padding: 1rem;\n  color: #222;\n}\n\nheader {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  border-bottom: 1px solid #ddd;\n  padding-bottom: 0.5rem;\n}\n\n.brand {\n  font-weight: bold;\n  font-size: 1.25rem;\n  text-decoration: none;\n  color: inherit;\n}\n\nnav {\n  display: flex;\n  gap: 1rem;\n}\n\nnav a[aria-current=\"page\"] {\n  font-weight: bold;\n  text-decoration: none;\n}\n\nmain {\n  padding: 1rem 0;\n}\n\nfooter {\n  border-top: 1px solid #ddd;\n  padding-top: 0.5rem;\n  color: #666;\n}\n\n.tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  padding: 0;\n  list-style: none;\n}\n\nbutton[aria-pressed=\"true\"] {\n  font-weight: bold;\n  background: #222;\n  color: #fff;\n}\n\n.books li {\n  margin-bottom: 0.25rem;\n}\n\n.favorite {\n  color: #b8860b;\n}\n\n.field {\n  display: flex;\n  flex-direction: column;\n  margin-bottom: 1rem;\n  max-width: 24rem;\n}\n\n.error {\n  color: #b00020;\n  margin: 0.25rem 0 0;\n}\nEOF\nbun run check && bun run build 2>&1 | tail -15",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "perl -0pi -e 's|            rows=\"5\"\\n            value=\\{sentValue\\(\"message\"\\)\\}\\n(.*?)          />|            rows=\"5\"\\n$1          >\\n            {sentValue(\"message\")}\\n          </textarea>|s' src/routes/contact.tsx && sed -n '/<textarea/,/<\\/textarea>/p' src/routes/contact.tsx; pkill -f \".output/server/index.mjs\"; bun run check && bun run build >/dev/null 2>&1 && echo built; (PORT=4123 bun run start > /tmp/srv.log 2>&1 &); sleep 1.5; ACTION=$(curl -s localhost:4123/contact | grep -o 'action=\"[^\"]*\"' | cut -d'\"' -f2); curl -s -c /tmp/cj -X POST \"localhost:4123$ACTION\" -H \"Referer: http://localhost:4123/contact\" --data-urlencode \"name=Bo\" --data-urlencode \"email=\" --data-urlencode \"message=short <b>\" >/dev/null; curl -s -b /tmp/cj localhost:4123/contact | grep -o '<textarea.*</textarea>\\|<p id[^>]*>[^<]*'",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "pgrep -af \"index.mjs\"; bun run check && bun run build >/dev/null 2>&1 && echo built",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "kill $(cat /tmp/srv.pid); sleep 0.5; rm -rf /tmp/bs /tmp/cj /tmp/cj2 /tmp/srv.pid; bun remove playwright-core 2>&1 | tail -1; bun run check && bun run build 2>&1 | tail -2 && PORT=4124 bun run start >/dev/null 2>&1 & sleep 8; curl -s -o /dev/null -w '%{http_code}\\n' localhost:4124/; kill %1 2>/dev/null; pkill -f \"^bun .output/server/index.mjs\"; sleep 0.5; pgrep -af \"output/server\" | grep -v pgrep; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 5,
+      "chars": 33424
+    },
+    "outside": [
+      "Bash: which chromium chromium-browser google-chrome google-chrome-stable firefox 2>/dev/null; ls ~/.cache/ms-playwright 2>/dev/null; ls node_modules | grep -i -E \"playwright|puppeteer\"",
+      "Bash: bun add -d playwright-core 2>&1 | tail -2; grep -A3 '\"chromium\"' node_modules/playwright-core/browsers.json | head -5; ls ~/.cache/ms-playwright/chromium-1234"
+    ],
+    "skippedLines": 0,
+    "otherRuntimes": [],
+    "resultTokens": {
+      "input": 52,
+      "output": 18624,
+      "cacheCreation": 45640,
+      "cacheRead": 836491
+    }
+  },
+  "diff": {
+    "files": 16,
+    "added": 524,
+    "removed": 100,
+    "dependenciesAdded": [
+      "marked",
+      "yaml"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://docs.solidjs.com/llms.txt and the pages it links",
+    "fetchedAt": "2026-10-10T00:36:28.549Z",
+    "files": 272,
+    "bytes": 839181
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/opus-probe/solidstart-1"
+}
