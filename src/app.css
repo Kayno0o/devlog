@@ -79,11 +79,11 @@
     @apply flex flex-wrap gap-x-1;
 
     & > .tab-label {
-      @apply cursor-pointer rounded-t border-2 border-b-0 border-transparent px-3 py-1 text-sm text-subtext hover:text-text;
+      @apply cursor-pointer rounded-t px-3 py-1 text-sm text-subtext hover:text-text;
     }
 
     & > .tab-input:checked + .tab-label {
-      @apply border-surface bg-mantle text-text;
+      @apply bg-mantle text-text;
     }
 
     & > .tab-input:focus-visible + .tab-label {
@@ -166,7 +166,7 @@
     }
 
     & pre {
-      @apply overflow-x-auto rounded border-2 border-surface p-4 font-mono text-sm leading-normal;
+      @apply overflow-x-auto rounded p-4 font-mono text-sm leading-normal;
 
       /* Shiki writes the theme's background inline; the code block sits on the mantle instead. */
       background-color: var(--color-mantle) !important;
