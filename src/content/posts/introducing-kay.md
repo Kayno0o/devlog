@@ -1,12 +1,14 @@
 ---
-title: kay, a Bun web framework built to be fast to run and fast to write
-description: Why I built my own framework, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte and Astro.
+title: "kay: fast to run, fast to write"
+description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte and Astro.
 date: 2026-10-09
 tags: [kay, benchmarks]
 draft: true
 ---
 
-kay is a web framework on Bun and Elysia. A `.kay` file is one component: TypeScript fences, then a pug-like indented template. Pages render to plain HTML on the server, and only the interactive parts, the islands, ship JavaScript.
+Yes, another JavaScript framework. In my defense, it is the one I wanted to use.
+
+kay runs on Bun and Elysia. A `.kay` file is one component: TypeScript fences, then a pug-like indented template. Pages render to plain HTML on the server, and only the interactive parts, the islands, ship JavaScript. It is still experimental, so expect breaking changes for a while.
 
 ## What a component looks like
 
@@ -108,24 +110,22 @@ The server part renders as in kay, but Astro keeps no state in the browser: the 
 
 ## Why I built it
 
-I care about speed everywhere: how fast a page loads and runs, how fast the server answers, and how fast a build or a test run finishes. And about how little the server needs: the memory it holds and what it takes to deploy.
+I care about speed everywhere: how fast a page loads and runs, how fast the server answers, how fast a build or a test run finishes, and how little the server needs, in memory and in what it takes to deploy.
 
-And about how much code it takes. My personal dashboard's SvelteKit front-end is about 27,000 lines of code, and the SolidJS dashboard of my modpack server about 34,000, blanks and comments left out. At that size, every line a framework saves is one less to write, read and keep working.
+I also care about how much code it takes. I have two apps of my own, one in SvelteKit at about 27,000 lines and one in SolidJS at about 34,000, blanks and comments left out: at that size, every line a framework saves is one less to write, read and keep working. Neither is migrated to kay yet, and that will get its own post.
 
-I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and SolidJS has no static export and no server rendering. Astro renders on the server, but has nothing easy for dynamic components or pages unless you bring in SolidJS.
-
-So Astro with SolidJS inside was my main choice for a while: fast pages for the least code possible. SolidJS was still missing server rendering, though, and kay is what I built to have it all in one place.
+I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and SolidJS on its own renders in the browser: server rendering and static export come with SolidStart. Astro renders on the server, but has nothing easy for dynamic components unless you bring in another framework. So Astro with SolidJS inside was my choice for a while, fast pages for little code, at the price of two frameworks and two ways to write a component in one project. kay is what I built to have it all in one place.
 
 I also wanted to leave Vite behind: SvelteKit, SolidStart and Astro all build on it, and it sometimes makes builds and unit tests slow. kay builds and tests with Bun alone, and gets Bun's speed at both.
 
 ## Where it comes from
 
-kay is a mix of what I liked in other tools, in one file format:
+kay mixes what I liked elsewhere into one file format:
 
-- **Astro**: the TypeScript fence on top of the component, islands as the only JavaScript a page ships, and content collections.
-- **pug**: indented templates with no closing tags. I found pug a long time ago and loved it, but never saw a framework support it, Astro included. It is short to write and quick to read, and that compactness also means fewer tokens for an agent to read and write.
-- **SolidJS**: signals and fine-grained updates, with no virtual DOM.
-- **Svelte and SvelteKit**: a compiler that does the work ahead of time, file-based routes with layouts, and typed form actions.
+- **Astro**: the TypeScript fence on top, islands as the only JavaScript a page ships, content collections.
+- **pug**: indented templates with no closing tags. I loved pug long ago and never saw a framework support it. It is short to write, quick to read, and fewer tokens for an agent.
+- **SolidJS**: signals and fine-grained updates, no virtual DOM.
+- **Svelte and SvelteKit**: a compiler doing the work ahead of time, file-based routes with layouts, typed form actions.
 
 ## How it works
 
@@ -134,9 +134,11 @@ kay is a mix of what I liked in other tools, in one file format:
 3. An island renders on the server with hydration markers, then claims those nodes in the browser instead of rendering again.
 4. `kay build --static` writes the whole site as files, like this devlog, served by plain nginx.
 
+Bun does everything underneath: the server, the bundler, the test runner and the database driver, and a whole site compiles into a single executable. Every build type-checks the project first, templates included, so a broken prop or a mistyped link never ships.
+
 ## A synthetic bench
 
-The same products page, the same data and the same Elysia server for each framework, from kay's own bench. Each one is written the way its own docs and its js-framework-benchmark entry write it. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+The same products page, the same data and the same Elysia server for each framework, each written the way its own docs and its js-framework-benchmark entry write it. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 ### Where kay wins
 
@@ -160,13 +162,13 @@ On the rest of the table benchmark kay is within 20% of the fastest, and first o
 
 <Note title="How it was measured">
 
-Bun 1.4.2 and headless Chromium 151. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
+kay 1.3, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.2 and headless Chromium 151. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
 
 </Note>
 
 ## A real site, ported from SvelteKit
 
-Benchmarks of a products table only go so far, so I ported a real site from SvelteKit to kay: a home page and content pages, about 3,000 lines of code over 22 Svelte components. Both versions were measured in one sitting, runs interleaved, over loopback: the ratios carry over, the absolute numbers are optimistic.
+A products table only goes so far, so I ported a real site from SvelteKit to kay: a home page and content pages, about 3,000 lines over 22 Svelte components. Both versions were measured in one sitting, runs interleaved, over loopback: the ratios carry over, the absolute numbers are optimistic.
 
 ### What kay gains
 
@@ -176,7 +178,7 @@ Benchmarks of a products table only go so far, so I ported a real site from Svel
 
 <BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 16.6}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" />
 
-The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view. kay serves the page itself from memory.
+The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
 
 <BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 14332}, {"label": "SvelteKit", "value": 760}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
 
@@ -188,12 +190,12 @@ Under load, kay peaks at 85 MiB of memory against SvelteKit's 134. The home page
 
 <BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 36}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS after start" />
 
-- **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
+- **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
 - **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at about SvelteKit's rate for 1.2 to 1.3 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
 
 <Note title="How it was measured">
 
-Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.17.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
@@ -220,20 +222,15 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 <BarChart title="JS shipped per page, brotli" unit="KB" better="lower" rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 10.3}, {"label": "kay, painter", "value": 10.4}]} bench="astro" source="average over every page" />
 
-- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 10.4 KB on kay, most of it the runtime its islands and in-place navigation need; the cattery's goes from 5.2 to 10.3 KB.
-- **A heavier painter site on phones.** A phone downloads 167 KB per page against 126 KB, mostly fonts, 107 against 35 KB, and that script. Its largest paint lands about 100 ms later on a phone and 35 ms later on desktop.
+- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 10.4 KB on kay, mostly the runtime its islands and in-place navigation need; the cattery's goes from 5.2 to 10.3 KB.
+- **A heavier painter site on phones.** A phone downloads 167 KB per page against 126 KB, mostly fonts (107 against 35 KB) and that script. Its largest paint lands about 100 ms later on a phone and 35 ms later on desktop.
 - **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image at each width, and type-checks, which `astro build` does not: 11.1 against 1.9 s on the cattery and 7.5 against 1.5 s on the painter, the cattery's build peaking at 1.9 GB against 1.1.
 
 <Note title="How it was measured">
 
-Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production. Sizes compare exactly; paints and throughput come from two sittings, so small gaps there are noise, and kay's throughput ran on a loaded machine, so it understates kay. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
+kay 1.17.7 on Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production. Sizes compare exactly; paints and throughput come from two sittings, so small gaps there are noise, and kay's throughput ran on a loaded machine, so it understates kay. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
 
 </Note>
-
-## What comes with it
-
-- **Bun underneath.** One fast runtime for the server, the bundler, the test runner and the database driver, and the whole site compiles into a single executable.
-- **Builds check first.** `kay build` type-checks the whole project, templates included, before it bundles anything, so a broken prop or a mistyped link never ships. The port above still builds faster than it did on SvelteKit.
 
 ## Built for LLMs too
 
@@ -248,11 +245,11 @@ To check that, Claude Opus 5.5 built the same small site in each framework: a bo
 
 <Embed src="/llm-bench/bookshelf/books" title="The Bookshelf site kay's agent built" />
 
-That is the site kay's agent built, running: filter the books, open one, mark it a favorite. It is the run of median cost, moved to the current kay and exported to static files with four changes that needs: a base path, the list of book pages to export, a stylesheet in this devlog's colors, and no contact form, since its action needs a server. Styling was left free and was not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
+That is the site kay's agent built, running: filter the books, open one, mark it a favorite. It is the run of median cost, moved to the current kay and exported as static files, without its contact form, since that needs a server. Styling was free and not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
 
 ### What kay gains
 
-<Stats items={[{"value":"20 of 20","label":"runs passing every check and test"},{"value":"16K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
+<Stats items={[{"value":"16K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
 <BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.1},{"label":"Astro","value":2.6},{"label":"SvelteKit","value":4.5},{"label":"SolidStart","value":9.3}]} bench="llm" />
 
@@ -270,10 +267,34 @@ Astro builds the site for less. The model already knows Astro, while it learns k
 
 <Note title="How it was measured">
 
-Each run is one headless Claude Code session, Opus 5.5 at high effort, with no project instructions, hooks or plugins, in a fresh copy of the framework's starter under bubblewrap, so it cannot see the tests, the other runs or anything else on the machine. A run passes when the starter's own `check`, the build and every acceptance test pass, and every figure is the median of the passing runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus/results.md).
+kay 1.18.0. Each run is one headless Claude Code session, Opus 5.5 at high effort, with no project instructions, hooks or plugins, in a fresh copy of the framework's starter under bubblewrap, so it cannot see the tests, the other runs or anything else on the machine. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus/results.md).
 
 </Note>
 
+## Should you use it?
+
+For a side project, a personal site or a small business site, if you like what you saw above: go for it, and tell me what breaks. For anything you would be paged for at night, not yet. kay is a one-person project, it has no ecosystem to speak of, and a minor version may still break your code: the tilde in its version range is there for a reason. Read the changelog before every bump, or enjoy the surprise.
+
 ## What is next
 
-TODO
+kay is still experimental, and I am doing lots of breaking changes for now. Next, I will migrate the two apps above to it, and write about how that went.
+
+## Try it
+
+kay is published to my own registry, not npm. Tell Bun where the `@kaynooo` scope lives once, in `~/.bunfig.toml`:
+
+```toml
+[install.scopes]
+"@kaynooo" = "https://git.kaynooo.fr/api/packages/kaynooo/npm/"
+```
+
+Then start a project:
+
+```sh
+bunx -p @kaynooo/kayjs kay new my-app
+cd my-app
+bun install
+bun run dev
+```
+
+The docs are at [kayjs.kaynooo.fr](https://kayjs.kaynooo.fr), and the code, issues and questions on [GitHub](https://github.com/Kayno0o/kayjs).
