@@ -6,6 +6,7 @@ header.border-b-2.border-surface.px-4.py-4.sm:px-8
   nav.flex.items-center.justify-between.gap-4(aria-label="Main navigation")
     a.font-mono.text-lg.font-semibold.no-underline(href="/") devlog
     ul.flex.items-center.gap-5.text-sm
+      li: a(href="/about") About
       li
         a.inline-flex.items-center.gap-1(href="https://kayjs.kaynooo.fr")
           img.size-4(src={kay} sizes="16px" alt="")
