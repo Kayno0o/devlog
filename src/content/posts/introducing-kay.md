@@ -75,29 +75,31 @@ Benchmarks of a products table only go so far, so I ported a real site from Svel
 
 ### What kay gains
 
-<Stats items={[{"value": "-46%", "label": "phone first paint, content page"}, {"value": "16 vs 70 KB", "label": "client JS, brotli"}, {"value": "25 vs 65", "label": "requests, home page"}]} />
+<Stats items={[{"value": "-44%", "label": "phone first paint, content page"}, {"value": "17 vs 70 KB", "label": "client JS, brotli"}, {"value": "26 vs 65", "label": "requests, home page"}]} />
 
-<BarChart title="First paint on a phone, content page" unit="ms" better="lower" highlight="kay, inlined styles" digits={0} rows={[{"label": "kay, inlined styles", "value": 407}, {"label": "SvelteKit", "value": 757}, {"label": "kay, linked styles", "value": 863}]} source="SvelteKit vs kay 1.14.0, Lighthouse Pixel 7 preset (slow 4G, 4x CPU), 3 runs each, 2026-10-09" />
+<BarChart title="First paint on a phone, content page" unit="ms" better="lower" highlight="kay" digits={0} rows={[{"label": "kay", "value": 424}, {"label": "SvelteKit", "value": 752}]} source="SvelteKit vs kay 1.17.4, Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs, 2026-10-10" />
 
-<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" highlight="kay" rows={[{"label": "kay", "value": 16.1}, {"label": "SvelteKit", "value": 70.1}]} source="SvelteKit vs kay 1.13.0, 2026-10-09" />
+<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" highlight="kay" rows={[{"label": "kay", "value": 16.6}, {"label": "SvelteKit", "value": 70.1}]} source="SvelteKit vs kay 1.17.4, 2026-10-10" />
 
-<BarChart title="Requests per second, home page" unit="req/s" better="higher" highlight={["kay, linked styles", "kay, inlined styles"]} digits={0} rows={[{"label": "kay, linked styles", "value": 1772}, {"label": "kay, inlined styles", "value": 1487}, {"label": "SvelteKit", "value": 730}]} source="SvelteKit vs kay 1.16.6, oha, 64 connections for 10 s, 2 rounds, 2026-10-10" />
+The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view. kay serves the page itself from memory.
 
-<BarChart title="Build, cold caches" unit="s" better="lower" highlight="kay" digits={2} rows={[{"label": "kay", "value": 2.22}, {"label": "SvelteKit", "value": 3.57}]} source="SvelteKit vs kay 1.13.0, hyperfine, 3 runs, 2026-10-09" />
+<BarChart title="Requests per second, home page" unit="req/s" better="higher" highlight="kay" digits={0} rows={[{"label": "kay", "value": 14332}, {"label": "SvelteKit", "value": 760}]} source="SvelteKit vs kay 1.17.4, oha, 64 connections for 10 s, 2 rounds, kay's slower round, 2026-10-10" />
 
-The home page a phone downloads drops from 706 to 547 KB, mostly images: kay serves AVIF at the width drawn. The Docker image goes from 228 to 184 MB, and the code from 3,037 to 2,590 lines.
+<BarChart title="Build, cold caches" unit="s" better="lower" highlight="kay" digits={2} rows={[{"label": "kay", "value": 2.38}, {"label": "SvelteKit", "value": 3.68}]} source="SvelteKit vs kay 1.17.4, hyperfine, 3 runs, 2026-10-10" />
+
+Page and form together cost about 0.25 ms of server CPU per visitor against SvelteKit's 1.63 ms, and kay's peak memory under that load is 85 against 134 MiB. The home page a phone downloads drops from 706 to 552 KB, mostly images: kay serves AVIF at the width drawn. The Docker image goes from 228 to 184 MB, and the code from 3,037 to 2,590 lines.
 
 ### What kay loses
 
-<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 36}, {"label": "kay", "value": 58}]} source="SvelteKit vs kay 1.16.6, RSS after start, 2026-10-10" />
+<BarChart title="Server memory at rest" unit="MiB" better="lower" highlight="kay" digits={0} rows={[{"label": "SvelteKit", "value": 36}, {"label": "kay", "value": 61}]} source="SvelteKit vs kay 1.17.4, RSS after start, 2026-10-10" />
 
-- **Memory.** kay holds about 1.6 times SvelteKit's memory at rest and 1.4 to 1.6 times at peak, 212 against 134 MiB under load with inlined styles.
-- **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay paints 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
-- **Short pages with inlined styles.** Each response carries the whole stylesheet, so kay serves short pages at 0.88 to 0.97 times SvelteKit's rate for 1.3 to 1.5 times its CPU per request. Linked, they go at 1.8 to 2.2 times SvelteKit's rate.
+- **Memory at rest.** kay idles at 1.7 times SvelteKit's memory.
+- **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay 1.14.0 painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page and the stylesheet is no longer cached between pages.
+- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at about SvelteKit's rate for 1.2 to 1.3 times its CPU per request. With the stylesheet linked, kay 1.16.6 served them at 1.8 to 2.2 times SvelteKit's rate.
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3 canary, on 2026-10-09 and 10: SvelteKit against kay 1.13.0, 1.14.0 for the paints and 1.16.6 for the server. Paints come from Playwright under Lighthouse's phone and desktop presets, 3 runs each; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+One desktop, Ryzen 5 7600 with 12 threads, Linux and Bun 1.4.3 canary, on 2026-10-10: SvelteKit against kay 1.17.4, every figure in one sitting. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
