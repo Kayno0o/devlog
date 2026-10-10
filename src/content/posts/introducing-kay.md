@@ -248,7 +248,7 @@ To check that, Claude Opus 5.5 built the same small site in each framework: a bo
 
 <Embed src="/llm-bench/bookshelf/books" title="The Bookshelf site kay's agent built" />
 
-That is the site kay's agent built, running: filter the books, open one, mark it a favorite. It is the run of median cost, exported to static files with four changes that needs: a base path, the list of book pages to export, a stylesheet in this devlog's colors, and no contact form, since its action needs a server. Styling was left free and was not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
+That is the site kay's agent built, running: filter the books, open one, mark it a favorite. It is the run of median cost, moved to the current kay and exported to static files with four changes that needs: a base path, the list of book pages to export, a stylesheet in this devlog's colors, and no contact form, since its action needs a server. Styling was left free and was not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
 
 ### What kay gains
 

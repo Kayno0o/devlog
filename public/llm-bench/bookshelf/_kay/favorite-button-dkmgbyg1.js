@@ -1,1 +1,0 @@
-import{i,o,l,y}from"./entry-7swwm74v.js";import{w,k,_}from"./entry-6wsz17hb.js";function e(t){return(()=>{let a=s();return o(a,null,null,()=>k(w(),t.slug)?"Remove from favorites":"Add to favorites"),l(a,"onClick",()=>_(t.slug)),a})()}var s=i('<button type="button"></button>'),P=y("src/components/favorite-button.kay",e);export{P as default};
