@@ -251,15 +251,45 @@ kay is meant to be as easy for a coding agent to write as for me:
 
 To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network, and a hidden suite of browser tests grades the site.
 
+<Tabs label="The books page each agent built">
+
+<Tab group="site" label="kay" checked>
+
+![The books page kay's agent built: a heading, the tag buttons and the list of books, unstyled](/llm-bench/kay.jpg)
+
+</Tab>
+
+<Tab group="site" label="SvelteKit">
+
+![The books page SvelteKit's agent built: a centered column with a header bar, the tag buttons and the list of books](/llm-bench/sveltekit.jpg)
+
+</Tab>
+
+<Tab group="site" label="SolidStart">
+
+![The books page SolidStart's agent built: a centered column with a header bar, the tag buttons and the list of books](/llm-bench/solidstart.jpg)
+
+</Tab>
+
+<Tab group="site" label="Astro">
+
+![The books page Astro's agent built: a centered column on a warm background, the tag buttons and the list of books](/llm-bench/astro.jpg)
+
+</Tab>
+
+</Tabs>
+
+Styling was left free and was not graded. kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS, so the line counts below leave styles out.
+
 ### What kay gains
 
-<Stats items={[{"value":"15 of 15","label":"runs passing every check and test"},{"value":"2.1 min","label":"kay, time to build the site"},{"value":"331","label":"kay, lines of code for the site"}]} />
+<Stats items={[{"value":"15 of 15","label":"runs passing every check and test"},{"value":"2.1 min","label":"kay, time to build the site"},{"value":"335","label":"kay, lines of code for the site"}]} />
 
 <BarChart title="Time to build the site" unit="min" better="lower" highlight="kay" digits={1} rows={[{"label":"kay","value":2.1},{"label":"Astro","value":2.6},{"label":"SvelteKit","value":4.5},{"label":"SolidStart","value":9.3}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
 
-<BarChart title="Lines of code written, tests left out" unit="lines" better="lower" highlight="kay" digits={0} rows={[{"label":"kay","value":331},{"label":"SvelteKit","value":575},{"label":"Astro","value":590},{"label":"SolidStart","value":620}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
+<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" highlight="kay" digits={0} rows={[{"label":"kay","value":335},{"label":"Astro","value":458},{"label":"SvelteKit","value":473},{"label":"SolidStart","value":534}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
 
-kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site fastest, in a little over half the lines the others take.
+kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site fastest, in a quarter to a third fewer lines than the others.
 
 ### What kay loses
 
