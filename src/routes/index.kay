@@ -11,7 +11,8 @@ head
 .mx-auto.max-w-2xl
   section.mb-12
     h1.mb-3.text-3xl.font-semibold devlog
-    p.text-subtext Notes on the software I build: how it works, what it costs, and the benchmarks behind it, starting with #[a(href="https://kayjs.kaynooo.fr") kay], a Bun web framework. Written by Kévyn.
+    p.mb-3.text-subtext I'm #[a(href="https://github.com/Kayno0o") Kévyn], a French full-stack developer based in Bordeaux. I've been coding since I was twelve, the last four years for a living, mostly with Bun, TypeScript, Astro, SolidJS, Svelte and Vue/Nuxt. Away from the web, I love Godot and build Minecraft mods and tools.
+    p.text-subtext These are notes on the software I build: how it works, what it costs, and the benchmarks behind it, starting with #[a(href="https://kayjs.kaynooo.fr") kay], a Bun web framework.
   section(aria-labelledby="posts-title")
     h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase Posts
     ol.flex.flex-col.gap-6
