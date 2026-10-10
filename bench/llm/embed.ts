@@ -48,7 +48,8 @@ const source = join(shown.workspace, 'site')
 // the run's own build outputs and tests stay behind, not the dist folders of its packages; its tests would import the contact page
 const builds = new Set([join(source, 'dist'), join(source, '.kay'), join(source, 'tests')])
 
-cpSync(source, site, { recursive: true, filter: path => !builds.has(path) })
+// verbatim, or node_modules/.bin/kay would point at the run's kay rather than the copy's, two kay instances in one build
+cpSync(source, site, { recursive: true, verbatimSymlinks: true, filter: path => !builds.has(path) })
 
 async function patch(path: string, edit: (text: string) => string): Promise<void> {
   const file = join(site, path)
@@ -87,11 +88,6 @@ const colorToken = /--color-[\w-]+:[^;]+;/g
 const tokens = (await Bun.file(join(benchDir, '../../src/app.css')).text()).match(colorToken) ?? []
 
 await Bun.write(join(site, 'src/bookshelf.css'), `:root { ${tokens.join(' ')} }\n${await Bun.file(join(benchDir, 'bookshelf.css')).text()}`)
-
-// kay's static export reads a collection's folder against the project root, not against content.config.ts as the server does (kayjs#182)
-if (contentDir !== 'content/books') {
-  cpSync(join(site, contentDir), join(site, 'content/books'), { recursive: true })
-}
 
 const build = await run(['bunx', 'kay', 'build', '--static'], site)
 
