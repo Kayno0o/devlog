@@ -96,6 +96,7 @@ describe('parseRun', () => {
     expect(bash('curl -s -H "Origin: http://localhost:4567" https://example.com')).toHaveLength(1)
     expect(bash('B=http://127.0.0.1:4701; for o in http://localhost:4701 http://evil.com; do curl -s -w "$o %{http_code}" -H "Origin: $o" -X POST $B/contact; done')).toEqual([])
     expect(bash('for u in https://docs.astro.build http://localhost:4701; do curl -s $u; done')).toHaveLength(1)
+    expect(bash(`u=http://localhost:4701; for o in http://localhost:4701 http://evil.example; do h=\${o#http://}; echo -n "$o -> "; curl -s -X POST -H "Origin: $o" -H "Host: $h" $u/contact; done`)).toEqual([])
     expect(bash('PLAYWRIGHT_BROWSERS_PATH=./b bunx playwright-core install chromium')).toHaveLength(1)
     expect(bash('bun add -d playwright-core')).toEqual([])
   })
