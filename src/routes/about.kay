@@ -8,7 +8,16 @@ article.mx-auto.max-w-2xl
     h2 How I got here
     p It started with an #[a(href="https://www.arduino.cc") Arduino], discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, a lot of #[a(href="https://processing.org") Processing], and Discord bots hosted on Glitch. A friend saw one of those bots and asked me for a custom one, then bought me a VPS, my first real server: it taught me a lot about Linux and how to host things on the internet.
     p Processing came back in seconde, my first year of high school, when a class asked us to use it. I handed in a platform game, and the teacher had a hard time believing I had made it myself, though one look at the code would have settled it: it was a mess that would burn my eyes today. Around the same time, I wrote a Discord bot for a YouTuber, who paid for another VPS so I could run it there.
-    p All of that made a real difference once I got to my computer science IUT, where, I admit, I spent more classes than I should have playing #[a(href="https://www.dofus.com") Dofus], and even more playing video games once Covid moved classes online. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years.
+    p All of that made a real difference once I got to my computer science IUT, where, I admit, I spent more classes than I should have playing #[a(href="https://www.dofus.com") Dofus], and even more playing video games once Covid moved classes online. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years. There, I build large #[a(href="https://nuxt.com") Nuxt] and #[a(href="https://symfony.com") Symfony] projects over several months, then maintain them, migrating to new versions to keep them secure.
     h2 What I care about
     p Developer experience, performance and accessibility, and the footprint of what I build: the smaller it is, the less it costs, both to the people using it and to the planet.
     p I'm also picky about code itself, and about formatting most of all: code should breathe. I started #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset] as a layer over #[a(href="https://github.com/antfu/eslint-config") antfu's], and ended up rewriting it from scratch. At work, I set up a very strict #[a(href="https://cs.symfony.com") PHP CS Fixer] config, half to annoy my coworkers, half so I stop grumbling when I read their code.
+    h2 What I use
+    p I code with #[a(href="https://claude.com/product/claude-code") Claude Code], extended with my own memory server (an #[a(href="https://modelcontextprotocol.io") MCP] server), hooks and mods. The rest of my setup:
+    ul
+      li Arch Linux and Manjaro
+      li KDE Plasma on Wayland
+      li fish, in kitty with tmux
+      li Brave
+    h2 Get in touch
+    p Contributions to kay are welcome, and so are questions: open an issue on #[a(href="https://github.com/Kayno0o/kayjs") kay's repository], or write to me at #[a(href="mailto:contact@kaynooo.fr") contact@kaynooo.fr].
