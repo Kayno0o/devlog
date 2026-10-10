@@ -20,6 +20,13 @@ const lines = [
   { type: 'result', subtype: 'success', duration_ms: 61_000, duration_api_ms: 50_000, num_turns: 5, total_cost_usd: 0.42, usage: { input_tokens: 14, output_tokens: 900, output_tokens_details: { thinking_tokens: 400 }, cache_creation_input_tokens: 120, cache_read_input_tokens: 350 } },
 ]
 
+/** The outside calls of a session running these Bash commands one after another. */
+function bashes(...commands: string[]): string[] {
+  return parseRun(commands.map((command, index) => JSON.stringify({ type: 'assistant', message: { id: `m${index}`, content: [{ type: 'tool_use', id: `t${index}`, name: 'Bash', input: { command } }] } })).join('\n'), cwd).outside
+}
+
+const bash = (command: string): string[] => bashes(command)
+
 describe('parseRun', () => {
   const metrics = parseRun(lines.map(line => JSON.stringify(line)).join('\n'), cwd)
 
@@ -82,8 +89,6 @@ describe('parseRun', () => {
   })
 
   it('lets a curl at the agent\'s own server through', () => {
-    const bash = (command: string): string[] => parseRun(JSON.stringify({ type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Bash', input: { command } }] } }), cwd).outside
-
     expect(bash('curl -s -H "Origin: http://localhost:4567" localhost:4567/contact')).toEqual([])
     expect(bash('curl -s http://127.0.0.1:4567/ && curl -s https://example.com')).toHaveLength(1)
     expect(bash('wget example.com')).toHaveLength(1)
@@ -96,8 +101,6 @@ describe('parseRun', () => {
   })
 
   it('follows the folder the shell keeps between calls, flagging only a cd out of the workspace', () => {
-    const bashes = (...commands: string[]): string[] => parseRun(commands.map((command, index) => JSON.stringify({ type: 'assistant', message: { id: `m${index}`, content: [{ type: 'tool_use', id: `t${index}`, name: 'Bash', input: { command } }] } })).join('\n'), cwd).outside
-
     expect(bashes('cd docs/docs/kit; grep -n x llms.txt', 'cd ../../..; ls node_modules')).toEqual([])
     expect(bashes('cd src && ls', 'cd .. && cd ..')).toHaveLength(1)
     expect(bashes('(cd .. && ls)')).toHaveLength(1)
@@ -111,6 +114,8 @@ describe('parseRun', () => {
 
     expect(read('/home/me/.claude/projects/-home-me--cache-llm-bench-run-kay-1-site/abc/tool-results/b1.txt')).toEqual([])
     expect(read('/home/me/.claude/projects/-home-me-Workspace-other/abc/tool-results/b1.txt')).toHaveLength(1)
+    expect(bash('cat /home/me/.claude/projects/-home-me--cache-llm-bench-run-kay-1-site/abc/tool-results/b1.txt | sed -n 50,700p')).toEqual([])
+    expect(bash('cat /home/me/.claude/projects/-home-me-Workspace-other/abc/tool-results/b1.txt')).toHaveLength(1)
   })
 
   it('reads past heredoc bodies, which are files being written', () => {
