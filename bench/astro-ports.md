@@ -1,12 +1,12 @@
 # Two sites, Astro against kay
 
-Copied from kay's bench/sites/results.md (Astro) and bench/sites/results.kay.md (kay), the sites left unnamed.
+Measured with kay's sites bench (`bun run bench:sites` in kayjs, the sites given by a local config), the sites left unnamed.
 
 - AMD Ryzen 5 7600 6-Core Processor, 12 threads
 - Bun 1.4.2, Chromium 151.0.7922.34 headless, nginx/1.30.5
-- cattery: Astro at fd11fb0, kay 1.16.6 at 497066f
-- painter: Astro at 6b8c6e5, kay 1.16.6 at ef8a894
-- Astro run on 2026-10-07; kay rerun alone on 2026-10-10 (`KIND=kay`), the Astro side unchanged since. Sizes, lines and deploy carry across the two sittings; paints and throughput drift between sittings, so read their Astro and kay columns with that in mind.
+- cattery: Astro at fd11fb0, kay 1.17.7 at c5484e2
+- painter: Astro at 6b8c6e5, kay 1.17.7 at 1549cda
+- Astro run on 2026-10-07; kay 1.17.7 rerun alone on 2026-10-10 (`KIND=kay`), the Astro side unchanged since. Both sites now serve their contact form as a deferred server island, so every page they list is prerendered but the cattery's home page. Sizes, lines and deploy carry across the two sittings; paints and throughput drift between sittings, so read their Astro and kay columns with that in mind.
 
 cattery and painter as they last ran on Astro, then on kay, each built and served as it deploys: Astro's standalone server under Bun, kay's one executable, both behind an nginx set up as production's (HTTP/2 over TLS, brotli and gzip at level 6). kay is the version each site pins, not this checkout.
 
@@ -16,15 +16,15 @@ Average over every page: text as brotli at quality 11 sends it, images as served
 
 |  | cattery astro | cattery kay | painter astro | painter kay |
 | --- | --- | --- | --- | --- |
-| HTML | 4.7 KB | 5.1 KB | 6.4 KB | 6.8 KB |
+| HTML | 4.7 KB | 5.1 KB | 6.4 KB | 6.9 KB |
 | CSS | 35.2 KB | 5.3 KB | 9.3 KB | 6.8 KB |
-| JS | 5.2 KB | 10.1 KB | 0.4 KB | 10.4 KB |
+| JS | 5.2 KB | 10.3 KB | 0.4 KB | 10.4 KB |
 | JS files | 1.0 | 2.0 | 0.0 | 5.0 |
 | images, desktop | 142.5 KB | 55.2 KB | 160.8 KB | 36.4 KB |
 | images, phone | 142.5 KB | 114.5 KB | 185.3 KB | 105.2 KB |
 | fonts | 109.5 KB | 109.5 KB | 35.2 KB | 106.6 KB |
 
-Inline `<script>` bodies count as JS, weighed as what they add to the page's brotli (kayjs #158): Astro inlines the painter's scripts in its pages, which an earlier count put under HTML. These rows were corrected from the cached builds of the same commits; the cattery's home page is not prerendered, so its share is the average of its other pages'.
+Inline `<script>` bodies count as JS, weighed as what they add to the page's brotli (kayjs #158): Astro inlines the painter's scripts in its pages, which an earlier count put under HTML. The Astro columns were corrected from the cached builds of the same commits; the cattery's home page is not prerendered, so its share is the average of its other pages'.
 
 ## In a browser
 
@@ -32,20 +32,20 @@ Every page loaded cold, 5 times in a fresh context, medians averaged over the pa
 
 |  | cattery astro | cattery kay | painter astro | painter kay |
 | --- | --- | --- | --- | --- |
-| mobile first paint (ms) | 1497 | 1364 | 1285 | 1369 |
-| mobile largest paint (ms) | 2734 | 1758 | 1292 | 1371 |
+| mobile first paint (ms) | 1497 | 1371 | 1285 | 1391 |
+| mobile largest paint (ms) | 2734 | 1766 | 1292 | 1393 |
 | mobile blocking time (ms) | 0.0 | 0.0 | 0.0 | 0.0 |
 | mobile layout shift | 0.006 | 0.006 | 0.002 | 0.018 |
-| mobile load (ms) | 3065 | 2702 | 2393 | 2698 |
-| mobile transferred | 255.8 KB | 196.8 KB | 126.1 KB | 165.6 KB |
-| mobile requests | 10.1 | 10.8 | 6.3 | 13.7 |
-| desktop first paint (ms) | 172 | 166 | 165 | 188 |
-| desktop largest paint (ms) | 351 | 268 | 210 | 254 |
+| mobile load (ms) | 3065 | 2710 | 2393 | 2722 |
+| mobile transferred | 255.8 KB | 197.2 KB | 126.1 KB | 167.1 KB |
+| mobile requests | 10.1 | 11.0 | 6.3 | 15.1 |
+| desktop first paint (ms) | 172 | 166 | 165 | 180 |
+| desktop largest paint (ms) | 351 | 265 | 210 | 246 |
 | desktop blocking time (ms) | 0.0 | 0.0 | 0.0 | 0.0 |
 | desktop layout shift | 0.007 | 0.001 | 0.001 | 0.001 |
-| desktop load (ms) | 347 | 257 | 296 | 353 |
-| desktop transferred | 266.6 KB | 137.5 KB | 207.6 KB | 225.7 KB |
-| desktop requests | 11.1 | 10.4 | 7.6 | 15.0 |
+| desktop load (ms) | 347 | 258 | 296 | 347 |
+| desktop transferred | 266.6 KB | 137.9 KB | 207.6 KB | 227.1 KB |
+| desktop requests | 11.1 | 10.7 | 7.6 | 16.4 |
 
 ## Server
 
@@ -53,24 +53,26 @@ Cold start is from spawning the server to its first 200 on the home page, median
 
 |  | cattery astro | cattery kay | painter astro | painter kay |
 | --- | --- | --- | --- | --- |
-| cold start | 110 ms | 28.6 ms | 52.1 ms | 23.3 ms |
-| memory once started | 115 MB | 68 MB | 66 MB | 61 MB |
-| memory after load (peak) | 283 MB (311 MB) | 134 MB (146 MB) | 134 MB (149 MB) | 95 MB (107 MB) |
+| cold start | 110 ms | 30.3 ms | 52.1 ms | 31.8 ms |
+| memory once started | 115 MB | 69 MB | 66 MB | 70 MB |
+| memory after load (peak) | 283 MB (311 MB) | 142 MB (151 MB) | 134 MB (149 MB) | 104 MB (117 MB) |
 
 |  | URL | req/s | p50 (ms) | p99 (ms) | server CPU (µs/req) | nginx CPU (µs/req) |
 | --- | --- | --- | --- | --- | --- | --- |
 | cattery astro | `/` | 2224 | 11.6 | 25.1 | 533 | 1421 |
 | cattery astro | a content page | 12523 | 1.6 | 8.7 | 94 | 472 |
 | cattery astro | `/_astro/index.CA4QUJZR.css` | 3254 | 6.1 | 43.6 | 173 | 2549 |
-| cattery kay | `/` | 3345 | 6.1 | 23.6 | 321 | 908 |
-| cattery kay | a content page | 39090 | 0.7 | 2.1 | 22 | 21 |
-| cattery kay | `/_kay/_layout-sjxtq4vb.css` | 56131 | 0.5 | 1.6 | 14 | 20 |
+| cattery kay | `/` | 2997 | 8.9 | 23.8 | 360 | 1610 |
+| cattery kay | a content page | 31202 | 0.9 | 2.9 | 28 | 24 |
+| cattery kay | `/_kay/_layout-sjxtq4vb.css` | 52894 | 0.5 | 1.8 | 15 | 21 |
 | painter astro | `/` | 6068 | 2.4 | 23.0 | 154 | 1118 |
 | painter astro | a content page | 11376 | 1.4 | 10.1 | 96 | 541 |
 | painter astro | `/_astro/default.fuv9R-in.css` | 7848 | 1.9 | 17.6 | 109 | 879 |
-| painter kay | `/` | 40051 | 0.7 | 2.1 | 23 | 22 |
-| painter kay | a content page | 39118 | 0.7 | 2.0 | 23 | 22 |
-| painter kay | `/_kay/_layout-j8sny4hd.css` | 54849 | 0.5 | 1.7 | 14 | 20 |
+| painter kay | `/` | 34966 | 0.8 | 2.5 | 26 | 23 |
+| painter kay | a content page | 34994 | 0.8 | 2.3 | 26 | 23 |
+| painter kay | `/_kay/_layout-j8sny4hd.css` | 51715 | 0.5 | 1.8 | 15 | 20 |
+
+kay 1.16.6, run earlier the same day, served the content pages at 39,000 requests a second and started in 23 to 29 ms. Whether the drop comes from kay 1.17 or from a machine busier with other runs was not separated, so compare kay with Astro here, not with that run.
 
 ## Build and code
 
@@ -79,14 +81,14 @@ Clean builds, median of 3. `kay build` runs `kay check` first, which `astro buil
 |  | command | wall (s) | CPU (s) | peak memory |
 | --- | --- | --- | --- | --- |
 | cattery astro | `astro build` | 1.94 | 5.1 | 1099 MB |
-| cattery kay | `kay build` | 12.59 | 53.0 | 1825 MB |
-| cattery kay | `kay build --no-check` | 11.64 | 47.1 | 1837 MB |
+| cattery kay | `kay build` | 11.06 | 48.9 | 1864 MB |
+| cattery kay | `kay build --no-check` | 12.16 | 48.2 | 1923 MB |
 | painter astro | `astro build` | 1.48 | 6.2 | 1222 MB |
-| painter kay | `kay build` | 7.30 | 32.3 | 1146 MB |
-| painter kay | `kay build --no-check` | 7.10 | 29.7 | 1108 MB |
+| painter kay | `kay build` | 7.48 | 33.1 | 1140 MB |
+| painter kay | `kay build --no-check` | 7.49 | 30.5 | 1106 MB |
 
 |  | cattery astro | cattery kay | painter astro | painter kay |
 | --- | --- | --- | --- | --- |
-| lines of code | 1892 | 1282 | 1935 | 1219 |
-| lines of tests | 0 | 355 | 0 | 154 |
+| lines of code | 1892 | 1286 | 1935 | 1223 |
+| lines of tests | 0 | 364 | 0 | 178 |
 | deployed | 231 MB (dist and production node_modules) | 109 MB (one executable) | 301 MB (dist and production node_modules) | 98 MB (one executable) |
