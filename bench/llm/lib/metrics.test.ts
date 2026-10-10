@@ -93,6 +93,8 @@ describe('parseRun', () => {
     expect(bashes('cd src && ls', 'cd .. && cd ..')).toHaveLength(1)
     expect(bashes('(cd .. && ls)')).toHaveLength(1)
     expect(bashes('cd ~ && ls')).toHaveLength(1)
+    expect(bashes('cd /tmp; curl -s http://127.0.0.1:4701/about', 'ls src')).toEqual([])
+    expect(bashes('cd /tmp/../etc && ls')).toHaveLength(1)
   })
 
   it('lets the agent read the long tool output Claude Code kept for its own session', () => {

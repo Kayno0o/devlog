@@ -149,6 +149,10 @@ function readsDocs(input: Record<string, unknown>): boolean {
   return [input.file_path, input.path, input.command, input.pattern].some(value => typeof value === 'string' && docsPath.test(value))
 }
 
+function within(path: string, dir: string): boolean {
+  return path === dir || path.startsWith(`${dir}/`)
+}
+
 function withoutNonTargetLoops(command: string): string {
   return command.replaceAll(forList, (loop, name: string) => new RegExp(String.raw`\$\{?${name}\b`).test(command.replace(loop, '')) ? loop : '')
 }
@@ -160,12 +164,12 @@ function leaves(command: string, cwd: string, shell: { dir: string }): boolean {
   for (const [, target = ''] of command.matchAll(cdCommand)) {
     const dir = target.startsWith('~') ? target : resolve(shell.dir, target)
 
-    if (dir === cwd || dir.startsWith(`${cwd}/`)) {
+    if (within(dir, cwd)) {
       shell.dir = dir
     }
     else {
-      // Claude Code puts a shell that left the project back at its root
-      left = true
+      // Claude Code puts a shell that left the project back at its root; the sandbox gives each run a /tmp of its own
+      left ||= !within(dir, '/tmp')
       shell.dir = cwd
     }
   }
@@ -189,7 +193,7 @@ function outsideOf(name: string, input: Record<string, unknown>, cwd: string, sh
   // Claude Code keeps a long tool output in a file of the session's own project folder, which the agent then reads
   const ownOutput = `/.claude/projects/${cwd.replaceAll(pathSeparators, '-')}/`
 
-  return path.startsWith('/') && !path.startsWith(cwd) && !path.includes(ownOutput) ? `${name}: ${path}` : undefined
+  return path.startsWith('/') && !within(path, cwd) && !within(path, '/tmp') && !path.includes(ownOutput) ? `${name}: ${path}` : undefined
 }
 
 function tokensOf(usage: Usage): Tokens {
