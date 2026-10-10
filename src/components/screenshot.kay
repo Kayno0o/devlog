@@ -1,0 +1,6 @@
+---
+const { src, dark, alt } = props<{ src: string, dark: string, alt: string }>()
+---
+picture
+  source(media="(prefers-color-scheme: dark)" srcset={dark})
+  img(src={src} alt={alt} width="1024" height="640" loading="lazy")

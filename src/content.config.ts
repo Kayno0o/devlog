@@ -2,6 +2,7 @@ import { t } from 'kay'
 import { collection } from 'kay/content'
 import BarChart from './components/bar-chart.kay'
 import Note from './components/note.kay'
+import Screenshot from './components/screenshot.kay'
 import Stats from './components/stats.kay'
 import Tab from './components/tab.kay'
 import Tabs from './components/tabs.kay'
@@ -16,7 +17,7 @@ export const posts = collection('content/posts', {
     tags: t.Array(t.String(), { default: [] }),
     draft: t.Optional(t.Boolean()),
   }),
-  components: { BarChart, Note, Stats, Tab, Tabs },
+  components: { BarChart, Note, Screenshot, Stats, Tab, Tabs },
   highlight,
   draft: post => post.data.draft === true,
   sort: (a, b) => b.data.date.getTime() - a.data.date.getTime(),
