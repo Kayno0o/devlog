@@ -1,0 +1,22 @@
+@reference '../app.css';
+
+@layer components {
+  .chart-bar {
+    @apply h-3 min-w-0.5 rounded-r bg-muted;
+  }
+
+  .chart-bar-highlight {
+    background-image: linear-gradient(to bottom right, color-mix(in oklab, var(--color-accent) 55%, var(--color-base)), var(--color-accent));
+  }
+
+  /* public/charts.js adds in-view once a chart shows, so the bars grow then; with scripting off they render at full width. */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .chart-bar {
+      transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--row) * 80ms);
+    }
+
+    .chart:not(.in-view) .chart-bar {
+      width: 0 !important;
+    }
+  }
+}

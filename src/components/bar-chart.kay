@@ -1,4 +1,5 @@
 ---
+import './bar-chart.css'
 import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
 import Astro from '~icons/simple-icons/astro'
