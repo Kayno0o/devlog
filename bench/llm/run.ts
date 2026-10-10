@@ -109,6 +109,10 @@ function sandbox(root: string): string[] {
     '--bind',
     root,
     root,
+    // its own process list, so the agent can neither see nor kill the grader's servers or another session
+    '--unshare-pid',
+    '--proc',
+    '/proc',
     '--die-with-parent',
     '--',
   ]

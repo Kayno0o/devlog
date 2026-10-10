@@ -84,6 +84,15 @@ describe('parseRun', () => {
     expect(bash('bun add -d playwright-core')).toEqual([])
   })
 
+  it('follows the folder the shell keeps between calls, flagging only a cd out of the workspace', () => {
+    const bashes = (...commands: string[]): string[] => parseRun(commands.map((command, index) => JSON.stringify({ type: 'assistant', message: { id: `m${index}`, content: [{ type: 'tool_use', id: `t${index}`, name: 'Bash', input: { command } }] } })).join('\n'), cwd).outside
+
+    expect(bashes('cd docs/docs/kit; grep -n x llms.txt', 'cd ../../..; ls node_modules')).toEqual([])
+    expect(bashes('cd src && ls', 'cd .. && cd ..')).toHaveLength(1)
+    expect(bashes('(cd .. && ls)')).toHaveLength(1)
+    expect(bashes('cd ~ && ls')).toHaveLength(1)
+  })
+
   it('lets the agent read the long tool output Claude Code kept for its own session', () => {
     const read = (path: string): string[] => parseRun(JSON.stringify({ type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Read', input: { file_path: path } }] } }), cwd).outside
 
