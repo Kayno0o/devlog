@@ -172,7 +172,7 @@ A products table only goes so far, so I ported a real site from SvelteKit to kay
 
 ### What kay gains
 
-<Stats items={[{"value": "0.25 vs 1.63 ms", "label": "server CPU per visitor"}, {"value": "26 vs 65", "label": "requests to load the home page"}, {"value": "184 vs 228 MB", "label": "Docker image"}, {"value": "2,590 vs 3,037", "label": "lines of code"}]} />
+<Stats items={[{"value": "-85%", "label": "server CPU per visitor"}, {"value": "-60%", "label": "requests to load the home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-15%", "label": "lines of code"}]} />
 
 <BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 424}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
 
