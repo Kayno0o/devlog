@@ -215,37 +215,9 @@ kay is meant to be as easy for a coding agent to write as for me:
 
 To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network, and a hidden suite of browser tests grades the site.
 
-<Tabs label="The books page each agent built">
+<Screenshot src="/llm-bench/books.jpg" dark="/llm-bench/books-dark.jpg" alt="The books page: the Bookshelf header with its Books, About and Contact links, the heading All books, a row of tag buttons with All selected, and the eight books with their authors and years" />
 
-<Tab group="site" label="kay" checked>
-
-![The books page kay's agent built: a centered column with a header bar, the tag buttons and the list of books](/llm-bench/kay-3.jpg)
-
-The one kay run of five that wrote CSS, 15 lines of it; the other four left the page unstyled.
-
-</Tab>
-
-<Tab group="site" label="SvelteKit">
-
-![The books page SvelteKit's agent built: a centered column with a header bar, the tag buttons and the list of books](/llm-bench/sveltekit.jpg)
-
-</Tab>
-
-<Tab group="site" label="SolidStart">
-
-![The books page SolidStart's agent built: a centered column with a header bar, the tag buttons and the list of books](/llm-bench/solidstart.jpg)
-
-</Tab>
-
-<Tab group="site" label="Astro">
-
-![The books page Astro's agent built: a centered column on a warm background, the tag buttons and the list of books](/llm-bench/astro.jpg)
-
-</Tab>
-
-</Tabs>
-
-Styling was left free and was not graded. kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
+Every agent built this same page; here is kay's, in this devlog's colors. Styling was left free and was not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so each site's own styles are swapped out here, and the line counts below leave styles out.
 
 <Stats items={[{"value":"15 of 15","label":"runs passing every check and test"},{"value":"14K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
