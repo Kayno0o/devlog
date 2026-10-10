@@ -1,4 +1,4 @@
-/* One plain stylesheet for every framework's site, in the devlog's colors, so the screenshots compare what the agents built rather than how each styled it; screenshots.ts prepends the --color-* tokens of src/app.css. */
+/* A plain stylesheet in the devlog's colors, swapped in for the screenshotted site's own styles; screenshots.ts prepends the --color-* tokens of src/app.css. */
 :root {
   color-scheme: light dark;
 }
