@@ -1,0 +1,8 @@
+---
+const { group, label, checked } = props<{ group: string, label: string, checked?: boolean | undefined }>()
+const id = `${group}-${label.toLowerCase()}`
+---
+input.tab-input.sr-only(type="radio" name={group} id={id} checked={checked})
+label.tab-label(for={id}) {label}
+.tab-panel
+  slot

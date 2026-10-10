@@ -1,6 +1,7 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
 import PostMeta from '../src/components/post-meta.kay'
+import Tab from '../src/components/tab.kay'
 import Toc from '../src/components/toc.kay'
 import { highlight } from '../src/highlight'
 import { readingMinutes } from '../src/reading-time'
@@ -37,4 +38,13 @@ it('shows a post\'s date, its update, its reading time and its tags', async () =
 it('labels a code block with its language, and a plain one with none', () => {
   expect(highlight('const a = 1', 'ts')).toContain('data-language="ts"')
   expect(highlight('plain', undefined)).not.toContain('data-language')
+})
+
+it('ties a tab\'s label to its radio, checked only when asked', async () => {
+  const first = await renderToString(Tab, { group: 'component', label: 'SvelteKit', checked: true })
+  const other = await renderToString(Tab, { group: 'component', label: 'Astro' })
+
+  expect(first).toContain('name="component" id="component-sveltekit" checked')
+  expect(first).toContain('<label class="tab-label" for="component-sveltekit">SvelteKit</label>')
+  expect(other).not.toContain('checked')
 })

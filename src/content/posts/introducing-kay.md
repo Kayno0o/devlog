@@ -10,6 +10,12 @@ kay is a web framework on Bun and Elysia. A `.kay` file is one component: TypeSc
 
 ## What a component looks like
 
+The same page in kay and in the three it borrows from, each passing its own checker:
+
+<Tabs label="One page in four frameworks">
+
+<Tab group="component" label="kay" checked>
+
 ```kay
 --- server
 const greeting = 'Hello from the server'
@@ -21,9 +27,11 @@ h1 {greeting}
 button(onClick={() => count.set(count + 1)}) Clicked {count} times
 ```
 
-The first fence runs on the server only, the second also in the browser, and the template reads both. Here is the same page in the other three, each passing its own checker.
+The first fence runs on the server only, the second also in the browser, and the template reads both.
 
-SvelteKit keeps server data in a second file, `+page.server.ts`, which the page receives as `data`:
+</Tab>
+
+<Tab group="component" label="SvelteKit">
 
 ```ts
 export function load() {
@@ -41,7 +49,11 @@ export function load() {
 <button onclick={() => count++}>Clicked {count} times</button>
 ```
 
-SolidStart marks the server part with `'use server'` and reads it back asynchronously:
+The server data lives in a second file, `+page.server.ts`, which the page receives as `data`.
+
+</Tab>
+
+<Tab group="component" label="SolidStart">
 
 ```tsx
 import { createAsync, query } from '@solidjs/router'
@@ -65,7 +77,11 @@ export default function Counter() {
 }
 ```
 
-Astro renders the server part as kay does, but has no state of its own in the browser: the counter is DOM code in a script, or a component of another framework, such as SolidJS, in a file of its own:
+The server part is marked `'use server'` and read back asynchronously.
+
+</Tab>
+
+<Tab group="component" label="Astro">
 
 ```astro
 ---
@@ -81,6 +97,12 @@ const greeting = 'Hello from the server'
   })
 </script>
 ```
+
+The server part renders as in kay, but Astro keeps no state in the browser: the counter is DOM code in a script, or a component of another framework, such as SolidJS, in a file of its own.
+
+</Tab>
+
+</Tabs>
 
 ## Why I built it
 

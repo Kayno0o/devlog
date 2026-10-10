@@ -1,0 +1,5 @@
+---
+const { label } = props<{ label: string }>()
+---
+.tabs(role="group" aria-label={label})
+  slot
