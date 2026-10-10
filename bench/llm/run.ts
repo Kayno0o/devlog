@@ -104,7 +104,8 @@ function sandbox(root: string): string[] {
     '--dev-bind',
     '/',
     '/',
-    ...hidden.flatMap(path => ['--tmpfs', path]),
+    // a /tmp of its own too, where agents keep curl cookie jars and server logs another run could otherwise read
+    ...['/tmp', ...hidden].flatMap(path => ['--tmpfs', path]),
     ...browsers.flatMap(path => ['--tmpfs', path, '--remount-ro', path]),
     '--bind',
     root,
