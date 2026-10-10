@@ -1,0 +1,188 @@
+{
+  "label": "opus-probe-1.27",
+  "model": "claude-opus-5-5",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-10T17:27:25.590Z",
+  "to": "2026-10-10T17:27:25.590Z",
+  "frameworks": {
+    "kay": {
+      "runs": 1,
+      "passed": 1,
+      "versions": {
+        "bun": "1.4.4",
+        "kay": "1.27.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [],
+      "spent": {
+        "costUsd": 0.9398748000000002,
+        "totalTokens": 1272319,
+        "minutes": 2.5662833333333332
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 62,
+          "min": 62,
+          "max": 62
+        },
+        "cacheWriteTokens": {
+          "median": 54810,
+          "min": 54810,
+          "max": 54810
+        },
+        "cacheReadTokens": {
+          "median": 1204434,
+          "min": 1204434,
+          "max": 1204434
+        },
+        "outputTokens": {
+          "median": 13013,
+          "min": 13013,
+          "max": 13013
+        },
+        "thinkingTokens": {
+          "median": 3973,
+          "min": 3973,
+          "max": 3973
+        },
+        "totalTokens": {
+          "median": 1272319,
+          "min": 1272319,
+          "max": 1272319
+        },
+        "peakContextTokens": {
+          "median": 60066,
+          "min": 60066,
+          "max": 60066
+        },
+        "costUsd": {
+          "median": 0.9398748000000002,
+          "min": 0.9398748000000002,
+          "max": 0.9398748000000002
+        },
+        "minutes": {
+          "median": 2.5662833333333332,
+          "min": 2.5662833333333332,
+          "max": 2.5662833333333332
+        },
+        "apiMinutes": {
+          "median": 2.400916666666667,
+          "min": 2.400916666666667,
+          "max": 2.400916666666667
+        },
+        "turns": {
+          "median": 32,
+          "min": 32,
+          "max": 32
+        },
+        "apiCalls": {
+          "median": 31,
+          "min": 31,
+          "max": 31
+        },
+        "toolCalls": {
+          "median": 31,
+          "min": 31,
+          "max": 31
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 31,
+          "min": 31,
+          "max": 31
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 11,
+          "min": 11,
+          "max": 11
+        },
+        "docsChars": {
+          "median": 50883,
+          "min": 50883,
+          "max": 50883
+        },
+        "checkRuns": {
+          "median": 7,
+          "min": 7,
+          "max": 7
+        },
+        "failedCheckRuns": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "checkErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "filesChanged": {
+          "median": 23,
+          "min": 23,
+          "max": 23
+        },
+        "linesWritten": {
+          "median": 334,
+          "min": 334,
+          "max": 334
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "linesRemoved": {
+          "median": 4,
+          "min": 4,
+          "max": 4
+        },
+        "packagesAdded": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "failures": []
+    }
+  }
+}
