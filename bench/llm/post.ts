@@ -47,7 +47,7 @@ const stats = [
 console.log([
   `<Stats items={${JSON.stringify(stats)}} />`,
   chart('Time to build the site', 'min', 'minutes', 1),
-  chart('Lines of code written, tests left out', 'lines', 'linesWritten', 0),
+  chart('Lines of code written, tests and styles left out', 'lines', 'linesWritten', 0),
   chart('Cost of the site, API prices', 'USD', 'costUsd', 2),
   chart('Docs read', 'K characters', 'docsChars', 0, { scale: 1000, lowerIsBetter: false }),
 ].join('\n\n'))
