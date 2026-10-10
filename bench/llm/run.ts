@@ -1,6 +1,6 @@
 // Runs the LLM benchmark: one headless Claude Code session per framework and run, each in a fresh copy of its starter, graded by the hidden acceptance suite.
 // bun bench/llm/run.ts [--frameworks kay,sveltekit,solidstart,astro] [--runs 5] [--model claude-opus-5-5] [--effort high] [--budget 30] [--minutes 90] [--label <name>] [--grade-only]
-import { existsSync, mkdirSync } from 'node:fs'
+import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
@@ -100,10 +100,11 @@ interface Session {
   wallMs: number
 }
 
-// What the agent must not see: browsers it could test with, the hidden suite and reference site, other runs' sites and past Claude transcripts
+// What the agent must not see: browsers it could test with, the hidden suite and reference site, other runs' sites, and the user's Claude config with its transcripts, plugins, mods, skills and CLAUDE.md
 const workspaces = join(homedir(), 'Workspace')
 const repo = join(benchDir, '..', '..')
-const hidden = [workspaces, ...repo.startsWith(`${workspaces}/`) ? [] : [repo], join(homedir(), '.claude', 'projects'), join(cacheDir, 'claude-tmp'), join(cacheDir, 'llm-bench')].filter(path => existsSync(path))
+const hidden = [workspaces, ...repo.startsWith(`${workspaces}/`) ? [] : [repo], join(homedir(), '.claude'), join(cacheDir, 'claude-tmp'), join(cacheDir, 'llm-bench')].filter(path => existsSync(path))
+const credentials = join(homedir(), '.claude', '.credentials.json')
 const browsers = [join(cacheDir, 'ms-playwright'), join(cacheDir, 'puppeteer')].filter(path => existsSync(path))
 
 /** bwrap arguments masking `hidden` with empty folders and `browsers` with read-only ones, `root` alone mounted back. */
@@ -129,6 +130,15 @@ function sandbox(root: string): string[] {
 }
 
 async function agent(framework: Framework, site: string, transcript: string): Promise<Session> {
+  // An empty config of its own, so Claude Code starts with none of the user's settings, whatever --safe-mode still lists; the main account's login is lent for the run only
+  const config = join(site, '..', 'claude-config')
+  const lentCredentials = join(config, '.credentials.json')
+
+  mkdirSync(config, { recursive: true })
+
+  if (agentEnv.CLAUDE_CODE_OAUTH_TOKEN === undefined && existsSync(credentials))
+    copyFileSync(credentials, lentCredentials)
+
   const started = performance.now()
   const child = Bun.spawn([
     'setsid',
@@ -151,7 +161,7 @@ async function agent(framework: Framework, site: string, transcript: string): Pr
     '--output-format',
     'stream-json',
     '--verbose',
-  ], { cwd: site, env: agentEnv, stdin: 'ignore', stdout: Bun.file(transcript), stderr: 'inherit' })
+  ], { cwd: site, env: { ...agentEnv, CLAUDE_CONFIG_DIR: config }, stdin: 'ignore', stdout: Bun.file(transcript), stderr: 'inherit' })
 
   running = child
   let timedOut = false
@@ -166,6 +176,7 @@ async function agent(framework: Framework, site: string, transcript: string): Pr
   // whatever the agent forked and left in the group
   await killGroup(child, 0)
   running = undefined
+  rmSync(lentCredentials, { force: true })
 
   return { exitCode, timedOut, wallMs }
 }
