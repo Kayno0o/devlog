@@ -88,7 +88,7 @@ const tokens = (await Bun.file(join(benchDir, '../../src/app.css')).text()).matc
 
 await Bun.write(join(site, 'src/bookshelf.css'), `:root { ${tokens.join(' ')} }\n${await Bun.file(join(benchDir, 'bookshelf.css')).text()}`)
 
-// kay 1.18's static export reads a collection's folder against the project root, not against content.config.ts as the server does
+// kay's static export reads a collection's folder against the project root, not against content.config.ts as the server does (kayjs#182)
 if (contentDir !== 'content/books') {
   cpSync(join(site, contentDir), join(site, 'content/books'), { recursive: true })
 }
