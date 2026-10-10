@@ -1,17 +1,25 @@
 ---
+import Arch from '~icons/simple-icons/archlinux'
 import Arduino from '~icons/simple-icons/arduino'
+import Brave from '~icons/simple-icons/brave'
 import Claude from '~icons/simple-icons/claude'
+import Egg from '~icons/tabler/egg-filled'
 import Eslint from '~icons/simple-icons/eslint'
+import Fish from '~icons/simple-icons/fishshell'
 import Forgejo from '~icons/simple-icons/forgejo'
-import Gamepad from '~icons/tabler/device-gamepad-2'
 import Github from '~icons/simple-icons/github'
 import Godot from '~icons/simple-icons/godotengine'
 import Mail from '~icons/tabler/mail'
+import Manjaro from '~icons/simple-icons/manjaro'
 import Mcp from '~icons/simple-icons/modelcontextprotocol'
 import Nuxt from '~icons/simple-icons/nuxt'
 import Php from '~icons/simple-icons/php'
+import Plasma from '~icons/simple-icons/kdeplasma'
 import Processing from '~icons/simple-icons/processingfoundation'
 import Symfony from '~icons/simple-icons/symfony'
+import Terminal from '~icons/tabler/terminal-2'
+import Tmux from '~icons/simple-icons/tmux'
+import Wayland from '~icons/simple-icons/wayland'
 import IconLink from '../components/icon-link.kay'
 ---
 head
@@ -24,7 +32,7 @@ article.mx-auto.max-w-2xl
     h2 How I got here
     p It started with an #[IconLink(href="https://www.arduino.cc" icon={Arduino}) Arduino], discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, a lot of #[IconLink(href="https://processing.org" icon={Processing}) Processing], and Discord bots hosted on Glitch. A friend saw one of those bots and asked me for a custom one, then bought me a VPS, my first real server: it taught me a lot about Linux and how to host things on the internet.
     p Processing came back in seconde, my first year of high school, when a class asked us to use it. I handed in a platform game, and the teacher had a hard time believing I had made it myself, though one look at the code would have settled it: it was a mess that would burn my eyes today. Around the same time, I wrote a Discord bot for a YouTuber, who paid for another VPS so I could run it there.
-    p All of that made a real difference once I got to my computer science IUT, where, I admit, I spent more classes than I should have playing #[IconLink(href="https://www.dofus.com" icon={Gamepad}) Dofus], and even more playing video games once Covid moved classes online and nobody could see my screen. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years. There, I build large #[IconLink(href="https://nuxt.com" icon={Nuxt}) Nuxt] and #[IconLink(href="https://symfony.com" icon={Symfony}) Symfony] projects over several months, then maintain them, migrating to new versions to keep them secure.
+    p All of that made a real difference once I got to my computer science IUT, where, I admit, I spent more classes than I should have playing #[IconLink(href="https://www.dofus.com" icon={Egg}) Dofus], and even more playing video games once Covid moved classes online and nobody could see my screen. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years. There, I build large #[IconLink(href="https://nuxt.com" icon={Nuxt}) Nuxt] and #[IconLink(href="https://symfony.com" icon={Symfony}) Symfony] projects over several months, then maintain them, migrating to new versions to keep them secure.
     p I also still host my own things, on my own server running #[IconLink(href="https://forgejo.org" icon={Forgejo}) Forgejo], this blog and a few personal tools. My data stays mine, it costs little, the footprint stays small, and I keep learning from it, which is half the fun.
     h2 What I care about
     p Developer experience, performance and accessibility, and the footprint of what I build: the smaller it is, the less it costs, both to the people using it and to the planet, which never asked for a 2 MB JavaScript bundle.
@@ -32,9 +40,9 @@ article.mx-auto.max-w-2xl
     h2 What I use
     p I code with #[IconLink(href="https://claude.com/product/claude-code" icon={Claude}) Claude Code], extended with my own memory server (an #[IconLink(href="https://modelcontextprotocol.io" icon={Mcp}) MCP] server), hooks and mods, so it remembers how I like my code to breathe. The rest of my setup:
     ul
-      li I use Arch, btw (and Manjaro)
-      li KDE Plasma on Wayland
-      li fish, in kitty with tmux
-      li Brave
+      li I use #[IconLink(href="https://archlinux.org" icon={Arch}) Arch], btw (and #[IconLink(href="https://manjaro.org" icon={Manjaro}) Manjaro])
+      li #[IconLink(href="https://kde.org/plasma-desktop" icon={Plasma}) KDE Plasma] on #[IconLink(href="https://wayland.freedesktop.org" icon={Wayland}) Wayland]
+      li #[IconLink(href="https://fishshell.com" icon={Fish}) fish], in #[IconLink(href="https://sw.kovidgoyal.net/kitty" icon={Terminal}) kitty] with #[IconLink(href="https://github.com/tmux/tmux" icon={Tmux}) tmux]
+      li #[IconLink(href="https://brave.com" icon={Brave}) Brave]
     h2 Get in touch
     p Contributions to kay are welcome, and so are questions: open an issue on #[IconLink(href="https://github.com/Kayno0o/kayjs" icon={Github}) kay's repository], or write to me at #[IconLink(href="mailto:contact@kaynooo.fr" icon={Mail}) contact@kaynooo.fr].
