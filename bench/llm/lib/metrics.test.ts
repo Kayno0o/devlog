@@ -51,6 +51,15 @@ describe('parseRun', () => {
     expect(cut.thinkingTokens).toBe(70)
   })
 
+  it('records a usage limit Claude Code answered in place of the model', () => {
+    const limit = { type: 'assistant', message: { id: 'm5', model: '<synthetic>', usage: { input_tokens: 0, output_tokens: 0 }, content: [{ type: 'text', text: 'You\'ve hit your session limit' }] } }
+    const limited = parseRun([...lines.slice(0, -1), limit, lines.at(-1)].map(line => JSON.stringify(line)).join('\n'), cwd)
+
+    expect(limited.interrupted).toBe('You\'ve hit your session limit')
+    expect(limited.outcome).toBe('success')
+    expect(metrics.interrupted).toBeUndefined()
+  })
+
   it('counts the docs the agent read', () => {
     expect(metrics.docs).toEqual({ calls: 2, chars: 25 })
   })

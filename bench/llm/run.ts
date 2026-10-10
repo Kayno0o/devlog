@@ -53,7 +53,16 @@ mkdirSync(resultsDir, { recursive: true })
 // The agent gets a clean environment: none of a parent Claude Code session's variables and no PORT of ours, while the ones choosing the account or provider stay
 const inherited = /^(?:CLAUDECODE|CLAUDE_PID|CLAUDE_EFFORT|CLAUDE_CODE_|PORT$)/
 const provider = /^CLAUDE_CODE_(?:OAUTH_TOKEN|USE_BEDROCK|USE_VERTEX|USE_FOUNDRY)$/
-const agentEnv = Object.fromEntries(Object.entries(process.env).filter(([key]) => !inherited.test(key) || provider.test(key)))
+const agentEnv: Record<string, string | undefined> = Object.fromEntries(Object.entries(process.env).filter(([key]) => !inherited.test(key) || provider.test(key)))
+
+// The account fish's claude function would start on: the token of the one `account use` made active, else the /login in ~/.claude
+const activeFile = join(process.env.XDG_STATE_HOME ?? join(homedir(), '.local', 'state'), 'claude-account')
+const account = existsSync(activeFile) ? (await Bun.file(activeFile).text()).trim() : 'main'
+const tokenFile = join(process.env.XDG_CONFIG_HOME ?? join(homedir(), '.config'), 'claude-accounts', account)
+
+if (agentEnv.CLAUDE_CODE_OAUTH_TOKEN === undefined && account !== 'main' && existsSync(tokenFile)) {
+  agentEnv.CLAUDE_CODE_OAUTH_TOKEN = (await Bun.file(tokenFile).text()).trim()
+}
 
 let running: { pid: number, exited: Promise<number> } | undefined
 
@@ -199,6 +208,12 @@ async function one(framework: Framework, index: number, port: number): Promise<v
   const leftovers = sweep(root)
   const metrics = parseRun(existsSync(transcript) ? await Bun.file(transcript).text() : '', site)
 
+  // a usage limit ends every following session too, so the benchmark stops with no result written, and the same command resumes at this run
+  if (metrics.interrupted !== undefined && !regrade) {
+    console.log(`${id}: stopped by Claude Code, not the agent: ${metrics.interrupted}`)
+    process.exit(1)
+  }
+
   console.log(`${id}: ${session.timedOut ? 'timed out' : metrics.outcome} after ${Math.round(session.wallMs / 60_000)} min, grading`)
   const result = {
     framework,
@@ -223,7 +238,7 @@ async function one(framework: Framework, index: number, port: number): Promise<v
   console.log(`${id}: ${graded.passed ? 'PASSED' : 'failed'} (check ${graded.check.ok ? 'ok' : 'failed'}, build ${graded.build.ok ? 'ok' : 'failed'}, acceptance ${graded.acceptance.pass} pass ${graded.acceptance.fail} fail), ${metrics.tokens.output} output tokens, $${metrics.costUsd.toFixed(2)}`)
 }
 
-console.log(`label ${label}: ${runs} runs of ${selected.join(', ')}, results in ${resultsDir}, workspaces in ${workDir}`)
+console.log(`label ${label}: ${runs} runs of ${selected.join(', ')} on account ${process.env.CLAUDE_CODE_OAUTH_TOKEN === undefined ? account : 'given by CLAUDE_CODE_OAUTH_TOKEN'}, results in ${resultsDir}, workspaces in ${workDir}`)
 // Interleaved and rotated, so drift in API latency over the session falls on every framework alike
 for (let index = 1; index <= runs; index++) {
   const order = selected.map((_, offset) => selected[(offset + index - 1) % selected.length] as Framework)
