@@ -11,3 +11,4 @@ article.mx-auto.max-w-2xl
     p Early on, a friend also bought me a VPS of my own, and it helped me a lot once I got to university, a computer science IUT, where I was bored enough to play Dofus during classes. Then came a one-year work-study web degree (licence pro en alternance), and straight after it the job I still hold, four years in now.
     h2 What I care about
     p Developer experience, performance and accessibility. And the environment: making things small and keeping their footprint down.
+    p I'm strict about code in general, and about its formatting most of all: code has to breathe. That's why I made #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset], first as a layer over antfu's, then rewritten from scratch. At work, I set up a really strong PHP CS Fixer config, to annoy my coworkers, or rather so I don't grumble at them when I read their code.
