@@ -249,9 +249,29 @@ kay is meant to be as easy for a coding agent to write as for me:
 - Typed end to end, templates included: `kay check` points at the `.kay` line, so an agent fixes its own mistakes without a browser.
 - The whole reference ships as `llms.txt` and one file per topic, read on demand instead of searched for.
 
-<Note title="Benchmark coming">
+To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network, and a hidden suite of browser tests grades the site.
 
-The same app written by an LLM in kay and in other frameworks, measuring tokens, wall time, turns and check errors. Until it runs, this section makes no claim with a number in it.
+### What kay gains
+
+<Stats items={[{"value":"15 of 15","label":"runs passing every check and test"},{"value":"2.1 min","label":"kay, time to build the site"},{"value":"331","label":"kay, lines of code for the site"}]} />
+
+<BarChart title="Time to build the site" unit="min" better="lower" highlight="kay" digits={1} rows={[{"label":"kay","value":2.1},{"label":"Astro","value":2.6},{"label":"SvelteKit","value":4.5},{"label":"SolidStart","value":9.3}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
+
+<BarChart title="Lines of code written, tests left out" unit="lines" better="lower" highlight="kay" digits={0} rows={[{"label":"kay","value":331},{"label":"SvelteKit","value":575},{"label":"Astro","value":590},{"label":"SolidStart","value":620}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
+
+kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site fastest, in a little over half the lines the others take.
+
+### What kay loses
+
+<BarChart title="Cost of the site, API prices" unit="USD" better="lower" highlight="kay" digits={2} rows={[{"label":"Astro","value":0.79},{"label":"kay","value":1.03},{"label":"SvelteKit","value":1.53},{"label":"SolidStart","value":1.94}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
+
+<BarChart title="Docs read" unit="K characters" highlight="kay" digits={0} rows={[{"label":"Astro","value":30},{"label":"SolidStart","value":38},{"label":"kay","value":67},{"label":"SvelteKit","value":70}]} source="LLM benchmark, Opus 5.5, effort high, median of the passing runs, 2026-10-10" />
+
+Astro builds the site for less. The model already knows Astro, while it learns kay from its docs, reading about twice as much, and every call after those reads pays for them again. kay still costs less than SvelteKit and SolidStart, which the model knows too.
+
+<Note title="How it was measured">
+
+Each run is one headless Claude Code session, Opus 5.5 at high effort, with no project instructions, hooks or plugins, in a fresh copy of the framework's starter under bubblewrap, so it cannot see the tests, the other runs or anything else on the machine. A run passes when the starter's own `check`, the build and every acceptance test pass, and every figure is the median of the passing runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus/results.md).
 
 </Note>
 

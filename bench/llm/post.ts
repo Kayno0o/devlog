@@ -40,14 +40,14 @@ function chart(title: string, unit: string, key: string, digits: number, { scale
 
 const stats = [
   { value: `${passed} of ${runs}`, label: 'runs passing every check and test' },
-  { value: `$${median('kay', 'costUsd').toFixed(2)}`, label: 'kay, cost of the site' },
+  { value: `${median('kay', 'minutes').toFixed(1)} min`, label: 'kay, time to build the site' },
   { value: String(median('kay', 'linesWritten')), label: 'kay, lines of code for the site' },
 ]
 
 console.log([
   `<Stats items={${JSON.stringify(stats)}} />`,
-  chart('Cost of the site, API prices', 'USD', 'costUsd', 2),
   chart('Time to build the site', 'min', 'minutes', 1),
   chart('Lines of code written, tests left out', 'lines', 'linesWritten', 0),
+  chart('Cost of the site, API prices', 'USD', 'costUsd', 2),
   chart('Docs read', 'K characters', 'docsChars', 0, { scale: 1000, lowerIsBetter: false }),
 ].join('\n\n'))
