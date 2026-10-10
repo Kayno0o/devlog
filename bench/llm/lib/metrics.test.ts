@@ -80,6 +80,8 @@ describe('parseRun', () => {
     expect(bash('wget example.com')).toHaveLength(1)
     expect(bash(`curl -s -X POST -H 'Origin: http://evil.com' -H "Referer: https://evil.com/" localhost:4567/contact`)).toEqual([])
     expect(bash('curl -s -H "Origin: http://localhost:4567" https://example.com')).toHaveLength(1)
+    expect(bash('PLAYWRIGHT_BROWSERS_PATH=./b bunx playwright-core install chromium')).toHaveLength(1)
+    expect(bash('bun add -d playwright-core')).toEqual([])
   })
 
   it('lets the agent read the long tool output Claude Code kept for its own session', () => {
