@@ -38,5 +38,5 @@ it('puts each framework\'s logo before its name, a site after the comma included
   const html = await renderToString(BarChart, { title: 'Memory', unit: 'MB', rows: [{ label: 'kay, painter', value: 104 }, { label: 'Astro, painter', value: 134 }, { label: 'Other', value: 90 }] })
 
   expect(html.match(/<svg/g)).toHaveLength(1)
-  expect(html).toMatch(/<img[^>]*class="size-4 rounded-sm"/)
+  expect(html).toMatch(/<img[^>]*class="size-4"/)
 })
