@@ -1,6 +1,6 @@
 ---
 import Rss from '~icons/tabler/rss'
-import kay from '../kay-logo.png'
+import kay from '../kay-logo.svg'
 ---
 header.border-b-2.border-surface.px-4.py-4.sm:px-8
   nav.flex.items-center.justify-between.gap-4(aria-label="Main navigation")
@@ -9,7 +9,7 @@ header.border-b-2.border-surface.px-4.py-4.sm:px-8
       li: a(href="/about") About
       li
         a.inline-flex.items-center.gap-1(href="https://kayjs.kaynooo.fr")
-          img.size-4(src={kay} sizes="16px" alt="")
+          img.size-4(src={kay} alt="")
           | kay
       li
         a.inline-flex.items-center.gap-1(href="/rss.xml")

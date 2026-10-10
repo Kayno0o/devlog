@@ -4,7 +4,7 @@ import { benchSource } from '../benches'
 import Astro from '~icons/simple-icons/astro'
 import Solid from '~icons/simple-icons/solid'
 import Svelte from '~icons/simple-icons/svelte'
-import kay from '../kay-logo.png'
+import kay from '../kay-logo.svg'
 import { formatNumber } from '../format'
 
 // A row is named by its framework, then maybe its site: `SvelteKit` or `Astro, painter`.
@@ -46,7 +46,7 @@ figure.chart
       span.flex.items-center.justify-end.gap-2.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
         | {row.label}
         if logo(row.label) === 'kay'
-          img.size-4(src={kay} sizes="16px" alt="")
+          img.size-4(src={kay} alt="")
         else if logo(row.label) === 'svelte'
           Svelte.size-4.shrink-0
         else if logo(row.label) === 'solid'
