@@ -142,27 +142,27 @@ The same products page, the same data and the same Elysia server for each framew
 
 ### Where kay wins
 
-<BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 11.2}, {"label": "Svelte", "value": 15.8}]} bench="synthetic" />
+<BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 10.9}, {"label": "Svelte", "value": 14.5}]} bench="synthetic" />
 
 kay hydrates its islands only. SolidJS and Svelte hydrate the whole page, so they also send its data again as JSON.
 
 <BarChart title="HTML sent, products page, gzip" unit="KB" better="lower" rows={[{"label": "kay", "value": 8.2}, {"label": "Svelte", "value": 15.7}, {"label": "SolidJS", "value": 21.6}]} bench="synthetic" />
 
-<BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4458}, {"label": "Svelte", "value": 3825}, {"label": "SolidJS", "value": 1661}]} bench="synthetic" />
+<BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 3960}, {"label": "Svelte", "value": 3215}, {"label": "SolidJS", "value": 1578}]} bench="synthetic" />
 
 ### Where kay loses
 
-<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "kay", "value": 11.1}, {"label": "Svelte", "value": 22.5}]} bench="synthetic" />
+<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "kay", "value": 11.2}, {"label": "Svelte", "value": 22.5}]} bench="synthetic" />
 
 SolidJS ships less JavaScript. kay's includes its in-place page navigation, which the Solid app, having no router, does without.
 
-<BarChart title="Update every 10th row of 1,000" unit="ms" better="lower" rows={[{"label": "Svelte", "value": 3.1}, {"label": "SolidJS", "value": 3.2}, {"label": "kay", "value": 3.3}]} bench="synthetic" />
+<BarChart title="Create 1,000 rows" unit="ms" better="lower" rows={[{"label": "SolidJS", "value": 28.6}, {"label": "Svelte", "value": 29.6}, {"label": "kay", "value": 33.5}]} bench="synthetic" />
 
-On the whole table benchmark, kay is within 17% of the fastest on every operation, and first on replacing 1,000 rows and on selecting a row. It is last on creating rows, by 7 to 8%, and on partial updates and swaps, where it replaces rows immutably under a keyed `for` while Solid and Svelte write one signal per row.
+On the whole table benchmark, kay is within 18% of the fastest on every operation, and first on appending 1,000 rows and on selecting a row. It is last on creating rows, by 13% on 1,000 and 1% on 10,000, and on replacing 1,000, by 3%.
 
 <Note title="How it was measured">
 
-kay 1.23.1, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.2 and headless Chromium 151. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
+kay 1.24.4, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.2 and headless Chromium 151. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
 
 </Note>
 
@@ -172,30 +172,32 @@ A products table only goes so far, so I ported a real site from SvelteKit to kay
 
 ### What kay gains
 
-<Stats items={[{"value": "-85%", "label": "server CPU per visitor"}, {"value": "-60%", "label": "requests in home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-15%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-85%", "label": "server CPU per visitor"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
 
-<BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 424}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
+<BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 404}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
 
-<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 16.6}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" />
+<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 45.1}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="every file the build writes" />
+
+A page loads only the part its islands need: 15 KB on a content page.
 
 The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
 
-<BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 14332}, {"label": "SvelteKit", "value": 760}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
+<BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 31872}, {"label": "SvelteKit", "value": 798}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
 
-<BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.38}, {"label": "SvelteKit", "value": 3.68}]} bench="sveltekit" source="hyperfine, 3 runs" />
+<BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.48}, {"label": "SvelteKit", "value": 3.62}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
 
-Under load, kay peaks at 85 MiB of memory against SvelteKit's 134. The home page a phone downloads drops from 706 to 552 KB, mostly images: kay serves AVIF at the width drawn.
+Under load, kay peaks at 87 MiB of memory against SvelteKit's 135. The home page a phone downloads drops from 706 to 557 KB, mostly images: kay serves AVIF at the width drawn.
 
 ### What kay loses
 
-<BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 36}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS after start" />
+<BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 40}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS after start" />
 
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
-- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at about SvelteKit's rate for 1.2 to 1.3 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
+- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.3 to 1.4 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
 
 <Note title="How it was measured">
 
-kay 1.17.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.24.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
@@ -205,30 +207,30 @@ Two small business sites moved to kay from Astro: a cattery and a house painter.
 
 ### What kay gains
 
-<Stats items={[{"value": "-32 to -37%", "label": "lines of code"}, {"value": "2.0 to 3.6x", "label": "faster cold start"}, {"value": "-27 to -85%", "label": "CSS per page"}]} />
+<Stats items={[{"value": "-32 to -37%", "label": "lines of code"}, {"value": "2.3 to 3.9x", "label": "faster cold start"}, {"value": "-27 to -85%", "label": "CSS per page"}]} />
 
-<BarChart title="Requests per second, a content page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay, painter", "value": 34994}, {"label": "kay, cattery", "value": 31202}, {"label": "Astro, cattery", "value": 12523}, {"label": "Astro, painter", "value": 11376}]} bench="astro" source="32 clients through nginx for 5 s" />
+<BarChart title="Requests per second, a content page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay, painter", "value": 35088}, {"label": "kay, cattery", "value": 33047}, {"label": "Astro, cattery", "value": 10938}, {"label": "Astro, painter", "value": 10058}]} bench="astro" source="32 clients through nginx for 5 s" />
 
-kay serves those pages prerendered and already compressed, so nginx spends about 25 µs on each instead of 470 to 540. Both sites load their contact form as a deferred server island, so every page but the cattery's home is prerendered.
+kay serves those pages prerendered and already compressed, so nginx spends about 25 µs on each instead of 480 to 550. Both sites load their contact form as a deferred server island, so every page but the cattery's home is prerendered.
 
-<BarChart title="Server memory after load" unit="MB" better="lower" digits={0} rows={[{"label": "Astro, cattery", "value": 283}, {"label": "kay, cattery", "value": 142}, {"label": "Astro, painter", "value": 134}, {"label": "kay, painter", "value": 104}]} bench="astro" source="RSS after the load runs" />
+<BarChart title="Server memory after load" unit="MB" better="lower" digits={0} rows={[{"label": "Astro, cattery", "value": 231}, {"label": "kay, cattery", "value": 138}, {"label": "Astro, painter", "value": 133}, {"label": "kay, painter", "value": 95}]} bench="astro" source="RSS after the load runs" />
 
 <BarChart title="Deployed size" unit="MB" better="lower" digits={0} rows={[{"label": "Astro, painter", "value": 301}, {"label": "Astro, cattery", "value": 231}, {"label": "kay, cattery", "value": 109}, {"label": "kay, painter", "value": 98}]} bench="astro" source="dist and production node_modules against one executable" />
 
 - **Lighter images**, served as AVIF at the width drawn: 55 against 143 KB and 36 against 161 KB per page on desktop, 115 against 143 KB and 105 against 185 KB on a phone.
-- **Faster paints on the cattery**: on a phone, the largest paint lands at 1.77 s instead of 2.73 s, and a phone downloads 197 KB per page instead of 256.
+- **Faster paints on the cattery**: on a phone, the largest paint lands at 1.78 s instead of 2.76 s, and a phone downloads 200 KB per page instead of 256.
 
 ### What kay loses
 
-<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 10.3}, {"label": "kay, painter", "value": 10.4}]} bench="astro" source="average over every page" />
+<BarChart title="JS shipped per page, brotli" unit="KB" better="lower" rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 12.3}, {"label": "kay, painter", "value": 12.4}]} bench="astro" source="average over every page" />
 
-- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 10.4 KB on kay, mostly the runtime its islands and in-place navigation need; the cattery's goes from 5.2 to 10.3 KB.
-- **A heavier painter site on phones.** A phone downloads 167 KB per page against 126 KB, mostly fonts (107 against 35 KB) and that script. Its largest paint lands about 100 ms later on a phone and 35 ms later on desktop.
-- **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image at each width, and type-checks, which `astro build` does not: 11.1 against 1.9 s on the cattery and 7.5 against 1.5 s on the painter, the cattery's build peaking at 1.9 GB against 1.1.
+- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 12.4 KB on kay, mostly the runtime its islands and in-place navigation need; the cattery's goes from 5.2 to 12.3 KB.
+- **A heavier painter site on phones.** A phone downloads 169 KB per page against 126 KB, mostly fonts (107 against 35 KB) and that script. Its largest paint lands about 80 ms later on a phone and 40 ms later on desktop.
+- **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image at each width, and type-checks, which `astro build` does not: 11.4 against 2.3 s on the cattery and 7.6 against 2.1 s on the painter, the cattery's build peaking at 1.8 GB against 1.1.
 
 <Note title="How it was measured">
 
-kay 1.17.7 on Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production. Sizes compare exactly; paints and throughput come from two sittings, so small gaps there are noise, and kay's throughput ran on a loaded machine, so it understates kay. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
+kay 1.24.4 on Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production, both sides in one sitting. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
 
 </Note>
 
