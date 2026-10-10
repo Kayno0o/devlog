@@ -1,0 +1,13 @@
+head
+  title About
+  meta(name="description" content="Kévyn, a French full-stack developer: how I got into coding, and what I care about in it.")
+article.mx-auto.max-w-2xl
+  h1.mb-10.text-3xl.font-semibold About
+  .prose
+    p I'm Kévyn, a French full-stack developer based in Bordeaux.
+    h2 How I got here
+    p It started with an Arduino at a family meal. I spent the following year tinkering with it, then moved on to really basic HTML, Discord bots hosted on Glitch, and a lot of Processing.
+    p In my first year of high school (seconde), one class had us use Processing. I made a platform game for it, and the teacher didn't believe I had written it myself. The code was the worst, it would burn my eyes today. Around then, a YouTuber bought a VPS for me to set up the Discord bot I had made for them.
+    p Early on, a friend also bought me a VPS of my own, and it helped me a lot once I got to university, a computer science IUT, where I was bored enough to play Dofus during classes. Then came a one-year work-study web degree (licence pro en alternance), and straight after it the job I still hold, four years in now.
+    h2 What I care about
+    p Developer experience, performance and accessibility. And the environment: making things small and keeping their footprint down.

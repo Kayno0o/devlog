@@ -25,6 +25,15 @@ it('links kay\'s docs site from the header, on kay\'s mark', async () => {
   expect(home.html).toMatch(/<a[^>]*href="https:\/\/kayjs\.kaynooo\.fr"[^>]*><img[^>]*kay-logo/)
 })
 
+it('links the about page from the intro', async () => {
+  const home = await site.visit('/')
+  const about = await site.visit('/about')
+
+  expect(home.html).toContain('href="/about"')
+  expect(about.status).toBe(200)
+  expect(about.html).toContain('How I got here')
+})
+
 it('serves the feed', async () => {
   const feed = await site.visit('/rss.xml')
 
