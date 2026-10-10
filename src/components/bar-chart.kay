@@ -4,7 +4,7 @@ import { benchSource } from '../benches'
 import Astro from '~icons/simple-icons/astro'
 import Solid from '~icons/simple-icons/solid'
 import Svelte from '~icons/simple-icons/svelte'
-import kay from '../favicon.png'
+import kay from '../kay-logo.png'
 import { formatNumber } from '../format'
 
 // A row is named by its framework, then maybe its site: `SvelteKit` or `Astro, painter`.
