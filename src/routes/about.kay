@@ -15,7 +15,7 @@ article.mx-auto.max-w-2xl
     h2 What I use
     p I code with #[a(href="https://claude.com/product/claude-code") Claude Code], extended with my own memory server (an #[a(href="https://modelcontextprotocol.io") MCP] server), hooks and mods. The rest of my setup:
     ul
-      li Arch Linux and Manjaro
+      li I use Arch, btw (and Manjaro)
       li KDE Plasma on Wayland
       li fish, in kitty with tmux
       li Brave
