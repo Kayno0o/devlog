@@ -87,22 +87,31 @@ The server part is marked `'use server'` and read back asynchronously.
 
 <Tab group="component" label="Astro">
 
+```tsx
+import { createSignal } from 'solid-js'
+
+export default function Counter() {
+  const [count, setCount] = createSignal(0)
+
+  return (
+    <button onClick={() => setCount(count() + 1)}>
+      Clicked {count()} times
+    </button>
+  )
+}
+```
+
 ```astro
 ---
+import Counter from '../components/Counter'
+
 const greeting = 'Hello from the server'
 ---
 <h1>{greeting}</h1>
-<button>Clicked <span>0</span> times</button>
-
-<script>
-  const count = document.querySelector('button span')!
-  document.querySelector('button')!.addEventListener('click', () => {
-    count.textContent = String(Number(count.textContent) + 1)
-  })
-</script>
+<Counter client:load />
 ```
 
-The server part renders as in kay, but Astro keeps no state in the browser: the counter is DOM code in a script, or a component of another framework, such as SolidJS, in a file of its own.
+The server part renders as in kay. Astro leaves state in the browser to a component of another framework, here SolidJS, in a file of its own and hydrated as an island.
 
 </Tab>
 
@@ -114,7 +123,7 @@ I care about speed everywhere: how fast a page loads and runs, how fast the serv
 
 I also care about how much code it takes. I have two apps of my own, one in SvelteKit at about 27,000 lines and one in SolidJS at about 34,000, blanks and comments left out: at that size, every line a framework saves is one less to write, read and keep working. Neither is migrated to kay yet, and that will get its own post.
 
-I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and SolidJS on its own renders in the browser: server rendering and static export come with SolidStart. Astro renders on the server, but has nothing easy for dynamic components unless you bring in another framework. So Astro with SolidJS inside was my choice for a while, fast pages for little code, at the price of two frameworks and two ways to write a component in one project. kay is what I built to have it all in one place.
+I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and SolidJS on its own renders in the browser: server rendering and static export come with SolidStart. Astro renders on the server and leaves dynamic components to another framework. So Astro with SolidJS inside was my choice for a while, fast pages for little code, at the price of two frameworks and two ways to write a component in one project. kay is what I built to have it all in one place.
 
 I also wanted to leave Vite behind: SvelteKit, SolidStart and Astro all build on it, and it sometimes makes builds and unit tests slow. kay builds and tests with Bun alone, and gets Bun's speed at both.
 
@@ -140,7 +149,7 @@ Bun does everything underneath: the server, the bundler, the test runner and the
 
 The same products page, the same data and the same Elysia server for each framework, each written the way its own docs and its js-framework-benchmark entry write it. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
-### Where kay wins
+### What kay gains
 
 <BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 10.9}, {"label": "Svelte", "value": 14.5}]} bench="synthetic" />
 
@@ -150,7 +159,7 @@ kay hydrates its islands only. SolidJS and Svelte hydrate the whole page, so the
 
 <BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 3960}, {"label": "Svelte", "value": 3215}, {"label": "SolidJS", "value": 1578}]} bench="synthetic" />
 
-### Where kay loses
+### What kay loses
 
 <BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "kay", "value": 11.2}, {"label": "Svelte", "value": 22.5}]} bench="synthetic" />
 
@@ -183,6 +192,8 @@ A page loads only the part its islands need: 15 KB on a content page.
 The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
 
 <BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 31872}, {"label": "SvelteKit", "value": 798}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
+
+Most of that gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
 
 <BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.48}, {"label": "SvelteKit", "value": 3.62}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
 
