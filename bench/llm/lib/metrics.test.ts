@@ -78,6 +78,15 @@ describe('parseRun', () => {
     expect(bash('curl -s -H "Origin: http://localhost:4567" localhost:4567/contact')).toEqual([])
     expect(bash('curl -s http://127.0.0.1:4567/ && curl -s https://example.com')).toHaveLength(1)
     expect(bash('wget example.com')).toHaveLength(1)
+    expect(bash(`curl -s -X POST -H 'Origin: http://evil.com' -H "Referer: https://evil.com/" localhost:4567/contact`)).toEqual([])
+    expect(bash('curl -s -H "Origin: http://localhost:4567" https://example.com')).toHaveLength(1)
+  })
+
+  it('lets the agent read the long tool output Claude Code kept for its own session', () => {
+    const read = (path: string): string[] => parseRun(JSON.stringify({ type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Read', input: { file_path: path } }] } }), cwd).outside
+
+    expect(read('/home/me/.claude/projects/-home-me--cache-llm-bench-run-kay-1-site/abc/tool-results/b1.txt')).toEqual([])
+    expect(read('/home/me/.claude/projects/-home-me-Workspace-other/abc/tool-results/b1.txt')).toHaveLength(1)
   })
 
   it('reads past heredoc bodies, which are files being written', () => {
