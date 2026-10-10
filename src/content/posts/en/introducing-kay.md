@@ -175,23 +175,34 @@ A products table only goes so far, so I ported a real site from SvelteKit to kay
 
 ### What kay gains
 
-<Stats items={[{"value": "-46%", "label": "first paint on a phone, content page"}, {"value": "40x", "label": "requests per second, home page"}, {"value": "-85%", "label": "server CPU per visitor"}, {"value": "-36%", "label": "client JavaScript"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-31%", "label": "build, cold caches"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-85%", "label": "server CPU per visitor"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
 
-A page loads only the part of that JavaScript its islands need: 15 KB on a content page.
+<BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 404}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
 
-The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory. Most of the requests-per-second gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
+<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 45.1}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="every file the build writes" />
+
+A page loads only the part its islands need: 15 KB on a content page.
+
+The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
+
+<BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 31872}, {"label": "SvelteKit", "value": 798}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
+
+Most of that gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
+
+<BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.48}, {"label": "SvelteKit", "value": 3.62}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
 
 Under load, kay peaks at 87 MiB of memory against SvelteKit's 135. The home page a phone downloads drops from 706 to 557 KB, mostly images: kay serves AVIF at the width drawn.
 
 ### What kay loses
 
-- **More memory at rest.** 61 MiB after start, against SvelteKit's 40.
+<BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 40}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS after start" />
+
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
 - **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.3 to 1.4 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
 
 <Note title="How it was measured">
 
-kay 1.24.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. Client JavaScript counts every file the build writes, in brotli. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.24.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
@@ -239,9 +250,13 @@ kay is meant to be as easy for a coding agent to write as for me:
 
 To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network, and a hidden suite of browser tests grades the site.
 
+<Note title="The site kay's agent built, running">
+
 <Embed src="/llm-bench/bookshelf/books" title="The Bookshelf site kay's agent built" />
 
-That is the site kay's agent built, running: filter the books, open one, mark it a favorite. It is the run of median cost, moved to the current kay and exported as static files, without its contact form, since that needs a server. Styling was free and not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
+</Note>
+
+Filter its books, open one, mark it a favorite. It is the run of median cost, moved to the current kay and exported as static files, without its contact form, since that needs a server. Styling was free and not graded: kay's agents mostly wrote none, where the others wrote about a hundred lines of CSS every run, so the line counts below leave styles out.
 
 ### What kay gains
 
