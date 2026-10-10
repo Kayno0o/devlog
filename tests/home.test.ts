@@ -14,7 +14,7 @@ it('lists the posts, leaving drafts out', async () => {
 it('names its author, and gives contact links in the footer', async () => {
   const home = await site.visit('/')
 
-  expect(home.html).toContain('Written by kaynooo')
+  expect(home.html).toContain('Written by Kévyn')
   expect(home.html).toContain('href="mailto:contact@kaynooo.fr"')
   expect(home.html).toContain('href="https://github.com/Kayno0o/devlog"')
 })

@@ -7,11 +7,11 @@ const entries = await posts.all()
 import PostMeta from '../components/post-meta.kay'
 ---
 head
-  title(raw) devlog, notes on building kay
+  title(raw) devlog, notes on building software
 .mx-auto.max-w-2xl
   section.mb-12
     h1.mb-3.text-3xl.font-semibold devlog
-    p.text-subtext Notes on building #[a(href="https://github.com/Kayno0o/kayjs") kay], a Bun web framework: how it works, what it costs, and the benchmarks behind it. Written by kaynooo, kay's author.
+    p.text-subtext Notes on the software I build: how it works, what it costs, and the benchmarks behind it, starting with #[a(href="https://kayjs.kaynooo.fr") kay], a Bun web framework. Written by Kévyn.
   section(aria-labelledby="posts-title")
     h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase Posts
     ol.flex.flex-col.gap-6
