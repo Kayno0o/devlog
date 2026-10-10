@@ -3,7 +3,6 @@ import { collection } from 'kay/content'
 import BarChart from './components/bar-chart.kay'
 import Embed from './components/embed.kay'
 import Note from './components/note.kay'
-import RatioChart from './components/ratio-chart.kay'
 import Stats from './components/stats.kay'
 import Tab from './components/tab.kay'
 import Tabs from './components/tabs.kay'
@@ -18,7 +17,7 @@ export const posts = collection('content/posts', {
     tags: t.Array(t.String(), { default: [] }),
     draft: t.Optional(t.Boolean()),
   }),
-  components: { BarChart, Embed, Note, RatioChart, Stats, Tab, Tabs },
+  components: { BarChart, Embed, Note, Stats, Tab, Tabs },
   highlight,
   draft: post => post.data.draft === true,
   sort: (a, b) => b.data.date.getTime() - a.data.date.getTime(),
