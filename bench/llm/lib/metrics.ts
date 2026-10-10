@@ -45,6 +45,8 @@ export interface RunMetrics {
   outside: string[]
   /** Bash calls running python, node or another package manager, where the prompt asks for bun only. */
   otherRuntimes: string[]
+  /** What Claude Code wrote in place of a model's answer, such as a usage limit or an API error, which ends the session early whatever the agent did. */
+  interrupted?: string
   /** Lines that were not JSON, such as the last one of a transcript cut short by a kill. */
   skippedLines: number
 }
@@ -63,6 +65,7 @@ interface Block {
   name?: string
   input?: Record<string, unknown>
   tool_use_id?: string
+  text?: string
   content?: string | { type: string, text?: string }[]
   is_error?: boolean
 }
@@ -77,7 +80,7 @@ interface Line {
   tools?: string[]
   plugins?: { name: string }[]
   mcp_servers?: { name: string }[]
-  message?: { id?: string, usage?: Usage | null, content?: string | Block[] }
+  message?: { id?: string, model?: string, usage?: Usage | null, content?: string | Block[] }
   duration_ms?: number
   duration_api_ms?: number
   num_turns?: number
@@ -272,6 +275,10 @@ export function parseRun(text: string, cwd: string): RunMetrics {
     if (line.type === 'assistant') {
       if (line.message?.id !== undefined && line.message.usage) {
         usageById.set(line.message.id, line.message.usage)
+      }
+
+      if (line.message?.model === '<synthetic>') {
+        metrics.interrupted = content.map(block => block.text ?? '').join('\n')
       }
 
       for (const block of content.filter(entry => entry.type === 'tool_use')) {
