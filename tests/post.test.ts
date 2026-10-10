@@ -1,6 +1,7 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
 import Embed from '../src/components/embed.kay'
+import Note from '../src/components/note.kay'
 import PostMeta from '../src/components/post-meta.kay'
 import Tab from '../src/components/tab.kay'
 import Toc from '../src/components/toc.kay'
@@ -48,6 +49,13 @@ it('ties a tab\'s label to its radio, checked only when asked', async () => {
   expect(first).toContain('name="component" id="component-sveltekit" checked')
   expect(first).toContain('<label class="tab-label" for="component-sveltekit">SvelteKit</label>')
   expect(other).not.toContain('checked')
+})
+
+it('folds a note under its title, closed until opened', async () => {
+  const html = await renderToString(Note, { title: 'How it was measured' })
+
+  expect(html).toMatch(/<details class="note [^"]*">/)
+  expect(html).toContain('<span>How it was measured</span></summary>')
 })
 
 it('frames a page lazily, named for screen readers', async () => {

@@ -123,13 +123,7 @@ I care about speed everywhere: how fast a page loads and runs, how fast the serv
 
 I also care about how much code it takes. I have two apps of my own, one in SvelteKit at about 27,000 lines and one in SolidJS at about 34,000, blanks and comments left out: at that size, every line a framework saves is one less to write, read and keep working. Neither is migrated to kay yet, and that will get its own post.
 
-I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and SolidJS on its own renders in the browser: server rendering and static export come with SolidStart. Astro renders on the server and leaves dynamic components to another framework. So Astro with SolidJS inside was my choice for a while, fast pages for little code, at the price of two frameworks and two ways to write a component in one project. kay is what I built to have it all in one place.
-
-I also wanted to leave Vite behind: SvelteKit, SolidStart and Astro all build on it, and it sometimes makes builds and unit tests slow. kay builds and tests with Bun alone, and gets Bun's speed at both.
-
-## Where it comes from
-
-kay mixes what I liked elsewhere into one file format:
+For a while I used Astro with SolidJS inside: fast pages for little code, at the price of two frameworks and two ways to write a component in one project. SvelteKit, SolidStart and Astro also all build on Vite, which sometimes makes builds and unit tests slow. kay is what I built to have it all in one place, built and tested by Bun alone. It mixes what I liked in each:
 
 - **Astro**: the TypeScript fence on top, islands as the only JavaScript a page ships, content collections.
 - **pug**: indented templates with no closing tags. I loved pug long ago and never saw a framework support it. It is short to write, quick to read, and fewer tokens for an agent.
@@ -181,34 +175,23 @@ A products table only goes so far, so I ported a real site from SvelteKit to kay
 
 ### What kay gains
 
-<Stats items={[{"value": "-85%", "label": "server CPU per visitor"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-46%", "label": "first paint on a phone, content page"}, {"value": "40x", "label": "requests per second, home page"}, {"value": "-85%", "label": "server CPU per visitor"}, {"value": "-36%", "label": "client JavaScript"}, {"value": "-55%", "label": "requests in home page"}, {"value": "-31%", "label": "build, cold caches"}, {"value": "-19%", "label": "Docker image"}, {"value": "-16%", "label": "lines of code"}]} />
 
-<BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 404}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
+A page loads only the part of that JavaScript its islands need: 15 KB on a content page.
 
-<BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 45.1}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="every file the build writes" />
-
-A page loads only the part its islands need: 15 KB on a content page.
-
-The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
-
-<BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 31872}, {"label": "SvelteKit", "value": 798}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
-
-Most of that gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
-
-<BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.48}, {"label": "SvelteKit", "value": 3.62}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
+The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory. Most of the requests-per-second gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
 
 Under load, kay peaks at 87 MiB of memory against SvelteKit's 135. The home page a phone downloads drops from 706 to 557 KB, mostly images: kay serves AVIF at the width drawn.
 
 ### What kay loses
 
-<BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 40}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS after start" />
-
+- **More memory at rest.** 61 MiB after start, against SvelteKit's 40.
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
 - **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.3 to 1.4 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
 
 <Note title="How it was measured">
 
-kay 1.24.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.24.4 on Bun 1.4.3 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. Client JavaScript counts every file the build writes, in brotli. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
@@ -287,10 +270,6 @@ kay 1.27.0, its runs a few hours after the others, with the same model and Claud
 ## Should you use it?
 
 For a side project, a personal site or a small business site, if you like what you saw above: go for it, and tell me what breaks. For anything you would be paged for at night, not yet. kay is a one-person project, it has no ecosystem to speak of, and a minor version may still break your code: the tilde in its version range is there for a reason. Read the changelog before every bump, or enjoy the surprise.
-
-## What is next
-
-kay is still experimental, and I am doing lots of breaking changes for now. Next, I will migrate the two apps above to it, and write about how that went.
 
 ## Try it
 
