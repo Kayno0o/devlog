@@ -1,0 +1,155 @@
+{
+  "framework": "kay",
+  "run": 1,
+  "label": "opus-probe-2",
+  "startedAt": "2026-10-10T01:18:20.215Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.17.7",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 142432,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 141931,
+    "durationApiMs": 129019,
+    "turns": 25,
+    "costUsd": 0.8301632000000002,
+    "tokens": {
+      "input": 50,
+      "output": 13009,
+      "cacheCreation": 50014,
+      "cacheRead": 848356
+    },
+    "outputExact": true,
+    "thinkingTokens": 2632,
+    "apiCalls": 25,
+    "peakContextTokens": 55270,
+    "toolCalls": {
+      "Bash": 24
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "python3 - <<'EOF'\np='src/components/book-list.kay'\ns=open(p).read()\ns=s[:s.index('\\nstyle\\n')]+'\\n'\nopen(p,'w').write(s)\nEOF\ncat > src/app.css <<'EOF'\nbody { font-family: system-ui, sans-serif; max-width: 48rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }\nheader { display: flex; gap: 1.5rem; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }\nheader nav { display: flex; gap: 1rem; }\nnav a[aria-current=\"page\"] { font-weight: bold; }\nfooter { border-top: 1px solid #ddd; margin-top: 2rem; padding-top: 0.5rem; color: #666; }\n.filter { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }\n.filter button[aria-pressed=\"true\"] { font-weight: bold; }\n.meta, .favorite { margin-left: 0.5rem; }\n.tags { display: flex; gap: 0.5rem; list-style: none; padding: 0; }\n.field { display: flex; flex-direction: column; margin-bottom: 1rem; max-width: 24rem; }\n.error { color: #b00020; margin: 0.25rem 0 0; }\nEOF\nsed -i '2a import '\"'\"'../app.css'\"'\"'' src/routes/_layout.kay; head -4 src/routes/_layout.kay\ncat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nexport const contact = action(t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n}), (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { contact } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(contact.failed()?.data?.errors ?? {})\nconst thanked = signal(contact.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    try {\n      thanked.set((await contact(fields, { refresh: false })).name)\n      form.reset()\n    }\n    catch (error) {\n      const data = (error as { data?: { errors?: ContactErrors } }).data\n      errors.set(data?.errors ?? {})\n    }\n  }\n}\n---\nif thanked\n  p.success(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={contact} novalidate onSubmit={submit})\n  .field\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error {errors.name}\n  .field\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error {errors.email}\n  .field\n    label(for=\"message\") Message\n    textarea#message(name=\"message\")\n    if errors.message\n      p.error {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -15; (PORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &); sleep 2; for p in / /books /books/frankenstein /about /contact /nope /books/nope; do echo \"== $p\"; curl -s -o /tmp/out.html -w \"%{http_code}\\n\" http://127.0.0.1:4701$p; done; curl -s http://127.0.0.1:4701/books/frankenstein",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/routes/_layout.kay'\ns=open(p).read()\ns=s.replace(\"import '../app.css'\\n\",\"\",1)\ns=\"---\\nimport '../app.css'\\n---\\n\"+s\nopen(p,'w').write(s)\nEOF\nhead -12 src/routes/_layout.kay; bun run check && bun run build 2>&1 | tail -3",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > kay.config.ts <<'EOF'\nimport process from 'node:process'\nimport { defineConfig } from 'kay/server'\n\nexport default defineConfig({\n  lang: 'en',\n  ...(process.env.ORIGIN ? { site: process.env.ORIGIN } : {}),\n  seo: { name: 'Bookshelf', titleTemplate: '%s | Bookshelf', description: 'A small catalog of classic books.' },\n})\nEOF\ncat > src/server.ts <<'EOF'\nimport process from 'node:process'\nimport { Elysia } from 'elysia'\nimport { pages } from 'kay/server'\n\n// Exported for `kay check`, which checks links against the routes it serves besides the pages and types `ctx.locals` from its plugins.\nexport const app = new Elysia().use(await pages()).listen({\n  port: Number(process.env.PORT ?? 3000),\n  ...(process.env.HOST ? { hostname: process.env.HOST } : {}),\n})\n\nconsole.log(`Listening on http://${app.server?.hostname}:${app.server?.port}`)\nEOF\nkill $(cat /tmp/srv.pid) 2>/dev/null; bun run check && bun run build | tail -1\nPORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &\necho $! > /tmp/srv.pid; sleep 2; cat /tmp/srv.log\nB=http://localhost:4701; A=/_kay/action/src/routes/contact.kay/contact\nH=(-H \"Origin: http://localhost:4701\" -H \"Referer: http://localhost:4701/contact\")\necho \"== invalid\"; curl -s -w \"\\nSTATUS %{http_code}\\n\" \"${H[@]}\" -F name=\" \" -F email=\"bad@x\" -F message=\"short\" $B$A | grep -o '<main>.*</main>\\|STATUS.*'\necho \"== empty email\"; curl -s \"${H[@]}\" -F name=\"Ann\" -F email=\"\" -F message=\"short message here, but long enough\" $B$A | grep -o '<form.*</form>'\necho \"== valid\"; curl -s -c /tmp/cj -D - -o /dev/null \"${H[@]}\" -F name=\"  Ann  \" -F email=\"ann@example.com\" -F message=\"This is a long enough message.\" $B$A | grep -i \"^HTTP\\|^location\"\ncurl -s -b /tmp/cj $B/contact | grep -o '<main>.*</main>'\necho \"== 127 host\"; curl -s -o /dev/null -w \"%{http_code}\\n\" -H \"Origin: http://localhost:4701\" -F name=a -F email=a -F message=a http://127.0.0.1:4701$A",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "rm e2e-tmp.ts; kill $(cat /tmp/srv.pid); sleep 0.5; pgrep -af \"server.ts\" | grep -v pgrep; bun run check && bun run build | tail -1; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 12,
+      "chars": 75454
+    },
+    "outside": [
+      "Bash: grep -n -i \"browser\\|chrom\\|playwright\" docs/llms/testing.md | head -20; which chromium chromium-browser google-chrome firefox 2>/dev/null; ls ~/.cache/ms-playwright 2>/dev/null",
+      "Bash: ls ~/.cache/ms-playwright/chromium-1234/*/; cat > e2e-tmp.ts <<'EOF'\nimport { browse } from 'kay/test'\n\nconst B = 'http://localhost:4701'\nconst ok = (c: unknown, m: string) => console.log(c ? 'PASS' : 'FAIL', m)\n\nconst p = await browse(`${B}/books`)\nok(await p.count('ul[aria-label=\"Books\"] li') === 8, '8 books')\nawait p.click('button:nth-of-type(3)') // gothic\nawait p.waitUntil(() => document.querySelectorAll('ul[aria-label=\"Books\"] li').length === 3)\nok(await p.evaluate(() => [...document.querySelectorAll('.filter button')].map(b => b.getAttribute('aria-pressed')).join()) === 'false,false,true,false,false,false,false,false,false', 'pressed state')\nok(await p.path() === '/books', 'no navigation')\nawait p.click('.filter button:first-child')\nawait p.waitUntil(() => document.querySelectorAll('ul[aria-label=\"Books\"] li').length === 8)\nok(true, 'All restores')\n\nawait p.goto(`${B}/books/dracula`)\nawait p.waitFor('article button', { text: 'Add to favorites' })\nawait p.click('article button')\nawait p.waitFor('article button', { text: 'Remove from favorites' })\nawait p.reload()\nawait p.waitFor('article button', { text: 'Remove from favorites' })\nok(true, 'favorite survives reload')\nawait p.goto(`${B}/books`)\nawait p.waitUntil(() => document.querySelectorAll('.favorite').length === 1)\nok((await p.text('ul[aria-label=\"Books\"] li:nth-child(2)'))?.includes('Favorite'), 'Dracula marked Favorite')\nok(!(await p.text('ul[aria-label=\"Books\"] li:nth-child(3)'))?.includes('Favorite'), 'Frankenstein not marked')\nok(await p.text('nav a[aria-current=\"page\"]') === 'Books', 'nav current')\n\nawait p.goto(`${B}/contact`)\nawait p.fill('#email', 'bad')\nawait p.click('button[type=\"submit\"]')\nawait p.waitFor('.error', { text: 'Name is required.' })\nok(await p.count('.error') === 3, '3 errors client side: ' + await p.evaluate(() => [...document.querySelectorAll('.error')].map(e => e.textContent).join('|')))\nok(await p.path() === '/contact', 'still on contact')\nawait p.fill('#name', '  Zoe ')\nawait p.fill('#email', 'zoe@example.com')\nawait p.fill('#message', 'Hello there, this is long enough.')\nawait p.click('button[type=\"submit\"]')\nawait p.waitFor('.success', { text: 'Thanks, Zoe! Your message has been sent.' })\nok(await p.count('.error') === 0, 'errors cleared')\nconsole.log('errors:', p.errors)\nprocess.exit(0)\nEOF\nBUN_CHROME_PATH=$(ls ~/.cache/ms-playwright/chromium-1234/chrome-linux*/chrome) timeout 90 bun e2e-tmp.ts"
+    ],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='src/components/book-list.kay'\ns=open(p).read()\ns=s[:s.index('\\nstyle\\n')]+'\\n'\nopen(p,'w').write(s)\nEOF\ncat > src/app.css <<'EOF'\nbody { font-family: system-ui, sans-serif; max-width: 48rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }\nheader { display: flex; gap: 1.5rem; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }\nheader nav { display: flex; gap: 1rem; }\nnav a[aria-current=\"page\"] { font-weight: bold; }\nfooter { border-top: 1px solid #ddd; margin-top: 2rem; padding-top: 0.5rem; color: #666; }\n.filter { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }\n.filter button[aria-pressed=\"true\"] { font-weight: bold; }\n.meta, .favorite { margin-left: 0.5rem; }\n.tags { display: flex; gap: 0.5rem; list-style: none; padding: 0; }\n.field { display: flex; flex-direction: column; margin-bottom: 1rem; max-width: 24rem; }\n.error { color: #b00020; margin: 0.25rem 0 0; }\nEOF\nsed -i '2a import '\"'\"'../app.css'\"'\"'' src/routes/_layout.kay; head -4 src/routes/_layout.kay\ncat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nexport const contact = action(t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n}), (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { contact } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(contact.failed()?.data?.errors ?? {})\nconst thanked = signal(contact.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    try {\n      thanked.set((await contact(fields, { refresh: false })).name)\n      form.reset()\n    }\n    catch (error) {\n      const data = (error as { data?: { errors?: ContactErrors } }).data\n      errors.set(data?.errors ?? {})\n    }\n  }\n}\n---\nif thanked\n  p.success(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={contact} novalidate onSubmit={submit})\n  .field\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error {errors.name}\n  .field\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error {errors.email}\n  .field\n    label(for=\"message\") Message\n    textarea#message(name=\"message\")\n    if errors.message\n      p.error {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check",
+      "python3 - <<'EOF'\np='src/routes/_layout.kay'\ns=open(p).read()\ns=s.replace(\"import '../app.css'\\n\",\"\",1)\ns=\"---\\nimport '../app.css'\\n---\\n\"+s\nopen(p,'w').write(s)\nEOF\nhead -12 src/routes/_layout.kay; bun run check && bun run build 2>&1 | tail -3"
+    ],
+    "resultTokens": {
+      "input": 50,
+      "output": 13009,
+      "cacheCreation": 50014,
+      "cacheRead": 848356
+    }
+  },
+  "diff": {
+    "files": 24,
+    "added": 346,
+    "removed": 5,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.17.7 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-10T01:14:03.245Z",
+    "files": 18,
+    "bytes": 199127
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/opus-probe-2/kay-1"
+}
