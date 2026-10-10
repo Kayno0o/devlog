@@ -1,5 +1,5 @@
 ---
-title: "kay: fast to run, fast to write"
+title: "kayjs: fast to run, easy to write"
 description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte and Astro.
 date: 2026-10-09
 tags: [kay, benchmarks]

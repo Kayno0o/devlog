@@ -9,7 +9,7 @@ it('lists the posts, leaving drafts out', async () => {
 
   expect(home.status).toBe(200)
   expect(home.html).toContain('Nothing published yet.')
-  expect(home.html).not.toContain('fast to run and fast to write')
+  expect(home.html).not.toContain('fast to run, easy to write')
 })
 
 it('names its author, and gives contact links in the footer', async () => {
