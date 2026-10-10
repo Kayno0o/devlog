@@ -61,7 +61,7 @@ SvelteKit's client JavaScript was not measured again: `c860ae5` has not changed 
 | Partner page | 4.1 gzip | 20.6 gzip | KB |
 
 - kay's HTML carries the 13.9 KB stylesheet inlined, so it is not fetched separately.
-- A home page built with the site set serves 28.4 KB br. Built without it, as here, the page is rendered again at boot once `SITE_URL` is known, and that render compresses less; reported to kay.
+- A home page built with the site set serves 28.4 KB br. Built without it, as here, the page is rendered again at boot once `SITE_URL` is known, and kay 1.17.4 compressed that render at request-path levels (brotli 4) instead of the build's. That is a regression, fixed in kay 1.17.6, which compresses it again at the build's levels, so every request after the first gets the build's bytes.
 - Inlined pages rendered per request go out as gzip: kay compresses them around a stylesheet deflated once at start.
 
 ## Server
