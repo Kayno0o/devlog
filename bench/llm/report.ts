@@ -90,8 +90,9 @@ const measures: Record<string, { group: string, title: string, read: (result: Re
   failedCheckRuns: { group: 'Checks', title: 'Checks and builds that failed', read: r => r.metrics.checkRuns.filter(run => run.failed).length, digits: 0 },
   checkErrors: { group: 'Checks', title: 'Check errors hit on the way', read: r => r.metrics.checkErrors, digits: 0 },
   filesChanged: { group: 'Code', title: 'Files written or changed', read: r => r.diff.files, digits: 0 },
-  linesWritten: { group: 'Code', title: 'Lines added, tests left out', read: r => r.diff.added - (r.diff.testLines ?? 0), digits: 0 },
+  linesWritten: { group: 'Code', title: 'Lines added, tests and styles left out', read: r => r.diff.added - (r.diff.testLines ?? 0) - (r.diff.styleLines ?? 0), digits: 0 },
   testLines: { group: 'Code', title: 'Test lines added', read: r => r.diff.testLines ?? 0, digits: 0 },
+  styleLines: { group: 'Code', title: 'Style lines added', read: r => r.diff.styleLines ?? 0, digits: 0 },
   linesRemoved: { group: 'Code', title: 'Lines removed', read: r => r.diff.removed, digits: 0 },
   packagesAdded: { group: 'Code', title: 'Packages added', read: r => r.diff.dependenciesAdded.length, digits: 0 },
 }
