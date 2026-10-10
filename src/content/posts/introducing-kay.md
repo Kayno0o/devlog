@@ -38,7 +38,7 @@ I also wanted to leave Vite behind: SvelteKit, SolidStart and Astro all build on
 kay is a mix of what I liked in other tools, in one file format:
 
 - **Astro**: the TypeScript fence on top of the component, islands as the only JavaScript a page ships, and content collections.
-- **pug**: indented templates with no closing tags, short to write and quick to read.
+- **pug**: indented templates with no closing tags. I found pug a long time ago and loved it, but never saw a framework support it, Astro included. It is short to write and quick to read, and that compactness also means fewer tokens for an agent to read and write.
 - **SolidJS**: signals and fine-grained updates, with no virtual DOM.
 - **Svelte and SvelteKit**: a compiler that does the work ahead of time, file-based routes with layouts, and typed form actions.
 
