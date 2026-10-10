@@ -7,7 +7,7 @@ import { afterAll, describe, expect, it } from 'bun:test'
 import { pageWeight } from '../src/page-weight'
 
 const dir = mkdtempSync(join(tmpdir(), 'page-weight-'))
-const files: Record<string, string> = { '/app.css': 'a { color: red }', '/logo.svg': '<svg></svg>', '/favicon.ico': 'icon'.repeat(500), '/charts.js': 'export {}', '/apple-touch-icon.png': 'touch' }
+const files: Record<string, string> = { '/app.css': 'a { color: red }', '/logo.svg': '<svg></svg>', '/favicon.ico': 'icon'.repeat(500), '/favicon.svg': '<svg viewBox="0 0 32 32"/>', '/charts.js': 'export {}', '/apple-touch-icon.png': 'touch' }
 
 for (const [url, text] of Object.entries(files)) {
   await Bun.write(join(dir, url), text)
@@ -31,6 +31,13 @@ describe('pageWeight', () => {
     const linked = brotli(files['/app.css']!) + brotli(files['/logo.svg']!) + files['/favicon.ico']!.length
 
     expect(html).toContain(', no JavaScript.</span>')
+    expect(Number(weight.exec(html)?.[1])).toBe(Number(((brotli(html) + linked) / 1024).toFixed(1)))
+  })
+
+  it('counts the SVG icon alone when the page links one, as a browser drawing it fetches no other', async () => {
+    const html = await transform('<link rel="icon" href="/favicon.svg" type="image/svg+xml">')
+    const linked = brotli(files['/app.css']!) + brotli(files['/favicon.svg']!)
+
     expect(Number(weight.exec(html)?.[1])).toBe(Number(((brotli(html) + linked) / 1024).toFixed(1)))
   })
 
