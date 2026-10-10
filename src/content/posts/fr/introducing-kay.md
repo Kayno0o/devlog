@@ -145,13 +145,13 @@ La même page de produits, les mêmes données et le même serveur Elysia pour c
 
 ### Ce que kay gagne
 
-<BarChart title="Script du thread principal au chargement, page produits" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 10.9}, {"label": "Svelte", "value": 14.5}]} bench="synthetic" />
+<BarChart title="Script du thread principal au chargement, page produits" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 12.0}, {"label": "Svelte", "value": 15.7}]} bench="synthetic" />
 
 kay n'hydrate que ses islands. SolidJS et Svelte hydratent toute la page, et renvoient donc aussi ses données en JSON.
 
 <BarChart title="HTML envoyé, page produits, gzip" unit="Ko" better="lower" rows={[{"label": "kay", "value": 8.2}, {"label": "Svelte", "value": 15.7}, {"label": "SolidJS", "value": 21.6}]} bench="synthetic" />
 
-<BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label": "kay", "value": 3960}, {"label": "Svelte", "value": 3215}, {"label": "SolidJS", "value": 1578}]} bench="synthetic" />
+<BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4185}, {"label": "Svelte", "value": 3684}, {"label": "SolidJS", "value": 1685}]} bench="synthetic" />
 
 ### Ce que kay perd
 
@@ -159,13 +159,13 @@ kay n'hydrate que ses islands. SolidJS et Svelte hydratent toute la page, et ren
 
 SolidJS envoie moins de JavaScript. Celui de kay inclut sa navigation de page sur place, dont l'appli Solid, qui n'a pas de routeur, se passe.
 
-<BarChart title="Création de 1 000 lignes" unit="ms" better="lower" rows={[{"label": "SolidJS", "value": 28.6}, {"label": "Svelte", "value": 29.6}, {"label": "kay", "value": 33.5}]} bench="synthetic" />
+<BarChart title="Création de 1 000 lignes" unit="ms" better="lower" rows={[{"label": "SolidJS", "value": 30.8}, {"label": "Svelte", "value": 32.4}, {"label": "kay", "value": 33.9}]} bench="synthetic" />
 
-Sur l'ensemble du benchmark du tableau, kay reste à moins de 18 % du plus rapide sur chaque opération, et il est premier pour ajouter 1 000 lignes et pour sélectionner une ligne. Il est dernier pour créer des lignes, de 13 % sur 1 000 et de 1 % sur 10 000, et pour en remplacer 1 000, de 3 %.
+Sur l'ensemble du benchmark du tableau, kay reste à moins de 11 % du plus rapide sur chaque opération, et il est premier pour remplacer et ajouter 1 000 lignes et pour sélectionner une ligne. Il est dernier pour créer des lignes, de 5 % sur 1 000 et de 7 % sur 10 000, pour échanger des lignes, de 4 %, et pour mettre à jour une ligne sur 10, de 5 %.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.24.4, solid-js 1.9.15 et Svelte 5.57.1, sur Bun 1.4.2 et Chromium 151 headless. Les chargements de page sont des médianes de 10 chargements à froid, les opérations sur le tableau des médianes de 10 exécutions après 2 échauffements, et le rendu serveur est mesuré en processus par mitata. Chaque tableau et ses notes sont dans le [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md) de kay, et `bun run bench` dans le dépôt de kay le relance.
+kay 1.28.0, solid-js 1.9.15 et Svelte 5.57.1, sur Bun 1.4.4 et Chromium 151 headless. Chaque chiffre est la médiane de trois passes du benchmark entier. Dans une passe, les chargements de page sont des médianes de 10 chargements à froid, les opérations sur le tableau des médianes de 10 exécutions après 2 échauffements, et le rendu serveur est mesuré en processus par mitata. Chaque tableau et ses notes sont dans le [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md) de kay, et `bun run bench` dans le dépôt de kay le relance.
 
 </Note>
 
@@ -175,34 +175,34 @@ Un tableau de produits ne mène pas bien loin, alors j'ai porté un vrai site de
 
 ### Ce que kay gagne
 
-<Stats items={[{"value": "-85 %", "label": "CPU serveur par visiteur"}, {"value": "-55 %", "label": "requêtes sur la page d'accueil"}, {"value": "-19 %", "label": "image Docker"}, {"value": "-16 %", "label": "lignes de code"}]} />
+<Stats items={[{"value": "-87 %", "label": "CPU serveur par visiteur"}, {"value": "-55 %", "label": "requêtes sur la page d'accueil"}, {"value": "-19 %", "label": "image Docker"}, {"value": "-16 %", "label": "lignes de code"}]} />
 
-<BarChart title="Premier rendu sur mobile, page de contenu" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 404}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="preset Lighthouse Pixel 7 (4G lente, CPU 4x), médiane de 3 exécutions" />
+<BarChart title="Premier rendu sur mobile, page de contenu" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 408}, {"label": "SvelteKit", "value": 752}]} bench="sveltekit" source="preset Lighthouse Pixel 7 (4G lente, CPU 4x), médiane de 3 exécutions" />
 
-<BarChart title="JavaScript côté client, brotli" unit="Ko" better="lower" rows={[{"label": "kay", "value": 45.1}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="tous les fichiers écrits par le build" />
+<BarChart title="JavaScript côté client, brotli" unit="Ko" better="lower" rows={[{"label": "kay", "value": 45.9}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="tous les fichiers écrits par le build" />
 
-Une page ne charge que la partie dont ses islands ont besoin : 15 Ko sur une page de contenu.
+Une page ne charge que la partie dont ses islands ont besoin : 16 Ko sur une page de contenu.
 
 La page d'accueil est prérendue, et son formulaire de contact, la seule partie qui diffère selon le visiteur, est une server island différée : le navigateur la récupère environ un écran avant qu'elle n'entre dans la vue, tandis que kay sert la page elle-même depuis la mémoire.
 
-<BarChart title="Requêtes par seconde, page d'accueil" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 31872}, {"label": "SvelteKit", "value": 798}]} bench="sveltekit" source="oha, 64 connexions pendant 10 s, 2 passes, la plus lente de kay" />
+<BarChart title="Requêtes par seconde, page d'accueil" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 37793}, {"label": "SvelteKit", "value": 790}]} bench="sveltekit" source="oha, 64 connexions pendant 10 s, 2 passes, la plus lente de kay" />
 
 L'essentiel de cet écart vient du prérendu, pas de la vitesse de rendu : quand kay rendait toute la page à chaque requête, comme SvelteKit, il la servait à environ deux fois le débit de SvelteKit.
 
-<BarChart title="Build, caches froids" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.48}, {"label": "SvelteKit", "value": 3.62}]} bench="sveltekit" source="hyperfine, médiane de 3 exécutions" />
+<BarChart title="Build, caches froids" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 3.04}, {"label": "SvelteKit", "value": 4.25}]} bench="sveltekit" source="hyperfine, médiane de 3 exécutions" />
 
-Sous charge, kay culmine à 87 Mio de mémoire contre 135 pour SvelteKit. La page d'accueil téléchargée par un mobile passe de 706 à 557 Ko, surtout grâce aux images : kay sert de l'AVIF à la largeur affichée.
+Sous charge, kay culmine à 79 Mio de mémoire contre 136 à 142 pour SvelteKit. La page d'accueil téléchargée par un mobile passe de 706 à 558 Ko, surtout grâce aux images : kay sert de l'AVIF à la largeur affichée.
 
 ### Ce que kay perd
 
-<BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 40}, {"label": "kay", "value": 61}]} bench="sveltekit" source="RSS après le démarrage" />
+<BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 42}, {"label": "kay", "value": 51}]} bench="sveltekit" source="RSS après le démarrage" />
 
 - **Le réglage par défaut n'est pas le chemin rapide.** Le rendu sur mobile ci-dessus demande `inlineStyles`, qui est optionnel : avec la feuille de styles liée, comme kay le fait par défaut, kay rendait de 85 à 140 ms derrière SvelteKit. L'inlining coûte environ 2 Ko par page, et la feuille de styles n'est plus mise en cache d'une page à l'autre.
-- **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,3 à 1,4 fois son CPU par requête. Avec la feuille liée, kay les servait à 1,8 à 2,2 fois le débit de SvelteKit.
+- **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,1 à 1,2 fois son CPU par requête. Avec la feuille liée, kay les servait à 1,8 à 2,2 fois le débit de SvelteKit.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.24.4 sur Bun 1.4.3 canary. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
+kay 1.28.0 sur Bun 1.4.4 canary. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
 
 </Note>
 
@@ -212,30 +212,30 @@ Deux petits sites d'entreprise sont passés d'Astro à kay : un élevage de cha
 
 ### Ce que kay gagne
 
-<Stats items={[{"value": "-32 à -37 %", "label": "lignes de code"}, {"value": "2,3 à 3,9x", "label": "démarrage à froid plus rapide"}, {"value": "-27 à -85 %", "label": "CSS par page"}]} />
+<Stats items={[{"value": "-32 à -37 %", "label": "lignes de code"}, {"value": "2,2 à 3,5x", "label": "démarrage à froid plus rapide"}, {"value": "-27 à -85 %", "label": "CSS par page"}]} />
 
-<BarChart title="Requêtes par seconde, une page de contenu" unit="req/s" better="higher" digits={0} rows={[{"label": "kay, peintre", "value": 35088}, {"label": "kay, élevage", "value": 33047}, {"label": "Astro, élevage", "value": 10938}, {"label": "Astro, peintre", "value": 10058}]} bench="astro" source="32 clients via nginx pendant 5 s" />
+<BarChart title="Requêtes par seconde, une page de contenu" unit="req/s" better="higher" digits={0} rows={[{"label": "kay, peintre", "value": 39805}, {"label": "kay, élevage", "value": 39322}, {"label": "Astro, élevage", "value": 12648}, {"label": "Astro, peintre", "value": 11798}]} bench="astro" source="32 clients via nginx pendant 5 s" />
 
-kay sert ces pages prérendues et déjà compressées, si bien que nginx passe environ 25 µs sur chacune au lieu de 480 à 550. Les deux sites chargent leur formulaire de contact comme une server island différée, donc toutes les pages sauf l'accueil de l'élevage sont prérendues.
+kay sert ces pages prérendues et déjà compressées, si bien que nginx passe environ 20 µs sur chacune au lieu de 470 à 540, et tous deux frôlent le plafond du client de charge lui-même, environ 40 000 par seconde. Les deux sites chargent leur formulaire de contact comme une server island différée, donc toutes les pages sauf l'accueil de l'élevage sont prérendues.
 
-<BarChart title="Mémoire du serveur après charge" unit="Mo" better="lower" digits={0} rows={[{"label": "Astro, élevage", "value": 231}, {"label": "kay, élevage", "value": 138}, {"label": "Astro, peintre", "value": 133}, {"label": "kay, peintre", "value": 95}]} bench="astro" source="RSS après les passes de charge" />
+<BarChart title="Mémoire du serveur après charge" unit="Mo" better="lower" digits={0} rows={[{"label": "Astro, élevage", "value": 281}, {"label": "kay, élevage", "value": 144}, {"label": "Astro, peintre", "value": 125}, {"label": "kay, peintre", "value": 95}]} bench="astro" source="RSS après les passes de charge" />
 
 <BarChart title="Taille déployée" unit="Mo" better="lower" digits={0} rows={[{"label": "Astro, peintre", "value": 301}, {"label": "Astro, élevage", "value": 231}, {"label": "kay, élevage", "value": 109}, {"label": "kay, peintre", "value": 98}]} bench="astro" source="dist et node_modules de production contre un seul exécutable" />
 
 - **Des images plus légères**, servies en AVIF à la largeur affichée : 55 contre 143 Ko et 36 contre 161 Ko par page sur desktop, 115 contre 143 Ko et 105 contre 185 Ko sur mobile.
-- **Des rendus plus rapides sur le site de l'élevage** : sur mobile, le plus gros rendu arrive à 1,78 s au lieu de 2,76 s, et un mobile télécharge 200 Ko par page au lieu de 256.
+- **Des rendus plus rapides sur le site de l'élevage** : sur mobile, le plus gros rendu arrive à 1,78 s au lieu de 2,73 s, et un mobile télécharge 201 Ko par page au lieu de 256.
 
 ### Ce que kay perd
 
-<BarChart title="JS envoyé par page, brotli" unit="Ko" better="lower" rows={[{"label": "Astro, peintre", "value": 0.4}, {"label": "Astro, élevage", "value": 5.2}, {"label": "kay, élevage", "value": 12.3}, {"label": "kay, peintre", "value": 12.4}]} bench="astro" source="moyenne sur toutes les pages" />
+<BarChart title="JS envoyé par page, brotli" unit="Ko" better="lower" rows={[{"label": "Astro, peintre", "value": 0.4}, {"label": "Astro, élevage", "value": 5.2}, {"label": "kay, élevage", "value": 13.1}, {"label": "kay, peintre", "value": 13.1}]} bench="astro" source="moyenne sur toutes les pages" />
 
-- **Plus de JavaScript.** Le site du peintre envoyait 0,4 Ko sur Astro, quelques scripts simples inlinés dans ses pages, et en envoie 12,4 sur kay, surtout le runtime dont ses islands et la navigation sur place ont besoin ; celui de l'élevage passe de 5,2 à 12,3 Ko.
-- **Un site de peintre plus lourd sur mobile.** Un mobile télécharge 169 Ko par page contre 126, surtout des polices (107 contre 35 Ko) et ce script. Son plus gros rendu arrive environ 80 ms plus tard sur mobile et 40 ms plus tard sur desktop.
-- **Des builds plus lents.** Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image à chaque largeur, et vérifie les types, ce que `astro build` ne fait pas : 11,4 contre 2,3 s sur l'élevage et 7,6 contre 2,1 s sur le peintre, le build de l'élevage culminant à 1,8 Go contre 1,1.
+- **Plus de JavaScript.** Le site du peintre envoyait 0,4 Ko sur Astro, quelques scripts simples inlinés dans ses pages, et en envoie 13,1 sur kay, surtout le runtime dont ses islands et la navigation sur place ont besoin ; celui de l'élevage passe de 5,2 à 13,1 Ko.
+- **Un site de peintre plus lourd sur mobile.** Un mobile télécharge 170 Ko par page contre 126, surtout des polices (107 contre 35 Ko) et ce script. Son plus gros rendu arrive environ 70 ms plus tard sur mobile et 35 ms plus tard sur desktop.
+- **Des builds plus lents.** Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image à chaque largeur, et vérifie les types, ce que `astro build` ne fait pas : 11,3 contre 1,9 s sur l'élevage et 7,1 contre 1,6 s sur le peintre, le build de l'élevage culminant à 1,9 Go contre 1,1.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.24.4 sur Bun 1.4.2, Chromium 151 headless et nginx 1.30.5 configuré comme en production, les deux côtés en une seule séance. Les rendus sont des médianes de 5 chargements à froid par page sous la limitation de Lighthouse ; la charge est de 32 clients pendant 5 s par URL ; les builds sont la médiane de 3 exécutions propres. Le code des sites est privé, donc la trace est [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), chaque chiffre avec ses conditions.
+kay 1.28.0 sur Bun 1.4.4, Chromium 151 headless et nginx 1.30.5 configuré comme en production, les deux côtés en une seule séance. Les rendus sont des médianes de 5 chargements à froid par page sous la limitation de Lighthouse ; la charge est de 32 clients pendant 5 s par URL ; les builds sont la médiane de 3 exécutions propres. Le code des sites est privé, donc la trace est [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), chaque chiffre avec ses conditions.
 
 </Note>
 
