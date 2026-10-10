@@ -21,6 +21,67 @@ h1 {greeting}
 button(onClick={() => count.set(count + 1)}) Clicked {count} times
 ```
 
+The first fence runs on the server only, the second also in the browser, and the template reads both. Here is the same page in the other three, each passing its own checker.
+
+SvelteKit keeps server data in a second file, `+page.server.ts`, which the page receives as `data`:
+
+```ts
+export function load() {
+  return { greeting: 'Hello from the server' }
+}
+```
+
+```svelte
+<script lang="ts">
+  let { data } = $props()
+  let count = $state(0)
+</script>
+
+<h1>{data.greeting}</h1>
+<button onclick={() => count++}>Clicked {count} times</button>
+```
+
+SolidStart marks the server part with `'use server'` and reads it back asynchronously:
+
+```tsx
+import { createAsync, query } from '@solidjs/router'
+import { createSignal } from 'solid-js'
+
+const getGreeting = query(async () => {
+  'use server'
+  return 'Hello from the server'
+}, 'greeting')
+
+export default function Counter() {
+  const greeting = createAsync(() => getGreeting())
+  const [count, setCount] = createSignal(0)
+
+  return (
+    <>
+      <h1>{greeting()}</h1>
+      <button onClick={() => setCount(count() + 1)}>Clicked {count()} times</button>
+    </>
+  )
+}
+```
+
+Astro renders the server part as kay does, but has no state of its own in the browser: the counter is DOM code in a script, or a component of another framework, such as SolidJS, in a file of its own:
+
+```astro
+---
+const greeting = 'Hello from the server'
+---
+<h1>{greeting}</h1>
+<button>Clicked <span>0</span> times</button>
+
+<script>
+  const count = document.querySelector('button span')!
+  document.querySelector('button')!.addEventListener('click', () => {
+    count.textContent = String(Number(count.textContent) + 1)
+  })
+</script>
+```
+
 ## Why I built it
 
 I care about speed everywhere: how fast a page loads and runs, how fast the server answers, and how fast a build or a test run finishes. And about how little the server needs: the memory it holds and what it takes to deploy.
