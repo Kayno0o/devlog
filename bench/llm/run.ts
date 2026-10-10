@@ -43,7 +43,8 @@ for (const framework of selected) {
 const runs = Number(values.runs)
 const label = values.label ?? `${new Date().toISOString().slice(0, 10)}-${values.model}`
 const resultsDir = join(benchDir, 'results', label)
-const workDir = join(process.env.XDG_CACHE_HOME ?? join(homedir(), '.cache'), 'llm-bench', label)
+const cacheDir = process.env.XDG_CACHE_HOME ?? join(homedir(), '.cache')
+const workDir = join(cacheDir, 'llm-bench', label)
 const prompt = await Bun.file(join(benchDir, 'prompt.md')).text()
 const docsSources = await Bun.file(join(benchDir, 'starters/docs-sources.json')).json() as Record<string, unknown>
 
@@ -90,10 +91,34 @@ interface Session {
   wallMs: number
 }
 
+// What the agent must not see: browsers it could test with, the hidden suite and reference site, other runs' sites and past Claude transcripts
+const workspaces = join(homedir(), 'Workspace')
+const repo = join(benchDir, '..', '..')
+const hidden = [workspaces, ...repo.startsWith(`${workspaces}/`) ? [] : [repo], join(homedir(), '.claude', 'projects'), join(cacheDir, 'claude-tmp'), join(cacheDir, 'llm-bench')].filter(path => existsSync(path))
+const browsers = [join(cacheDir, 'ms-playwright'), join(cacheDir, 'puppeteer')].filter(path => existsSync(path))
+
+/** bwrap arguments masking `hidden` with empty folders and `browsers` with read-only ones, `root` alone mounted back. */
+function sandbox(root: string): string[] {
+  return [
+    'bwrap',
+    '--dev-bind',
+    '/',
+    '/',
+    ...hidden.flatMap(path => ['--tmpfs', path]),
+    ...browsers.flatMap(path => ['--tmpfs', path, '--remount-ro', path]),
+    '--bind',
+    root,
+    root,
+    '--die-with-parent',
+    '--',
+  ]
+}
+
 async function agent(framework: Framework, site: string, transcript: string): Promise<Session> {
   const started = performance.now()
   const child = Bun.spawn([
     'setsid',
+    ...sandbox(join(site, '..')),
     'claude',
     '-p',
     prompt.replaceAll('{framework}', frameworks[framework].name),
@@ -146,7 +171,7 @@ async function one(framework: Framework, index: number, port: number): Promise<v
   const site = join(root, 'site')
   const transcript = join(root, 'transcript.jsonl')
   // grading again keeps what the agent's run recorded
-  const previous = regrade && existsSync(resultFile) ? await Bun.file(resultFile).json() as { startedAt: string, requested: object, session: Session & { leftoverProcesses: number } } : undefined
+  const previous = regrade && existsSync(resultFile) ? await Bun.file(resultFile).json() as { startedAt: string, requested: object, session: Session & { leftoverProcesses: number }, sandbox?: string[] } : undefined
   const startedAt = previous?.startedAt ?? new Date().toISOString()
   let session: Session = previous?.session ?? { exitCode: 0, timedOut: false, wallMs: 0 }
 
@@ -178,6 +203,8 @@ async function one(framework: Framework, index: number, port: number): Promise<v
     requested: previous?.requested ?? { model: values.model, effort: values.effort, budgetUsd: Number(values.budget), minutes: Number(values.minutes) },
     versions: { ...await versions(site, framework), claude: metrics.claudeVersion },
     session: { ...session, leftoverProcesses: previous?.session.leftoverProcesses ?? leftovers },
+    // what the agent's sandbox hid; a regrade keeps what the run had
+    sandbox: regrade ? previous?.sandbox : [...hidden, ...browsers],
     metrics,
     diff: await diff(site),
     grade: await grade(site, port),

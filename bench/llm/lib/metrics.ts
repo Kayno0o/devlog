@@ -98,6 +98,8 @@ const localHost = /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0)\b/
 // a header such as `Origin: http://evil.com` in a curl at the agent's own server names a site without reaching it
 const headerArg = /(?:-H|--header)\s+(?:'[^']*'|"[^"]*"|\S+)/g
 const pathSeparators = /[/.]/g
+// downloading a browser to test with reaches the network beyond a package install
+const browserDownload = /\b(?:playwright(?:-core)?\s+install|puppeteer\s+browsers\s+install)\b/
 const homePath = /(?:~|\/home\/)[^\s'"]*/g
 const parentCd = /(?:^|\s)cd\s+\.\.(?:\s|\/|$)/
 const heredocStart = /<<-?\s*['"]?(\w+)/
@@ -151,7 +153,7 @@ function outsideOf(name: string, input: Record<string, unknown>, cwd: string): s
     const network = networkCommand.test(command) && (remoteUrl.test(target) || !localHost.test(target))
     const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
 
-    return network || home || parentCd.test(command) ? `Bash: ${String(input.command)}` : undefined
+    return network || home || parentCd.test(command) || browserDownload.test(command) ? `Bash: ${String(input.command)}` : undefined
   }
 
   const path = String(input.file_path ?? input.path ?? '')

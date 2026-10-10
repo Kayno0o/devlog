@@ -3,6 +3,7 @@
 import type { Grade } from './lib/grade'
 import type { RunMetrics, Tokens } from './lib/metrics'
 import type { Diff } from './lib/workspace'
+import { homedir } from 'node:os'
 import { basename, join } from 'node:path'
 import process from 'node:process'
 
@@ -13,6 +14,7 @@ interface Result {
   requested: { model: string, effort: string, budgetUsd: number, minutes: number }
   versions: Record<string, string>
   session?: { timedOut: boolean, wallMs?: number }
+  sandbox?: string[]
   metrics: RunMetrics
   diff: Diff
   grade: Grade
@@ -161,8 +163,13 @@ function isolation(): string[] {
   const undercounted = results.filter(result => !result.metrics.outputExact)
   const otherRuntimes = results.filter(result => result.metrics.otherRuntimes.length > 0)
   const cut = results.filter(result => result.metrics.skippedLines > 0)
+  const unsandboxed = results.filter(result => result.sandbox === undefined)
+  const masked = [...new Set(results.flatMap(result => result.sandbox ?? []))].map(path => path.replace(homedir(), '~'))
 
   return [
+    unsandboxed.length === 0
+      ? `- Each agent ran under bwrap, which hid ${masked.map(path => `\`${path}\``).join(', ')}: the acceptance suite and reference site, other runs' sites, past Claude transcripts and any browser to test with.`
+      : `- Runs without the bwrap sandbox, so able to read the acceptance suite, other runs' sites and the grader's browser: ${unsandboxed.map(result => `${result.framework} ${result.run}`).join(', ')}`,
     mcp.length === 0
       ? '- No session started an MCP server.'
       : `- Sessions that started MCP servers: ${mcp.map(result => `${result.framework} ${result.run} (${result.metrics.loaded.mcpServers.join(', ')})`).join('; ')}`,
