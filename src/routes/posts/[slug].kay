@@ -1,4 +1,5 @@
 --- server
+import { shareCard } from 'kay/image'
 import { posts } from '../../content.config'
 
 export const prerender = posts
@@ -16,6 +17,7 @@ head
   title {post.data.title}
   meta(name="description" content={post.data.description})
   meta(property="og:type" content="article")
+  meta(property="og:image" content={shareCard({ title: post.data.title })})
   script(src="/charts.js" type="module")
 article.relative.mx-auto.max-w-2xl
   a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
