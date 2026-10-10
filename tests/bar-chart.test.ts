@@ -33,3 +33,10 @@ it('opens a bench\'s source with its name and ends it with its date', async () =
   expect(detailed).toContain('Source: SvelteKit port, hyperfine, 3 runs, 2026-10-10')
   expect(plain).toContain('Source: kay\'s bench, 2026-10-07')
 })
+
+it('puts each framework\'s logo before its name, a site after the comma included', async () => {
+  const html = await renderToString(BarChart, { title: 'Memory', unit: 'MB', rows: [{ label: 'kay, painter', value: 104 }, { label: 'Astro, painter', value: 134 }, { label: 'Other', value: 90 }] })
+
+  expect(html.match(/<svg/g)).toHaveLength(1)
+  expect(html).toMatch(/<img[^>]*class="size-4 rounded-sm"/)
+})

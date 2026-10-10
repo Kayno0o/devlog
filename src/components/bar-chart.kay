@@ -1,7 +1,14 @@
 ---
 import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
+import Astro from '~icons/simple-icons/astro'
+import Solid from '~icons/simple-icons/solid'
+import Svelte from '~icons/simple-icons/svelte'
+import kay from '../favicon.png'
 import { formatNumber } from '../format'
+
+// A row is named by its framework, then maybe its site: `SvelteKit` or `Astro, painter`.
+const logos = new Map([['kay', 'kay'], ['Svelte', 'svelte'], ['SvelteKit', 'svelte'], ['SolidJS', 'solid'], ['SolidStart', 'solid'], ['Astro', 'astro']])
 
 interface Row {
   label: string
@@ -23,15 +30,29 @@ const { title, unit, rows, highlight, better, bench, source, digits = 1 } = prop
 const highlighted = new Set(highlight === undefined ? rows.map(row => row.label).filter(label => label === 'kay' || label.startsWith('kay, ')) : [highlight].flat())
 const caption = bench === undefined ? source : benchSource(bench, source)
 const max = () => Math.max(...rows.map(row => row.value))
+function logo(label: string) {
+  const comma = label.indexOf(',')
+
+  return logos.get(comma === -1 ? label : label.slice(0, comma))
+}
 ---
 figure.chart
   figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
     span.font-semibold {title}
     if better
       span.text-sm.text-muted {better} is better
-  div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2" aria-hidden="true")
+  div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1" aria-hidden="true")
     for row, i of rows key={row.label}
-      span.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }}) {row.label}
+      span.flex.items-center.gap-1.5.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
+        if logo(row.label) === 'kay'
+          img.size-4.rounded-sm(src={kay} sizes="16px" alt="")
+        else if logo(row.label) === 'svelte'
+          Svelte.size-4.shrink-0
+        else if logo(row.label) === 'solid'
+          Solid.size-4.shrink-0
+        else if logo(row.label) === 'astro'
+          Astro.size-4.shrink-0
+        | {row.label}
       .flex.min-w-0.items-center.gap-2
         .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
         span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
