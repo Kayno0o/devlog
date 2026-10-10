@@ -4,7 +4,8 @@ import { defineConfig } from 'kay/server'
 import { pageWeight } from './src/page-weight'
 
 export default defineConfig({
-  lang: 'en',
+  // English stays unprefixed so the existing links keep working; French is served under /fr.
+  i18n: { locales: ['en', 'fr'], defaultLocale: 'en' },
   site: process.env.SITE_URL ?? 'https://log.kaynooo.fr',
   plugins: [tailwind],
   extensions: [pageWeight],

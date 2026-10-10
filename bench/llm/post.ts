@@ -2,7 +2,8 @@
 // bun bench/llm/post.ts <label>
 import { join } from 'node:path'
 import process from 'node:process'
-import { benchSource } from '../../src/benches'
+import { benches } from '../../src/benches'
+import messages from '../../src/messages/en'
 import { benchDir } from './lib/workspace'
 
 interface Spread {
@@ -33,8 +34,8 @@ const passed = frameworks.reduce((sum, [, framework]) => sum + framework.passed,
 const model = summary.model.replace(modelId, (_, family: string, major: string, minor: string) => `${family[0]?.toUpperCase()}${family.slice(1)} ${major}.${minor}`)
 const source = `LLM benchmark, ${model}, effort ${summary.requested.effort}, median of the passing runs, ${summary.to.slice(0, 10)}`
 
-if (benchSource('llm', undefined) !== source) {
-  console.error(`benches.llm in src/benches.ts should read: ${source}`)
+if (`${messages.benches.llm}, ${benches.llm.date}` !== source) {
+  console.error(`benches.llm in src/messages/en.ts, then its date in src/benches.ts, should read: ${source}`)
 }
 
 function chart(title: string, unit: string, key: string, digits: number, { scale = 1, lowerIsBetter = true } = {}): string {

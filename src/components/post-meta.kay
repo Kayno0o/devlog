@@ -1,4 +1,5 @@
 ---
+import { t } from 'kay/i18n'
 import { formatDate } from '../format'
 import { readingMinutes } from '../reading-time'
 
@@ -12,7 +13,7 @@ const { date, updated, file, tags = [] } = props<{
 p.flex.flex-wrap.gap-x-4.font-mono.text-sm.text-muted
   time(datetime={date.toISOString()}) {formatDate(date)}
   if updated
-    span updated #[time(datetime={updated.toISOString()}) {formatDate(updated)}]
-  span {readingMinutes(file)} min read
+    span {t('post.updated')} #[time(datetime={updated.toISOString()}) {formatDate(updated)}]
+  span {t('post.readingTime', { minutes: readingMinutes(file) })}
   for tag of tags key={tag}
     span \#{tag}

@@ -8,6 +8,7 @@ const post = await posts.get(ctx.params.slug) ?? ctx.notFound()
 const { Content } = post
 ---
 ---
+import { t } from 'kay/i18n'
 import ArrowLeft from '~icons/tabler/arrow-left'
 import Pencil from '~icons/tabler/pencil'
 import PostMeta from '../../components/post-meta.kay'
@@ -23,7 +24,7 @@ head
 article.relative.mx-auto.max-w-2xl
   a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
     ArrowLeft.size-4
-    | All posts
+    | {t('post.all')}
   header.mb-10
     h1.mb-3.text-3xl.font-semibold.text-balance {post.data.title}
     PostMeta(date={post.data.date} updated={post.data.updated} file={post.file} tags={post.data.tags})
@@ -33,4 +34,4 @@ article.relative.mx-auto.max-w-2xl
   footer.mt-12.border-t-2.border-surface.pt-4.text-sm.text-muted
     a.inline-flex.items-center.gap-1(href={`https://github.com/Kayno0o/devlog/blob/main/${post.file}`})
       Pencil.size-4
-      | Suggest a fix to this post
+      | {t('post.suggestFix')}

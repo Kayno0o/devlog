@@ -4,20 +4,29 @@ import { posts } from '../content.config'
 const entries = await posts.all()
 ---
 ---
+import { t, T } from 'kay/i18n'
 import Github from '~icons/simple-icons/github'
 import IconLink from '../components/icon-link.kay'
 import PostMeta from '../components/post-meta.kay'
 import kay from '../kay-logo.svg'
 ---
 head
-  title(raw) devlog, notes on building software
+  title(raw) {t('home.title')}
 .mx-auto.max-w-2xl
   section.mb-12
-    h1.mb-3.text-3xl.font-semibold Hi, I'm Kévyn
-    p.mb-3.text-subtext A French full-stack developer based in Bordeaux, I've been coding since middle school, the last four years for a living, mostly with Bun, TypeScript, Astro, SolidJS, Svelte and Vue/Nuxt. Away from the web, I love Godot and build Minecraft mods and tools. More #[a(href="/about") about me], or #[IconLink(href="https://github.com/Kayno0o" icon={Github}) my code].
-    p.text-subtext These are notes on the software I build: how it works, what it costs, and the benchmarks behind it, starting with #[IconLink(href="https://kayjs.kaynooo.fr" image={kay}) kay], a Bun web framework, because the world clearly needed one more.
+    h1.mb-3.text-3xl.font-semibold {t('home.greeting')}
+    p.mb-3.text-subtext
+      T(key="home.who")
+        @about(text)
+          a(href="/about") {text}
+        @code(text)
+          IconLink(href="https://github.com/Kayno0o" icon={Github}) {text}
+    p.text-subtext
+      T(key="home.notes")
+        @kay(text)
+          IconLink(href="https://kayjs.kaynooo.fr" image={kay}) {text}
   section(aria-labelledby="posts-title")
-    h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase Posts
+    h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase {t('home.posts')}
     ol.flex.flex-col.gap-6
       for post of entries key={post.slug}
         li
@@ -26,4 +35,4 @@ head
             h3.text-lg.font-semibold.group-hover:underline.group-hover:decoration-accent {post.data.title}
             p.text-subtext {post.data.description}
       else
-        li.text-subtext Nothing published yet.
+        li.text-subtext {t('home.empty')}

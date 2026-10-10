@@ -9,6 +9,7 @@ import Tabs from './components/tabs.kay'
 import { highlight } from './highlight'
 
 export const posts = collection('content/posts', {
+  localized: true,
   schema: t.Object({
     title: t.String(),
     description: t.String(),

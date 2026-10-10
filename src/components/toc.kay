@@ -1,4 +1,5 @@
 ---
+import { t } from 'kay/i18n'
 import './toc.css'
 
 interface Heading {
@@ -14,7 +15,7 @@ const sections = () => headings.filter(heading => heading.depth === 2)
 if sections().length >= 4
   nav.toc(aria-labelledby="toc-title")
     .toc-list
-      h2#toc-title.mb-2.font-mono.text-sm.tracking-wide.text-muted.uppercase Contents
+      h2#toc-title.mb-2.font-mono.text-sm.tracking-wide.text-muted.uppercase {t('post.contents')}
       ol
         for section of sections() key={section.id}
           li: a(href={`#${section.id}`}) {section.text}

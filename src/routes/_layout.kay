@@ -1,15 +1,21 @@
 ---
+import { localize, t, T } from 'kay/i18n'
 import Header from '../components/header.kay'
 import '../app.css'
 ---
 head
-  link(rel="alternate" type="application/rss+xml" title="devlog" href="/rss.xml")
-a.skip-link(href="#main-content") Skip to main content
+  meta(name="description" content={t('site.description')})
+  link(rel="alternate" type="application/rss+xml" title="devlog" href={localize('/rss.xml')})
+a.skip-link(href="#main-content") {t('site.skipLink')}
 Header
 main#main-content.w-full.grow.px-4.py-10.sm:px-8
   slot
 footer.flex.flex-wrap.justify-between.gap-x-6.gap-y-2.border-t-2.border-surface.px-4.py-4.text-sm.text-muted.sm:px-8
-  p Built with #[a(href="https://github.com/Kayno0o/kayjs") kay], served as static files. #[span(data-page-weight)]
+  p
+    T(key="footer.builtWith")
+      @kay(text)
+        a(href="https://github.com/Kayno0o/kayjs") {text}
+    |  #[span(data-page-weight)]
   ul.flex.gap-5
     li: a(href="mailto:contact@kaynooo.fr") contact@kaynooo.fr
-    li: a(href="https://github.com/Kayno0o/devlog") Source
+    li: a(href="https://github.com/Kayno0o/devlog") {t('footer.source')}
