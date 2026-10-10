@@ -109,7 +109,7 @@ Two small business sites moved to kay from Astro: a cattery and a house painter.
 
 ### What kay gains
 
-<Stats items={[{"value": "-32 to -37%", "label": "lines of code"}, {"value": "1.6 to 3.6x", "label": "faster cold start"}, {"value": "2.1 to 3.1x", "label": "smaller deploy"}]} />
+<Stats items={[{"value": "-32 to -37%", "label": "lines of code"}, {"value": "2.0 to 3.6x", "label": "faster cold start"}, {"value": "2.1 to 3.1x", "label": "smaller deploy"}]} />
 
 <BarChart title="Requests per second, a content page" unit="req/s" better="higher" highlight={["kay, cattery", "kay, painter"]} digits={0} rows={[{"label": "kay, painter", "value": 34994}, {"label": "kay, cattery", "value": 31202}, {"label": "Astro, cattery", "value": 12523}, {"label": "Astro, painter", "value": 11376}]} source="Astro (2026-10-07) vs kay 1.17.7 (2026-10-10), 32 clients through nginx for 5 s" />
 
@@ -122,7 +122,7 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 - **Less CSS.** The cattery's stylesheet drops from 35.2 to 5.3 KB per page, the painter's from 9.3 to 6.8 KB.
 - **Lighter images**, served as AVIF at the width drawn: 55 against 143 KB and 36 against 161 KB per page on desktop, 115 against 143 KB and 105 against 185 KB on a phone.
 - **Faster paints on the cattery**: on a phone, the largest paint lands at 1.77 s instead of 2.73 s, and a phone downloads 197 KB per page instead of 256.
-- **Faster cold starts**, 30 against 110 ms on the cattery and 32 against 52 ms on the painter.
+- **Faster cold starts**, 30 against 110 ms on the cattery and 26 against 52 ms on the painter.
 
 ### What kay loses
 
@@ -134,7 +134,7 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 <Note title="How it was measured">
 
-One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production: Astro on 2026-10-07, kay 1.17.7 rerun alone on 2026-10-10. Sizes compare exactly; paints and throughput come from two sittings, so small gaps there are noise. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
+One desktop, Ryzen 5 7600 with 12 threads, Bun 1.4.2, headless Chromium 151 and nginx 1.30.5 set up as in production: Astro on 2026-10-07, kay 1.17.7 rerun alone on 2026-10-10. Sizes compare exactly; paints and throughput come from two sittings, so small gaps there are noise. kay's throughput was measured while other runs loaded the machine, so it understates kay: a quiet rerun served the cattery's content page at about 38,000 requests a second. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
 
 </Note>
 

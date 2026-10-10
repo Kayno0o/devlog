@@ -53,7 +53,7 @@ Cold start is from spawning the server to its first 200 on the home page, median
 
 |  | cattery astro | cattery kay | painter astro | painter kay |
 | --- | --- | --- | --- | --- |
-| cold start | 110 ms | 30.3 ms | 52.1 ms | 31.8 ms |
+| cold start | 110 ms | 30.3 ms | 52.1 ms | 26.1 ms |
 | memory once started | 115 MB | 69 MB | 66 MB | 70 MB |
 | memory after load (peak) | 283 MB (311 MB) | 142 MB (151 MB) | 134 MB (149 MB) | 104 MB (117 MB) |
 
@@ -72,7 +72,7 @@ Cold start is from spawning the server to its first 200 on the home page, median
 | painter kay | a content page | 34994 | 0.8 | 2.3 | 26 | 23 |
 | painter kay | `/_kay/_layout-j8sny4hd.css` | 51715 | 0.5 | 1.8 | 15 | 20 |
 
-kay 1.16.6, run earlier the same day, served the content pages at 39,000 requests a second and started in 23 to 29 ms. Whether the drop comes from kay 1.17 or from a machine busier with other runs was not separated, so compare kay with Astro here, not with that run.
+kay's load figures come from a sitting that shared the machine with other runs, so they understate it: nginx's own CPU per request rose too. A quiet A/B the same night, kay 1.16.6 against 1.17.7 on the same site code (the commits before the island work, only dependency bumps between them), served the cattery's content page at 38,286 and 37,823 requests a second for 23 µs of server CPU each, and started it in 28.8 and 29.4 ms: kay 1.17 did not regress. The painter's cold start comes from a later rerun: until kayjs 300cb8d the bench compiled its server without the site's env, so kay 1.17 rendered every page again on its first request, which had put it at 31.8 ms.
 
 ## Build and code
 
