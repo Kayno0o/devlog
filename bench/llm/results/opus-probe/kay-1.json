@@ -1,0 +1,154 @@
+{
+  "framework": "kay",
+  "run": 1,
+  "label": "opus-probe",
+  "startedAt": "2026-10-10T00:43:27.240Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.17.4",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 132465,
+    "leftoverProcesses": 0
+  },
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 131981,
+    "durationApiMs": 116907,
+    "turns": 25,
+    "costUsd": 0.9295068000000001,
+    "tokens": {
+      "input": 42,
+      "output": 13326,
+      "cacheCreation": 60793,
+      "cacheRead": 882374
+    },
+    "outputExact": true,
+    "thinkingTokens": 2865,
+    "apiCalls": 21,
+    "peakContextTokens": 65302,
+    "toolCalls": {
+      "Bash": 20,
+      "Read": 4
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "cat > kay.config.ts <<'EOF'\nimport { defineConfig } from 'kay/server'\n\nexport default defineConfig({\n  lang: 'en',\n  seo: { name: 'Bookshelf', titleTemplate: '%s | Bookshelf', description: 'A small catalog of classic books.' },\n})\nEOF\ncat > src/content.config.ts <<'EOF'\nimport { t } from 'kay'\nimport { collection } from 'kay/content'\n\nexport const books = collection('content/books', {\n  schema: t.Object({\n    title: t.String(),\n    author: t.String(),\n    year: t.Number(),\n    rating: t.Number({ minimum: 1, maximum: 5 }),\n    tags: t.Array(t.String(), { default: [] }),\n  }),\n  sort: (a, b) => a.data.title.localeCompare(b.data.title, 'en'),\n})\nEOF\ncat > src/favorites.ts <<'EOF'\nimport { persisted } from 'kay'\n\nexport const favorites = persisted<string[]>('favorites', [], { storage: 'local' })\n\nexport function toggleFavorite(slug: string) {\n  favorites.set(list => list.includes(slug) ? list.filter(item => item !== slug) : [...list, slug])\n}\nEOF\ncat > src/contact.ts <<'EOF'\nexport interface Contact { name: string, email: string, message: string }\nexport type ContactErrors = Partial<Record<keyof Contact, string>>\n\nconst emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/\n\nexport function checkContact({ name, email, message }: Contact): ContactErrors {\n  const errors: ContactErrors = {}\n\n  if (name.trim() === '')\n    errors.name = 'Name is required.'\n\n  if (email.trim() === '')\n    errors.email = 'Email is required.'\n  else if (!emailPattern.test(email.trim()))\n    errors.email = 'Enter a valid email address.'\n\n  if (message.trim().length < 20)\n    errors.message = 'Message must be at least 20 characters.'\n\n  return errors\n}\nEOF\ncat > src/routes/_layout.kay <<'EOF'\n--- server\nimport { books } from '../content.config'\n\nconst parts = ctx.url.pathname.split('/').filter(part => part !== '')\nconst section = parts.length === 1 ? parts[0] : undefined\nconst onBook = parts.length === 2 && parts[0] === 'books' && await books.get(decodeURIComponent(parts[1] ?? '')) !== undefined\nconst current = (name: string) => (section === name || (name === 'books' && onBook)) ? 'page' : undefined\n---\nheader\n  a(href=\"/\" aria-current={undefined}) Bookshelf\n  nav(aria-label=\"Main\")\n    a(href=\"/books\" aria-current={current('books')}) Books\n    a(href=\"/about\" aria-current={current('about')}) About\n    a(href=\"/contact\" aria-current={current('contact')}) Contact\nmain\n  slot\nfooter © Bookshelf\nEOF\ncat > src/routes/index.kay <<'EOF'\n--- server\nimport { books } from '../content.config'\n\nconst top = (await books.all())\n  .toSorted((a, b) => b.data.rating - a.data.rating || a.data.title.localeCompare(b.data.title, 'en'))\n  .slice(0, 3)\n---\nhead\n  title(raw) Bookshelf\nh1 Bookshelf\np A small catalog of classic books.\nh2 Top rated\nol\n  for book of top key={book.slug}\n    li: a(href={`/books/${book.slug}`}) {book.data.title}\nEOF\ncat > src/routes/about.kay <<'EOF'\nhead\n  title About\nh1 About\np Bookshelf lists a few classic books worth reading.\nEOF\ncat > src/routes/_404.kay <<'EOF'\nhead\n  title Not found\nh1 Not found\na(href=\"/books\") Back to the books\nEOF\nmkdir -p src/routes/books src/components\ncat > src/routes/books/index.kay <<'EOF'\n--- server\nimport { books } from '../../content.config'\nimport BookList from '../../components/book-list.kay'\n\nconst list = (await books.all()).map(book => ({\n  slug: book.slug,\n  title: book.data.title,\n  author: book.data.author,\n  year: book.data.year,\n  tags: book.data.tags,\n}))\nconst tags = [...new Set(list.flatMap(book => book.tags))].toSorted((a, b) => a.localeCompare(b, 'en'))\n---\nhead\n  title Books\nh1 All books\nBookList(books={list} tags={tags})\nEOF\ncat > src/routes/books/[slug].kay <<'EOF'\n--- server\nimport { books } from '../../content.config'\nimport FavoriteButton from '../../components/favorite-button.kay'\n\nconst book = await books.get(ctx.params.slug) ?? ctx.notFound()\nconst { Content } = book\n---\nhead\n  title {book.data.title}\narticle\n  h1 {book.data.title}\n  p by {book.data.author}\n  p Published in {book.data.year}\n  p Rating: {book.data.rating}/5\n  ul.tags\n    for tag of book.data.tags\n      li: a(href=\"/books\") {tag}\n  FavoriteButton(slug={book.slug})\n  Content\nEOF\ncat > src/components/favorite-button.kay <<'EOF'\n---\nimport { favorites, toggleFavorite } from '../favorites'\n\nconst { slug } = props<{ slug: string }>()\n---\nbutton(type=\"button\" aria-pressed={favorites().includes(slug) ? 'true' : 'false'} onClick={() => toggleFavorite(slug)})\n  if favorites().includes(slug)\n    | Remove from favorites\n  else\n    | Add to favorites\nEOF\ncat > src/components/book-list.kay <<'EOF'\n---\nimport { favorites } from '../favorites'\n\ninterface Book { slug: string, title: string, author: string, year: number, tags: string[] }\n\nconst { books, tags } = props<{ books: Book[], tags: string[] }>()\nconst selected = signal('')\nconst shown = memo(() => books.filter(book => selected() === '' || book.tags.includes(selected())))\n---\n.filter(role=\"group\" aria-label=\"Filter by tag\")\n  button(type=\"button\" aria-pressed={selected === '' ? 'true' : 'false'} onClick={() => selected.set('')}) All\n  for tag of tags\n    button(type=\"button\" aria-pressed={selected === tag ? 'true' : 'false'} onClick={() => selected.set(tag)}) {tag}\nul(aria-label=\"Books\")\n  for book of shown key={book.slug}\n    li\n      a(href={`/books/${book.slug}`}) {book.title}\n      | {' '}\n      span {book.author}, {book.year}\n      if favorites().includes(book.slug)\n        | {' '}\n        strong Favorite\nEOF\ncat > src/routes/contact.kay <<'EOF'\n--- server\nimport { t } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nexport const send = action(t.Object({\n  name: t.String({ maxLength: 200 }),\n  email: t.String({ maxLength: 320 }),\n  message: t.String({ maxLength: 5000 }),\n}), (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { ActionError } from 'kay'\nimport { send } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst failed = send.failed()\nconst errors = signal<ContactErrors>(failed?.data?.errors ?? {\n  name: failed?.errors?.name,\n  email: failed?.errors?.email,\n  message: failed?.errors?.message,\n})\nconst thanked = signal(send.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length > 0)\n    return\n\n  try {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n  catch (error) {\n    if (!(error instanceof ActionError))\n      throw error\n    const data = error.data as { errors?: ContactErrors } | undefined\n    errors.set(data?.errors ?? { name: error.errors.name, email: error.errors.email, message: error.errors.message })\n  }\n}\n---\nif thanked\n  p(role=\"status\") Thanks, {thanked}! Your message has been sent.\nform(action={send} novalidate onSubmit={submit})\n  .field\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\")\n    if errors.name\n      p.error {errors.name}\n  .field\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\")\n    if errors.email\n      p.error {errors.email}\n  .field\n    label(for=\"message\") Message\n    textarea#message(name=\"message\")\n    if errors.message\n      p.error {errors.message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i 's/^export type ContactErrors = .*/export type ContactErrors = { [K in keyof Contact]?: string | undefined }/' src/contact.ts && bun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -20 && (PORT=4567 bun run start > /tmp/kay-server.log 2>&1 &) && sleep 2 && for p in / /books /books/frankenstein /books/nope /about /contact /zzz; do echo \"== $p $(curl -s -o /dev/null -w '%{http_code}' localhost:4567$p)\"; done; curl -s localhost:4567/ | sed 's/></>\\n</g' | grep -v '^<script\\|^<link\\|^<meta' | head -60",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"bun src/server.ts\"; sleep 0.5; bun run check 2>&1 | tail -3 && bun run build 2>&1 | tail -2 && (PORT=4999 bun run start > /tmp/kay-server2.log 2>&1 &) && sleep 2 && cat /tmp/kay-server2.log && curl -s -o /dev/null -w '%{http_code}\\n' localhost:4999/books; pkill -f \"bun src/server.ts\"; sleep 0.5; pgrep -af \"server.ts\" || echo \"no servers running\"; git status --short",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "pgrep -f \"src/serve[r].ts\" | xargs -r kill; sleep 0.5; bun run check 2>&1 | tail -2 && bun run build 2>&1 | tail -2 && { PORT=4999 bun run start > /tmp/kay-server2.log 2>&1 & echo $! > /tmp/kay.pid; } && sleep 2 && cat /tmp/kay-server2.log && curl -s -o /dev/null -w '%{http_code}\\n' localhost:4999/books",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 10,
+      "chars": 99583
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='tests/site.test.ts'\ns=open(p).read()\ns=s.replace(\"import { afterAll, beforeAll, expect, it } from 'bun:test'\",\"import { afterAll, beforeAll, describe, expect, it } from 'bun:test'\")\nhead,dom=s.split(\"beforeAll(() => GlobalRegistrator.register())\\n\\n\")\ndom='\\n'.join(('  '+l if l else l) for l in dom.rstrip('\\n').split('\\n'))\ns=head+\"describe('in the browser', () => {\\n  beforeAll(() => GlobalRegistrator.register())\\n  afterAll(async () => GlobalRegistrator.unregister())\\n\\n\"+dom+\"\\n})\\n\"\nopen(p,'w').write(s)\nEOF\nbun test 2>&1 | tail -15"
+    ],
+    "resultTokens": {
+      "input": 42,
+      "output": 13326,
+      "cacheCreation": 60793,
+      "cacheRead": 882374
+    }
+  },
+  "diff": {
+    "files": 25,
+    "added": 431,
+    "removed": 3,
+    "dependenciesAdded": [
+      "@happy-dom/global-registrator"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.17.4 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-10T00:36:28.549Z",
+    "files": 18,
+    "bytes": 197710
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/opus-probe/kay-1"
+}
