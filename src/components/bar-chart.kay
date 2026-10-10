@@ -41,9 +41,10 @@ figure.chart
     span.font-semibold {title}
     if better
       span.text-sm.text-muted {better} is better
-  div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1" aria-hidden="true")
+  div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1.5 gap-y-1" aria-hidden="true")
     for row, i of rows key={row.label}
-      span.flex.items-center.gap-1.5.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
+      span.flex.items-center.justify-end.gap-1.5.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
+        | {row.label}
         if logo(row.label) === 'kay'
           img.size-4(src={kay} sizes="16px" alt="")
         else if logo(row.label) === 'svelte'
@@ -52,7 +53,6 @@ figure.chart
           Solid.size-4.shrink-0
         else if logo(row.label) === 'astro'
           Astro.size-4.shrink-0
-        | {row.label}
       .flex.min-w-0.items-center.gap-2
         .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
         span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
