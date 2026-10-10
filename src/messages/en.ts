@@ -63,6 +63,13 @@ export default defineMessages({
     },
     name: 'Name',
     value: 'Value',
+    runs: 'Runs',
+    range: '{low} to {high}',
+    legend: {
+      lower: 'Bars stop at the median run, gray carries on to the worst, the tick marks the best.',
+      higher: 'Bars stop at the median run, gray carries on to the best, the tick marks the worst.',
+      none: 'Bars stop at the median run, gray carries on to the highest, the tick marks the lowest.',
+    },
     source: 'Source: {source}',
   },
   benches: {

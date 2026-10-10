@@ -63,6 +63,13 @@ export default defineMessages({
     },
     name: 'Nom',
     value: 'Valeur',
+    runs: 'Runs',
+    range: '{low} à {high}',
+    legend: {
+      lower: 'La barre s\'arrête au run médian, le gris va jusqu\'au pire, le trait marque le meilleur.',
+      higher: 'La barre s\'arrête au run médian, le gris va jusqu\'au meilleur, le trait marque le pire.',
+      none: 'La barre s\'arrête au run médian, le gris va jusqu\'au plus haut, le trait marque le plus bas.',
+    },
     source: 'Source : {source}',
   },
   benches: {

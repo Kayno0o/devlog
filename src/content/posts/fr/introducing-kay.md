@@ -262,25 +262,25 @@ Voilà le site construit par l'agent de kay, en fonctionnement : filtrer les li
 
 ### Ce que kay gagne
 
-<Stats items={[{"value":"16K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
+<Stats items={[{"value":"13K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
 
-<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.1},{"label":"Astro","value":2.6},{"label":"SvelteKit","value":4.5},{"label":"SolidStart","value":9.3}]} bench="llm" />
+<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.6,"range":[1.9,2.8]},{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
 
-<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":334},{"label":"Astro","value":463},{"label":"SvelteKit","value":472},{"label":"SolidStart","value":537}]} bench="llm" />
+<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":348,"range":[333,360]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]}]} bench="llm" />
 
-kay est le seul framework que le modèle n'avait jamais vu : tout ce qu'il en sait vient de la documentation du projet. Il construit pourtant le site le plus vite, en 28 à 38 % de lignes en moins que les autres.
+kay est le seul framework que le modèle n'avait jamais vu : tout ce qu'il en sait vient de la documentation du projet. Il construit pourtant le site aussi vite qu'Astro et plus vite que les deux autres, en 25 à 35 % de lignes en moins que chacun d'eux.
 
 ### Ce que kay perd
 
-<BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78},{"label":"kay","value":1.2},{"label":"SvelteKit","value":1.52},{"label":"SolidStart","value":1.94}]} bench="llm" />
+<BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.88,1.11]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
-<BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Astro","value":29},{"label":"SolidStart","value":52},{"label":"SvelteKit","value":89},{"label":"kay","value":90}]} bench="llm" />
+<BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":96,"range":[83,116]}]} bench="llm" />
 
 Astro construit le site pour moins cher. Le modèle connaît déjà Astro, alors qu'il apprend kay dans sa documentation, en lisant trois fois plus, et chaque appel après ces lectures les repaie. kay coûte quand même moins que SvelteKit et SolidStart, que le modèle connaît eux aussi.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.18.0. Chaque exécution est une session Claude Code headless, Opus 5.5 en effort élevé, sans instructions de projet, hooks ni plugins, dans une copie neuve du starter du framework sous bubblewrap, donc sans accès aux tests, aux autres exécutions ni à quoi que ce soit d'autre sur la machine. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. Le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus/results.md).
+kay 1.27.0, ses exécutions quelques heures après celles des autres, avec le même modèle et le même Claude Code. Chaque exécution est une session Claude Code headless, Opus 5.5 en effort élevé, sans instructions de projet, hooks ni plugins, dans une copie neuve du starter du framework sous bubblewrap, donc sans accès aux tests, aux autres exécutions ni à quoi que ce soit d'autre sur la machine. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. Le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
 
