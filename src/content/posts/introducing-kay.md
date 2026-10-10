@@ -142,27 +142,27 @@ The same products page, the same data and the same Elysia server for each framew
 
 ### Where kay wins
 
-<BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.4}, {"label": "SolidJS", "value": 12.4}, {"label": "Svelte", "value": 15.6}]} bench="synthetic" />
+<BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 11.2}, {"label": "Svelte", "value": 15.8}]} bench="synthetic" />
 
 kay hydrates its islands only. SolidJS and Svelte hydrate the whole page, so they also send its data again as JSON.
 
-<BarChart title="HTML sent, products page, gzip" unit="KB" better="lower" rows={[{"label": "kay", "value": 8.1}, {"label": "Svelte", "value": 15.6}, {"label": "SolidJS", "value": 21.6}]} bench="synthetic" />
+<BarChart title="HTML sent, products page, gzip" unit="KB" better="lower" rows={[{"label": "kay", "value": 8.2}, {"label": "Svelte", "value": 15.7}, {"label": "SolidJS", "value": 21.6}]} bench="synthetic" />
 
-<BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4788}, {"label": "Svelte", "value": 3853}, {"label": "SolidJS", "value": 1754}]} bench="synthetic" />
+<BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4458}, {"label": "Svelte", "value": 3825}, {"label": "SolidJS", "value": 1661}]} bench="synthetic" />
 
 ### Where kay loses
 
-<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.0}, {"label": "kay", "value": 9.7}, {"label": "Svelte", "value": 21.8}]} bench="synthetic" />
+<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "kay", "value": 11.1}, {"label": "Svelte", "value": 22.5}]} bench="synthetic" />
 
-SolidJS ships less JavaScript. About 2.3 KB of kay's is its in-place page navigation, which the Solid app, having no router, does without.
+SolidJS ships less JavaScript. kay's includes its in-place page navigation, which the Solid app, having no router, does without.
 
-<BarChart title="Update every 10th row of 1,000" unit="ms" better="lower" rows={[{"label": "Svelte", "value": 3.0}, {"label": "SolidJS", "value": 3.1}, {"label": "kay", "value": 3.6}]} bench="synthetic" />
+<BarChart title="Update every 10th row of 1,000" unit="ms" better="lower" rows={[{"label": "Svelte", "value": 3.1}, {"label": "SolidJS", "value": 3.2}, {"label": "kay", "value": 3.3}]} bench="synthetic" />
 
-On the rest of the table benchmark kay is within 20% of the fastest, and first on selecting a row and on creating 10,000 rows. It is last on partial updates and swaps: it replaces rows immutably under a keyed `for`, where Solid and Svelte write one signal per row.
+On the whole table benchmark, kay is within 17% of the fastest on every operation, and first on replacing 1,000 rows and on selecting a row. It is last on creating rows, by 7 to 8%, and on partial updates and swaps, where it replaces rows immutably under a keyed `for` while Solid and Svelte write one signal per row.
 
 <Note title="How it was measured">
 
-kay 1.3, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.2 and headless Chromium 151. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
+kay 1.23.1, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.2 and headless Chromium 151. Page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
 
 </Note>
 
