@@ -1,6 +1,7 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
 import PostMeta from '../src/components/post-meta.kay'
+import Screenshot from '../src/components/screenshot.kay'
 import Tab from '../src/components/tab.kay'
 import Toc from '../src/components/toc.kay'
 import { highlight } from '../src/highlight'
@@ -47,4 +48,11 @@ it('ties a tab\'s label to its radio, checked only when asked', async () => {
   expect(first).toContain('name="component" id="component-sveltekit" checked')
   expect(first).toContain('<label class="tab-label" for="component-sveltekit">SvelteKit</label>')
   expect(other).not.toContain('checked')
+})
+
+it('swaps a screenshot for its dark twin under a dark color scheme', async () => {
+  const html = await renderToString(Screenshot, { src: '/a.jpg', dark: '/a-dark.jpg', alt: 'A page' })
+
+  expect(html).toContain('<source media="(prefers-color-scheme: dark)" srcset="/a-dark.jpg">')
+  expect(html).toContain('src="/a.jpg" alt="A page"')
 })
