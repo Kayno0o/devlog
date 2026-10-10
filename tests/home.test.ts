@@ -15,7 +15,8 @@ it('lists the posts, leaving drafts out', async () => {
 it('names its author, and gives contact links in the footer', async () => {
   const home = await site.visit('/')
 
-  expect(home.html).toMatch(/I'm <a [^>]*href="https:\/\/github\.com\/Kayno0o"><svg.*?<\/svg>Kévyn<\/a>/)
+  expect(home.html).toContain('Hi, I\'m Kévyn</h1>')
+  expect(home.html).toMatch(/<a [^>]*href="https:\/\/github\.com\/Kayno0o"><svg.*?<\/svg>my code<\/a>/)
   expect(home.html).toContain('href="mailto:contact@kaynooo.fr"')
   expect(home.html).toContain('href="https://github.com/Kayno0o/devlog"')
 })
