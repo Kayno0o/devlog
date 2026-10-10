@@ -12,6 +12,7 @@ import ArrowLeft from '~icons/tabler/arrow-left'
 import Pencil from '~icons/tabler/pencil'
 import PostMeta from '../../components/post-meta.kay'
 import Toc from '../../components/toc.kay'
+import '../../post.css'
 ---
 head
   title {post.data.title}

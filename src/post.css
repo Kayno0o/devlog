@@ -1,0 +1,120 @@
+@reference './app.css';
+
+/* Only posts load it: the content components, and the code, tables and quotes of their prose. */
+@layer components {
+  .chart-bar {
+    @apply h-3 min-w-0.5 rounded-r bg-muted;
+  }
+
+  .chart-bar-highlight {
+    background-image: linear-gradient(to bottom right, color-mix(in oklab, var(--color-accent) 55%, var(--color-base)), var(--color-accent));
+  }
+
+  /* public/charts.js adds in-view once a chart shows, so the bars grow then; with scripting off they render at full width. */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .chart-bar {
+      transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--row) * 80ms);
+    }
+
+    .chart:not(.in-view) .chart-bar {
+      width: 0 !important;
+    }
+  }
+
+  .embed {
+    @apply block h-[36rem] w-full rounded;
+  }
+
+  /* In the flow on narrow screens; beside the post and sticky once there is room on its right. */
+  .toc {
+    @apply mb-10 xl:absolute xl:inset-y-0 xl:left-full xl:mb-0 xl:ml-10 xl:w-52;
+  }
+
+  .toc-list {
+    @apply border-l-2 border-surface pl-4 text-sm xl:sticky xl:top-8;
+
+    & ol {
+      @apply flex flex-col gap-1;
+    }
+  }
+
+  /* Radio buttons pick the tab with no script; panels follow every label, so the labels line up above them. */
+  .tabs {
+    @apply flex flex-wrap gap-x-1;
+
+    & > .tab-label {
+      @apply cursor-pointer rounded-t px-3 py-1 text-sm text-subtext hover:text-text;
+    }
+
+    & > .tab-input:checked + .tab-label {
+      @apply bg-mantle text-text;
+    }
+
+    & > .tab-input:focus-visible + .tab-label {
+      @apply outline-2 outline-offset-2 outline-accent;
+    }
+
+    & > .tab-panel {
+      @apply order-1 hidden w-full;
+
+      & > * + * {
+        @apply mt-5;
+      }
+    }
+
+    & > .tab-input:checked + .tab-label + .tab-panel {
+      @apply block;
+    }
+  }
+
+  .prose {
+    & blockquote {
+      @apply border-l-2 border-accent pl-4 text-subtext;
+    }
+
+    & hr {
+      @apply my-10 border-surface;
+    }
+
+    & :not(pre) > code {
+      @apply rounded bg-mantle px-1.5 py-0.5 font-mono text-[0.875em];
+    }
+
+    & pre {
+      @apply overflow-x-auto rounded p-4 font-mono text-sm leading-normal;
+
+      /* Shiki writes the theme's background inline; the code block sits on the mantle instead. */
+      background-color: var(--color-mantle) !important;
+
+      &[data-language]::before {
+        @apply mb-2 block font-sans text-xs text-muted;
+
+        content: attr(data-language);
+      }
+    }
+
+    & table:not(.sr-only) {
+      @apply block w-full overflow-x-auto text-sm tabular-nums;
+
+      & :is(th, td) {
+        @apply border-b border-surface px-3 py-2 text-left;
+      }
+
+      & th {
+        @apply font-semibold;
+      }
+    }
+
+    & img {
+      @apply rounded;
+    }
+
+    & :is(.chart, .stats, .note, .tabs, .embed) {
+      @apply my-8;
+    }
+
+    & .note > * + * {
+      @apply mt-2;
+    }
+  }
+}
