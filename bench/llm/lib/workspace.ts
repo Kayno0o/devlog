@@ -6,6 +6,7 @@ import { killGroup } from './site'
 export const benchDir = join(import.meta.dir, '..')
 
 // Build outputs and installs a starter may hold locally, never copied into a run
+const testFile = /\.(?:test|spec)\.|(?:^|\/)tests?\//
 const skipped = new Set(['node_modules', '.kay', '.svelte-kit', '.output', '.vinxi', '.astro', 'dist', 'build', '.eslintcache'])
 
 const processId = /^\d+$/
@@ -82,6 +83,8 @@ export interface Diff {
   files: number
   added: number
   removed: number
+  /** Of `added`, the lines of test files: an agent's own tests, which some agents keep and others delete. */
+  testLines: number
   dependenciesAdded: string[]
   /** Grading inputs the agent changed: its package.json scripts or tsconfig.json, which could weaken `check`. */
   gradingConfigChanged: string[]
@@ -108,6 +111,7 @@ export async function diff(site: string): Promise<Diff> {
     files: rows.length,
     added: rows.reduce((sum, [added]) => sum + (Number(added) || 0), 0),
     removed: rows.reduce((sum, [, removed]) => sum + (Number(removed) || 0), 0),
+    testLines: rows.filter(([, , path = '']) => testFile.test(path)).reduce((sum, [added]) => sum + (Number(added) || 0), 0),
     dependenciesAdded: [...names(after)].filter(name => !had.has(name)).toSorted(),
     gradingConfigChanged,
   }

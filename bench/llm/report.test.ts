@@ -39,7 +39,7 @@ function result(framework: string, run: number, output: number, passed: boolean)
       skippedLines: 0,
       otherRuntimes: framework === 'kay' && run === 1 ? ['python3 - <<EOF'] : [],
     },
-    diff: { files: 8, added: 300, removed: 10, dependenciesAdded: framework === 'sveltekit' ? ['marked'] : [], gradingConfigChanged: framework === 'kay' && run === 2 ? ['script check'] : [] },
+    diff: { files: 8, added: 300, removed: 10, testLines: framework === 'kay' ? 40 : 0, dependenciesAdded: framework === 'sveltekit' ? ['marked'] : [], gradingConfigChanged: framework === 'kay' && run === 2 ? ['script check'] : [] },
     grade: { check: { ok: passed, errors: 0 }, build: { ok: true }, acceptance: { pass: passed ? 24 : 20, fail: passed ? 0 : 4, failures: passed ? [] : ['favorites > toggle'] }, passed },
     docs: { source: 'fixture docs', revision: 'abcdef1234', files: 3, bytes: 2_500_000 },
   }
@@ -67,6 +67,8 @@ it('sums up medians over passing runs and lists every run', async () => {
   expect(markdown).toContain('| Passed | 2 of 2 | 1 of 2 |')
   expect(markdown).toContain('| Output tokens | 2,000 (1,000 to 3,000) | 5,000 (5,000 to 5,000) |')
   expect(markdown).toContain('| Cache read tokens | 30,000 (30,000 to 30,000) |')
+  expect(markdown).toContain('| Lines added, tests left out | 260 (260 to 260) | 300 (300 to 300) |')
+  expect(markdown).toContain('| Test lines added | 40 (40 to 40) | 0 (0 to 0) |')
   expect(markdown).toContain('| Cost of every run, failed ones included (USD) | 3.00 | 3.00 |')
   expect(markdown).toContain('| Wall time (minutes) | 15.0 (10.0 to 20.0) | 10.0 (10.0 to 10.0) |')
   expect(summary.frameworks.sveltekit?.spent.totalTokens).toBe(32_100 * 2 + 5000 + 9000)
