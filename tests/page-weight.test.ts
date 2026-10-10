@@ -7,7 +7,7 @@ import { afterAll, describe, expect, it } from 'bun:test'
 import { pageWeight } from '../src/page-weight'
 
 const dir = mkdtempSync(join(tmpdir(), 'page-weight-'))
-const files: Record<string, string> = { '/app.css': 'a { color: red }', '/logo.svg': '<svg></svg>', '/favicon.ico': 'icon', '/charts.js': 'export {}', '/apple-touch-icon.png': 'touch' }
+const files: Record<string, string> = { '/app.css': 'a { color: red }', '/logo.svg': '<svg></svg>', '/favicon.ico': 'icon'.repeat(500), '/charts.js': 'export {}', '/apple-touch-icon.png': 'touch' }
 
 for (const [url, text] of Object.entries(files)) {
   await Bun.write(join(dir, url), text)
@@ -26,9 +26,9 @@ async function transform(body: string): Promise<string> {
 }
 
 describe('pageWeight', () => {
-  it('counts the page and each file a first visit fetches once, brotli as served', async () => {
+  it('counts the page and each file a first visit fetches once, as served: text brotli, an icon as it is', async () => {
     const html = await transform('<img src="/logo.svg"><img src="/logo.svg"><iframe src="/elsewhere" loading="lazy"></iframe><script type="speculationrules">{}</script>')
-    const linked = brotli(files['/app.css']!) + brotli(files['/logo.svg']!) + brotli(files['/favicon.ico']!)
+    const linked = brotli(files['/app.css']!) + brotli(files['/logo.svg']!) + files['/favicon.ico']!.length
 
     expect(html).toContain(', no JavaScript.</span>')
     expect(Number(weight.exec(html)?.[1])).toBe(Number(((brotli(html) + linked) / 1024).toFixed(1)))
