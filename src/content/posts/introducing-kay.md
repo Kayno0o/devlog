@@ -27,6 +27,8 @@ I love how fast SolidJS and Svelte run, but I don't like Svelte's syntax, and So
 
 So Astro with SolidJS inside was my main choice for a while: fast pages for the least code possible. SolidJS was still missing server rendering, though, and kay is what I built to have it all in one place.
 
+I also wanted to leave Vite behind, which all three build on and which sometimes makes builds and unit tests slow. kay builds and tests with Bun alone, and gets Bun's speed at both.
+
 ## Where it comes from
 
 kay is a mix of what I liked in other tools, in one file format:
