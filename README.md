@@ -1,10 +1,10 @@
 # devlog
 
-A minimalist devlog built with [kay](https://github.com/Kayno0o/kayjs) as a static site: no server, no JavaScript shipped, light and dark themes from the reader's system setting.
+A minimalist devlog built with [kay](https://github.com/Kayno0o/kayjs) as a static site: no server, no JavaScript shipped, light and dark themes from the reader's system setting, in English and in French under `/fr`.
 
 ## Writing a post
 
-Add a Markdown file to `src/content/posts/`; its file name is the slug, served at `/posts/<slug>`.
+Add a Markdown file to `src/content/posts/en/`, and its French translation under the same name in `src/content/posts/fr/`; the file name is the slug, served at `/posts/<slug>` and `/fr/posts/<slug>`. A post with no French copy shows in English on the French site.
 
 ```md
 ---
@@ -33,6 +33,8 @@ Markdown inside, after a blank line.
 ```
 
 Markdown tables render as they are, for numbers that read better side by side than as bars.
+
+The pages' own texts live in `src/messages/en.ts` and `src/messages/fr.ts`; `kay check` holds the French file to the English one's keys.
 
 ## Commands
 

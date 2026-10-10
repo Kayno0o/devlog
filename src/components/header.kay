@@ -1,12 +1,16 @@
 ---
+import { alternate, locale, t } from 'kay/i18n'
 import Rss from '~icons/tabler/rss'
 import kay from '../kay-logo.svg'
+
+// The other language's copy of this page, named in its own language.
+const other = locale() === 'fr' ? { locale: 'en', name: 'English' } as const : { locale: 'fr', name: 'Français' } as const
 ---
 header.bg-mantle.px-4.py-4.sm:px-8
-  nav.flex.items-center.justify-between.gap-4(aria-label="Main navigation")
+  nav.flex.items-center.justify-between.gap-4(aria-label={t('nav.label')})
     a.font-mono.text-lg.font-semibold.no-underline(href="/") devlog
     ul.flex.items-center.gap-5.text-sm
-      li: a(href="/about") About
+      li: a(href="/about") {t('nav.about')}
       li
         a.inline-flex.items-center.gap-1(href="https://kayjs.kaynooo.fr")
           img.size-4(src={kay} alt="")
@@ -15,3 +19,4 @@ header.bg-mantle.px-4.py-4.sm:px-8
         a.inline-flex.items-center.gap-1(href="/rss.xml")
           Rss.size-4
           | RSS
+      li: a(href={alternate(other.locale)} hreflang={other.locale} lang={other.locale}) {other.name}

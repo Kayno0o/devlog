@@ -1,4 +1,5 @@
 ---
+import { t } from 'kay/i18n'
 import './bar-chart.css'
 import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
@@ -41,7 +42,7 @@ figure.chart
   figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
     span.font-semibold {title}
     if better
-      span.text-sm.text-muted {better} is better
+      span.text-sm.text-muted {t(`chart.better.${better}`)}
   div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1.5 gap-y-1" aria-hidden="true")
     for row, i of rows key={row.label}
       span.flex.items-center.justify-end.gap-2.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
@@ -60,12 +61,12 @@ figure.chart
   table.sr-only
     thead
       tr
-        th(scope="col") Name
-        th(scope="col") Value
+        th(scope="col") {t('chart.name')}
+        th(scope="col") {t('chart.value')}
     tbody
       for row of rows key={row.label}
         tr
           th(scope="row") {row.label}
           td {formatNumber(row.value, digits)} {unit}
   if caption
-    p.mt-3.text-xs.text-muted Source: {caption}
+    p.mt-3.text-xs.text-muted {t('chart.source', { source: caption })}
