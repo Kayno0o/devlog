@@ -1,14 +1,14 @@
 head
   title About
-  meta(name="description" content="Kévyn, a French full-stack developer: how I got into coding, and what I care about in it.")
+  meta(name="description" content="Kévyn, a full-stack developer from Bordeaux: how I got into coding, and what I care about in it.")
 article.mx-auto.max-w-2xl
   h1.mb-10.text-3xl.font-semibold About
   .prose
-    p I'm Kévyn, a French full-stack developer based in Bordeaux.
+    p I'm Kévyn, a full-stack developer from Bordeaux, France. I build web apps for a living, and Minecraft mods, tools and Godot projects for fun.
     h2 How I got here
-    p It started with an Arduino at a family meal. I spent the following year tinkering with it, then moved on to really basic HTML, Discord bots hosted on Glitch, and a lot of Processing.
-    p In my first year of high school (seconde), one class had us use Processing. I made a platform game for it, and the teacher didn't believe I had written it myself. The code was the worst, it would burn my eyes today. Around then, a YouTuber bought a VPS for me to set up the Discord bot I had made for them.
-    p Early on, a friend also bought me a VPS of my own, and it helped me a lot once I got to university, a computer science IUT, where I was bored enough to play Dofus during classes. Then came a one-year work-study web degree (licence pro en alternance), and straight after it the job I still hold, four years in now.
+    p It started with an Arduino, discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, Discord bots hosted on Glitch, and a lot of Processing.
+    p Processing came back in seconde, my first year of high school, when a class asked us to use it. I handed in a platform game, and the teacher refused to believe I had made it myself. The code was awful, the kind that would burn my eyes today, but it was mine. Around the same time, I wrote a Discord bot for a YouTuber, who paid for a VPS so I could run it there.
+    p A friend had bought me a VPS of my own early on, and what I learned running it carried me through my computer science IUT, to the point that I got bored and played Dofus in class. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years.
     h2 What I care about
-    p Developer experience, performance and accessibility. And the environment: making things small and keeping their footprint down.
-    p I'm strict about code in general, and about its formatting most of all: code has to breathe. That's why I made #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset], first as a layer over antfu's, then rewritten from scratch. At work, I set up a really strong PHP CS Fixer config, to annoy my coworkers, or rather so I don't grumble at them when I read their code.
+    p Developer experience, performance and accessibility, and the footprint of what I build: the smaller it is, the less it costs, both to the people using it and to the planet.
+    p I'm also picky about code itself, and about formatting most of all: code should breathe. I started #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset] as a layer over antfu's, and ended up rewriting it from scratch. At work, I set up a very strict PHP CS Fixer config, half to annoy my coworkers, half so I stop grumbling when I read their code.
