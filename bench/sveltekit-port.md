@@ -4,7 +4,7 @@ A real site ported from SvelteKit to kay: a home page and content pages (the par
 
 ## Conditions (apply to everything below unless a row says otherwise)
 - **SvelteKit:** commit `c860ae5`, served by `bun build/index.ts` through the site's own Bun adapter. Pages are gzip only; static assets are precompressed br.
-- **kay:** the site on kay 1.13.0 (commit `c7e6417`) for build and size. Browser figures also on kay 1.14.0 with `inlineStyles: true` (commit `21d681f`, which the site has shipped since). Server figures on kay 1.16.6 (commit `cd24483`), inlined and linked.
+- **kay:** the site on kay 1.13.0 (commit `c7e6417`) for build and size. Browser figures also on kay 1.14.0 with `inlineStyles: true` (commit `21d681f`, which the site has shipped since). Server figures on kay 1.16.6 (commit `cd24483`), inlined and linked, and on kay 1.17.1 with server islands (uncommitted, babelraid issue #12).
 - **Machine:** one desktop, Ryzen 5 7600 (12 threads), Linux, Bun 1.4.3 canary. Everything runs over loopback, so absolute figures are optimistic and only the ratios carry over.
 - **Date:** 9 Oct 2026, and 10 Oct for the server. Both versions were measured in the same sitting, interleaved; figures from different sittings should not be compared, since paints drift 50 ms or more and memory a few MiB.
 
@@ -90,6 +90,30 @@ Tool: oha 1.16 in Docker on the host network, `accept-encoding: gzip, deflate, b
 - **Earlier releases, inlined:** kay 1.16.0 served short pages at 1.8k to 2.2k req/s for 1.1 to 1.3 ms of CPU each, kay 1.16.3 at 2.1k to 2.2k req/s for 0.49 to 0.54 ms, kay 1.16.5 at 4.0k to 4.6k req/s for 0.31 to 0.35 ms, each in its own sitting.
 - The health check's kay figures differ by 7k req/s between two builds of the same code, so read that row as noise around 1.1 to 1.3 times SvelteKit.
 - On images, SvelteKit serves static files, while kay serves resized variants through an image route.
+
+## Server islands (sitting 5, kay 1.17.1, inlined styles)
+Same tool and method as sitting 4, on 10 Oct 2026. The site was an uncommitted tree: kay 1.17.1 plus the contact form, the home page's only per-visitor part, marked as a server island (babelraid issue #12). That tree was compiled three ways, all with `inlineStyles: true`:
+- **whole:** no mark, the home page rendered per request as in sitting 4.
+- **inline:** the form marked `server`: the page is prerendered and only the form is rendered per request and spliced in. The page goes out as gzip with `Cache-Control: private, no-store`.
+- **deferred:** the form marked `server="defer"`, the shipped config: the page is served as any prerendered page, brotli with an ETag, and the browser fetches the form alone about a screen before it scrolls into view.
+
+| Endpoint | Metric | SvelteKit | kay whole | kay inline | kay deferred | Unit |
+|---|---|---|---|---|---|---|
+| Home page | Body sent | 16.9 gzip | 34.8 gzip | 35.1 gzip | 28.5 br | KB |
+| Home page | Requests per second | 619 to 768 | 1,328 to 1,367 | 4,038 to 4,976 | over 14k | req/s |
+| Home page | CPU per request | 1.77 | 1.52 | 0.37 | 0.03 to 0.04 | ms |
+| Home page | TTFB p50, 1 connection | 1.36 | 1.26 | 0.19 | 0.06 to 0.09 | ms |
+| Home page | RSS peak over the load run | 129 | 218 | 166 | 76 | MiB |
+| Deferred form (`/?kay_island=0`) | Requests per second | | | | 8.8k to 9.2k | req/s |
+| Deferred form | CPU per request, body sent | | | | 0.22 ms, 1.1 KB br | |
+
+- **Deferred home page:** measured between 14.2k and 31.4k req/s, a spread that comes from oha needing about as much CPU as the server at that rate, so quote it as over 14k, at least 18 times SvelteKit. A visitor costs the page plus one form fetch, about 0.26 ms of CPU together, against 0.37 ms inline and 1.77 ms on SvelteKit.
+- **Inline home page:** 5 to 8 times SvelteKit's rate at a fifth of its CPU per request, since only the form is rendered and compressed while the rest of the page was deflated once at build.
+- **Whole home page:** 1.7 to 2.2 times SvelteKit, in line with sitting 4.
+- **Short pages** (partner, legal, 404, no island), kay inlined: about 3.4k to 4.5k req/s at 0.32 to 0.42 ms of CPU, against SvelteKit's 3.8k to 4.9k at 0.23 to 0.28 ms, as in sitting 4.
+- **Health check:** 65k to 74k req/s against SvelteKit's 52k to 54k. kay's health check now answers on `/_kay/health`, which is the path measured.
+- **Cold start:** kay 25.5 to 26.2 ms against SvelteKit's 31 ms. Earlier sittings had both at 23 to 24 ms, so read it as noise. **Idle RSS:** 58 to 60 against 36 MiB.
+- Paints and page weight were not measured on this tree: the deferred form adds one small request and changes the home page's HTML size.
 
 ## Build and deploy (sitting 1, kay 1.13.0)
 Tool: hyperfine. Cold runs cleared caches (`.svelte-kit` and `node_modules/.cache`, or `.kay`): 3 runs. Warm runs kept the caches: 1 warmup and 5 runs.
