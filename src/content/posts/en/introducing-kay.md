@@ -202,7 +202,7 @@ Under load, kay peaks at 79 MiB of memory against SvelteKit's 136 to 142. The ho
 
 <Note title="How it was measured">
 
-kay 1.30.0 on Bun 1.4.4 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.31.0 on Bun 1.4.4 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
