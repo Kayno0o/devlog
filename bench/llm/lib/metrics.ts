@@ -182,19 +182,19 @@ function leaves(command: string, cwd: string, shell: { dir: string }): boolean {
 
 /** Paths and commands of a tool call that leave the workspace or use the network. */
 function outsideOf(name: string, input: Record<string, unknown>, cwd: string, shell: { dir: string }): string | undefined {
+  // Claude Code keeps a long tool output in a file of the session's own project folder, which the agent then reads
+  const ownOutput = `/.claude/projects/${cwd.replaceAll(pathSeparators, '-')}/`
+
   if (name === 'Bash') {
     const command = withoutHeredocs(String(input.command ?? ''))
     const target = withoutNonTargetLoops(command.replaceAll(nonTargetArg, ''))
     const network = networkCommand.test(command) && (remoteUrl.test(target) || !localHost.test(target))
-    const home = command.match(homePath)?.some(path => !path.startsWith(cwd)) ?? false
+    const home = command.match(homePath)?.some(path => !path.startsWith(cwd) && !path.includes(ownOutput)) ?? false
 
     return leaves(command, cwd, shell) || network || home || browserDownload.test(command) ? `Bash: ${String(input.command)}` : undefined
   }
 
   const path = String(input.file_path ?? input.path ?? '')
-
-  // Claude Code keeps a long tool output in a file of the session's own project folder, which the agent then reads
-  const ownOutput = `/.claude/projects/${cwd.replaceAll(pathSeparators, '-')}/`
 
   return path.startsWith('/') && !within(path, cwd) && !within(path, '/tmp') && !path.includes(ownOutput) ? `${name}: ${path}` : undefined
 }
