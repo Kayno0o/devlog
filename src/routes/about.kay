@@ -4,11 +4,11 @@ head
 article.mx-auto.max-w-2xl
   h1.mb-10.text-3xl.font-semibold About
   .prose
-    p I'm Kévyn, a full-stack developer from Bordeaux, France. I build web apps for a living, and Minecraft mods, tools and Godot projects for fun.
+    p I'm Kévyn, a full-stack developer from Bordeaux, France. I build web apps for a living, and Minecraft mods, tools and #[a(href="https://godotengine.org") Godot] projects for fun.
     h2 How I got here
-    p It started with an Arduino, discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, Discord bots hosted on Glitch, and a lot of Processing.
+    p It started with an #[a(href="https://www.arduino.cc") Arduino], discovered at a family meal when I was twelve. I spent a year playing with it, then drifted to the screen: some very basic HTML, Discord bots hosted on Glitch, and a lot of #[a(href="https://processing.org") Processing].
     p Processing came back in seconde, my first year of high school, when a class asked us to use it. I handed in a platform game, and the teacher had a hard time believing I had made it myself, though one look at the code would have settled it: it was a mess that would burn my eyes today. Around the same time, I wrote a Discord bot for a YouTuber, who paid for a VPS so I could run it there.
-    p A friend had bought me a VPS of my own early on, and it helped a lot at my computer science IUT, where, I admit, I spent more classes than I should have playing Dofus. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years.
+    p A friend had bought me a VPS of my own early on, and it helped a lot at my computer science IUT, where, I admit, I spent more classes than I should have playing #[a(href="https://www.dofus.com") Dofus]. A one-year work-study web degree followed (licence pro en alternance), and right after it, the job I've now held for four years.
     h2 What I care about
     p Developer experience, performance and accessibility, and the footprint of what I build: the smaller it is, the less it costs, both to the people using it and to the planet.
-    p I'm also picky about code itself, and about formatting most of all: code should breathe. I started #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset] as a layer over antfu's, and ended up rewriting it from scratch. At work, I set up a very strict PHP CS Fixer config, half to annoy my coworkers, half so I stop grumbling when I read their code.
+    p I'm also picky about code itself, and about formatting most of all: code should breathe. I started #[a(href="https://github.com/Kayno0o/eslint") my own ESLint ruleset] as a layer over #[a(href="https://github.com/antfu/eslint-config") antfu's], and ended up rewriting it from scratch. At work, I set up a very strict #[a(href="https://cs.symfony.com") PHP CS Fixer] config, half to annoy my coworkers, half so I stop grumbling when I read their code.
