@@ -97,12 +97,13 @@ const errorLine = /^error\b|\berror\[|\berror TS\d+|^Error:|\berror during build
 const docsPath = /(?:^|[\s/"'])docs(?:\/|\s|$)/
 const networkCommand = /\b(?:curl|wget)\b/
 // a curl at the agent's own server is fine, so only a remote URL or no local host at all counts as the network
-const remoteUrl = /https?:\/\/(?!localhost\b|127\.0\.0\.1\b|0\.0\.0\.0\b|\[::1\])/
+const remoteUrl = /https?:\/\/(?!localhost\b|127\.0\.0\.1\b|0\.0\.0\.0\b|\[::1\])[\w[]/
 const localHost = /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0)\b/
 // a header such as `Origin: http://evil.com`, or a `-w` output format, names a site without reaching it
 const nonTargetArg = /(?:-H|--header|-w|--write-out)\s+(?:'[^']*'|"[^"]*"|\S+)/g
-// a `for o in http://evil.com ...` list whose variable only ever fills such an argument
+// a `for o in http://evil.com ...` list whose variable never reaches a curl or wget but through such an argument
 const forList = /\bfor\s+(\w+)\s+in\s+[^;\n]*/g
+const networkCall = /\b(?:curl|wget)\b[^|;&\n]*/g
 const pathSeparators = /[/.]/g
 // downloading a browser to test with reaches the network beyond a package install
 const browserDownload = /\b(?:playwright(?:-core)?\s+install|puppeteer\s+browsers\s+install)\b/
@@ -157,7 +158,9 @@ function within(path: string, dir: string): boolean {
 }
 
 function withoutNonTargetLoops(command: string): string {
-  return command.replaceAll(forList, (loop, name: string) => new RegExp(String.raw`\$\{?${name}\b`).test(command.replace(loop, '')) ? loop : '')
+  const calls = command.match(networkCall)?.join('\n') ?? ''
+
+  return command.replaceAll(forList, (loop, name: string) => new RegExp(String.raw`\$\{?${name}\b`).test(calls) ? loop : '')
 }
 
 /** Whether the command's `cd`s leave the workspace, following the folder the Bash tool keeps from one call to the next in `shell.dir`. */
