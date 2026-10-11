@@ -200,9 +200,18 @@ Under load, kay peaks at 79 MiB of memory against SvelteKit's 136 to 142. The ho
 - **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
 - **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.1 to 1.2 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
 
+### In development
+
+<BarChart title="First load of the home page, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 93}, {"label": "SvelteKit", "value": 2030}]} bench="sveltekit" source="headless Chromium, load event, median of 2 rounds" />
+
+<BarChart title="Template edit to screen, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 361}]} bench="sveltekit" source="file write to the page showing it, median of 14 edits" />
+
+- **kay starts and loads faster.** It serves a bundled client, 19 requests for the home page against Vite's 166 modules, starts in 666 ms against 1,273 with cold caches, and holds 167 MiB against 488.
+- **Vite applies edits sooner.** kay restarts its server on every edit, so a template or style change shows in about 360 ms against Vite's 40. It shows a server code edit in the same time with the page's state kept, which SvelteKit only shows after a manual reload.
+
 <Note title="How it was measured">
 
-kay 1.31.0 on Bun 1.4.4 canary. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.31.0 on Bun 1.4.4 canary, kay 1.32.0 for the dev server. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
