@@ -200,9 +200,18 @@ Sous charge, kay culmine à 79 Mio de mémoire contre 136 à 142 pour SvelteKit
 - **Le réglage par défaut n'est pas le chemin rapide.** Le rendu sur mobile ci-dessus demande `inlineStyles`, qui est optionnel : avec la feuille de styles liée, comme kay le fait par défaut, kay rendait de 85 à 140 ms derrière SvelteKit. L'inlining coûte environ 2 Ko par page, et la feuille de styles n'est plus mise en cache d'une page à l'autre.
 - **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,1 à 1,2 fois son CPU par requête. Avec la feuille liée, kay les servait à 1,8 à 2,2 fois le débit de SvelteKit.
 
+### En développement
+
+<BarChart title="Premier chargement de la page d'accueil, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 93}, {"label": "SvelteKit", "value": 2030}]} bench="sveltekit" source="Chromium headless, événement load, médiane de 2 passes" />
+
+<BarChart title="Modification de template à l'écran, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 361}]} bench="sveltekit" source="de l'écriture du fichier à son affichage, médiane de 14 modifications" />
+
+- **kay démarre et charge plus vite.** Il sert un client groupé, 19 requêtes pour la page d'accueil contre 166 modules pour Vite, démarre en 666 ms contre 1 273 avec les caches vides, et occupe 167 Mio contre 488.
+- **Vite applique les modifications plus tôt.** kay redémarre son serveur à chaque modification, si bien qu'un changement de template ou de style s'affiche en 360 ms environ contre 40 pour Vite. Il affiche une modification du code serveur dans le même temps en gardant l'état de la page, ce que SvelteKit n'affiche qu'après un rechargement manuel.
+
 <Note title="Comment c'est mesuré">
 
-kay 1.31.0 sur Bun 1.4.4 canary. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
+kay 1.31.0 sur Bun 1.4.4 canary, kay 1.32.0 pour le serveur de dev. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
 
 </Note>
 
