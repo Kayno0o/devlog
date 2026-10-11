@@ -2,8 +2,7 @@
 import { posts } from '../content.config'
 
 const entries = await posts.all()
----
----
+--- script
 import { t, T } from 'kay/i18n'
 import Github from '~icons/simple-icons/github'
 import IconLink from '../components/icon-link.kay'

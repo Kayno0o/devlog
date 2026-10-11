@@ -6,8 +6,7 @@ export const page = { prerender: posts }
 
 const post = await posts.get(ctx.params.slug) ?? ctx.notFound()
 const { Content } = post
----
----
+--- script
 import { t } from 'kay/i18n'
 import ArrowLeft from '~icons/tabler/arrow-left'
 import Pencil from '~icons/tabler/pencil'
