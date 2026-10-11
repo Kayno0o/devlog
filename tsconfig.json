@@ -1,5 +1,5 @@
 {
   "extends": "kay/tsconfig.json",
-  "include": ["src", "tests", "*.config.ts", ".kay/types", "bench/llm"],
+  "include": ["src", "tests", "*.config.ts", ".kay/types", "bench/llm", "bench/synthetic-loc.ts"],
   "exclude": ["bench/llm/starters"]
 }
