@@ -130,33 +130,34 @@ Tool: cloc 2.10 on `git archive` of each commit, without `static/`, `public/` an
 Counted at kay 1.31.0's commit (`56e5d18`). Since sitting 9: the header listens for Escape through `listen(window, 'keydown', ...)` (kay 1.31.0) rather than adding and removing the listener by hand, the contact mail reads its recipient from kayjs-mail 0.3, and an `AGENTS.md` joined the config. The contact form names its fields with `field="..."` (kay 1.30.0), which writes `required`, `minlength`, `maxlength` and `type="email"` from the action's schema.
 
 ## Dev server
-`vite dev` (SvelteKit `c860ae5`) against `kay dev` (kay 1.32.0, commit `d3c09e6`), each run from a scratch copy of its commit on its own port, two rounds alternating the two, right after sitting 10. Browser: headless Chromium, 1280x800, unthrottled over loopback, the site's own CSP enforced. Figures are medians, with the range in brackets.
+`vite dev` (SvelteKit `c860ae5`) against `kay dev` (kay 1.37.3, commit `d468a60`), each run from a scratch copy of its commit on its own port, two rounds alternating the two. Browser: headless Chromium, 1280x800, unthrottled over loopback, the site's own CSP enforced. Figures are medians, with the range in brackets.
 
 | Metric | SvelteKit | kay | Unit |
 |---|---|---|---|
-| Startup to first 200, caches cleared (`.svelte-kit` and `node_modules/.vite`, or `.kay`) | 1,273 (810 to 1,735) | 666 (628 to 704) | ms |
-| Startup to first 200, warm (10 launches) | 447 (419 to 769) | 382 (375 to 391) | ms |
-| Startup to the home page's first 200, warm | 1,479 (1,372 to 2,042) | 395 (390 to 405) | ms |
-| First load of the home page, fresh server and browser (load event) | 2,030 (1,615 to 2,446) | 93 (91 to 95) | ms |
-| Requests for it | 166 | 19 | requests |
-| First load of the partner page (load event) | 893 (688 to 1,099) | 41 (41 to 41) | ms |
-| Requests for it | 84 | 12 to 13 | requests |
-| Template edit to screen (14 edits) | 38 (33 to 85) | 361 (357 to 467) | ms |
-| Style edit to screen | 39 (34 to 74) | 366 (364 to 370) | ms |
-| Server code edit to screen | never by itself; 84 (81 to 208) from a manual reload | 359 (356 to 460) | ms |
+| Startup to first 200, caches cleared (`.svelte-kit` and `node_modules/.vite`, or `.kay`) | 1,023 (846 to 1,200) | 1,040 (1,039 to 1,040) | ms |
+| Startup to first 200, warm (10 launches) | 468 (412 to 817) | 555 (542 to 599) | ms |
+| Startup to the home page's first 200, warm | 1,440 (1,361 to 1,925) | 571 (558 to 616) | ms |
+| First load of the home page, fresh server and browser (load event) | 1,654 (1,631 to 1,676) | 97 (94 to 100) | ms |
+| Requests for it | 166 | 19 to 20 | requests |
+| First load of the partner page (load event) | 705 (692 to 718) | 51 (51 to 52) | ms |
+| Requests for it | 84 | 14 to 15 | requests |
+| Template edit to screen (14 edits) | 37 (32 to 52) | 257 (255 to 264) | ms |
+| Style edit to screen | 38 (34 to 51) | 96 (88 to 104) | ms |
+| Server code edit to screen | never by itself; 87 (81 to 166) from a manual reload | 258 (255 to 261) | ms |
 | Page state kept through the edit (template / style / server) | 14 / 14 / 0 of 14 | 14 / 14 / 14 of 14 | edits |
-| Memory at rest, PSS (RSS) of the process tree | 488 (524), 1 process | 167 (267), 3 processes | MiB |
-| Memory after 21 edits, PSS (RSS) | 587 (624) | 213 (315) | MiB |
+| Memory at rest, PSS (RSS) of the process tree | 415 (443), 1 process | 251 (379), 4 processes | MiB |
+| Memory after 21 edits, PSS (RSS) | 511 (540) | 333 (463) | MiB |
 
 - **Edits:** the partner page is open with a marker set on `window` and scrolled 300 px. One edit a kind in turn, 7 rounds, each timed from the file write to the moment the page shows it, checked after every DOM mutation and every task. The template edit changes a link's text, the style edit a rule appended to `app.css`, the server code edit a value the page's server code returns (a `--- server` fence in kay, `+page.server.ts` in SvelteKit), only in the copies.
 - **SvelteKit's server code edits:** Vite reloads nothing when `+page.server.ts` changes, so after 10 s the page was reloaded by hand and the time from that reload is given; the marker is lost each time. Two template edits of 14 also lost the scroll position.
-- **kay's edits:** every edit restarts the server (about 250 to 300 ms, kept warm by a spare process), then the page swaps in what changed, so the 360 ms is mostly the restart. The marker and the scroll position survived every edit.
-- **Memory:** kay runs `kay dev`, the server and the spare as three processes, whose RSS counts shared pages several times, so PSS is the fair figure.
-- **First load:** Vite serves each module on its own (166 requests for the home page); kay serves a bundled client (19).
+- **kay's edits:** a page edit restarts the server (147 to 199 ms by kay's log, kept warm by a spare process), then the page swaps in what changed. A stylesheet edit is swapped in without a restart (49 to 62 ms by kay's log). The marker and the scroll position survived every edit.
+- **Memory:** kay runs `kay dev`, the server, the spare and the client builder it keeps as four processes, whose RSS counts shared pages several times, so PSS is the fair figure.
+- **First load:** Vite serves each module on its own (166 requests for the home page); kay serves a bundled client (19 to 20).
 - **Harness fix:** a first pass bypassed the CSP in the browser, under which kay up to 1.34.0 opened one more live-reload connection per edit and stalled after six (kayjs#275, fixed in 1.35.0). With the site's CSP, as a developer's browser has it, kay is unaffected; the figures above come from that.
 
 ## Earlier sittings
 Kept for what the shipped config no longer shows; compare them within their own sitting only.
+- **kay dev on kay 1.32.0 (`d3c09e6`, earlier the same day):** startup to first 200 in 666 ms with cold caches and 382 warm, edits shown in about 360 ms each since a stylesheet edit restarted the server too, 167 MiB PSS at rest in 3 processes and 213 after 21 edits; SvelteKit measured 1,273 cold and 447 warm in that sitting.
 - **Linked styles, server (sitting 4, kay 1.16.6, `cd24483`, every page rendered per request):** linked short pages served at 1.8 to 2.2 times SvelteKit's rate (8.3k to 9.2k req/s), about twice the inlined rate, as inlined pages splice the stylesheet on the main thread while linked ones compress on the thread pool. The home page rendered per request served at 2.0 times SvelteKit inlined (1,487 req/s) and 2.4 times linked (1,772).
 - **Server island modes (sitting 5, kay 1.17.1, uncommitted):** with the contact form marked `server` instead of `server="defer"`, the page is prerendered and the form rendered per request and spliced in, sent as gzip with `Cache-Control: private, no-store`: 4.0k to 5.0k req/s, 5 to 8 times SvelteKit, at 0.37 ms of CPU. With no mark, the whole page rendered per request served at 1.3k to 1.4k req/s.
 - **Earlier releases, inlined short pages:** kay 1.16.0 served them at 1.8k to 2.2k req/s for 1.1 to 1.3 ms of CPU each, kay 1.16.3 at 2.1k to 2.2k req/s for 0.49 to 0.54 ms, kay 1.16.5 at 4.0k to 4.6k req/s for 0.31 to 0.35 ms, each in its own sitting.
