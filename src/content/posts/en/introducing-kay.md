@@ -201,16 +201,16 @@ Under load, kay peaks at 79 MiB of memory against SvelteKit's 136 to 142. The ho
 
 ### In development
 
-<BarChart title="First load of the home page, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 93}, {"label": "SvelteKit", "value": 2030}]} bench="sveltekit" source="headless Chromium, load event, median of 2 rounds" />
+<BarChart title="First load of the home page, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 97}, {"label": "SvelteKit", "value": 1654}]} bench="sveltekit" source="headless Chromium, load event, median of 2 rounds" />
 
-<BarChart title="Template edit to screen, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 361}]} bench="sveltekit" source="file write to the page showing it, median of 14 edits" />
+<BarChart title="Template edit to screen, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 37}, {"label": "kay", "value": 257}]} bench="sveltekit" source="file write to the page showing it, median of 14 edits" />
 
-- **kay starts and loads faster.** It serves a bundled client, 19 requests for the home page against Vite's 166 modules, starts in 666 ms against 1,273 with cold caches, and holds 167 MiB against 488.
-- **Vite applies edits sooner.** kay restarts its server on every edit, so a template or style change shows in about 360 ms against Vite's 40. It shows a server code edit in the same time with the page's state kept, which SvelteKit only shows after a manual reload.
+- **kay loads pages faster.** Both start in about a second with cold caches, but kay serves a bundled client, 19 requests for the home page against Vite's 166 modules, so the home page answers in 571 ms from a warm start against 1,440. Its processes hold 251 MiB against Vite's 415.
+- **Vite applies edits sooner.** kay restarts its server on a template edit, so it shows in about 260 ms against Vite's 40; a style edit is swapped in without a restart, in 96 ms against 38. kay shows a server code edit in the same 260 ms with the page's state kept, which SvelteKit only shows after a manual reload.
 
 <Note title="How it was measured">
 
-kay 1.31.0 on Bun 1.4.4 canary, kay 1.32.0 for the dev server. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
+kay 1.31.0 on Bun 1.4.4 canary, kay 1.37.3 for the dev server. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
 
