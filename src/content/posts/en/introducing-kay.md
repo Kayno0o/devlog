@@ -211,6 +211,10 @@ kay hydrates its islands only. SolidJS and Svelte hydrate the whole page, so the
 
 <BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4185}, {"label": "Svelte", "value": 3684}, {"label": "SolidJS", "value": 1685}]} bench="synthetic" />
 
+<BarChart title="Lines of code, products and table pages" unit="lines" better="lower" digits={0} rows={[{"label": "Svelte", "value": 70}, {"label": "kay", "value": 73}, {"label": "Nuxt", "value": 108}, {"label": "Astro", "value": 140}, {"label": "SolidJS", "value": 151}, {"label": "Next.js", "value": 151}]} bench="synthetic" source="cloc, the bench's server glue left out" />
+
+kay writes both pages in 73 lines, three more than Svelte and less than half of SolidJS and Next.js. Pages, layouts, components and config count; the file mounting each app in the bench does not, since Next's is a relay only the bench needs.
+
 ### What kay loses
 
 <BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "kay", "value": 11.2}, {"label": "Svelte", "value": 22.5}]} bench="synthetic" />
@@ -223,7 +227,7 @@ On the whole table benchmark, kay is within 11% of the fastest on every operatio
 
 <Note title="How it was measured">
 
-kay 1.28.0, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.4 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again.
+kay 1.28.0, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.4 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Lines of code are cloc 2.10's count at kay's commit db7b3c0, blank lines and comments left out.
 
 </Note>
 
