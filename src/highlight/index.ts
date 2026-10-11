@@ -6,7 +6,7 @@ const kay: LanguageRegistration = { ...kayGrammar, name: 'kay', embeddedLangs: [
 
 const highlighter = await createHighlighter({
   themes: ['catppuccin-latte', 'catppuccin-mocha'],
-  langs: [kay, 'typescript', 'tsx', 'javascript', 'svelte', 'astro', 'json', 'yaml', 'bash', 'css', 'html', 'diff', 'dockerfile', 'nginx'],
+  langs: [kay, 'typescript', 'tsx', 'javascript', 'svelte', 'astro', 'vue', 'json', 'yaml', 'bash', 'css', 'html', 'diff', 'dockerfile', 'nginx'],
 })
 
 const languages = new Set(highlighter.getLoadedLanguages())

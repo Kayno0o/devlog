@@ -12,9 +12,9 @@ kay tourne sur Bun et Elysia. Un fichier `.kay` est un composant : des blocs Ty
 
 ## À quoi ressemble un composant
 
-La même page en kay et dans les trois frameworks dont il s'inspire, chacune passant son propre vérificateur :
+La même page en kay, dans les trois frameworks dont il s'inspire, puis en Next.js et Nuxt, chacune passant son propre vérificateur :
 
-<Tabs label="Une page dans quatre frameworks">
+<Tabs label="Une page dans six frameworks">
 
 <Tab group="component" label="kay" checked>
 
@@ -111,6 +111,65 @@ const greeting = 'Hello from the server'
 ```
 
 La partie serveur se rend comme dans kay. Astro laisse l'état dans le navigateur à un composant d'un autre framework, ici SolidJS, dans son propre fichier et hydraté comme une island.
+
+</Tab>
+
+<Tab group="component" label="Next.js">
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  )
+}
+```
+
+```tsx
+import Counter from './counter'
+
+export default function Page() {
+  const greeting = 'Hello from the server'
+
+  return (
+    <>
+      <h1>{greeting}</h1>
+      <Counter />
+    </>
+  )
+}
+```
+
+La page est un composant serveur et se rend comme dans kay. L'état demande un composant client, dans son propre fichier marqué `'use client'`.
+
+</Tab>
+
+<Tab group="component" label="Nuxt">
+
+```ts
+export default defineEventHandler(() => 'Hello from the server')
+```
+
+```vue
+<script setup lang="ts">
+const { data: greeting } = await useFetch('/api/greeting')
+const count = ref(0)
+</script>
+
+<template>
+  <h1>{{ greeting }}</h1>
+  <button @click="count++">Clicked {{ count }} times</button>
+</template>
+```
+
+Le script de la page s'exécute sur le serveur puis à nouveau dans le navigateur : la partie réservée au serveur part donc dans une route d'API, `server/api/greeting.ts`, que la page récupère.
 
 </Tab>
 
