@@ -119,15 +119,16 @@ Tool: cloc 2.10 on `git archive` of each commit, without `static/`, `public/` an
 
 | Area | SvelteKit | kay | Unit |
 |---|---|---|---|
-| Application (src/, plus SvelteKit's adapter/) | 2,087 | 1,531 | lines |
-| Components (.svelte / .kay) | 1,032 (22 files) | 883 (25 files) | lines |
-| TypeScript and JavaScript | 616 | 244 | lines |
+| Application (src/, plus SvelteKit's adapter/) | 2,087 | 1,503 | lines |
+| Components (.svelte / .kay) | 1,032 (22 files) | 857 (25 files) | lines |
+| TypeScript and JavaScript | 616 | 242 | lines |
 | CSS | 410 | 404 | lines |
 | Tests | 714 | 842 | lines |
 | Config and tooling | 236 | 170 | lines |
-| Total | 3,037 | 2,543 | lines |
+| Total | 3,037 | 2,515 | lines |
 
-Counted at kay 1.31.0's commit (`56e5d18`). Since sitting 9: the header listens for Escape through `listen(window, 'keydown', ...)` (kay 1.31.0) rather than adding and removing the listener by hand, the contact mail reads its recipient from kayjs-mail 0.3, and an `AGENTS.md` joined the config. The contact form names its fields with `field="..."` (kay 1.30.0), which writes `required`, `minlength`, `maxlength` and `type="email"` from the action's schema.
+Counted at kay 1.37.3's commit (`d468a60`). Since `56e5d18` (kay 1.31.0): kay prints the server's start line and kayjs-mail 0.5 logs each mail, so the site dropped its own lines for both, and two pages open their script fence with `--- script` rather than a second `---` line.
+- **Correction:** sitting 10 gave kay's components as 883 lines, application 1,531, total 2,543. Those counted the 24 `//` comment lines in `.kay` files as code; with them excluded, as the tool line above says, `56e5d18` counts 859, 1,507 and 2,519.
 
 ## Dev server
 `vite dev` (SvelteKit `c860ae5`) against `kay dev` (kay 1.37.3, commit `d468a60`), each run from a scratch copy of its commit on its own port, two rounds alternating the two. Browser: headless Chromium, 1280x800, unthrottled over loopback, the site's own CSP enforced. Figures are medians, with the range in brackets.
