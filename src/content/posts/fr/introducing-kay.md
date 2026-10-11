@@ -21,12 +21,11 @@ La même page en kay et dans les trois frameworks dont il s'inspire, chacune pas
 ```kay
 --- server
 const greeting = 'Hello from the server'
----
----
+--- script
 const count = signal(0)
 ---
 h1 {greeting}
-button(onClick={() => count.set(count + 1)}) Clicked {count} times
+button(onClick={() => count++}) Clicked {count} times
 ```
 
 Le premier bloc ne s'exécute que sur le serveur, le second aussi dans le navigateur, et le template lit les deux.

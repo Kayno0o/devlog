@@ -21,12 +21,11 @@ The same page in kay and in the three it borrows from, each passing its own chec
 ```kay
 --- server
 const greeting = 'Hello from the server'
----
----
+--- script
 const count = signal(0)
 ---
 h1 {greeting}
-button(onClick={() => count.set(count + 1)}) Clicked {count} times
+button(onClick={() => count++}) Clicked {count} times
 ```
 
 The first fence runs on the server only, the second also in the browser, and the template reads both.
