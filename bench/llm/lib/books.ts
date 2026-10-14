@@ -37,7 +37,10 @@ export async function loadBooks(dir = booksDir): Promise<Book[]> {
 }
 
 export function byTitle(a: Book, b: Book): number {
-  return a.title < b.title ? -1 : a.title > b.title ? 1 : 0
+  if (a.title === b.title)
+    return 0
+
+  return a.title < b.title ? -1 : 1
 }
 
 /** The home page's "Top rated" order: rating first, then title. */

@@ -72,6 +72,7 @@ function validate(values: Record<string, unknown>): Record<string, string> {
   if (email === '') {
     errors.email = 'Email is required.'
   }
+  // eslint-disable-next-line e18e/prefer-static-regex -- the browser runs this function from its source, which sees nothing of this module
   else if (!(/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/).test(email)) {
     errors.email = 'Enter a valid email address.'
   }
