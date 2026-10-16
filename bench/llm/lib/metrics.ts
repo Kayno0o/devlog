@@ -113,6 +113,7 @@ const cdCommand = /(?:^|&&|\|\||[\n;(])\s*cd\s+([^\s;&|)]+)/g
 const heredocStart = /<<-?\s*['"]?(\w+)/
 const otherRuntime = /(?:^|[\s;&|(])(?:python3?|node|npx|npm|pnpm|yarn)(?=\s|$)/m
 const failedExit = /^Exit code [1-9]/
+const signalExit = /^Exit code (?:129|1[3-9]\d|2\d\d)\b/
 
 // A heredoc's body is a file being written, whose `~/lib` imports or URLs in comments are not commands
 function withoutHeredocs(command: string): string {
@@ -328,7 +329,11 @@ export function parseRun(text: string, cwd: string): RunMetrics {
         const command = block.tool_use_id === undefined ? undefined : pendingChecks.get(block.tool_use_id)
 
         if (command !== undefined) {
-          metrics.checkRuns.push({ command, failed, errors: failed ? Math.max(1, countErrors(output)) : 0 })
+          const errors = countErrors(output)
+          // a shell a signal killed, such as the agent's own `pkill -f` matching its command line, failed no check unless one printed an error
+          const checkFailed = failed && (errors > 0 || !signalExit.test(output))
+
+          metrics.checkRuns.push({ command, failed: checkFailed, errors: checkFailed ? Math.max(1, errors) : 0 })
         }
       }
     }
