@@ -96,6 +96,18 @@ describe('parseRun', () => {
     expect(checked('ls .next')).toEqual([])
   })
 
+  it('counts no failed check when a signal killed the shell after a clean one, as an agent\'s own pkill does', () => {
+    const checked = (output: string): RunMetrics => parseRun([
+      { type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Bash', input: { command: 'pkill -f "kay start"; bun run check' } }] } },
+      { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't', is_error: true, content: output }] } },
+    ].map(line => JSON.stringify(line)).join('\n'), cwd)
+    const killed = checked('Exit code 144\n$ kay check\nchecked with no problems in 428 ms')
+
+    expect(killed.checkRuns).toEqual([{ command: 'pkill -f "kay start"; bun run check', failed: false, errors: 0 }])
+    expect(killed.toolErrors).toBe(1)
+    expect(checked('Exit code 143\nerror: src/a.kay:1:1 unknown tag').checkRuns[0]?.failed).toBe(true)
+  })
+
   it('flags reads outside the workspace and network use', () => {
     expect(metrics.outside).toEqual(['Read: /home/me/Workspace/kayjs/README.md', 'Bash: curl -s https://example.com'])
   })
