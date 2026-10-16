@@ -349,7 +349,7 @@ Astro builds the site for less. The model already knows Astro, while it learns k
 
 <Note title="How it was measured">
 
-kay 1.27.0, its runs a few hours after the others, with the same model and Claude Code. Each run is one headless Claude Code session, Opus 5.5 at high effort, with no project instructions, hooks or plugins, in a fresh copy of the framework's starter under bubblewrap, so it cannot see the tests, the other runs or anything else on the machine. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
+kay 1.27.0, its runs a few hours after the others, with the same model and Claude Code, Opus 5.5 at high effort. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. How a run is set up, kept apart from the others and graded has [its own post](/posts/agent-bench); the spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
 
