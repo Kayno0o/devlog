@@ -26,7 +26,7 @@ article.relative.mx-auto.max-w-2xl
     | {t('post.all')}
   header.mb-10
     h1.mb-3.text-3xl.font-semibold.text-balance {post.data.title}
-    PostMeta(date={post.data.date} updated={post.data.updated} file={post.file} tags={post.data.tags})
+    PostMeta(date={post.data.date} updated={post.data.updated} minutes={post.readingTime} tags={post.data.tags})
   Toc(headings={post.headings})
   .prose
     Content
