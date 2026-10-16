@@ -9,7 +9,7 @@
   },
   "claude": "2.1.289",
   "from": "2026-10-10T02:09:07.341Z",
-  "to": "2026-10-10T17:50:18.924Z",
+  "to": "2026-10-16T23:09:08.495Z",
   "frameworks": {
     "kay": {
       "runs": 5,
@@ -711,6 +711,183 @@
           "median": 0,
           "min": 0,
           "max": 1
+        }
+      },
+      "failures": []
+    },
+    "nuxt": {
+      "runs": 5,
+      "passed": 5,
+      "versions": {
+        "bun": "1.4.3",
+        "nuxt": "4.6.1",
+        "vue": "3.5.44",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "@nuxt/content",
+        "h3"
+      ],
+      "spent": {
+        "costUsd": 7.3023548,
+        "totalTokens": 9512917,
+        "minutes": 37.823616666666666
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 94,
+          "min": 58,
+          "max": 110
+        },
+        "cacheWriteTokens": {
+          "median": 61720,
+          "min": 43153,
+          "max": 85977
+        },
+        "cacheReadTokens": {
+          "median": 2042486,
+          "min": 799136,
+          "max": 2194336
+        },
+        "outputTokens": {
+          "median": 28668,
+          "min": 20117,
+          "max": 36228
+        },
+        "thinkingTokens": {
+          "median": 10202,
+          "min": 7491,
+          "max": 13794
+        },
+        "totalTokens": {
+          "median": 2163585,
+          "min": 862464,
+          "max": 2280795
+        },
+        "peakContextTokens": {
+          "median": 66976,
+          "min": 48409,
+          "max": 91233
+        },
+        "costUsd": {
+          "median": 1.4568471999999997,
+          "min": 0.9076232000000001,
+          "max": 1.7972492
+        },
+        "minutes": {
+          "median": 7.922,
+          "min": 4.304333333333333,
+          "max": 9.536233333333334
+        },
+        "apiMinutes": {
+          "median": 5.551566666666667,
+          "min": 3.3482666666666665,
+          "max": 6.69095
+        },
+        "turns": {
+          "median": 47,
+          "min": 30,
+          "max": 56
+        },
+        "apiCalls": {
+          "median": 47,
+          "min": 29,
+          "max": 55
+        },
+        "toolCalls": {
+          "median": 46,
+          "min": 29,
+          "max": 55
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 46,
+          "min": 29,
+          "max": 55
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 3
+        },
+        "docsCalls": {
+          "median": 5,
+          "min": 4,
+          "max": 6
+        },
+        "docsChars": {
+          "median": 14244,
+          "min": 7889,
+          "max": 21822
+        },
+        "checkRuns": {
+          "median": 7,
+          "min": 3,
+          "max": 9
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 17,
+          "min": 15,
+          "max": 19
+        },
+        "linesWritten": {
+          "median": 444,
+          "min": 437,
+          "max": 476
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 83,
+          "min": 26,
+          "max": 135
+        },
+        "linesRemoved": {
+          "median": 5,
+          "min": 5,
+          "max": 5
+        },
+        "packagesAdded": {
+          "median": 1,
+          "min": 1,
+          "max": 2
         }
       },
       "failures": []
