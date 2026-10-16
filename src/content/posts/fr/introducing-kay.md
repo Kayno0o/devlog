@@ -349,7 +349,7 @@ Astro construit le site pour moins cher. Le modèle connaît déjà Astro, alors
 
 <Note title="Comment c'est mesuré">
 
-kay 1.27.0, ses exécutions quelques heures après celles des autres, avec le même modèle et le même Claude Code. Chaque exécution est une session Claude Code headless, Opus 5.5 en effort élevé, sans instructions de projet, hooks ni plugins, dans une copie neuve du starter du framework sous bubblewrap, donc sans accès aux tests, aux autres exécutions ni à quoi que ce soit d'autre sur la machine. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. Le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
+kay 1.27.0, ses exécutions quelques heures après celles des autres, avec le même modèle et le même Claude Code, Opus 5.5 en effort élevé. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. La façon dont une exécution est préparée, isolée des autres et notée a [son propre article](/posts/agent-bench) ; le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
 
