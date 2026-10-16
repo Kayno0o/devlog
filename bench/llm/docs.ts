@@ -80,13 +80,22 @@ function bytesIn(dir: string): number {
   return [...new Bun.Glob('**/*').scanSync(dir)].reduce((sum, path) => sum + Bun.file(join(dir, path)).size, 0)
 }
 
-const { values } = parseArgs({ options: { frameworks: { type: 'string', default: 'kay,sveltekit,solidstart,astro,nuxt,next' } } })
+const known = ['kay', 'sveltekit', 'solidstart', 'astro', 'nuxt', 'next']
+const { values } = parseArgs({ options: { frameworks: { type: 'string', default: known.join(',') } } })
+const selected = (values.frameworks ?? '').split(',').filter(Boolean)
+
+for (const framework of selected) {
+  if (!known.includes(framework)) {
+    throw new Error(`unknown framework ${framework}, expected one of ${known.join(', ')}`)
+  }
+}
+
 const sourcesFile = join(starters, 'docs-sources.json')
 // refreshing some frameworks keeps what the others' docs were fetched from
 const sources = await Bun.file(sourcesFile).exists() ? await Bun.file(sourcesFile).json() as Record<string, Source> : {}
 const fetchedAt = new Date().toISOString()
 
-for (const framework of (values.frameworks ?? '').split(',').filter(Boolean)) {
+for (const framework of selected) {
   const out = join(starters, framework, 'docs')
 
   rmSync(out, { recursive: true, force: true })
@@ -113,14 +122,11 @@ for (const framework of (values.frameworks ?? '').split(',').filter(Boolean)) {
   else if (framework === 'next') {
     sources.next = { source: 'https://nextjs.org/docs/llms.txt and the Markdown of the pages it links', fetchedAt, files: await mirror('https://nextjs.org/docs/llms.txt', out, '.md'), bytes: bytesIn(out) }
   }
-  else if (framework === 'astro') {
+  else {
     // Astro dropped its llms.txt in April 2026, so its docs are the English Markdown source of docs.astro.build
     const { files, revision } = await astro(out)
 
     sources.astro = { source: 'https://github.com/withastro/docs src/content/docs/en', revision, fetchedAt, files, bytes: bytesIn(out) }
-  }
-  else {
-    throw new Error(`unknown framework ${framework}`)
   }
 
   console.log(`${framework}: ${sources[framework]?.files} files`)

@@ -93,7 +93,7 @@ const checkCommand = /\b(?:bun run (?:check|build)|kay (?:check|build)|svelte-ch
 // The summary line each checker prints, tsc (vue-tsc and nuxt typecheck too), svelte-check, astro check and kay check in that order
 const errorSummaries = [/Found (\d+) errors?/, /svelte-check found (\d+) errors?/, /^- (\d+) errors?/m, /^(\d+) errors?$/m]
 
-const errorLine = /^error\b|\berror\[|\berror TS\d+|^Error:|\berror during build/i
+const errorLine = /^error\b|\berror\[|\berror TS\d+|^Error:|^Type error:|\berror during build/i
 const docsPath = /(?:^|[\s/"'])docs(?:\/|\s|$)/
 const networkCommand = /\b(?:curl|wget)\b/
 // a curl at the agent's own server is fine, so only a remote URL or no local host at all counts as the network

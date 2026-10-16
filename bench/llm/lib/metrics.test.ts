@@ -148,6 +148,7 @@ describe('countErrors', () => {
     expect(countErrors('====\nsvelte-check found 4 errors and 1 warning in 2 files')).toBe(4)
     expect(countErrors('Result (12 files): \n- 5 errors\n- 0 warnings\n- 1 hint')).toBe(5)
     expect(countErrors('error[TS2322]: x\n\n1 error')).toBe(1)
+    expect(countErrors('Failed to compile.\n\n./app/page.tsx:3:7\nType error: Type "number" is not assignable to type "string".')).toBe(1)
   })
 
   it('counts error lines when there is no summary', () => {
