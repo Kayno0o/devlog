@@ -87,5 +87,5 @@ figure.chart
             td {row.range ? `${t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })} ${unit}` : ''}
   if ranged
     p.mt-3.text-xs.text-muted {t(`chart.legend.${better ?? 'none'}`)}
-  if caption
+  if caption !== undefined
     p.text-xs.text-muted(class={ranged ? 'mt-1' : 'mt-3'}) {t('chart.source', { source: caption })}
