@@ -41,6 +41,17 @@ it('puts each framework\'s logo before its name, a site after the comma included
   expect(html).toMatch(/<img[^>]*class="size-4"/)
 })
 
+it('draws Next.js and Nuxt rows with their own logos', async () => {
+  const logoOf = async (label: string): Promise<string | undefined> => (await renderToString(BarChart, { title: 'Memory', unit: 'MB', rows: [{ label, value: 1 }] })).match(/<svg[\s\S]*?<\/svg>/)?.[0]
+  const next = await logoOf('Next.js')
+  const nuxt = await logoOf('Nuxt, painter')
+
+  expect(next).toBeDefined()
+  expect(nuxt).toBeDefined()
+  expect(nuxt).not.toBe(next)
+  expect(await logoOf('Next')).toBe(next)
+})
+
 it('fills a ranged row to its median, scales it to the highest run and ticks its lowest', async () => {
   const html = await renderToString(BarChart, { title: 'Time', unit: 'min', better: 'lower', rows: [{ label: 'kay', value: 2, range: [1, 4] }, { label: 'Astro', value: 3, range: [2, 8] }] })
 
