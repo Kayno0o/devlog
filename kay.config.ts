@@ -15,5 +15,12 @@ export default defineConfig({
   images: { card: { background: '#1e1e2e', color: '#cdd6f4' } },
   // Nothing here is interactive: pages load fully and ship no script.
   navigation: false,
-  seo: { name: 'devlog', titleTemplate: '%s | devlog', description: 'Notes on the software Kévyn builds: how it works, what it costs, and the benchmarks behind it.' },
+  seo: {
+    name: 'devlog',
+    titleTemplate: '%s | devlog',
+    description: {
+      en: 'Notes on the software Kévyn builds: how it works, what it costs, and the benchmarks behind it.',
+      fr: 'Notes sur les logiciels que Kévyn construit : comment ils marchent, ce qu\'ils coûtent, et les benchmarks derrière.',
+    },
+  },
 })

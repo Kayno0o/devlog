@@ -4,7 +4,6 @@ import Header from '../components/header.kay'
 import '../app.css'
 ---
 head
-  meta(name="description" content={t('site.description')})
   link(rel="alternate" type="application/rss+xml" title="devlog" href={localize('/rss.xml')})
 a.skip-link(href="#main-content") {t('site.skipLink')}
 Header

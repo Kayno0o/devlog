@@ -2,7 +2,6 @@ import { defineMessages } from 'kay/i18n'
 
 export default defineMessages({
   site: {
-    description: 'Notes on the software Kévyn builds: how it works, what it costs, and the benchmarks behind it.',
     skipLink: 'Skip to main content',
   },
   nav: {
