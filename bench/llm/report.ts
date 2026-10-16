@@ -99,7 +99,7 @@ const measures: Record<string, { group: string, title: string, read: (result: Re
 
 const inputKinds = ['input', 'cacheCreation', 'cacheRead'] as const satisfies (keyof Tokens)[]
 
-const known = ['kay', 'sveltekit', 'solidstart', 'astro']
+const known = ['kay', 'sveltekit', 'solidstart', 'astro', 'nuxt', 'next']
 const frameworks = [...new Set(results.map(result => result.framework))].toSorted((a, b) => known.indexOf(a) - known.indexOf(b))
 const summary = {
   label,
@@ -197,7 +197,7 @@ function isolation(): string[] {
 const lines = [
   `# LLM benchmark, ${label}`,
   '',
-  `Each run is one headless Claude Code session (\`claude -p --safe-mode\`, no CLAUDE.md, hooks, plugins or MCP servers) building [the same site](../../spec.md) from [the same prompt](../../prompt.md) in a fresh copy of the framework's starter, with the framework's docs offline in \`docs/\`. A run passes when \`bun run check\`, \`bun run build\` and every test of the hidden [acceptance suite](../../acceptance/site.test.ts) pass. \`check\` is each starter's own script: kay's \`kay check --deny-warnings\` also fails on warnings, the others' (\`svelte-check\`, \`tsc --noEmit\`, \`astro check\`) on errors only.`,
+  `Each run is one headless Claude Code session (\`claude -p --safe-mode\`, no CLAUDE.md, hooks, plugins or MCP servers) building [the same site](../../spec.md) from [the same prompt](../../prompt.md) in a fresh copy of the framework's starter, with the framework's docs offline in \`docs/\`. A run passes when \`bun run check\`, \`bun run build\` and every test of the hidden [acceptance suite](../../acceptance/site.test.ts) pass. \`check\` is each starter's own script: kay's \`kay check --deny-warnings\` also fails on warnings, the others' (\`svelte-check\`, \`tsc --noEmit\`, \`astro check\`, \`nuxt typecheck\`, \`next typegen && tsc --noEmit\`) on errors only.`,
   '',
   `Model ${summary.model}, effort ${summary.requested?.effort}, Claude Code ${summary.claude}, runs from ${summary.from} to ${summary.to}. Every measure is the median of the runs that passed, with the lowest and highest in brackets. Input tokens, cache writes and cache reads are what the model read; output tokens, thinking included, what it wrote.`,
   '',

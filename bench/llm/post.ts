@@ -28,7 +28,7 @@ if (label === undefined) {
 const summary = await Bun.file(join(benchDir, 'results', label, 'summary.json')).json() as Summary
 // claude-opus-5-5 reads Opus 5.5.
 const modelId = /^claude-(\w+)-(\d+)-(\d+)$/
-const names: Record<string, string> = { kay: 'kay', sveltekit: 'SvelteKit', solidstart: 'SolidStart', astro: 'Astro' }
+const names: Record<string, string> = { kay: 'kay', sveltekit: 'SvelteKit', solidstart: 'SolidStart', astro: 'Astro', nuxt: 'Nuxt', next: 'Next.js' }
 const frameworks = Object.entries(summary.frameworks)
 const spread = (framework: string, key: string): Spread => summary.frameworks[framework]?.measures[key] ?? { median: 0, min: 0, max: 0 }
 const median = (framework: string, key: string): number => spread(framework, key).median

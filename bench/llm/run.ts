@@ -1,5 +1,5 @@
 // Runs the LLM benchmark: one headless Claude Code session per framework and run, each in a fresh copy of its starter, graded by the hidden acceptance suite.
-// bun bench/llm/run.ts [--frameworks kay,sveltekit,solidstart,astro] [--runs 5] [--model claude-opus-5-5] [--effort high] [--budget 30] [--minutes 90] [--label <name>] [--grade-only]
+// bun bench/llm/run.ts [--frameworks kay,sveltekit,solidstart,astro,nuxt,next] [--runs 5] [--model claude-opus-5-5] [--effort high] [--budget 30] [--minutes 90] [--label <name>] [--grade-only]
 import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
@@ -15,6 +15,8 @@ const frameworks = {
   sveltekit: { name: 'SvelteKit', packages: ['@sveltejs/kit', 'svelte'] },
   solidstart: { name: 'SolidStart', packages: ['@solidjs/start', 'solid-js'] },
   astro: { name: 'Astro', packages: ['astro'] },
+  nuxt: { name: 'Nuxt', packages: ['nuxt', 'vue'] },
+  next: { name: 'Next.js', packages: ['next', 'react'] },
 }
 
 type Framework = keyof typeof frameworks

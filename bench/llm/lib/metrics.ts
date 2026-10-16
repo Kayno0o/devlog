@@ -88,9 +88,9 @@ interface Line {
   usage?: Usage
 }
 
-const checkCommand = /\b(?:bun run (?:check|build)|kay (?:check|build)|svelte-check|svelte-kit sync|tsc|astro (?:check|build)|vite build)\b/
+const checkCommand = /\b(?:bun run (?:check|build)|kay (?:check|build)|svelte-check|svelte-kit sync|tsc|astro (?:check|build)|vite build|nux[it] (?:typecheck|build)|vue-tsc|next (?:build|typegen))\b/
 
-// The summary line each checker prints, tsc, svelte-check, astro check and kay check in that order
+// The summary line each checker prints, tsc (vue-tsc and nuxt typecheck too), svelte-check, astro check and kay check in that order
 const errorSummaries = [/Found (\d+) errors?/, /svelte-check found (\d+) errors?/, /^- (\d+) errors?/m, /^(\d+) errors?$/m]
 
 const errorLine = /^error\b|\berror\[|\berror TS\d+|^Error:|\berror during build/i

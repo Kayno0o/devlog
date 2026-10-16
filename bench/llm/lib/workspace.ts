@@ -9,7 +9,7 @@ const testFile = /\.(?:test|spec)\.|(?:^|\/)tests?\//
 const stylesheet = /\.(?:css|scss|sass|less)$/
 const styleBlock = /<style[^>]*>([\s\S]*?)<\/style>/g
 // Build outputs and installs a starter may hold locally, never copied into a run
-const skipped = new Set(['node_modules', '.kay', '.svelte-kit', '.output', '.vinxi', '.astro', 'dist', 'build', '.eslintcache'])
+const skipped = new Set(['node_modules', '.kay', '.svelte-kit', '.output', '.vinxi', '.astro', '.nuxt', '.next', 'dist', 'build', '.eslintcache'])
 
 const processId = /^\d+$/
 

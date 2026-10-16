@@ -84,6 +84,18 @@ describe('parseRun', () => {
     expect(metrics.checkErrors).toBe(2)
   })
 
+  it('counts each framework\'s own checker as a check', () => {
+    const checked = (command: string): RunMetrics['checkRuns'] => parseRun([
+      { type: 'assistant', message: { id: 'm', content: [{ type: 'tool_use', id: 't', name: 'Bash', input: { command } }] } },
+      { type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 't', is_error: true, content: 'Exit code 1\nFound 3 errors in 2 files.' }] } },
+    ].map(line => JSON.stringify(line)).join('\n'), cwd).checkRuns
+
+    for (const command of ['bunx nuxt typecheck', 'bunx nuxi typecheck', 'bunx vue-tsc --noEmit', 'bunx next build', 'bunx next typegen && bunx tsc --noEmit']) {
+      expect(checked(command)).toEqual([{ command, failed: true, errors: 3 }])
+    }
+    expect(checked('ls .next')).toEqual([])
+  })
+
   it('flags reads outside the workspace and network use', () => {
     expect(metrics.outside).toEqual(['Read: /home/me/Workspace/kayjs/README.md', 'Bash: curl -s https://example.com'])
   })
