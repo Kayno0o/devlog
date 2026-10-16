@@ -23,5 +23,17 @@
     "fetchedAt": "2026-10-10T01:14:03.245Z",
     "files": 424,
     "bytes": 2984973
+  },
+  "nuxt": {
+    "source": "https://nuxt.com/llms.txt and the pages it links",
+    "fetchedAt": "2026-10-16T12:17:24.906Z",
+    "files": 341,
+    "bytes": 7754151
+  },
+  "next": {
+    "source": "https://nextjs.org/docs/llms.txt and the Markdown of the pages it links",
+    "fetchedAt": "2026-10-16T12:17:58.638Z",
+    "files": 306,
+    "bytes": 3140372
   }
 }

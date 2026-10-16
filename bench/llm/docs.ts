@@ -1,7 +1,7 @@
 // Writes each starter's offline docs/ folder from its framework's official docs, and records where they came from in starters/docs-sources.json.
-// bun bench/llm/docs.ts [--frameworks kay,sveltekit,solidstart,astro]
+// bun bench/llm/docs.ts [--frameworks kay,sveltekit,solidstart,astro,nuxt,next]
 import { cpSync, mkdirSync, rmSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, extname, join } from 'node:path'
 import { parseArgs } from 'node:util'
 
 const starters = join(import.meta.dir, 'starters')
@@ -15,16 +15,17 @@ interface Source {
   bytes: number
 }
 
-async function mirror(index: string, out: string): Promise<number> {
+// `suffix` is added to every linked page with no extension, for a site whose llms.txt links HTML pages that answer in Markdown at `<page>.md`
+async function mirror(index: string, out: string, suffix = ''): Promise<number> {
   const origin = new URL(index).origin
   let text = await (await fetch(index)).text()
   const links = [...new Set([...text.matchAll(/\]\((\S+?)\)/g)].map(match => match[1] ?? ''))]
-  const local = links.map(link => ({ link, url: new URL(link, index) })).filter(({ url }) => url.origin === origin)
+  const local = links.map(link => ({ link, url: new URL(link, index) })).filter(({ url }) => url.origin === origin).map(({ link, url }) => ({ link, url, page: `${url.pathname}${extname(url.pathname) === '' ? suffix : ''}` }))
   let files = 1
   const queue = [...local]
   const worker = async (): Promise<void> => {
     for (let next = queue.shift(); next; next = queue.shift()) {
-      const response = await fetch(next.url)
+      const response = await fetch(`${origin}${next.page}`)
 
       if (!response.ok) {
         console.warn(`skipped ${next.url.href}: ${response.status}`)
@@ -32,7 +33,7 @@ async function mirror(index: string, out: string): Promise<number> {
         continue
       }
 
-      const path = join(out, decodeURIComponent(next.url.pathname))
+      const path = join(out, decodeURIComponent(next.page))
 
       mkdirSync(dirname(path), { recursive: true })
       await Bun.write(path, await response.text())
@@ -41,8 +42,8 @@ async function mirror(index: string, out: string): Promise<number> {
   }
 
   await Promise.all(Array.from({ length: 8 }, worker))
-  for (const { link, url } of local) {
-    text = text.replaceAll(`](${link})`, () => `](.${decodeURIComponent(url.pathname)})`)
+  for (const { link, page } of local) {
+    text = text.replaceAll(`](${link})`, () => `](.${decodeURIComponent(page)})`)
   }
   await Bun.write(join(out, 'llms.txt'), text)
 
@@ -79,7 +80,7 @@ function bytesIn(dir: string): number {
   return [...new Bun.Glob('**/*').scanSync(dir)].reduce((sum, path) => sum + Bun.file(join(dir, path)).size, 0)
 }
 
-const { values } = parseArgs({ options: { frameworks: { type: 'string', default: 'kay,sveltekit,solidstart,astro' } } })
+const { values } = parseArgs({ options: { frameworks: { type: 'string', default: 'kay,sveltekit,solidstart,astro,nuxt,next' } } })
 const sourcesFile = join(starters, 'docs-sources.json')
 // refreshing some frameworks keeps what the others' docs were fetched from
 const sources = await Bun.file(sourcesFile).exists() ? await Bun.file(sourcesFile).json() as Record<string, Source> : {}
@@ -106,11 +107,20 @@ for (const framework of (values.frameworks ?? '').split(',').filter(Boolean)) {
   else if (framework === 'solidstart') {
     sources.solidstart = { source: 'https://docs.solidjs.com/llms.txt and the pages it links', fetchedAt, files: await mirror('https://docs.solidjs.com/llms.txt', out), bytes: bytesIn(out) }
   }
-  else {
+  else if (framework === 'nuxt') {
+    sources.nuxt = { source: 'https://nuxt.com/llms.txt and the pages it links', fetchedAt, files: await mirror('https://nuxt.com/llms.txt', out), bytes: bytesIn(out) }
+  }
+  else if (framework === 'next') {
+    sources.next = { source: 'https://nextjs.org/docs/llms.txt and the Markdown of the pages it links', fetchedAt, files: await mirror('https://nextjs.org/docs/llms.txt', out, '.md'), bytes: bytesIn(out) }
+  }
+  else if (framework === 'astro') {
     // Astro dropped its llms.txt in April 2026, so its docs are the English Markdown source of docs.astro.build
     const { files, revision } = await astro(out)
 
     sources.astro = { source: 'https://github.com/withastro/docs src/content/docs/en', revision, fetchedAt, files, bytes: bytesIn(out) }
+  }
+  else {
+    throw new Error(`unknown framework ${framework}`)
   }
 
   console.log(`${framework}: ${sources[framework]?.files} files`)
