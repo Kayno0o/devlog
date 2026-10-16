@@ -1,0 +1,190 @@
+{
+  "label": "opus-probe-1.48",
+  "model": "claude-opus-5-5",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-16T18:48:57.685Z",
+  "to": "2026-10-16T18:48:57.685Z",
+  "frameworks": {
+    "kay": {
+      "runs": 1,
+      "passed": 1,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.48.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "@happy-dom/global-registrator"
+      ],
+      "spent": {
+        "costUsd": 0.9442900000000001,
+        "totalTokens": 992990,
+        "minutes": 2.5332666666666666
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 54,
+          "min": 54,
+          "max": 54
+        },
+        "cacheWriteTokens": {
+          "median": 54244,
+          "min": 54244,
+          "max": 54244
+        },
+        "cacheReadTokens": {
+          "median": 922410,
+          "min": 922410,
+          "max": 922410
+        },
+        "outputTokens": {
+          "median": 16282,
+          "min": 16282,
+          "max": 16282
+        },
+        "thinkingTokens": {
+          "median": 4345,
+          "min": 4345,
+          "max": 4345
+        },
+        "totalTokens": {
+          "median": 992990,
+          "min": 992990,
+          "max": 992990
+        },
+        "peakContextTokens": {
+          "median": 58753,
+          "min": 58753,
+          "max": 58753
+        },
+        "costUsd": {
+          "median": 0.9442900000000001,
+          "min": 0.9442900000000001,
+          "max": 0.9442900000000001
+        },
+        "minutes": {
+          "median": 2.5332666666666666,
+          "min": 2.5332666666666666,
+          "max": 2.5332666666666666
+        },
+        "apiMinutes": {
+          "median": 2.3281666666666667,
+          "min": 2.3281666666666667,
+          "max": 2.3281666666666667
+        },
+        "turns": {
+          "median": 27,
+          "min": 27,
+          "max": 27
+        },
+        "apiCalls": {
+          "median": 27,
+          "min": 27,
+          "max": 27
+        },
+        "toolCalls": {
+          "median": 26,
+          "min": 26,
+          "max": 26
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 26,
+          "min": 26,
+          "max": 26
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 15,
+          "min": 15,
+          "max": 15
+        },
+        "docsChars": {
+          "median": 76222,
+          "min": 76222,
+          "max": 76222
+        },
+        "checkRuns": {
+          "median": 6,
+          "min": 6,
+          "max": 6
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 26,
+          "min": 26,
+          "max": 26
+        },
+        "linesWritten": {
+          "median": 335,
+          "min": 335,
+          "max": 335
+        },
+        "testLines": {
+          "median": 94,
+          "min": 94,
+          "max": 94
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "linesRemoved": {
+          "median": 3,
+          "min": 3,
+          "max": 3
+        },
+        "packagesAdded": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        }
+      },
+      "failures": []
+    }
+  }
+}
