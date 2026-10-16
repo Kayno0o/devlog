@@ -2,46 +2,46 @@
 
 Each run is one headless Claude Code session (`claude -p --safe-mode`, no CLAUDE.md, hooks, plugins or MCP servers) building [the same site](../../spec.md) from [the same prompt](../../prompt.md) in a fresh copy of the framework's starter, with the framework's docs offline in `docs/`. A run passes when `bun run check`, `bun run build` and every test of the hidden [acceptance suite](../../acceptance/site.test.ts) pass. `check` is each starter's own script, failing on errors only: `kay check`, `svelte-check`, `tsc --noEmit`, `astro check`, `nuxt typecheck`, `next typegen && tsc --noEmit`.
 
-Model claude-opus-5-5, effort high, Claude Code 2.1.289, runs from 2026-10-16T20:33:50.372Z to 2026-10-16T20:33:50.372Z. Every measure is the median of the runs that passed, with the lowest and highest in brackets. Input tokens, cache writes and cache reads are what the model read; output tokens, thinking included, what it wrote.
+Model claude-opus-5-5, effort high, Claude Code 2.1.289, runs from 2026-10-16T20:33:50.372Z to 2026-10-16T20:45:59.436Z. Every measure is the median of the runs that passed, with the lowest and highest in brackets. Input tokens, cache writes and cache reads are what the model read; output tokens, thinking included, what it wrote.
 
 | Runs | kay |
 | --- | ---: |
-| Passed | 1 of 1 |
-| Cost of every run, failed ones included (USD) | 1.37 |
-| Tokens of every run | 2,133,533 |
-| Minutes of every run | 3 |
+| Passed | 2 of 2 |
+| Cost of every run, failed ones included (USD) | 2.48 |
+| Tokens of every run | 3,582,489 |
+| Minutes of every run | 6 |
 
 ## Tokens
 
 | Measure | kay |
 | --- | ---: |
-| Input tokens, uncached | 76 (76 to 76) |
-| Cache write tokens | 79,844 (79,844 to 79,844) |
-| Cache read tokens | 2,037,213 (2,037,213 to 2,037,213) |
-| Output tokens | 16,400 (16,400 to 16,400) |
-| Thinking tokens, part of output | 4,353 (4,353 to 4,353) |
-| All tokens | 2,133,533 (2,133,533 to 2,133,533) |
-| Largest context of one call | 84,353 (84,353 to 84,353) |
-| Cost (USD, API prices) | 1.37 (1.37 to 1.37) |
+| Input tokens, uncached | 70 (64 to 76) |
+| Cache write tokens | 72,470 (65,096 to 79,844) |
+| Cache read tokens | 1,702,651 (1,368,089 to 2,037,213) |
+| Output tokens | 16,054 (15,707 to 16,400) |
+| Thinking tokens, part of output | 4,156 (3,959 to 4,353) |
+| All tokens | 1,791,245 (1,448,956 to 2,133,533) |
+| Largest context of one call | 77,353 (70,352 to 84,353) |
+| Cost (USD, API prices) | 1.24 (1.11 to 1.37) |
 
 ## Time
 
 | Measure | kay |
 | --- | ---: |
-| Wall time (minutes) | 2.6 (2.6 to 2.6) |
-| Time waiting on the API (minutes) | 2.4 (2.4 to 2.4) |
+| Wall time (minutes) | 2.8 (2.6 to 2.9) |
+| Time waiting on the API (minutes) | 2.5 (2.4 to 2.6) |
 
 ## Agent
 
 | Measure | kay |
 | --- | ---: |
-| Turns | 41 (41 to 41) |
-| API calls | 38 (38 to 38) |
-| Tool calls | 40 (40 to 40) |
+| Turns | 37 (33 to 41) |
+| API calls | 35 (32 to 38) |
+| Tool calls | 36 (32 to 40) |
 | Read calls | 0 (0 to 0) |
 | Write calls | 0 (0 to 0) |
 | Edit calls | 0 (0 to 0) |
-| Bash calls | 40 (40 to 40) |
+| Bash calls | 36 (32 to 40) |
 | Glob calls | 0 (0 to 0) |
 | Grep calls | 0 (0 to 0) |
 | Tool calls that failed | 1 (1 to 1) |
@@ -50,14 +50,14 @@ Model claude-opus-5-5, effort high, Claude Code 2.1.289, runs from 2026-10-16T20
 
 | Measure | kay |
 | --- | ---: |
-| Tool calls reading the docs | 19 (19 to 19) |
-| Docs characters read | 121,268 (121,268 to 121,268) |
+| Tool calls reading the docs | 17 (15 to 19) |
+| Docs characters read | 108,460 (95,651 to 121,268) |
 
 ## Checks
 
 | Measure | kay |
 | --- | ---: |
-| Checks and builds run | 5 (5 to 5) |
+| Checks and builds run | 5 (4 to 5) |
 | Checks and builds that failed | 0 (0 to 0) |
 | Check errors hit on the way | 0 (0 to 0) |
 
@@ -65,18 +65,19 @@ Model claude-opus-5-5, effort high, Claude Code 2.1.289, runs from 2026-10-16T20
 
 | Measure | kay |
 | --- | ---: |
-| Files written or changed | 26 (26 to 26) |
-| Lines added, tests and styles left out | 335 (335 to 335) |
-| Test lines added | 76 (76 to 76) |
-| Style lines added | 14 (14 to 14) |
+| Files written or changed | 26 (25 to 26) |
+| Lines added, tests and styles left out | 340 (335 to 345) |
+| Test lines added | 92 (76 to 107) |
+| Style lines added | 7 (0 to 14) |
 | Lines removed | 3 (3 to 3) |
-| Packages added | 1 (1 to 1) |
+| Packages added | 1 (0 to 1) |
 
 ## Every run
 
 | Run | Passed | Output tokens | Input tokens, uncached | Cache write tokens | Cache read tokens | Cost (USD, API prices) | Wall time (minutes) | Turns | Tool calls | Check errors hit on the way | Lines added, tests and styles left out |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | kay 1 | yes | 16,400 | 76 | 79,844 | 2,037,213 | 1.37 | 2.6 | 41 | 40 | 0 | 335 |
+| kay 2 | yes | 15,707 | 64 | 65,096 | 1,368,089 | 1.11 | 2.9 | 33 | 32 | 0 | 345 |
 
 ## Versions and docs
 
@@ -88,7 +89,7 @@ Model claude-opus-5-5, effort high, Claude Code 2.1.289, runs from 2026-10-16T20
 - No session started an MCP server.
 - Plugins installed on the machine, listed by each session at start and kept off by `--safe-mode`: cc-plugin-agents-md, cc-plugin-plugin-authoring
 - No tool call left the workspace or used the network beyond package installs.
-- Bash calls running python, node or another package manager despite the prompt: kay 1 (1)
+- Bash calls running python, node or another package manager despite the prompt: kay 2 (1), kay 1 (1)
 - No agent changed its package.json scripts or tsconfig.json.
 - Input and cache tokens summed per API call match the totals each finished session reported.
 
