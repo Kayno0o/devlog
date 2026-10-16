@@ -20,7 +20,7 @@ const weight = /This page: ([\d.]+) KB/
 
 async function transform(body: string): Promise<string> {
   const html = `<html><head><link rel="stylesheet" href="/app.css"><link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head><body>${body}<footer><span data-page-weight></span></footer></body></html>`
-  const page: RenderedPage = { path: '/', html, file: async url => url in files ? join(dir, url) : undefined }
+  const page: RenderedPage = { path: '/', locale: 'en', html, file: async url => url in files ? join(dir, url) : undefined }
 
   return pageWeight.transformPage!(page)
 }
@@ -48,7 +48,7 @@ describe('pageWeight', () => {
   })
 
   it('leaves a page without the footer slot as it is', async () => {
-    const page: RenderedPage = { path: '/404', html: '<p>Nothing here</p>', file: async () => undefined }
+    const page: RenderedPage = { path: '/404', locale: 'en', html: '<p>Nothing here</p>', file: async () => undefined }
 
     expect(await pageWeight.transformPage!(page)).toBe(page.html)
   })

@@ -30,7 +30,7 @@ head
       for post of entries key={post.slug}
         li
           a.group.block.no-underline(href={`/posts/${post.slug}`})
-            PostMeta(date={post.data.date} file={post.file})
+            PostMeta(date={post.data.date} minutes={post.readingTime})
             h3.text-lg.font-semibold.group-hover:underline.group-hover:decoration-accent {post.data.title}
             p.text-subtext {post.data.description}
       else

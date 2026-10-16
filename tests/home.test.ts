@@ -2,48 +2,48 @@ import { expect, it } from 'bun:test'
 import { testSite } from 'kay/test'
 
 const site = await testSite()
-const linkOpening = /<a [^>]*>(?:<svg|<img)?/g
 
 it('lists the posts, leaving drafts out', async () => {
   const home = await site.visit('/')
 
   expect(home.status).toBe(200)
-  expect(home.html).toContain('Nothing published yet.')
-  expect(home.html).not.toContain('fast to run, easy to write')
+  expect(home.text('section[aria-labelledby="posts-title"] ol')).toBe('Nothing published yet.')
 })
 
 it('names its author, and gives contact links in the footer', async () => {
   const home = await site.visit('/')
 
-  expect(home.html).toContain('Hi, I\'m Kévyn</h1>')
-  expect(home.html).toMatch(/<a [^>]*href="https:\/\/github\.com\/Kayno0o"><svg.*?<\/svg>my code<\/a>/)
-  expect(home.html).toContain('href="mailto:contact@kaynooo.fr"')
-  expect(home.html).toContain('href="https://github.com/Kayno0o/devlog"')
+  const code = home.find('a[href="https://github.com/Kayno0o"]')[0]
+
+  expect(home.text('h1')).toBe('Hi, I\'m Kévyn')
+  expect(code?.text).toBe('my code')
+  expect(code?.html).toStartWith('<svg')
+  expect(home.links()).toContain('mailto:contact@kaynooo.fr')
+  expect(home.links()).toContain('https://github.com/Kayno0o/devlog')
 })
 
 it('links kay\'s docs site from the header, on kay\'s mark', async () => {
   const home = await site.visit('/')
 
-  expect(home.html).toMatch(/<a[^>]*href="https:\/\/kayjs\.kaynooo\.fr"[^>]*><img[^>]*kay-logo/)
+  expect(home.find('header a[href="https://kayjs.kaynooo.fr"] img')[0]?.attributes.src).toContain('kay-logo')
 })
 
 it('links the about page from the intro and from the header on every page', async () => {
   const home = await site.visit('/')
   const about = await site.visit('/about')
 
-  expect(home.html.match(/href="\/about"/g)).toHaveLength(2)
+  expect(home.links().filter(link => link === '/about')).toHaveLength(2)
   expect(about.status).toBe(200)
-  expect(about.html).toContain('href="/about"')
-  expect(about.html).toContain('How I got here')
+  expect(about.links()).toContain('/about')
+  expect(about.text()).toContain('How I got here')
 })
 
 it('opens every link of the about page on its icon', async () => {
   const about = await site.visit('/about')
-  const article = about.html.slice(about.html.indexOf('<article'), about.html.indexOf('</article>'))
-  const links = article.match(linkOpening) ?? []
+  const links = about.find('article a')
 
   expect(links.length).toBeGreaterThan(10)
-  expect(links.filter(link => !link.endsWith('<svg') && !link.endsWith('<img'))).toEqual([])
+  expect(links.filter(link => !link.html.startsWith('<svg') && !link.html.startsWith('<img'))).toEqual([])
 })
 
 it('serves the feed', async () => {
@@ -58,5 +58,5 @@ it('serves the favicon and links it from every page', async () => {
   const home = await site.visit('/')
 
   expect(icon.status).toBe(200)
-  expect(home.html).toContain('<link rel="icon" href="/favicon.ico"')
+  expect(home.find('link[rel="icon"][href="/favicon.ico"]')).toHaveLength(1)
 })

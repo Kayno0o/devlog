@@ -1,10 +1,9 @@
 ---
-import { alternate, locale, t } from 'kay/i18n'
+import { alternate, locale, localeName, locales, t } from 'kay/i18n'
 import Rss from '~icons/tabler/rss'
 import kay from '../kay-logo.svg'
 
-// The other language's copy of this page, named in its own language.
-const other = locale() === 'fr' ? { locale: 'en', name: 'English' } as const : { locale: 'fr', name: 'Français' } as const
+const others = locales().filter(code => code !== locale())
 ---
 header.bg-mantle.px-4.py-4.sm:px-8
   nav.flex.items-center.justify-between.gap-4(aria-label={t('nav.label')})
@@ -19,4 +18,5 @@ header.bg-mantle.px-4.py-4.sm:px-8
         a.inline-flex.items-center.gap-1(href="/rss.xml")
           Rss.size-4
           | RSS
-      li: a(href={alternate(other.locale)} hreflang={other.locale} lang={other.locale}) {other.name}
+      for code of others key={code}
+        li: a(href={alternate(code)} hreflang={code} lang={code}) {localeName(code)}
