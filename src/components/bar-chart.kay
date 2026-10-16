@@ -4,13 +4,15 @@ import './bar-chart.css'
 import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
 import Astro from '~icons/simple-icons/astro'
+import Next from '~icons/simple-icons/nextdotjs'
+import Nuxt from '~icons/simple-icons/nuxt'
 import Solid from '~icons/simple-icons/solid'
 import Svelte from '~icons/simple-icons/svelte'
 import kay from '../kay-logo.svg'
 import { formatNumber } from '../format'
 
 // A row is named by its framework, then maybe its site: `SvelteKit` or `Astro, painter`.
-const logos = new Map([['kay', 'kay'], ['Svelte', 'svelte'], ['SvelteKit', 'svelte'], ['SolidJS', 'solid'], ['SolidStart', 'solid'], ['Astro', 'astro']])
+const logos = new Map([['kay', 'kay'], ['Svelte', 'svelte'], ['SvelteKit', 'svelte'], ['SolidJS', 'solid'], ['SolidStart', 'solid'], ['Astro', 'astro'], ['Next', 'next'], ['Next.js', 'next'], ['Nuxt', 'nuxt']])
 
 interface Row {
   label: string
@@ -60,6 +62,10 @@ figure.chart
           Solid.size-4.shrink-0
         else if logo(row.label) === 'astro'
           Astro.size-4.shrink-0
+        else if logo(row.label) === 'next'
+          Next.size-4.shrink-0
+        else if logo(row.label) === 'nuxt'
+          Nuxt.size-4.shrink-0
       .flex.min-w-0.items-center.gap-2
         if row.range
           .chart-range(style={`width: calc((100% - 6rem) * ${high(row) / max()}); --row: ${i}`})
