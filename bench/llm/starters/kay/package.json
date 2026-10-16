@@ -6,13 +6,13 @@
     "dev": "kay dev",
     "build": "kay build",
     "compile": "kay build --compile server",
-    "start": "NODE_ENV=production bun src/server.ts",
+    "start": "kay start",
     "check": "kay check --deny-warnings",
     "fmt": "kay fmt"
   },
   "dependencies": {
     "elysia": "^1.4.30",
-    "kay": "npm:@kaynooo/kayjs@~1.27.0"
+    "kay": "npm:@kaynooo/kayjs@~1.45.0"
   },
   "devDependencies": {
     "@types/bun": "^1.4.2"
