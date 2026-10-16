@@ -1,9 +1,9 @@
 {
   "kay": {
-    "source": "kay 1.48.0 package (llms.txt, llms/)",
-    "fetchedAt": "2026-10-16T18:40:40.064Z",
+    "source": "kay 1.49.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-16T20:32:25.402Z",
     "files": 22,
-    "bytes": 563568
+    "bytes": 576031
   },
   "sveltekit": {
     "source": "https://svelte.dev/llms.txt and the files it links",
