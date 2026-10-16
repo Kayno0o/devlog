@@ -1,5 +1,5 @@
 // The spec's acceptance suite, hidden from the agents. It runs against SITE_URL, or against the reference site when none is given, which is how `bun run test` proves the suite itself.
-import type { Browser, BrowserContext, Locator, Page } from 'playwright-core'
+import type { Browser, BrowserContext, BrowserContextOptions, Locator, Page } from 'playwright-core'
 import type { Site } from '../lib/site'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
@@ -43,12 +43,12 @@ afterAll(async () => {
   await reference?.stop()
 })
 
-async function open(path: string, javaScriptEnabled = true): Promise<{ page: Page, context: BrowserContext }> {
+async function open(path: string, javaScriptEnabled = true, storageState?: BrowserContextOptions['storageState']): Promise<{ page: Page, context: BrowserContext }> {
   if (!browser) {
     throw new Error('no browser')
   }
 
-  const context = await browser.newContext({ javaScriptEnabled })
+  const context = await browser.newContext(storageState === undefined ? { javaScriptEnabled } : { javaScriptEnabled, storageState })
 
   // below the test timeout, so a missing element fails its own test instead of timing it out
   context.setDefaultTimeout(10_000)
@@ -219,7 +219,15 @@ describeSite('book pages', () => {
 
 describeSite('favorites', () => {
   test('toggle on the book page, survive a reload and show on the books list', async () => {
-    const { page, context } = await open('/books/dracula')
+    let { page, context } = await open('/books/dracula')
+
+    // Next.js's router re-requests its cached prefetches on a second visit in one context and never finishes them, so networkidle never comes: each later visit opens a new context carrying the cookies and localStorage, as a reload keeps them
+    const visit = async (path: string): Promise<void> => {
+      const storageState = await context.storageState()
+
+      await context.close();
+      ({ page, context } = await open(path, true, storageState))
+    }
 
     try {
       const marks = async (): Promise<string[]> =>
@@ -227,14 +235,14 @@ describeSite('favorites', () => {
 
       await click(page.getByRole('button', { name: 'Add to favorites', exact: true }))
       await page.getByRole('button', { name: 'Remove from favorites', exact: true }).waitFor()
-      await page.reload({ waitUntil: 'networkidle' })
+      await visit('/books/dracula')
       await page.getByRole('button', { name: 'Remove from favorites', exact: true }).waitFor()
-      await page.goto(`${base}/books`, { waitUntil: 'networkidle' })
+      await visit('/books')
       await poll(marks, ['Dracula'])
-      await page.goto(`${base}/books/dracula`, { waitUntil: 'networkidle' })
+      await visit('/books/dracula')
       await click(page.getByRole('button', { name: 'Remove from favorites', exact: true }))
       await page.getByRole('button', { name: 'Add to favorites', exact: true }).waitFor()
-      await page.goto(`${base}/books`, { waitUntil: 'networkidle' })
+      await visit('/books')
       await poll(marks, [])
     }
     finally {

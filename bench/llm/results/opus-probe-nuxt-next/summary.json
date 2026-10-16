@@ -1,0 +1,372 @@
+{
+  "label": "opus-probe-nuxt-next",
+  "model": "claude-opus-5-5",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-16T17:24:46.991Z",
+  "to": "2026-10-16T17:32:54.338Z",
+  "frameworks": {
+    "nuxt": {
+      "runs": 1,
+      "passed": 1,
+      "versions": {
+        "bun": "1.4.3",
+        "nuxt": "4.6.1",
+        "vue": "3.5.44",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "@nuxt/content",
+        "zod"
+      ],
+      "spent": {
+        "costUsd": 1.2010595999999998,
+        "totalTokens": 1457035,
+        "minutes": 5.708266666666667
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 80,
+          "min": 80,
+          "max": 80
+        },
+        "cacheWriteTokens": {
+          "median": 52751,
+          "min": 52751,
+          "max": 52751
+        },
+        "cacheReadTokens": {
+          "median": 1379058,
+          "min": 1379058,
+          "max": 1379058
+        },
+        "outputTokens": {
+          "median": 25146,
+          "min": 25146,
+          "max": 25146
+        },
+        "thinkingTokens": {
+          "median": 8758,
+          "min": 8758,
+          "max": 8758
+        },
+        "totalTokens": {
+          "median": 1457035,
+          "min": 1457035,
+          "max": 1457035
+        },
+        "peakContextTokens": {
+          "median": 58007,
+          "min": 58007,
+          "max": 58007
+        },
+        "costUsd": {
+          "median": 1.2010595999999998,
+          "min": 1.2010595999999998,
+          "max": 1.2010595999999998
+        },
+        "minutes": {
+          "median": 5.708266666666667,
+          "min": 5.708266666666667,
+          "max": 5.708266666666667
+        },
+        "apiMinutes": {
+          "median": 3.5896166666666667,
+          "min": 3.5896166666666667,
+          "max": 3.5896166666666667
+        },
+        "turns": {
+          "median": 40,
+          "min": 40,
+          "max": 40
+        },
+        "apiCalls": {
+          "median": 40,
+          "min": 40,
+          "max": 40
+        },
+        "toolCalls": {
+          "median": 39,
+          "min": 39,
+          "max": 39
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 39,
+          "min": 39,
+          "max": 39
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 5,
+          "min": 5,
+          "max": 5
+        },
+        "docsChars": {
+          "median": 16437,
+          "min": 16437,
+          "max": 16437
+        },
+        "checkRuns": {
+          "median": 9,
+          "min": 9,
+          "max": 9
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 16,
+          "min": 16,
+          "max": 16
+        },
+        "linesWritten": {
+          "median": 418,
+          "min": 418,
+          "max": 418
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 20,
+          "min": 20,
+          "max": 20
+        },
+        "linesRemoved": {
+          "median": 6,
+          "min": 6,
+          "max": 6
+        },
+        "packagesAdded": {
+          "median": 2,
+          "min": 2,
+          "max": 2
+        }
+      },
+      "failures": []
+    },
+    "next": {
+      "runs": 1,
+      "passed": 1,
+      "versions": {
+        "bun": "1.4.3",
+        "next": "16.4.2",
+        "react": "19.3.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "gray-matter",
+        "rehype-stringify",
+        "remark-parse",
+        "remark-rehype",
+        "unified"
+      ],
+      "spent": {
+        "costUsd": 1.4233425999999998,
+        "totalTokens": 1988591,
+        "minutes": 4.384666666666667
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 78,
+          "min": 78,
+          "max": 78
+        },
+        "cacheWriteTokens": {
+          "median": 68534,
+          "min": 68534,
+          "max": 68534
+        },
+        "cacheReadTokens": {
+          "median": 1895193,
+          "min": 1895193,
+          "max": 1895193
+        },
+        "outputTokens": {
+          "median": 24786,
+          "min": 24786,
+          "max": 24786
+        },
+        "thinkingTokens": {
+          "median": 8800,
+          "min": 8800,
+          "max": 8800
+        },
+        "totalTokens": {
+          "median": 1988591,
+          "min": 1988591,
+          "max": 1988591
+        },
+        "peakContextTokens": {
+          "median": 73790,
+          "min": 73790,
+          "max": 73790
+        },
+        "costUsd": {
+          "median": 1.4233425999999998,
+          "min": 1.4233425999999998,
+          "max": 1.4233425999999998
+        },
+        "minutes": {
+          "median": 4.384666666666667,
+          "min": 4.384666666666667,
+          "max": 4.384666666666667
+        },
+        "apiMinutes": {
+          "median": 3.771316666666667,
+          "min": 3.771316666666667,
+          "max": 3.771316666666667
+        },
+        "turns": {
+          "median": 40,
+          "min": 40,
+          "max": 40
+        },
+        "apiCalls": {
+          "median": 39,
+          "min": 39,
+          "max": 39
+        },
+        "toolCalls": {
+          "median": 39,
+          "min": 39,
+          "max": 39
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 39,
+          "min": 39,
+          "max": 39
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 2,
+          "min": 2,
+          "max": 2
+        },
+        "docsCalls": {
+          "median": 14,
+          "min": 14,
+          "max": 14
+        },
+        "docsChars": {
+          "median": 86255,
+          "min": 86255,
+          "max": 86255
+        },
+        "checkRuns": {
+          "median": 7,
+          "min": 7,
+          "max": 7
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 18,
+          "min": 18,
+          "max": 18
+        },
+        "linesWritten": {
+          "median": 589,
+          "min": 589,
+          "max": 589
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 125,
+          "min": 125,
+          "max": 125
+        },
+        "linesRemoved": {
+          "median": 9,
+          "min": 9,
+          "max": 9
+        },
+        "packagesAdded": {
+          "median": 5,
+          "min": 5,
+          "max": 5
+        }
+      },
+      "failures": []
+    }
+  }
+}
