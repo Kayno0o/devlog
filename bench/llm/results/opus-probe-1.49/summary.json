@@ -1,0 +1,190 @@
+{
+  "label": "opus-probe-1.49",
+  "model": "claude-opus-5-5",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-16T20:33:50.372Z",
+  "to": "2026-10-16T20:33:50.372Z",
+  "frameworks": {
+    "kay": {
+      "runs": 1,
+      "passed": 1,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.49.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "@happy-dom/global-registrator"
+      ],
+      "spent": {
+        "costUsd": 1.3744986,
+        "totalTokens": 2133533,
+        "minutes": 2.63445
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 76,
+          "min": 76,
+          "max": 76
+        },
+        "cacheWriteTokens": {
+          "median": 79844,
+          "min": 79844,
+          "max": 79844
+        },
+        "cacheReadTokens": {
+          "median": 2037213,
+          "min": 2037213,
+          "max": 2037213
+        },
+        "outputTokens": {
+          "median": 16400,
+          "min": 16400,
+          "max": 16400
+        },
+        "thinkingTokens": {
+          "median": 4353,
+          "min": 4353,
+          "max": 4353
+        },
+        "totalTokens": {
+          "median": 2133533,
+          "min": 2133533,
+          "max": 2133533
+        },
+        "peakContextTokens": {
+          "median": 84353,
+          "min": 84353,
+          "max": 84353
+        },
+        "costUsd": {
+          "median": 1.3744986,
+          "min": 1.3744986,
+          "max": 1.3744986
+        },
+        "minutes": {
+          "median": 2.63445,
+          "min": 2.63445,
+          "max": 2.63445
+        },
+        "apiMinutes": {
+          "median": 2.44315,
+          "min": 2.44315,
+          "max": 2.44315
+        },
+        "turns": {
+          "median": 41,
+          "min": 41,
+          "max": 41
+        },
+        "apiCalls": {
+          "median": 38,
+          "min": 38,
+          "max": 38
+        },
+        "toolCalls": {
+          "median": 40,
+          "min": 40,
+          "max": 40
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 40,
+          "min": 40,
+          "max": 40
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 19,
+          "min": 19,
+          "max": 19
+        },
+        "docsChars": {
+          "median": 121268,
+          "min": 121268,
+          "max": 121268
+        },
+        "checkRuns": {
+          "median": 5,
+          "min": 5,
+          "max": 5
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 26,
+          "min": 26,
+          "max": 26
+        },
+        "linesWritten": {
+          "median": 335,
+          "min": 335,
+          "max": 335
+        },
+        "testLines": {
+          "median": 76,
+          "min": 76,
+          "max": 76
+        },
+        "styleLines": {
+          "median": 14,
+          "min": 14,
+          "max": 14
+        },
+        "linesRemoved": {
+          "median": 3,
+          "min": 3,
+          "max": 3
+        },
+        "packagesAdded": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        }
+      },
+      "failures": []
+    }
+  }
+}
