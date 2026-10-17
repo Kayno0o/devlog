@@ -333,23 +333,23 @@ Filtrez ses livres, ouvrez-en un, mettez-le en favori. C'est l'exécution au co�
 
 <Stats items={[{"value":"13K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
 
-<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.6,"range":[1.9,2.8]},{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
+<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.6,"range":[1.9,2.8]},{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
 
-<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":348,"range":[333,360]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]}]} bench="llm" />
+<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":348,"range":[333,360]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
 
-kay est le seul framework que le modèle n'avait jamais vu : tout ce qu'il en sait vient de la documentation du projet. Il construit pourtant le site aussi vite qu'Astro et plus vite que les deux autres, en 25 à 35 % de lignes en moins que chacun d'eux.
+kay est le seul framework que le modèle n'avait jamais vu : tout ce qu'il en sait vient de la documentation du projet. Il construit pourtant le site aussi vite qu'Astro et plus vite que les quatre autres, en 22 à 44 % de lignes en moins que chacun d'eux.
 
 ### Ce que kay perd
 
-<BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.88,1.11]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
+<BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.88,1.11]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
-<BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":96,"range":[83,116]}]} bench="llm" />
+<BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":96,"range":[83,116]}]} bench="llm" />
 
-Astro construit le site pour moins cher. Le modèle connaît déjà Astro, alors qu'il apprend kay dans sa documentation, en lisant trois fois plus, et chaque appel après ces lectures les repaie. kay coûte quand même moins que SvelteKit et SolidStart, que le modèle connaît eux aussi.
+Astro construit le site pour moins cher. Le modèle connaît déjà Astro, alors qu'il apprend kay dans sa documentation, en lisant trois fois plus, et chaque appel après ces lectures les repaie. kay coûte quand même moins que les quatre autres, que le modèle connaît eux aussi : les agents de Nuxt lisent le moins de documentation de tous et coûtent pourtant moitié plus.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.27.0, ses exécutions quelques heures après celles des autres, avec le même modèle et le même Claude Code, Opus 5.5 en effort élevé. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. La façon dont une exécution est préparée, isolée des autres et notée a [son propre article](/posts/agent-bench) ; le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
+kay 1.27.0, ses exécutions quelques heures après celles de SvelteKit, SolidStart et Astro et six jours avant celles de Nuxt et Next.js, avec le même modèle et le même Claude Code, Opus 5.5 en effort élevé. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. La façon dont une exécution est préparée, isolée des autres et notée a [son propre article](/posts/agent-bench) ; le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
 
