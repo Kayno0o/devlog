@@ -1,7 +1,7 @@
 --- server
 import { shareCard } from 'kay/image'
 import { posts } from '../../content.config'
-import kayCard from '../../kay-card.png'
+import kayCard from '../../kay-card.svg'
 
 export const page = { prerender: posts }
 
