@@ -1,0 +1,162 @@
+{
+  "framework": "next",
+  "run": 5,
+  "label": "full-opus-1.27",
+  "startedAt": "2026-10-16T23:43:41.389Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 288085,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 287634,
+    "durationApiMs": 245127,
+    "turns": 38,
+    "costUsd": 1.4803912,
+    "tokens": {
+      "input": 76,
+      "output": 26326,
+      "cacheCreation": 73310,
+      "cacheRead": 1835436
+    },
+    "outputExact": true,
+    "thinkingTokens": 9977,
+    "apiCalls": 38,
+    "peakContextTokens": 78566,
+    "toolCalls": {
+      "Bash": 37
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "\ncat > app/contact/actions.ts <<'EOF'\n\"use server\";\n\nimport {\n  type ContactState,\n  readContactForm,\n  successMessage,\n  validateContact,\n} from \"@/lib/contact\";\n\nexport async function sendContact(_previous: ContactState, formData: FormData): Promise<ContactState> {\n  const values = readContactForm(formData);\n  const errors = validateContact(values);\n  if (Object.keys(errors).length > 0) {\n    return { values, errors, success: null };\n  }\n  // Nothing needs to be stored.\n  return { values: { name: \"\", email: \"\", message: \"\" }, errors: {}, success: successMessage(values) };\n}\nEOF\ncat > app/contact/contact-form.tsx <<'EOF'\n\"use client\";\n\nimport { type FormEvent, useActionState, useState } from \"react\";\nimport { type ContactErrors, type ContactState, readContactForm, validateContact } from \"@/lib/contact\";\nimport { sendContact } from \"./actions\";\n\nconst initialState: ContactState = {\n  values: { name: \"\", email: \"\", message: \"\" },\n  errors: {},\n  success: null,\n};\n\nexport function ContactForm() {\n  const [state, formAction, pending] = useActionState(sendContact, initialState);\n  const [clientErrors, setClientErrors] = useState<ContactErrors | null>(null);\n  const errors = clientErrors ?? state.errors;\n  const success = clientErrors ? null : state.success;\n\n  function handleSubmit(event: FormEvent<HTMLFormElement>) {\n    const found = validateContact(readContactForm(new FormData(event.currentTarget)));\n    if (Object.keys(found).length > 0) {\n      event.preventDefault();\n      setClientErrors(found);\n    } else {\n      setClientErrors(null);\n    }\n  }\n\n  return (\n    <>\n      {success ? (\n        <p role=\"status\" className=\"success\">\n          {success}\n        </p>\n      ) : null}\n      <form action={formAction} onSubmit={handleSubmit} noValidate className=\"contact-form\">\n        <div className=\"field\">\n          <label htmlFor=\"contact-name\">Name</label>\n          <input\n            id=\"contact-name\"\n            name=\"name\"\n            type=\"text\"\n            defaultValue={state.values.name}\n            aria-invalid={errors.name ? true : undefined}\n            aria-describedby={errors.name ? \"contact-name-error\" : undefined}\n          />\n          {errors.name ? (\n            <p id=\"contact-name-error\" className=\"error\">\n              {errors.name}\n            </p>\n          ) : null}\n        </div>\n        <div className=\"field\">\n          <label htmlFor=\"contact-email\">Email</label>\n          <input\n            id=\"contact-email\"\n            name=\"email\"\n            type=\"email\"\n            defaultValue={state.values.email}\n            aria-invalid={errors.email ? true : undefined}\n            aria-describedby={errors.email ? \"contact-email-error\" : undefined}\n          />\n          {errors.email ? (\n            <p id=\"contact-email-error\" className=\"error\">\n              {errors.email}\n            </p>\n          ) : null}\n        </div>\n        <div className=\"field\">\n          <label htmlFor=\"contact-message\">Message</label>\n          <textarea\n            id=\"contact-message\"\n            name=\"message\"\n            rows={5}\n            defaultValue={state.values.message}\n            aria-invalid={errors.message ? true : undefined}\n            aria-describedby={errors.message ? \"contact-message-error\" : undefined}\n          />\n          {errors.message ? (\n            <p id=\"contact-message-error\" className=\"error\">\n              {errors.message}\n            </p>\n          ) : null}\n        </div>\n        <button type=\"submit\" disabled={pending}>\n          Send\n        </button>\n      </form>\n    </>\n  );\n}\nEOF\ncat > app/contact/page.tsx <<'EOF'\nimport type { Metadata } from \"next\";\nimport { ContactForm } from \"./contact-form\";\n\nexport const metadata: Metadata = { title: \"Contact | Bookshelf\" };\n\nexport default function ContactPage() {\n  return (\n    <>\n      <h1>Contact</h1>\n      <ContactForm />\n    </>\n  );\n}\nEOF\ncat > app/about/page.tsx <<'EOF'\nimport type { Metadata } from \"next\";\n\nexport const metadata: Metadata = { title: \"About | Bookshelf\" };\n\nexport default function AboutPage() {\n  return (\n    <>\n      <h1>About</h1>\n      <p>Bookshelf lists a few classic books worth reading.</p>\n    </>\n  );\n}\nEOF\ncat > app/page.tsx <<'EOF'\nimport type { Metadata } from \"next\";\nimport Link from \"next/link\";\nimport { getTopRated } from \"@/lib/books\";\n\nexport const metadata: Metadata = { title: \"Bookshelf\" };\n\nexport default async function Home() {\n  const topRated = await getTopRated(3);\n  return (\n    <>\n      <h1>Bookshelf</h1>\n      <p>A small catalog of classic books.</p>\n      <h2>Top rated</h2>\n      <ol>\n        {topRated.map((book) => (\n          <li key={book.slug}>\n            <Link href={`/books/${book.slug}`}>{book.title}</Link>\n          </li>\n        ))}\n      </ol>\n    </>\n  );\n}\nEOF\ncat > app/books/page.tsx <<'EOF'\nimport type { Metadata } from \"next\";\nimport { BookList } from \"@/components/book-list\";\nimport { getBooks } from \"@/lib/books\";\n\nexport const metadata: Metadata = { title: \"Books | Bookshelf\" };\n\nexport default async function BooksPage() {\n  const books = await getBooks();\n  const tags = [...new Set(books.flatMap((book) => book.tags))].sort((a, b) =>\n    a.localeCompare(b, \"en\"),\n  );\n  return (\n    <>\n      <h1>All books</h1>\n      <BookList books={books} tags={tags} />\n    </>\n  );\n}\nEOF\ncat > 'app/books/[slug]/page.tsx' <<'EOF'\nimport type { Metadata } from \"next\";\nimport Link from \"next/link\";\nimport { notFound } from \"next/navigation\";\nimport { FavoriteButton } from \"@/components/favorite-button\";\nimport { getBook, getBooks } from \"@/lib/books\";\n\nexport async function generateStaticParams() {\n  const books = await getBooks();\n  return books.map((book) => ({ slug: book.slug }));\n}\n\nexport async function generateMetadata({ params }: PageProps<\"/books/[slug]\">): Promise<Metadata> {\n  const { slug } = await params;\n  const book = await getBook(slug);\n  return { title: book ? `${book.title} | Bookshelf` : \"Not found | Bookshelf\" };\n}\n\nexport default async function BookPage({ params }: PageProps<\"/books/[slug]\">) {\n  const { slug } = await params;\n  const book = await getBook(slug);\n  if (!book) notFound();\n\n  return (\n    <article>\n      <h1>{book.title}</h1>\n      <p>by {book.author}</p>\n      <p>Published in {book.year}</p>\n      <p>Rating: {book.rating}/5</p>\n      <ul aria-label=\"Tags\" className=\"tags\">\n        {book.tags.map((tag) => (\n          <li key={tag}>\n            <Link href=\"/books\">{tag}</Link>\n          </li>\n        ))}\n      </ul>\n      <div className=\"book-body\" dangerouslySetInnerHTML={{ __html: book.html }} />\n      <FavoriteButton slug={book.slug} />\n    </article>\n  );\n}\nEOF\ncat > app/not-found.tsx <<'EOF'\nimport type { Metadata } from \"next\";\nimport Link from \"next/link\";\n\nexport const metadata: Metadata = { title: \"Not found | Bookshelf\" };\n\nexport default function NotFound() {\n  return (\n    <>\n      <h1>Not found</h1>\n      <Link href=\"/books\">Back to the books</Link>\n    </>\n  );\n}\nEOF\ncat > app/layout.tsx <<'EOF'\nimport type { Metadata } from \"next\";\nimport Link from \"next/link\";\nimport { Suspense } from \"react\";\nimport { CurrentMainNav, MainNav } from \"@/components/main-nav\";\nimport \"./globals.css\";\n\nexport const metadata: Metadata = {\n  title: \"Bookshelf\",\n  description: \"A small catalog of classic books.\",\n};\n\nexport default function RootLayout({ children }: LayoutProps<\"/\">) {\n  return (\n    <html lang=\"en\">\n      <body>\n        <header className=\"site-header\">\n          <Link href=\"/\" className=\"brand\">\n            Bookshelf\n          </Link>\n          <Suspense fallback={<MainNav />}>\n            <CurrentMainNav />\n          </Suspense>\n        </header>\n        <main>{children}</main>\n        <footer className=\"site-footer\">© Bookshelf</footer>\n      </body>\n    </html>\n  );\n}\nEOF\ncat > app/globals.css <<'EOF'\n:root {\n  color-scheme: light;\n  --ink: #2b2118;\n  --paper: #fbf7f0;\n  --accent: #8a3b12;\n  --muted: #6d5f52;\n  font-family: Georgia, \"Times New Roman\", serif;\n  color: var(--ink);\n  background: var(--paper);\n}\n\nbody {\n  margin: 0 auto;\n  max-width: 48rem;\n  padding: 0 1.25rem;\n  line-height: 1.6;\n}\n\na {\n  color: var(--accent);\n}\n\n.site-header {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 1.25rem 0;\n  border-bottom: 1px solid #e3d8c8;\n}\n\n.brand {\n  font-size: 1.4rem;\n  font-weight: bold;\n  text-decoration: none;\n}\n\n.site-header nav ul {\n  display: flex;\n  gap: 1.25rem;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n.site-header nav a[aria-current=\"page\"] {\n  font-weight: bold;\n  text-decoration-thickness: 2px;\n}\n\nmain {\n  padding: 1.5rem 0 3rem;\n}\n\n.site-footer {\n  border-top: 1px solid #e3d8c8;\n  padding: 1rem 0 2rem;\n  color: var(--muted);\n}\n\n.tag-filter {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  margin-bottom: 1rem;\n}\n\nbutton {\n  font: inherit;\n  padding: 0.3rem 0.8rem;\n  border: 1px solid var(--accent);\n  border-radius: 999px;\n  background: white;\n  color: var(--accent);\n  cursor: pointer;\n}\n\nbutton[aria-pressed=\"true\"] {\n  background: var(--accent);\n  color: white;\n}\n\nbutton:disabled {\n  opacity: 0.6;\n  cursor: default;\n}\n\n.book-list {\n  padding-left: 1.25rem;\n}\n\n.book-list li {\n  margin: 0.35rem 0;\n}\n\n.favorite-mark {\n  color: #b5651d;\n  font-size: 0.85em;\n}\n\n.tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n  list-style: none;\n  padding: 0;\n}\n\n.contact-form {\n  display: grid;\n  gap: 1rem;\n  max-width: 30rem;\n}\n\n.field {\n  display: grid;\n  gap: 0.25rem;\n}\n\n.field input,\n.field textarea {\n  font: inherit;\n  padding: 0.4rem;\n}\n\n.error {\n  margin: 0;\n  color: #b00020;\n}\n\n.success {\n  color: #1b6b2f;\n  font-weight: bold;\n}\nEOF\nbun run check 2>&1 | tail -20",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"next start\"; python3 - <<'EOF'\np='app/layout.tsx'\ns=open(p).read()\ns=s.replace('''          <Suspense fallback={<MainNav />}>\n            <CurrentMainNav />\n          </Suspense>''','''          <CurrentMainNav />''')\ns=s.replace('import { Suspense } from \"react\";\\n','').replace('{ CurrentMainNav, MainNav }','{ CurrentMainNav }')\nopen(p,'w').write(s)\nEOF\nbun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "grep -n \"Suspense\\|MainNav\" app/layout.tsx; bun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='app/layout.tsx'\ns=open(p).read()\ns=s.replace('''          <Suspense fallback={<MainNav />}>\n            <CurrentMainNav />\n          </Suspense>''','''          <CurrentMainNav />''')\ns=s.replace('import { Suspense } from \"react\";\\n','').replace('{ CurrentMainNav, MainNav }','{ CurrentMainNav }')\nopen(p,'w').write(s)\nEOF\nbun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > components/main-nav.tsx <<'EOF'\n\"use client\";\n\nimport Link from \"next/link\";\nimport { useSelectedLayoutSegment } from \"next/navigation\";\n\nconst LINKS = [\n  { href: \"/books\", segment: \"books\", label: \"Books\" },\n  { href: \"/about\", segment: \"about\", label: \"About\" },\n  { href: \"/contact\", segment: \"contact\", label: \"Contact\" },\n] as const;\n\n/**\n * Reads the active top-level route segment rather than the URL, so a 404 page\n * (including an unknown book slug rewritten by the proxy) marks no section.\n */\nexport function MainNav() {\n  const segment = useSelectedLayoutSegment();\n  return (\n    <nav aria-label=\"Main\">\n      <ul>\n        {LINKS.map((link) => (\n          <li key={link.href}>\n            <Link href={link.href} aria-current={segment === link.segment ? \"page\" : undefined}>\n              {link.label}\n            </Link>\n          </li>\n        ))}\n      </ul>\n    </nav>\n  );\n}\nEOF\nsed -i 's/CurrentMainNav/MainNav/g' app/layout.tsx\ncat > proxy.ts <<'EOF'\nimport { existsSync } from \"node:fs\";\nimport path from \"node:path\";\nimport { type NextRequest, NextResponse } from \"next/server\";\n\nconst BOOKS_DIR = path.join(process.cwd(), \"content\", \"books\");\n\n/**\n * Unknown book slugs are rewritten to the not-found route before rendering\n * starts, so they answer with a 404 status instead of a streamed fallback.\n */\nexport function proxy(request: NextRequest) {\n  const raw = request.nextUrl.pathname.slice(\"/books/\".length).replace(/\\/$/, \"\");\n  let slug: string;\n  try {\n    slug = decodeURIComponent(raw);\n  } catch {\n    slug = \"\";\n  }\n  const isBook =\n    /^[A-Za-z0-9._-]+$/.test(slug) &&\n    !slug.startsWith(\".\") &&\n    existsSync(path.join(BOOKS_DIR, `${slug}.md`));\n  if (isBook) return NextResponse.next();\n  return NextResponse.rewrite(new URL(\"/_not-found\", request.url));\n}\n\nexport const config = {\n  matcher: \"/books/:slug\",\n};\nEOF\ncat app/layout.tsx | head -25; bun run check && bun run build 2>&1 | tail -22",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > next.config.ts <<'EOF'\nimport type { NextConfig } from \"next\";\n\n// The site's public origin (for example `http://localhost:4701`) may differ\n// from the host the server sees, so Server Actions accept it explicitly.\nfunction allowedOrigins(): string[] {\n  const origin = process.env.ORIGIN;\n  if (!origin) return [];\n  try {\n    return [new URL(origin).host];\n  } catch {\n    return [];\n  }\n}\n\nconst nextConfig: NextConfig = {\n  /* config options here */\n  cacheComponents: true,\n  partialPrefetching: true,\n  experimental: {\n    serverActions: {\n      allowedOrigins: allowedOrigins(),\n    },\n  },\n};\n\nexport default nextConfig;\nEOF\nbash /tmp/stop.sh; bun run build 2>&1 | grep -i \"error\\|warn\\|✓ Compiled\"; bash /tmp/start.sh; sleep 3\nB=http://127.0.0.1:4701; H=$(curl -s $B/contact); \nref=$(echo \"$H\" | grep -o 'name=\"\\$ACTION_1:0\" value=\"[^\"]*\"' | sed 's/.*value=\"//;s/\"$//;s/&quot;/\"/g')\nst=$(echo \"$H\" | grep -o 'name=\"\\$ACTION_1:1\" value=\"[^\"]*\"' | sed 's/.*value=\"//;s/\"$//;s/&quot;/\"/g')\nkey=$(echo \"$H\" | grep -o 'name=\"\\$ACTION_KEY\" value=\"[^\"]*\"' | sed 's/.*value=\"//;s/\"$//')\nfor o in http://localhost:4701 http://evil.example; do curl -s -w '\\nHTTP %{http_code}\\n' -H \"Origin: $o\" -F '$ACTION_REF_1=' -F \"\\$ACTION_1:0=$ref\" -F \"\\$ACTION_1:1=$st\" -F \"\\$ACTION_KEY=$key\" -F name=Ada -F email=a@b.co -F 'message=This is a long enough message.' $B/contact | grep -o '<p role=\"status\"[^<]*\\|HTTP [0-9]*'; done",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run check 2>&1 | tail -2; for s in moby-dick the-time-machine pride-and-prejudice; do curl -s http://127.0.0.1:4701/books/$s | grep -o '<article>.*</article>' | head -c 400; echo; done; bash /tmp/stop.sh; sleep 1; curl -s -o /dev/null -w '%{http_code}\\n' http://127.0.0.1:4701/ ; pgrep -fa \"next\" ; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 12,
+      "chars": 72027
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "pkill -f \"next start\"; python3 - <<'EOF'\np='app/layout.tsx'\ns=open(p).read()\ns=s.replace('''          <Suspense fallback={<MainNav />}>\n            <CurrentMainNav />\n          </Suspense>''','''          <CurrentMainNav />''')\ns=s.replace('import { Suspense } from \"react\";\\n','').replace('{ CurrentMainNav, MainNav }','{ CurrentMainNav }')\nopen(p,'w').write(s)\nEOF\nbun run build 2>&1 | tail -30",
+      "python3 - <<'EOF'\np='app/layout.tsx'\ns=open(p).read()\ns=s.replace('''          <Suspense fallback={<MainNav />}>\n            <CurrentMainNav />\n          </Suspense>''','''          <CurrentMainNav />''')\ns=s.replace('import { Suspense } from \"react\";\\n','').replace('{ CurrentMainNav, MainNav }','{ CurrentMainNav }')\nopen(p,'w').write(s)\nEOF\nbun run build 2>&1 | tail -30"
+    ],
+    "resultTokens": {
+      "input": 76,
+      "output": 26326,
+      "cacheCreation": 73310,
+      "cacheRead": 1835436
+    }
+  },
+  "diff": {
+    "files": 19,
+    "added": 672,
+    "removed": 7,
+    "testLines": 0,
+    "styleLines": 135,
+    "dependenciesAdded": [
+      "gray-matter",
+      "marked"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://nextjs.org/docs/llms.txt and the Markdown of the pages it links",
+    "fetchedAt": "2026-10-16T12:17:58.638Z",
+    "files": 306,
+    "bytes": 3140372
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus-1.27/next-5"
+}

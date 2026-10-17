@@ -1,0 +1,141 @@
+{
+  "framework": "kay",
+  "run": 5,
+  "label": "full-opus-1.51",
+  "startedAt": "2026-10-17T01:17:52.808Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.51.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 283830,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 282526,
+    "durationApiMs": 266722,
+    "turns": 47,
+    "costUsd": 1.5376289999999997,
+    "tokens": {
+      "input": 86,
+      "output": 21424,
+      "cacheCreation": 77399,
+      "cacheRead": 2448065
+    },
+    "outputExact": true,
+    "thinkingTokens": 4960,
+    "apiCalls": 43,
+    "peakContextTokens": 82655,
+    "toolCalls": {
+      "Bash": 44,
+      "Read": 1,
+      "Edit": 1
+    },
+    "toolErrors": 2,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { s } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst message = s.Object({\n  name: s.String({ maxLength: 200 }),\n  email: s.String({ maxLength: 320 }),\n  message: s.String({ maxLength: 5000 }),\n})\n\nexport const contact = action(message, (input, ctx) => {\n  const errors = checkContact(input)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: input.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { contact } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(contact.failed()?.data?.errors ?? {})\nconst thanked = signal(contact.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    thanked.set((await contact(fields, { refresh: false })).name)\n    form.reset()\n  }\n}\n---\nif thanked()\n  p(role=\"status\") Thanks, {thanked()}! Your message has been sent.\nform(action={contact} novalidate onSubmit={submit})\n  .field\n    label(for=\"contact-name\") Name\n    input#contact-name(type=\"text\" name=\"name\")\n    if errors().name\n      p.error {errors().name}\n  .field\n    label(for=\"contact-email\") Email\n    input#contact-email(type=\"email\" name=\"email\")\n    if errors().email\n      p.error {errors().email}\n  .field\n    label(for=\"contact-message\") Message\n    textarea#contact-message(name=\"message\")\n    if errors().message\n      p.error {errors().message}\n  button(type=\"submit\") Send\nEOF\nbun run check; bun run fmt",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > src/routes/_layout.kay <<'EOF'\n--- server\nimport { books } from '../content.config'\n\nconst [, section, slug, ...rest] = ctx.url.pathname.replace(/\\/$/, '').split('/')\n// An unknown book slug renders the 404 page under /books, which lights no link.\nconst inBooks = section === 'books' && rest.length === 0 && (slug === undefined || await books.get(decodeURIComponent(slug)) !== undefined)\n---\nheader\n  a(href=\"/\" aria-current={undefined}) Bookshelf\n  nav(aria-label=\"Main\")\n    a(href=\"/books\" aria-current={inBooks ? 'page' : undefined}) Books\n    a(href=\"/about\" aria-current={section === 'about' && slug === undefined ? 'page' : undefined}) About\n    a(href=\"/contact\" aria-current={section === 'contact' && slug === undefined ? 'page' : undefined}) Contact\nmain\n  slot\nfooter © Bookshelf\nEOF\nbun run fmt && bun run check && bun run build 2>&1 | grep -i 'error\\|warn\\|route' | head",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run fmt && bun run check && bun run build >/tmp/build.log 2>&1; echo build=$?; bun test 2>&1 | tail -4; pgrep -f 'bun.*kay start' | xargs -r kill; sleep 1; pgrep -af 'kay start' | grep -v pgrep | grep -c bun",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 10,
+      "chars": 106726
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF' 2>/dev/null || bun -e '\nconst f = \"src/routes/_layout.kay\"; let t = await Bun.file(f).text()\nt = t.replace(\"const [, section\", \"function decoded(part: string) {\\n  try {\\n    return decodeURIComponent(part)\\n  }\\n  catch {\\n    return part\\n  }\\n}\\n\\nconst [, section\").replace(\"books.get(decodeURIComponent(slug))\", \"books.get(decoded(slug))\")\nawait Bun.write(f, t)'\nEOF\nsed -n 1,16p src/routes/_layout.kay"
+    ],
+    "resultTokens": {
+      "input": 86,
+      "output": 21424,
+      "cacheCreation": 77399,
+      "cacheRead": 2448065
+    }
+  },
+  "diff": {
+    "files": 26,
+    "added": 416,
+    "removed": 3,
+    "testLines": 80,
+    "styleLines": 0,
+    "dependenciesAdded": [
+      "@happy-dom/global-registrator"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.51.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 39,
+    "bytes": 591708
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus-1.51/kay-5"
+}

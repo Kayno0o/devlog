@@ -1,0 +1,156 @@
+{
+  "framework": "astro",
+  "run": 4,
+  "label": "full-opus",
+  "startedAt": "2026-10-10T03:07:50.937Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "astro": "7.3.8",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 155722,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude/projects",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "guards",
+        "tmux-tab",
+        "work-band",
+        "memory-preload",
+        "commit-titles",
+        "athome-scope",
+        "open-questions",
+        "agent-cap",
+        "ticket-hold",
+        "git-facts",
+        "context7",
+        "typescript-lsp",
+        "php-lsp",
+        "rust-analyzer-lsp",
+        "gopls-lsp",
+        "session-report",
+        "lua-lsp",
+        "clangd-lsp",
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 155524,
+    "durationApiMs": 140349,
+    "turns": 25,
+    "costUsd": 0.8306667999999998,
+    "tokens": {
+      "input": 48,
+      "output": 17119,
+      "cacheCreation": 43335,
+      "cacheRead": 707074
+    },
+    "outputExact": true,
+    "thinkingTokens": 4278,
+    "apiCalls": 24,
+    "peakContextTokens": 48591,
+    "toolCalls": {
+      "Bash": 24
+    },
+    "toolErrors": 2,
+    "checkRuns": [
+      {
+        "command": "sed -i 's/ aria-pressed=\"false\">$/>/; /button.setAttribute(.aria-pressed., String(favorite));/d' 'src/pages/books/[slug].astro' && grep -n \"aria-pressed\" 'src/pages/books/[slug].astro'\ncat > src/pages/api/contact.ts <<'EOF'\nimport type { APIRoute } from 'astro';\nimport { readContact, successMessage, validateContact } from '../../lib/contact';\n\nexport const prerender = false;\n\nexport const POST: APIRoute = async ({ request }) => {\n  let data: FormData;\n  try {\n    data = await request.formData();\n  } catch {\n    data = new FormData();\n  }\n  const values = readContact(data);\n  const errors = validateContact(values);\n  const ok = Object.keys(errors).length === 0;\n  return Response.json(\n    ok ? { ok, message: successMessage(values.name) } : { ok, errors },\n    { status: ok ? 200 : 400 },\n  );\n};\nEOF\ncat > src/pages/contact.astro <<'EOF'\n---\nimport Layout from '../layouts/Layout.astro';\nimport {\n  readContact,\n  successMessage,\n  validateContact,\n  type ContactErrors,\n  type ContactValues,\n} from '../lib/contact';\n\nexport const prerender = false;\n\nlet values: ContactValues = { name: '', email: '', message: '' };\nlet errors: ContactErrors = {};\nlet success = '';\n\nif (Astro.request.method === 'POST') {\n  try {\n    values = readContact(await Astro.request.formData());\n  } catch {\n    // An unreadable body is treated as an empty form.\n  }\n  errors = validateContact(values);\n  if (Object.keys(errors).length === 0) {\n    success = successMessage(values.name);\n    values = { name: '', email: '', message: '' };\n  } else {\n    Astro.response.status = 400;\n  }\n}\n---\n\n<Layout title=\"Contact | Bookshelf\">\n  <h1>Contact</h1>\n  <p class=\"success\" role=\"status\" hidden={!success}>{success}</p>\n  <form method=\"post\" action=\"/contact\" novalidate>\n    <div class=\"field\">\n      <label for=\"name\">Name</label>\n      <input\n        id=\"name\"\n        name=\"name\"\n        type=\"text\"\n        autocomplete=\"name\"\n        value={values.name}\n        aria-describedby=\"name-error\"\n        aria-invalid={errors.name ? 'true' : undefined}\n      />\n      <p class=\"error\" id=\"name-error\" data-error-for=\"name\">{errors.name}</p>\n    </div>\n    <div class=\"field\">\n      <label for=\"email\">Email</label>\n      <input\n        id=\"email\"\n        name=\"email\"\n        type=\"email\"\n        autocomplete=\"email\"\n        value={values.email}\n        aria-describedby=\"email-error\"\n        aria-invalid={errors.email ? 'true' : undefined}\n      />\n      <p class=\"error\" id=\"email-error\" data-error-for=\"email\">{errors.email}</p>\n    </div>\n    <div class=\"field\">\n      <label for=\"message\">Message</label>\n      <textarea\n        id=\"message\"\n        name=\"message\"\n        rows=\"6\"\n        aria-describedby=\"message-error\"\n        aria-invalid={errors.message ? 'true' : undefined}>{values.message}</textarea>\n      <p class=\"error\" id=\"message-error\" data-error-for=\"message\">{errors.message}</p>\n    </div>\n    <button type=\"submit\">Send</button>\n  </form>\n</Layout>\n\n<script>\n  import { readContact, validateContact, type ContactErrors } from '../lib/contact';\n\n  const form = document.querySelector<HTMLFormElement>('form[action=\"/contact\"]');\n  const success = document.querySelector<HTMLParagraphElement>('.success');\n\n  function showErrors(errors: ContactErrors) {\n    for (const field of ['name', 'email', 'message'] as const) {\n      const message = errors[field] ?? '';\n      const output = document.querySelector(`[data-error-for=\"${field}\"]`);\n      const input = form?.elements.namedItem(field);\n      if (output) output.textContent = message;\n      if (input instanceof HTMLElement) {\n        if (message) input.setAttribute('aria-invalid', 'true');\n        else input.removeAttribute('aria-invalid');\n      }\n    }\n  }\n\n  function showSuccess(message: string) {\n    if (!success) return;\n    success.textContent = message;\n    success.hidden = !message;\n  }\n\n  form?.addEventListener('submit', async (event) => {\n    event.preventDefault();\n    const data = new FormData(form);\n    const errors = validateContact(readContact(data));\n    showErrors(errors);\n    showSuccess('');\n    if (Object.keys(errors).length > 0) return;\n\n    const submit = form.querySelector<HTMLButtonElement>('button[type=\"submit\"]');\n    if (submit) submit.disabled = true;\n    try {\n      const response = await fetch('/api/contact', { method: 'POST', body: data });\n      const result: { ok: boolean; message?: string; errors?: ContactErrors } = await response.json();\n      if (result.ok) {\n        form.reset();\n        showSuccess(result.message ?? '');\n      } else {\n        showErrors(result.errors ?? {});\n      }\n    } catch {\n      // Fall back to a regular submission if the request could not be made.\n      form.submit();\n    } finally {\n      if (submit) submit.disabled = false;\n    }\n  });\n</script>\n\n<style>\n  form {\n    display: grid;\n    gap: 1rem;\n    max-width: 32rem;\n  }\n  .field {\n    display: grid;\n    gap: 0.25rem;\n  }\n  .error {\n    margin: 0;\n    color: #c00;\n  }\n  .error:empty {\n    display: none;\n  }\n  .success {\n    padding: 0.5rem 0.75rem;\n    border: 1px solid #0a0;\n    border-radius: 0.25rem;\n  }\n  button[type='submit'] {\n    justify-self: start;\n  }\n</style>\nEOF\ncat > src/middleware.ts <<'EOF'\nimport { defineMiddleware } from 'astro:middleware';\n\nconst SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);\n\n// Rejects cross-site form submissions, like Astro's built-in `checkOrigin`,\n// but also accepts the site's public origin given in the `ORIGIN` variable.\nexport const onRequest = defineMiddleware((context, next) => {\n  const { request, url, isPrerendered } = context;\n  if (isPrerendered || SAFE_METHODS.has(request.method)) return next();\n\n  const site = process.env.ORIGIN?.replace(/\\/+$/, '');\n  const fetchSite = request.headers.get('sec-fetch-site');\n  const origin = request.headers.get('origin');\n  const allowed =\n    fetchSite === 'same-origin' ||\n    fetchSite === 'none' ||\n    (!fetchSite && (!origin || origin === url.origin || origin === site)) ||\n    (fetchSite === 'same-site' && origin !== null && (origin === url.origin || origin === site));\n\n  if (!allowed) {\n    return new Response(`Cross-site ${request.method} form submissions are forbidden`, { status: 403 });\n  }\n  return next();\n});\nEOF\ncat > astro.config.mjs <<'EOF'\n// @ts-check\nimport { defineConfig } from 'astro/config';\n\nimport node from '@astrojs/node';\n\n// https://astro.build/config\nexport default defineConfig({\n  adapter: node({\n    mode: 'standalone'\n  }),\n  security: {\n    // Cross-site form submissions are rejected in `src/middleware.ts`, which\n    // also trusts the public origin given in the `ORIGIN` environment variable.\n    checkOrigin: false\n  }\n});\nEOF\nbun run check 2>&1 | tail -20",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i \"s#^import { defineMiddleware } from 'astro:middleware';#import { getSecret } from 'astro:env/server';\\nimport { defineMiddleware } from 'astro:middleware';#; s#process.env.ORIGIN?#getSecret('ORIGIN')?#\" src/middleware.ts && bun run check 2>&1 | tail -5 && bun run build 2>&1 | tail -25",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/middleware.ts'\ns=open(p).read()\ns=s.replace(\"\"\"  const site = getSecret('ORIGIN')?.replace(/\\\\/+$/, '');\n  const fetchSite = request.headers.get('sec-fetch-site');\n  const origin = request.headers.get('origin');\n  const allowed =\n    fetchSite === 'same-origin' ||\n    fetchSite === 'none' ||\n    (!fetchSite && (!origin || origin === url.origin || origin === site)) ||\n    (fetchSite === 'same-site' && origin !== null && (origin === url.origin || origin === site));\n\"\"\",\"\"\"  const fetchSite = request.headers.get('sec-fetch-site');\n  const origin = request.headers.get('origin');\n  const allowed =\n    fetchSite === 'same-origin' ||\n    fetchSite === 'none' ||\n    (!fetchSite && (!origin || isOwnOrigin(origin, request, url))) ||\n    (fetchSite === 'same-site' && origin !== null && isOwnOrigin(origin, request, url));\n\"\"\")\ns=s.replace(\"\"\"const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);\n\"\"\",\"\"\"const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);\n\nfunction isOwnOrigin(origin: string, request: Request, url: URL): boolean {\n  const host = request.headers.get('host');\n  const site = getSecret('ORIGIN')?.replace(/\\\\/+$/, '');\n  return origin === url.origin || origin === site || (host !== null && origin === `${url.protocol}//${host}`);\n}\n\"\"\")\ns=s.replace(\"// but also accepts the site's public origin given in the `ORIGIN` variable.\",\"// but also accepts the site's public origin given in the `ORIGIN` variable\\n// and the origin the request was actually addressed to (its `Host` header).\")\nopen(p,'w').write(s)\n\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"\"\"  } else {\n    Astro.response.status = 400;\n  }\n\"\"\",\"\"\"  }\n\"\"\")\nopen(p,'w').write(s)\np='src/pages/books/index.astro'\ns=open(p).read()\ns=s.replace(\"\"\"          <a href={`/books/${book.id}`}>{book.data.title}</a>\n          <span class=\"meta\">\"\"\",\"\"\"          <a href={`/books/${book.id}`}>{book.data.title}</a>{' '}\n          <span class=\"meta\">\"\"\")\ns=s.replace(\"\"\"</span>\n          <span class=\"favorite\" />\"\"\",\"\"\"</span>{' '}\n          <span class=\"favorite\" />\"\"\")\nopen(p,'w').write(s)\nEOF\ncat src/middleware.ts; pkill -f \"dist/server/entry.mjs\"; bun run check 2>&1 | grep -E \"error|Result\" ; bun run build 2>&1 | tail -2",
+        "failed": true,
+        "errors": 1
+      },
+      {
+        "command": "pgrep -af \"entry.mjs\" | grep -v pgrep; bun run check 2>&1 | grep -E \"error|Result\" ; bun run build 2>&1 | tail -2",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 1,
+    "docs": {
+      "calls": 8,
+      "chars": 37574
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='src/middleware.ts'\ns=open(p).read()\ns=s.replace(\"\"\"  const site = getSecret('ORIGIN')?.replace(/\\\\/+$/, '');\n  const fetchSite = request.headers.get('sec-fetch-site');\n  const origin = request.headers.get('origin');\n  const allowed =\n    fetchSite === 'same-origin' ||\n    fetchSite === 'none' ||\n    (!fetchSite && (!origin || origin === url.origin || origin === site)) ||\n    (fetchSite === 'same-site' && origin !== null && (origin === url.origin || origin === site));\n\"\"\",\"\"\"  const fetchSite = request.headers.get('sec-fetch-site');\n  const origin = request.headers.get('origin');\n  const allowed =\n    fetchSite === 'same-origin' ||\n    fetchSite === 'none' ||\n    (!fetchSite && (!origin || isOwnOrigin(origin, request, url))) ||\n    (fetchSite === 'same-site' && origin !== null && isOwnOrigin(origin, request, url));\n\"\"\")\ns=s.replace(\"\"\"const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);\n\"\"\",\"\"\"const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);\n\nfunction isOwnOrigin(origin: string, request: Request, url: URL): boolean {\n  const host = request.headers.get('host');\n  const site = getSecret('ORIGIN')?.replace(/\\\\/+$/, '');\n  return origin === url.origin || origin === site || (host !== null && origin === `${url.protocol}//${host}`);\n}\n\"\"\")\ns=s.replace(\"// but also accepts the site's public origin given in the `ORIGIN` variable.\",\"// but also accepts the site's public origin given in the `ORIGIN` variable\\n// and the origin the request was actually addressed to (its `Host` header).\")\nopen(p,'w').write(s)\n\np='src/pages/contact.astro'\ns=open(p).read()\ns=s.replace(\"\"\"  } else {\n    Astro.response.status = 400;\n  }\n\"\"\",\"\"\"  }\n\"\"\")\nopen(p,'w').write(s)\np='src/pages/books/index.astro'\ns=open(p).read()\ns=s.replace(\"\"\"          <a href={`/books/${book.id}`}>{book.data.title}</a>\n          <span class=\"meta\">\"\"\",\"\"\"          <a href={`/books/${book.id}`}>{book.data.title}</a>{' '}\n          <span class=\"meta\">\"\"\")\ns=s.replace(\"\"\"</span>\n          <span class=\"favorite\" />\"\"\",\"\"\"</span>{' '}\n          <span class=\"favorite\" />\"\"\")\nopen(p,'w').write(s)\nEOF\ncat src/middleware.ts; pkill -f \"dist/server/entry.mjs\"; bun run check 2>&1 | grep -E \"error|Result\" ; bun run build 2>&1 | tail -2"
+    ],
+    "resultTokens": {
+      "input": 48,
+      "output": 17119,
+      "cacheCreation": 43335,
+      "cacheRead": 707074
+    }
+  },
+  "diff": {
+    "files": 14,
+    "added": 604,
+    "removed": 15,
+    "testLines": 0,
+    "styleLines": 113,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://github.com/withastro/docs src/content/docs/en",
+    "revision": "bf9e538c64a51cd6ae7b212e0bcfdbf537dc6430",
+    "fetchedAt": "2026-10-10T01:14:03.245Z",
+    "files": 424,
+    "bytes": 2984973
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus/astro-4"
+}

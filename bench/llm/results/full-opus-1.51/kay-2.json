@@ -1,0 +1,149 @@
+{
+  "framework": "kay",
+  "run": 2,
+  "label": "full-opus-1.51",
+  "startedAt": "2026-10-17T01:08:24.227Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.51.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 172518,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 171964,
+    "durationApiMs": 155879,
+    "turns": 27,
+    "costUsd": 0.9351552000000001,
+    "tokens": {
+      "input": 52,
+      "output": 12275,
+      "cacheCreation": 59564,
+      "cacheRead": 1064676
+    },
+    "outputExact": true,
+    "thinkingTokens": 3138,
+    "apiCalls": 26,
+    "peakContextTokens": 64820,
+    "toolCalls": {
+      "Bash": 26
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "cat > src/routes/books/index.kay <<'EOF'\n--- server\nimport { books } from '../../content.config'\nimport BookList from '../../components/book-list.kay'\n\nconst list = (await books.all()).map(book => ({\n  slug: book.slug,\n  title: book.data.title,\n  author: book.data.author,\n  year: book.data.year,\n  tags: book.data.tags,\n}))\nconst tags = [...new Set(list.flatMap(book => book.tags))].toSorted((a, b) => a.localeCompare(b, 'en'))\n---\nhead\n  title Books\nh1 All books\nBookList(books={list} tags={tags})\nEOF\ncat > src/components/book-list.kay <<'EOF'\n---\nimport { favorites } from '../favorites'\n\ninterface Book { slug: string, title: string, author: string, year: number, tags: string[] }\n\nconst { books, tags } = props<{ books: Book[], tags: string[] }>()\nconst selected = signal<string | undefined>(undefined)\nconst shown = memo(() => {\n  const tag = selected()\n  return tag === undefined ? books : books.filter(book => book.tags.includes(tag))\n})\n---\ndiv.tags(role=\"group\" aria-label=\"Filter by tag\")\n  button(type=\"button\" aria-pressed={selected() === undefined ? 'true' : 'false'} onClick={() => selected = undefined}) All\n  for tag of tags key={tag}\n    button(type=\"button\" aria-pressed={selected() === tag ? 'true' : 'false'} onClick={() => selected = tag}) {tag}\nul(aria-label=\"Books\")\n  for book of shown() key={book.slug}\n    li\n      a(href={`/books/${book.slug}`}) {book.title}\n      | \n      span {book.author}, {book.year}\n      if favorites().includes(book.slug)\n        | \n        strong Favorite\nEOF\ncat > src/routes/books/\\[slug\\].kay <<'EOF'\n--- server\nimport { books } from '../../content.config'\nimport FavoriteButton from '../../components/favorite-button.kay'\n\nconst book = await books.get(ctx.params.slug) ?? ctx.notFound()\nconst { Content } = book\n---\nhead\n  title {book.data.title}\narticle\n  h1 {book.data.title}\n  p by {book.data.author}\n  p Published in {book.data.year}\n  p Rating: {book.data.rating}/5\n  ul.tags(aria-label=\"Tags\")\n    for tag of book.data.tags key={tag}\n      li: a(href=\"/books\") {tag}\n  FavoriteButton(slug={book.slug})\n  Content\nEOF\ncat > src/components/favorite-button.kay <<'EOF'\n---\nimport { favorites } from '../favorites'\n\nconst { slug } = props<{ slug: string }>()\nconst isFavorite = memo(() => favorites().includes(slug))\n\nfunction toggle() {\n  favorites = isFavorite() ? favorites().filter(item => item !== slug) : [...favorites(), slug]\n}\n---\nbutton(type=\"button\" onClick={toggle}) {isFavorite() ? 'Remove from favorites' : 'Add to favorites'}\nEOF\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { s } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst message = s.Object({\n  name: s.Optional(s.String({ maxLength: 200 })),\n  email: s.Optional(s.String({ maxLength: 320 })),\n  message: s.Optional(s.String({ maxLength: 5000 })),\n})\n\nexport const send = action(message, (input, ctx) => {\n  const fields = { name: input.name ?? '', email: input.email ?? '', message: input.message ?? '' }\n  const errors = checkContact(fields)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: fields.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { send } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(send.failed()?.data?.errors ?? {})\nconst thanked = signal(send.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n}\n---\nif thanked()\n  p(role=\"status\") Thanks, {thanked()}! Your message has been sent.\nform(action={send} novalidate onSubmit={submit})\n  div.field\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\")\n    if errors().name\n      p.error {errors().name}\n  div.field\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\")\n    if errors().email\n      p.error {errors().email}\n  div.field\n    label(for=\"message\") Message\n    textarea#message(name=\"message\")\n    if errors().message\n      p.error {errors().message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/components/contact-form.kay'\nt=open(p).read()\nt=t.replace(\"\"\"  if (Object.keys(found).length === 0) {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n\"\"\",\"\"\"  if (Object.keys(found).length > 0)\n    return\n\n  try {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n  catch (error) {\n    if (!send.refused(error))\n      throw error\n    errors.set(error.data?.errors ?? {})\n  }\n\"\"\")\nopen(p,'w').write(t)\nEOF\nbun run check 2>&1 | tail -20 && bun run fmt && git diff --stat && bun run build 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i \"s/^      |$/      {' '}/; s/^        |$/        {' '}/\" src/components/book-list.kay && bun run fmt && grep -n \"{' '}\" src/components/book-list.kay && bun run check && bun run build >/dev/null 2>&1; echo $?\nPORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &\nsleep 2; for u in / /books /books/frankenstein /books/nope /about /contact /zzz; do echo \"== $u $(curl -s -o /dev/null -w '%{http_code}' localhost:4701$u)\"; done",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"kay start\"; sleep 1; bun run fmt 2>&1 | tail -2 && bun run check 2>&1 | tail -2 && bun run build 2>&1 | grep -i -E \"error|warn\" ; echo build=$?\nPORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &\nsleep 2; for u in / /books /books/dracula /about /contact /x; do echo \"$u $(curl -s -o /dev/null -w '%{http_code}' 127.0.0.1:4702$u)\"; done; pkill -f \"kay start\"; sleep 1; pgrep -fa \"kay start\" || echo stopped; cat /tmp/srv.log; git status --short",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run fmt 2>&1 | tail -1 && bun run check 2>&1 | tail -1 && bun run build > /tmp/build.log 2>&1; echo build=$?; grep -i -E \"error|warn\" /tmp/build.log\nPORT=4702 HOST=127.0.0.1 ORIGIN=http://localhost:4702 NODE_ENV=production bun run start > /tmp/srv.log 2>&1 &\nSRV=$!; sleep 2; for u in / /books /books/dracula /about /contact /x; do echo \"$u $(curl -s -o /dev/null -w '%{http_code}' 127.0.0.1:4702$u)\"; done\nkill $SRV; sleep 1; ss -ltn | grep 4702 || echo stopped; cat /tmp/srv.log; git status --short",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 13,
+      "chars": 92517
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "python3 - <<'EOF'\np='src/components/contact-form.kay'\nt=open(p).read()\nt=t.replace(\"\"\"  if (Object.keys(found).length === 0) {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n\"\"\",\"\"\"  if (Object.keys(found).length > 0)\n    return\n\n  try {\n    thanked.set((await send(fields, { refresh: false })).name)\n    form.reset()\n  }\n  catch (error) {\n    if (!send.refused(error))\n      throw error\n    errors.set(error.data?.errors ?? {})\n  }\n\"\"\")\nopen(p,'w').write(t)\nEOF\nbun run check 2>&1 | tail -20 && bun run fmt && git diff --stat && bun run build 2>&1 | tail -30"
+    ],
+    "resultTokens": {
+      "input": 52,
+      "output": 12275,
+      "cacheCreation": 59564,
+      "cacheRead": 1064676
+    }
+  },
+  "diff": {
+    "files": 18,
+    "added": 302,
+    "removed": 3,
+    "testLines": 73,
+    "styleLines": 0,
+    "dependenciesAdded": [
+      "@happy-dom/global-registrator"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.51.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 39,
+    "bytes": 591708
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-opus-1.51/kay-2"
+}
