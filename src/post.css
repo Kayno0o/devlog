@@ -28,7 +28,7 @@
       }
     }
 
-    & table:not(.sr-only) {
+    & > table {
       @apply block w-full overflow-x-auto text-sm tabular-nums;
 
       & :is(th, td) {
