@@ -211,9 +211,9 @@ kay n'hydrate que ses islands. SolidJS et Svelte hydratent toute la page, et ren
 
 <BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4185}, {"label": "Svelte", "value": 3684}, {"label": "SolidJS", "value": 1685}]} bench="synthetic" />
 
-<BarChart title="Lignes de code, pages produits et tableau" unit="lignes" better="lower" digits={0} rows={[{"label": "Svelte", "value": 70}, {"label": "kay", "value": 73}, {"label": "Nuxt", "value": 108}, {"label": "Astro", "value": 140}, {"label": "SolidJS", "value": 151}, {"label": "Next.js", "value": 151}]} bench="synthetic" source="cloc, sans la glue serveur du benchmark" />
+<BarChart title="Code écrit, pages produits et tableau" unit="K caractères" better="lower" digits={1} rows={[{"label": "kay", "value": 1.9}, {"label": "Nuxt", "value": 2.9}, {"label": "Svelte", "value": 3.3}, {"label": "Astro", "value": 3.4}, {"label": "SolidJS", "value": 3.7}, {"label": "Next.js", "value": 4.1}]} bench="synthetic" source="sans les espaces ni les commentaires, ni la glue serveur du benchmark" />
 
-kay écrit les deux pages en 73 lignes, trois de plus que Svelte et moins de la moitié de SolidJS et Next.js. Les pages, layouts, composants et la config comptent ; le fichier qui branche chaque app dans le benchmark non, puisque celui de Next est un relais dont seul le benchmark a besoin.
+kay écrit les deux pages en 1 900 caractères, un tiers de moins que Nuxt, le suivant, et environ la moitié de SolidJS et Next.js. Des caractères plutôt que des lignes, puisqu'un nombre de lignes dépend de la mise en forme : l'app Svelte écrit chaque template sur une ligne, 70 lignes en tout, que Prettier transforme en 130. Les pages, layouts, composants et la config comptent ; le fichier qui branche chaque app dans le benchmark non, puisque celui de Next est un relais dont seul le benchmark a besoin.
 
 ### Ce que kay perd
 
@@ -227,7 +227,7 @@ Sur l'ensemble du benchmark du tableau, kay reste à moins de 11 % du plus rapi
 
 <Note title="Comment c'est mesuré">
 
-kay 1.28.0, solid-js 1.9.15 et Svelte 5.57.1, sur Bun 1.4.4 et Chromium 151 headless. Chaque chiffre est la médiane de trois passes du benchmark entier. Dans une passe, les chargements de page sont des médianes de 10 chargements à froid, les opérations sur le tableau des médianes de 10 exécutions après 2 échauffements, et le rendu serveur est mesuré en processus par mitata. Chaque tableau et ses notes sont dans le [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md) de kay, et `bun run bench` dans le dépôt de kay le relance. Les lignes de code sont le décompte de cloc 2.10 au commit db7b3c0 de kay, sans lignes vides ni commentaires.
+kay 1.28.0, solid-js 1.9.15 et Svelte 5.57.1, sur Bun 1.4.4 et Chromium 151 headless. Chaque chiffre est la médiane de trois passes du benchmark entier. Dans une passe, les chargements de page sont des médianes de 10 chargements à froid, les opérations sur le tableau des médianes de 10 exécutions après 2 échauffements, et le rendu serveur est mesuré en processus par mitata. Chaque tableau et ses notes sont dans le [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md) de kay, et `bun run bench` dans le dépôt de kay le relance. Le code est compté au commit db7b3c0 de kay, en caractères hors espaces et commentaires. Mis en forme par le formateur de chaque framework, kay fmt pour kay et Prettier pour les autres, cloc 2.10 compte 73 lignes pour kay, 122 pour Nuxt, 130 pour Svelte, 175 pour Astro, 182 pour SolidJS et 211 pour Next.js.
 
 </Note>
 
