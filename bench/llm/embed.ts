@@ -1,5 +1,5 @@
 // Exports the site kay's agent built, from its passing run of median cost, as static files under public/llm-bench/bookshelf/, for the post to show in an iframe.
-// It builds on the devlog's own kay, and a static export needs four changes to the agent's code, which the post lists: a base path, a prerender list for the book pages, a contact page saying its form is left out, since its action needs a server, and bookshelf.css for the devlog's colors.
+// It builds on the devlog's own kay, and a static export needs up to four changes to the agent's code, which the post lists: a base path, a prerender list for the book pages when the run has none, a contact page saying its form is left out, since its action needs a server, and bookshelf.css for the devlog's colors.
 // bun bench/llm/embed.ts <label>, once no benchmark is running, since it copies a graded workspace
 import { cpSync, existsSync, readdirSync, rmSync } from 'node:fs'
 import { homedir } from 'node:os'
@@ -74,10 +74,14 @@ const slugs = readdirSync(join(site, contentDir)).filter(name => name.endsWith('
 
 const devlogKay = (await Bun.file(join(benchDir, '../../package.json')).json() as { dependencies: { kay: string } }).dependencies.kay
 
-// the devlog's kay rather than the run's, so the export carries kay's fixes since
-await patch('package.json', text => text.replace(kayDependency, () => `"kay": "${devlogKay}"`))
+// the devlog's kay rather than the run's, so the export carries kay's fixes since, unless the run is on it already
+if (!(await Bun.file(join(site, 'package.json')).text()).includes(`"kay": "${devlogKay}"`)) {
+  await patch('package.json', text => text.replace(kayDependency, () => `"kay": "${devlogKay}"`))
+}
 await patch('kay.config.ts', text => text.replace('defineConfig({', () => `defineConfig({\n  base: '${base}',`))
-await patch('src/routes/books/[slug].kay', text => text.replace('--- server\n', () => `--- server\nexport const prerender = ${JSON.stringify(slugs)}\n`))
+if (!(await Bun.file(join(site, 'src/routes/books/[slug].kay')).text()).includes('prerender')) {
+  await patch('src/routes/books/[slug].kay', text => text.replace('--- server\n', () => `--- server\nexport const prerender = ${JSON.stringify(slugs)}\n`))
+}
 // a stylesheet is imported from a component script, the fence with no `server`
 await patch('src/routes/_layout.kay', text => text.startsWith('---\n') ? `---\nimport '../bookshelf.css'\n${text.slice(4)}` : `---\nimport '../bookshelf.css'\n---\n${text}`)
 // the form's components import its action, so they go with it
