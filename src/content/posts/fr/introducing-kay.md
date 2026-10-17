@@ -256,8 +256,6 @@ Pour le vérifier, Claude Opus 5.5 a construit le même petit site dans chaque f
 
 Filtrez ses livres, ouvrez-en un, mettez-le en favori. C'est l'exécution au coût médian, exportée en fichiers statiques, sans son formulaire de contact, puisqu'il demande un serveur. Le style était libre et non noté : les agents de kay n'en ont écrit aucun, là où les autres ont écrit une centaine de lignes de CSS dans une exécution typique, donc les comptes de lignes ci-dessous laissent les styles de côté.
 
-### Ce que kay gagne
-
 <Stats items={[{"value":"13K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
 
 <BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"kay","value":3.4,"range":[1.8,4.7]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
@@ -265,8 +263,6 @@ Filtrez ses livres, ouvrez-en un, mettez-le en favori. C'est l'exécution au co�
 <BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":323,"range":[227,336]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
 
 kay est le seul framework que le modèle apprend sur le moment, dans la documentation et le paquet du projet. Il construit pourtant le site juste derrière Astro et plus vite que les quatre autres, en 27 à 48 % de lignes en moins que chacun d'eux.
-
-### Ce que kay perd
 
 <BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.78,1.54]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 

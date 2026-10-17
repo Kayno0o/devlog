@@ -256,8 +256,6 @@ To check that, Claude Opus 5.5 built the same small site in each framework: a bo
 
 Filter its books, open one, mark it a favorite. It is the run of median cost, exported as static files, without its contact form, since that needs a server. Styling was free and not graded: kay's agents wrote none, where the others wrote about a hundred lines of CSS in a typical run, so the line counts below leave styles out.
 
-### What kay gains
-
 <Stats items={[{"value":"13K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
 <BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"kay","value":3.4,"range":[1.8,4.7]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
@@ -265,8 +263,6 @@ Filter its books, open one, mark it a favorite. It is the run of median cost, ex
 <BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":323,"range":[227,336]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
 
 kay is the one framework the model learns on the spot, from the docs and the package in the project. It still builds the site second only to Astro and faster than the other four, in 27 to 48% fewer lines than any of them.
-
-### What kay loses
 
 <BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.78,1.54]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
