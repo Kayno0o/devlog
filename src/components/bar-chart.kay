@@ -11,6 +11,8 @@ interface Row {
   value: number
   /** The lowest and highest of the runs `value` is the median of. */
   range?: [number, number] | undefined
+  /** Shown after the value in parentheses, telling apart two rows of one framework. */
+  note?: string | undefined
 }
 
 const { title, unit, rows, highlight, better, bench, source, digits = 1 } = props<{
@@ -28,6 +30,7 @@ const { title, unit, rows, highlight, better, bench, source, digits = 1 } = prop
 const highlighted = new Set(highlight === undefined ? rows.map(row => row.label).filter(label => label === 'kay' || label.startsWith('kay, ')) : [highlight].flat())
 const caption = bench === undefined ? source : benchSource(bench, source)
 const ranged = rows.some(row => row.range !== undefined)
+const name = (row: Row) => row.note === undefined ? row.label : `${row.label} (${row.note})`
 const high = (row: Row) => row.range?.[1] ?? row.value
 const max = () => Math.max(...rows.map(high))
 const share = (part: number, whole: number) => whole === 0 ? 0 : part / whole * 100
@@ -38,7 +41,7 @@ figure.chart
     if better
       span.text-sm.text-muted {t(`chart.better.${better}`)}
   div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1.5 gap-y-1" aria-hidden="true")
-    for row, i of rows key={row.label}
+    for row, i of rows key={name(row)}
       span.flex.items-center.justify-end.gap-2.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
         | {row.label}
         FrameworkLogo(label={row.label})
@@ -48,11 +51,17 @@ figure.chart
             .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: ${share(row.value, high(row))}%`})
             .chart-range-tick(style={`left: ${share(row.range[0], high(row))}%`})
           span.flex.flex-col.text-sm.leading-tight.whitespace-nowrap.tabular-nums
-            span {formatNumber(row.value, digits)} {unit}
+            span
+              | {formatNumber(row.value, digits)} {unit}
+              if row.note !== undefined
+                span.ml-1.text-muted ({row.note})
             span.text-xs.text-muted {t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })}
         else
           .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
-          span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
+          span.text-sm.whitespace-nowrap.tabular-nums
+            | {formatNumber(row.value, digits)} {unit}
+            if row.note !== undefined
+              span.ml-1.text-muted ({row.note})
   // a table takes its content's width whatever its own, so the box hiding it is a div
   .sr-only
     table
@@ -63,9 +72,9 @@ figure.chart
           if ranged
             th(scope="col") {t('chart.runs')}
       tbody
-        for row of rows key={row.label}
+        for row of rows key={name(row)}
           tr
-            th(scope="row") {row.label}
+            th(scope="row") {name(row)}
             td {formatNumber(row.value, digits)} {unit}
             if ranged
               td {row.range ? `${t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })} ${unit}` : ''}

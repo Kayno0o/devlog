@@ -75,3 +75,11 @@ it('hides its screen reader table in a div, since a table keeps its content\'s w
 
   expect(html).toContain('<div class="sr-only"><table>')
 })
+
+it('writes a row\'s note after its value, telling two rows of one framework apart', async () => {
+  const html = await renderToString(BarChart, { title: 'Build', unit: 's', digits: 2, rows: [{ label: 'kay', value: 0.34, note: 'no type check' }, { label: 'kay', value: 0.8 }] })
+
+  expect(html).toMatch(/0\.34 s<span[^>]*>\(no type check\)<\/span>/)
+  expect(html).toContain('<th scope="row">kay (no type check)</th>')
+  expect(html.match(/chart-bar-highlight/g)).toHaveLength(2)
+})
