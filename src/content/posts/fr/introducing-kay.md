@@ -201,8 +201,6 @@ Bun fait tout en dessous : le serveur, le bundler, le lanceur de tests et le dr
 
 La même page de produits et les mêmes données pour chaque framework, chacun écrit comme le font sa propre documentation et son entrée du js-framework-benchmark. kay, SolidJS et Svelte sont chronométrés derrière le même serveur Elysia, Astro et Nuxt à travers leurs propres gestionnaires de requêtes, et Next.js à travers son propre serveur HTTP. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
 
-### Ce que kay gagne
-
 <BarChart title="Script du thread principal au chargement, page produits" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.2}, {"label": "Astro", "value": 1.3}, {"label": "Nuxt", "value": 5.5}, {"label": "SolidJS", "value": 10.8}, {"label": "Svelte", "value": 14.2}, {"label": "Next.js", "value": 18.6}]} bench="synthetic" />
 
 kay n'hydrate que ses islands, et Astro ses deux islands Solid. SolidJS, Svelte et Nuxt hydratent toute la page, et renvoient donc aussi ses données en JSON, et Next.js envoie le payload de ses composants en flux avec la page.
@@ -214,8 +212,6 @@ kay n'hydrate que ses islands, et Astro ses deux islands Solid. SolidJS, Svelte 
 <BarChart title="Code écrit, pages produits et tableau" unit="K caractères" better="lower" digits={1} rows={[{"label": "kay", "value": 1.9}, {"label": "Nuxt", "value": 2.9}, {"label": "Svelte", "value": 3.3}, {"label": "Astro", "value": 3.4}, {"label": "SolidJS", "value": 3.7}, {"label": "Next.js", "value": 4.1}]} bench="synthetic" source="sans les espaces ni les commentaires, ni la glue serveur du benchmark" />
 
 kay écrit les deux pages en 1 900 caractères, un tiers de moins que Nuxt, le suivant, et environ la moitié de SolidJS et Next.js. Des caractères plutôt que des lignes, puisqu'un nombre de lignes dépend de la mise en forme : l'app Svelte écrit chaque template sur une ligne, 70 lignes en tout, que Prettier transforme en 130. Les pages, layouts, composants et la config comptent ; le fichier qui branche chaque app dans le benchmark non, puisque celui de Next est un relais dont seul le benchmark a besoin.
-
-### Ce que kay perd
 
 <BarChart title="JS envoyé, page tableau, gzip" unit="Ko" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
