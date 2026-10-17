@@ -78,10 +78,13 @@ const devlogKay = (await Bun.file(join(benchDir, '../../package.json')).json() a
 if (!(await Bun.file(join(site, 'package.json')).text()).includes(`"kay": "${devlogKay}"`)) {
   await patch('package.json', text => text.replace(kayDependency, () => `"kay": "${devlogKay}"`))
 }
+
 await patch('kay.config.ts', text => text.replace('defineConfig({', () => `defineConfig({\n  base: '${base}',`))
+
 if (!(await Bun.file(join(site, 'src/routes/books/[slug].kay')).text()).includes('prerender')) {
   await patch('src/routes/books/[slug].kay', text => text.replace('--- server\n', () => `--- server\nexport const prerender = ${JSON.stringify(slugs)}\n`))
 }
+
 // a stylesheet is imported from a component script, the fence with no `server`
 await patch('src/routes/_layout.kay', text => text.startsWith('---\n') ? `---\nimport '../bookshelf.css'\n${text.slice(4)}` : `---\nimport '../bookshelf.css'\n---\n${text}`)
 // the form's components import its action, so they go with it
