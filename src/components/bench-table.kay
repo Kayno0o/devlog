@@ -4,7 +4,6 @@ import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
 import FrameworkLogo from './framework-logo.kay'
 
-// The values are an array, not an object keyed by framework: kay reads a Markdown component's JSON prop two braces deep at most.
 interface Row {
   label: string
   /** One value per column, in the same order. */

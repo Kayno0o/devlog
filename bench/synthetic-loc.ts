@@ -7,8 +7,8 @@ import process from 'node:process'
 import { $ } from 'bun'
 
 const labels: Record<string, string> = { kay: 'kay', solid: 'SolidJS', svelte: 'Svelte', astro: 'Astro', next: 'Next.js', nuxt: 'Nuxt' }
-// The server glue mounting each app in the bench (Next's is a relay only the bench needs), type shims and package files are left out.
-const skipped = String.raw`^(app\.ts|entry\.ts|.*\.d\.ts|.*\.json)$`
+// The server glue mounting and building each app in the bench (Next's is a relay only the bench needs), type shims and package files are left out.
+const skipped = String.raw`^(app\.ts|build\.ts|entry\.ts|.*\.d\.ts|.*\.json)$`
 
 const kayjs = process.env.KAYJS ?? join(homedir(), 'Workspace', 'kayjs')
 const ref = process.argv[2] ?? 'HEAD'
