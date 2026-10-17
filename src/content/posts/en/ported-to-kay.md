@@ -36,8 +36,8 @@ Under load, kay peaks at 85 MiB of memory against SvelteKit's 131 to 134. The ho
 
 <BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 55}]} bench="sveltekit" source="RSS after start" />
 
-- **The default is not the fast path.** The phone paint above needs `inlineStyles`, which is opt-in: with the stylesheet linked, as kay does by default, kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
-- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.1 to 1.2 times its CPU per request. With it linked, kay served them at 1.8 to 2.2 times SvelteKit's rate.
+- **Inlining has a price.** The phone paint above comes from inlining the stylesheet, which this port turned on before kay 1.46 made it the default for stylesheets compressing under about 14 KB: with it linked, kay 1.14 painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
+- **Short pages with inlined styles.** Pages rendered per request carry the whole stylesheet, so kay serves them at 0.9 to 1.0 times SvelteKit's rate, for 1.1 to 1.2 times its CPU per request. With it linked, kay 1.16.6 served them at 1.8 to 2.2 times SvelteKit's rate.
 
 ### In development
 
@@ -66,9 +66,9 @@ Two small business sites moved to kay from Astro: a cattery and a house painter.
 
 kay serves those pages prerendered and already compressed, so nginx spends about 20 µs on each instead of 470 to 540, and both sit near the load client's own ceiling of about 40,000 a second. Both sites load their contact form as a deferred server island, so every page but the cattery's home is prerendered.
 
-<BarChart title="Server memory after load" unit="MB" better="lower" digits={0} rows={[{"label": "Astro, cattery", "value": 281}, {"label": "kay, cattery", "value": 144}, {"label": "Astro, painter", "value": 125}, {"label": "kay, painter", "value": 95}]} bench="astro" source="RSS after the load runs" />
+<BarChart title="Server memory after load" unit="MB" better="lower" digits={0} rows={[{"label": "kay, painter", "value": 95}, {"label": "Astro, painter", "value": 125}, {"label": "kay, cattery", "value": 144}, {"label": "Astro, cattery", "value": 281}]} bench="astro" source="RSS after the load runs" />
 
-<BarChart title="Deployed size" unit="MB" better="lower" digits={0} rows={[{"label": "Astro, painter", "value": 301}, {"label": "Astro, cattery", "value": 231}, {"label": "kay, cattery", "value": 109}, {"label": "kay, painter", "value": 98}]} bench="astro" source="dist and production node_modules against one executable" />
+<BarChart title="Deployed size" unit="MB" better="lower" digits={0} rows={[{"label": "kay, painter", "value": 98}, {"label": "kay, cattery", "value": 109}, {"label": "Astro, cattery", "value": 231}, {"label": "Astro, painter", "value": 301}]} bench="astro" source="dist and production node_modules against one executable" />
 
 - **Lighter images**, served as AVIF at the width drawn: 55 against 143 KB and 36 against 161 KB per page on desktop, 115 against 143 KB and 105 against 185 KB on a phone.
 - **Faster paints on the cattery**: on a phone, the largest paint lands at 1.78 s instead of 2.73 s, and a phone downloads 201 KB per page instead of 256.
@@ -77,9 +77,9 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 <BarChart title="JS shipped per page, brotli" unit="KB" better="lower" rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 13.1}, {"label": "kay, painter", "value": 13.1}]} bench="astro" source="average over every page" />
 
-- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 13.1 KB on kay, mostly the runtime its islands and in-place navigation need; the cattery's goes from 5.2 to 13.1 KB.
+- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 13.1 KB on kay; the cattery's goes from 5.2 to 13.1 KB.
 - **A heavier painter site on phones.** A phone downloads 170 KB per page against 126 KB, mostly fonts (107 against 35 KB) and that script. Its largest paint lands about 70 ms later on a phone and 35 ms later on desktop.
-- **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image at each width, and type-checks, which `astro build` does not: 11.3 against 1.9 s on the cattery and 7.1 against 1.6 s on the painter, the cattery's build peaking at 1.9 GB against 1.1.
+- **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image, which `astro build` does not: 11.3 against 1.9 s on the cattery and 7.1 against 1.6 s on the painter, the cattery's build peaking at 1.9 GB against 1.1.
 
 <Note title="How it was measured">
 

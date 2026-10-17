@@ -30,7 +30,7 @@ it('opens a bench\'s source with its name and ends it with its date', async () =
   const detailed = await renderToString(BarChart, { title: 'Build', unit: 's', rows, bench: 'sveltekit', source: 'hyperfine, 3 runs' })
   const plain = await renderToString(BarChart, { title: 'Build', unit: 's', rows, bench: 'synthetic' })
 
-  expect(detailed).toContain('Source: SvelteKit port, hyperfine, 3 runs, 2026-10-10')
+  expect(detailed).toContain('Source: SvelteKit port, hyperfine, 3 runs, 2026-10-11')
   expect(plain).toContain('Source: kay\'s bench, 2026-10-10')
 })
 

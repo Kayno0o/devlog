@@ -25,7 +25,7 @@ const greeting = 'Hello from the server'
 const count = signal(0)
 ---
 h1 {greeting}
-button(onClick={() => count++}) Clicked {count} times
+button(onClick={() => count++}) Clicked {count()} times
 ```
 
 Le premier bloc ne s'exécute que sur le serveur, le second aussi dans le navigateur, et le template lit les deux.
@@ -191,7 +191,7 @@ Pendant un temps, j'ai utilisé Astro avec SolidJS dedans : des pages rapides p
 ## Comment ça marche
 
 1. Le compilateur lit un fichier `.kay` une seule fois et produit deux jumeaux : un constructeur de chaînes HTML pour le serveur et un constructeur DOM pour le navigateur.
-2. Le serveur rend chaque page en chaîne de caractères. Une page statique n'a ni marqueurs ni script.
+2. Le serveur rend chaque page en chaîne de caractères. Une page statique n'a ni marqueurs d'hydratation ni bundle JavaScript.
 3. Une island est rendue côté serveur avec des marqueurs d'hydratation, puis reprend ces nœuds dans le navigateur au lieu de rendre une seconde fois.
 4. `kay build --static` écrit tout le site sous forme de fichiers, comme ce devlog, servi par un simple nginx.
 
@@ -199,7 +199,7 @@ Bun fait tout en dessous : le serveur, le bundler, le lanceur de tests et le dr
 
 ## Un benchmark synthétique
 
-La même page de produits, les mêmes données et le même serveur Elysia pour chaque framework, chacun écrit comme le font sa propre documentation et son entrée du js-framework-benchmark. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
+La même page de produits et les mêmes données pour chaque framework, chacun écrit comme le font sa propre documentation et son entrée du js-framework-benchmark. kay, SolidJS et Svelte sont chronométrés derrière le même serveur Elysia ; Astro, Next.js et Nuxt ne comptent que dans la taille du code. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
 
 ### Ce que kay gagne
 

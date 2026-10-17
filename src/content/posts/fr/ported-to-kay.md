@@ -36,8 +36,8 @@ Sous charge, kay culmine à 85 Mio de mémoire contre 131 à 134 pour SvelteKit
 
 <BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 55}]} bench="sveltekit" source="RSS après le démarrage" />
 
-- **Le réglage par défaut n'est pas le chemin rapide.** Le rendu sur mobile ci-dessus demande `inlineStyles`, qui est optionnel : avec la feuille de styles liée, comme kay le fait par défaut, kay rendait de 85 à 140 ms derrière SvelteKit. L'inlining coûte environ 2 Ko par page, et la feuille de styles n'est plus mise en cache d'une page à l'autre.
-- **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,1 à 1,2 fois son CPU par requête. Avec la feuille liée, kay les servait à 1,8 à 2,2 fois le débit de SvelteKit.
+- **L'inlining a un prix.** Le rendu sur mobile ci-dessus vient de la feuille de styles inlinée, que ce portage activait avant que kay 1.46 en fasse le réglage par défaut pour les feuilles de moins de 14 Ko environ une fois compressées : avec la feuille liée, kay 1.14 rendait de 85 à 140 ms derrière SvelteKit. L'inlining coûte environ 2 Ko par page, et la feuille de styles n'est plus mise en cache d'une page à l'autre.
+- **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,1 à 1,2 fois son CPU par requête. Avec la feuille liée, kay 1.16.6 les servait à 1,8 à 2,2 fois le débit de SvelteKit.
 
 ### En développement
 
@@ -66,9 +66,9 @@ Deux petits sites d'entreprise sont passés d'Astro à kay : un élevage de cha
 
 kay sert ces pages prérendues et déjà compressées, si bien que nginx passe environ 20 µs sur chacune au lieu de 470 à 540, et tous deux frôlent le plafond du client de charge lui-même, environ 40 000 par seconde. Les deux sites chargent leur formulaire de contact comme une server island différée, donc toutes les pages sauf l'accueil de l'élevage sont prérendues.
 
-<BarChart title="Mémoire du serveur après charge" unit="Mo" better="lower" digits={0} rows={[{"label": "Astro, élevage", "value": 281}, {"label": "kay, élevage", "value": 144}, {"label": "Astro, peintre", "value": 125}, {"label": "kay, peintre", "value": 95}]} bench="astro" source="RSS après les passes de charge" />
+<BarChart title="Mémoire du serveur après charge" unit="Mo" better="lower" digits={0} rows={[{"label": "kay, peintre", "value": 95}, {"label": "Astro, peintre", "value": 125}, {"label": "kay, élevage", "value": 144}, {"label": "Astro, élevage", "value": 281}]} bench="astro" source="RSS après les passes de charge" />
 
-<BarChart title="Taille déployée" unit="Mo" better="lower" digits={0} rows={[{"label": "Astro, peintre", "value": 301}, {"label": "Astro, élevage", "value": 231}, {"label": "kay, élevage", "value": 109}, {"label": "kay, peintre", "value": 98}]} bench="astro" source="dist et node_modules de production contre un seul exécutable" />
+<BarChart title="Taille déployée" unit="Mo" better="lower" digits={0} rows={[{"label": "kay, peintre", "value": 98}, {"label": "kay, élevage", "value": 109}, {"label": "Astro, élevage", "value": 231}, {"label": "Astro, peintre", "value": 301}]} bench="astro" source="dist et node_modules de production contre un seul exécutable" />
 
 - **Des images plus légères**, servies en AVIF à la largeur affichée : 55 contre 143 Ko et 36 contre 161 Ko par page sur desktop, 115 contre 143 Ko et 105 contre 185 Ko sur mobile.
 - **Des rendus plus rapides sur le site de l'élevage** : sur mobile, le plus gros rendu arrive à 1,78 s au lieu de 2,73 s, et un mobile télécharge 201 Ko par page au lieu de 256.
@@ -77,9 +77,9 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
 
 <BarChart title="JS envoyé par page, brotli" unit="Ko" better="lower" rows={[{"label": "Astro, peintre", "value": 0.4}, {"label": "Astro, élevage", "value": 5.2}, {"label": "kay, élevage", "value": 13.1}, {"label": "kay, peintre", "value": 13.1}]} bench="astro" source="moyenne sur toutes les pages" />
 
-- **Plus de JavaScript.** Le site du peintre envoyait 0,4 Ko sur Astro, quelques scripts simples inlinés dans ses pages, et en envoie 13,1 sur kay, surtout le runtime dont ses islands et la navigation sur place ont besoin ; celui de l'élevage passe de 5,2 à 13,1 Ko.
+- **Plus de JavaScript.** Le site du peintre envoyait 0,4 Ko sur Astro, quelques scripts simples inlinés dans ses pages, et en envoie 13,1 sur kay ; celui de l'élevage passe de 5,2 à 13,1 Ko.
 - **Un site de peintre plus lourd sur mobile.** Un mobile télécharge 170 Ko par page contre 126, surtout des polices (107 contre 35 Ko) et ce script. Son plus gros rendu arrive environ 70 ms plus tard sur mobile et 35 ms plus tard sur desktop.
-- **Des builds plus lents.** Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image à chaque largeur, et vérifie les types, ce que `astro build` ne fait pas : 11,3 contre 1,9 s sur l'élevage et 7,1 contre 1,6 s sur le peintre, le build de l'élevage culminant à 1,9 Go contre 1,1.
+- **Des builds plus lents.** Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image, ce que `astro build` ne fait pas : 11,3 contre 1,9 s sur l'élevage et 7,1 contre 1,6 s sur le peintre, le build de l'élevage culminant à 1,9 Go contre 1,1.
 
 <Note title="Comment c'est mesuré">
 
