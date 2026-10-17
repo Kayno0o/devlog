@@ -69,3 +69,9 @@ it('leaves the runs column and the legend out when no row has a range', async ()
   expect(html).not.toContain('chart-range')
   expect(html).not.toContain('Runs')
 })
+
+it('hides its screen reader table in a div, since a table keeps its content\'s width', async () => {
+  const html = await renderToString(BarChart, { title: 'Renders', unit: 'renders/s', rows })
+
+  expect(html).toContain('<div class="sr-only"><table>')
+})

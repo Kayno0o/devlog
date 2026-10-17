@@ -1,0 +1,28 @@
+---
+import Astro from '~icons/simple-icons/astro'
+import Next from '~icons/simple-icons/nextdotjs'
+import Nuxt from '~icons/simple-icons/nuxt'
+import Solid from '~icons/simple-icons/solid'
+import Svelte from '~icons/simple-icons/svelte'
+import kay from '../kay-logo.svg'
+
+// A label is a framework, then maybe its site: `SvelteKit` or `Astro, painter`.
+const logos = new Map([['kay', 'kay'], ['Svelte', 'svelte'], ['SvelteKit', 'svelte'], ['SolidJS', 'solid'], ['SolidStart', 'solid'], ['Astro', 'astro'], ['Next', 'next'], ['Next.js', 'next'], ['Nuxt', 'nuxt']])
+
+const { label } = props<{ label: string }>()
+
+const comma = label.indexOf(',')
+const logo = logos.get(comma === -1 ? label : label.slice(0, comma))
+---
+if logo === 'kay'
+  img.size-4(src={kay} alt="")
+else if logo === 'svelte'
+  Svelte.size-4.shrink-0
+else if logo === 'solid'
+  Solid.size-4.shrink-0
+else if logo === 'astro'
+  Astro.size-4.shrink-0
+else if logo === 'next'
+  Next.size-4.shrink-0
+else if logo === 'nuxt'
+  Nuxt.size-4.shrink-0

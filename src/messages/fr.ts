@@ -71,6 +71,10 @@ export default defineMessages({
     },
     source: 'Source : {source}',
   },
+  table: {
+    legend: '{unit}, {better}',
+    best: 'meilleur',
+  },
   benches: {
     synthetic: 'bench de kay',
     sveltekit: 'port SvelteKit',

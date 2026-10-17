@@ -1,4 +1,5 @@
 import { expect, it } from 'bun:test'
+import { bodyHtml } from 'kay/content'
 import { renderToString } from 'kay/server'
 import Embed from '../src/components/embed.kay'
 import Note from '../src/components/note.kay'
@@ -8,9 +9,10 @@ import Toc from '../src/components/toc.kay'
 import { highlight } from '../src/highlight'
 
 const heading = (depth: number, text: string) => ({ depth, id: text.toLowerCase(), text })
-const dataComponent = /^<(?:BarChart|Stats) /
-// the JSON prop, then only quoted attributes up to the tag's end
-const dataProp = /(?:rows|items)=\{(\[.*\])\}(?: [a-z]+="[^"]*")* \/>$/
+const frontmatter = /^---\n[\s\S]*?\n---\n/
+const code = /<(pre|code)\b[\s\S]*?<\/\1>/g
+// a capitalized tag left in the HTML, raw or escaped
+const componentLeft = /<[A-Z]|&lt;[A-Z]/
 
 it('lists a long post\'s sections, and nothing for a short one', async () => {
   const long = await renderToString(Toc, { headings: [heading(2, 'One'), heading(3, 'Inner'), heading(2, 'Two'), heading(2, 'Three'), heading(2, 'Four')] })
@@ -58,26 +60,18 @@ it('frames a page lazily, named for screen readers', async () => {
   expect(html).toContain('src="/llm-bench/bookshelf/books" title="The bookshelf" loading="lazy"')
 })
 
-// a component whose props do not parse shows as raw text in the post, which kay check does not report
-it('gives every chart and stats line of the posts props that parse', async () => {
-  const broken: string[] = []
+// a component tag kay cannot read stays in the post as text, which kay check does not report
+it('leaves no component of the posts as text', async () => {
+  const left: string[] = []
 
   for (const path of new Bun.Glob('src/content/posts/*/*.md').scanSync()) {
-    for (const line of (await Bun.file(path).text()).split('\n')) {
-      if (!dataComponent.test(line)) {
-        continue
-      }
+    const html = (await bodyHtml((await Bun.file(path).text()).replace(frontmatter, ''))).replace(code, '')
+    const at = html.search(componentLeft)
 
-      const json = dataProp.exec(line)?.[1]
-
-      try {
-        JSON.parse(json ?? '')
-      }
-      catch {
-        broken.push(`${path}: ${line.slice(0, 60)}`)
-      }
+    if (at !== -1) {
+      left.push(`${path}: ${html.slice(at, at + 60)}`)
     }
   }
 
-  expect(broken).toEqual([])
+  expect(left).toEqual([])
 })
