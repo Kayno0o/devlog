@@ -1,38 +1,38 @@
 {
   "kay": {
-    "source": "kay 1.49.0 package (llms.txt, llms/)",
-    "fetchedAt": "2026-10-16T20:32:25.402Z",
-    "files": 22,
-    "bytes": 576031
+    "source": "kay 1.51.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 39,
+    "bytes": 591708
   },
   "sveltekit": {
     "source": "https://svelte.dev/llms.txt and the files it links",
-    "fetchedAt": "2026-10-10T01:14:03.245Z",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
     "files": 8,
-    "bytes": 3446023
+    "bytes": 3447003
   },
   "solidstart": {
     "source": "https://docs.solidjs.com/llms.txt and the pages it links",
-    "fetchedAt": "2026-10-10T01:14:03.245Z",
-    "files": 272,
-    "bytes": 839181
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 273,
+    "bytes": 844791
   },
   "astro": {
     "source": "https://github.com/withastro/docs src/content/docs/en",
-    "revision": "bf9e538c64a51cd6ae7b212e0bcfdbf537dc6430",
-    "fetchedAt": "2026-10-10T01:14:03.245Z",
-    "files": 424,
-    "bytes": 2984973
+    "revision": "ce41ff8b0ddca4e26b5cbf588cd81bd10572060c",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 426,
+    "bytes": 2999356
   },
   "nuxt": {
     "source": "https://nuxt.com/llms.txt and the pages it links",
-    "fetchedAt": "2026-10-16T12:17:24.906Z",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
     "files": 341,
-    "bytes": 7754151
+    "bytes": 7758128
   },
   "next": {
     "source": "https://nextjs.org/docs/llms.txt and the Markdown of the pages it links",
-    "fetchedAt": "2026-10-16T12:17:58.638Z",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
     "files": 306,
     "bytes": 3140372
   }
