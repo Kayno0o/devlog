@@ -215,11 +215,9 @@ Compté en caractères, car les lignes dépendent de la mise en forme : Prettie
 
 <BarChart title="JS envoyé, page tableau, gzip" unit="Ko" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
-SolidJS envoie moins de JavaScript, et Astro aussi, dont l'island est le même tableau Solid. Celui de kay inclut sa navigation de page sur place, dont aucune des deux applis, sans routeur, ne se charge. Next.js et Nuxt en envoient 6 à 11 fois plus que kay.
+L'island d'Astro est le même tableau Solid que l'app SolidJS, et aucune des deux n'a de routeur, là où le JavaScript de kay inclut sa navigation de page sur place.
 
 <BenchTable title="Opérations sur le tableau" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Créer 1 000 lignes", "values": [29.8, 26.7, 25.8, 26.6, 29.9, 27]}, {"label": "Remplacer 1 000 lignes", "values": [25.7, 24.6, 25.9, 24.8, 31.4, 27.9]}, {"label": "Mettre à jour une ligne sur 10", "values": [2.8, 2.7, 2.7, 2.6, 4.1, 3.4]}, {"label": "Sélectionner une ligne", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.7]}, {"label": "Échanger deux lignes", "values": [2.3, 2, 2.1, 1.9, 20.4, 2.4]}, {"label": "Supprimer une ligne", "values": [2, 2, 2.2, 1.8, 3.4, 4.5]}, {"label": "Créer 10 000 lignes", "values": [264, 228, 232, 236, 362, 267]}, {"label": "Ajouter 1 000 lignes", "values": [24.5, 23.3, 24, 23.6, 26.9, 25.6]}, {"label": "Vider 1 000 lignes", "values": [3, 2.8, 3.2, 2.7, 5, 4.1]}]} bench="synthetic" />
-
-kay est premier pour sélectionner une ligne et devant Next.js sur chaque opération, devant Nuxt sur toutes sauf la création de 1 000 lignes. SolidJS, Svelte et Astro le battent sur la plupart des autres, de 21 % au plus, pour échanger deux lignes.
 
 <Note title="Comment c'est mesuré">
 
@@ -258,13 +256,11 @@ Filtrez ses livres, ouvrez-en un, mettez-le en favori. C'est l'exécution au co�
 
 <BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":323,"range":[227,336]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
 
-kay est le seul framework que le modèle apprend sur le moment, dans la documentation et le paquet du projet. Il construit pourtant le site juste derrière Astro et plus vite que les quatre autres, en 27 à 48 % de lignes en moins que chacun d'eux.
-
 <BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.78,1.54]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
 <BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":93,"range":[77,107]}]} bench="llm" />
 
-Astro construit le site pour moins cher. Le modèle arrive en ayant vu beaucoup d'Astro, alors qu'il apprend kay dans sa documentation, en lisant trois fois plus, et chaque appel après ces lectures les repaie. kay coûte quand même moins que les quatre autres, dont il a lui aussi vu beaucoup : les agents de Nuxt lisent le moins de documentation de tous et coûtent pourtant moitié plus.
+kay est le seul framework que le modèle apprend sur le moment, dans la documentation et le paquet du projet, là où il arrive en ayant vu beaucoup des autres, et chaque appel après ces lectures les repaie.
 
 <Note title="Comment c'est mesuré">
 
