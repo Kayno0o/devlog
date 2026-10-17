@@ -199,17 +199,17 @@ Bun does everything underneath: the server, the bundler, the test runner and the
 
 ## A synthetic bench
 
-The same products page and the same data for each framework, each written the way its own docs and its js-framework-benchmark entry write it. kay, SolidJS and Svelte are timed behind the same Elysia server; Astro, Next.js and Nuxt only count in the code size. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+The same products page and the same data for each framework, each written the way its own docs and its js-framework-benchmark entry write it. kay, SolidJS and Svelte are timed behind the same Elysia server, Astro and Nuxt through their own request handlers, and Next.js through its own HTTP server. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 ### What kay gains
 
-<BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "SolidJS", "value": 12.0}, {"label": "Svelte", "value": 15.7}]} bench="synthetic" />
+<BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.2}, {"label": "Astro", "value": 1.3}, {"label": "Nuxt", "value": 5.5}, {"label": "SolidJS", "value": 10.8}, {"label": "Svelte", "value": 14.2}, {"label": "Next.js", "value": 18.6}]} bench="synthetic" />
 
-kay hydrates its islands only. SolidJS and Svelte hydrate the whole page, so they also send its data again as JSON.
+kay hydrates its islands only, and Astro its two Solid ones. SolidJS, Svelte and Nuxt hydrate the whole page, so they also send its data again as JSON, and Next.js streams its component payload along with the page.
 
-<BarChart title="HTML sent, products page, gzip" unit="KB" better="lower" rows={[{"label": "kay", "value": 8.2}, {"label": "Svelte", "value": 15.7}, {"label": "SolidJS", "value": 21.6}]} bench="synthetic" />
+<BarChart title="HTML sent, products page, gzip" unit="KB" better="lower" rows={[{"label": "kay", "value": 8.4}, {"label": "Astro", "value": 10.3}, {"label": "Svelte", "value": 15.7}, {"label": "SolidJS", "value": 21.6}, {"label": "Nuxt", "value": 23.5}, {"label": "Next.js", "value": 23.6}]} bench="synthetic" />
 
-<BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4185}, {"label": "Svelte", "value": 3684}, {"label": "SolidJS", "value": 1685}]} bench="synthetic" />
+<BarChart title="Server rendering, products page" unit="renders/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4286}, {"label": "Svelte", "value": 3806}, {"label": "Astro", "value": 1805}, {"label": "SolidJS", "value": 1712}, {"label": "Nuxt", "value": 581}]} bench="synthetic" />
 
 <BarChart title="Code written, products and table pages" unit="K characters" better="lower" digits={1} rows={[{"label": "kay", "value": 1.9}, {"label": "Nuxt", "value": 2.9}, {"label": "Svelte", "value": 3.3}, {"label": "Astro", "value": 3.4}, {"label": "SolidJS", "value": 3.7}, {"label": "Next.js", "value": 4.1}]} bench="synthetic" source="whitespace and comments left out, as is the bench's server glue" />
 
@@ -217,17 +217,17 @@ kay writes both pages in 1,900 characters, a third less than Nuxt, the next shor
 
 ### What kay loses
 
-<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "kay", "value": 11.2}, {"label": "Svelte", "value": 22.5}]} bench="synthetic" />
+<BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
-SolidJS ships less JavaScript. kay's includes its in-place page navigation, which the Solid app, having no router, does without.
+SolidJS ships less JavaScript, and so does Astro, whose island is the same Solid table. kay's includes its in-place page navigation, which neither app, having no router, carries. Next.js and Nuxt ship 6 to 11 times more than kay.
 
-<BarChart title="Create 1,000 rows" unit="ms" better="lower" rows={[{"label": "SolidJS", "value": 30.8}, {"label": "Svelte", "value": 32.4}, {"label": "kay", "value": 33.9}]} bench="synthetic" />
+<BarChart title="Create 1,000 rows" unit="ms" better="lower" rows={[{"label": "Svelte", "value": 25.8}, {"label": "Astro", "value": 26.6}, {"label": "SolidJS", "value": 26.7}, {"label": "Nuxt", "value": 27}, {"label": "kay", "value": 29.8}, {"label": "Next.js", "value": 29.9}]} bench="synthetic" />
 
-On the whole table benchmark, kay is within 11% of the fastest on every operation, and first on replacing and appending 1,000 rows and on selecting a row. It is last on creating rows, by 5% on 1,000 and 7% on 10,000, on swapping rows, by 4%, and on updating every 10th row, by 5%.
+On the whole table benchmark, kay is first on selecting a row and ahead of Next.js on every operation, of Nuxt on all but creating 1,000 rows. SolidJS, Svelte and Astro beat it on most of the rest: kay trails the fastest by 21% on swapping rows, 15 to 16% on creating 1,000 and 10,000 rows, 11% on removing and clearing, and 4 to 6% on the others.
 
 <Note title="How it was measured">
 
-kay 1.28.0, solid-js 1.9.15 and Svelte 5.57.1, on Bun 1.4.4 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Code is counted at kay's commit db7b3c0, in characters other than whitespace and comments. Formatted by each framework's formatter, kay fmt for kay and Prettier for the others, cloc 2.10 counts kay 73 lines, Nuxt 122, Svelte 130, Astro 175, SolidJS 182 and Next.js 211.
+kay 1.51.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt 4.6.1, on Bun 1.4.3 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it serves only through its own HTTP server, so its renders would carry a socket round trip the others never pay. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Code is counted at kay 1.51.0, in characters other than whitespace and comments. Formatted by each framework's formatter, kay fmt for kay and Prettier for the others, cloc 2.10 counts kay 73 lines, Nuxt 122, Svelte 130, Astro 175, SolidJS 182 and Next.js 211.
 
 </Note>
 
