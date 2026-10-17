@@ -1,0 +1,190 @@
+{
+  "label": "opus-probe-1.51",
+  "model": "claude-opus-5-5",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-17T00:55:53.397Z",
+  "to": "2026-10-17T00:58:11.201Z",
+  "frameworks": {
+    "kay": {
+      "runs": 2,
+      "passed": 2,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.51.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "@happy-dom/global-registrator"
+      ],
+      "spent": {
+        "costUsd": 1.8384010000000002,
+        "totalTokens": 2294172,
+        "minutes": 4.153783333333333
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 55,
+          "min": 44,
+          "max": 66
+        },
+        "cacheWriteTokens": {
+          "median": 56102.5,
+          "min": 55410,
+          "max": 56795
+        },
+        "cacheReadTokens": {
+          "median": 1078202.5,
+          "min": 810327,
+          "max": 1346078
+        },
+        "outputTokens": {
+          "median": 12726,
+          "min": 12215,
+          "max": 13237
+        },
+        "thinkingTokens": {
+          "median": 3204.5,
+          "min": 2856,
+          "max": 3553
+        },
+        "totalTokens": {
+          "median": 1147086,
+          "min": 877996,
+          "max": 1416176
+        },
+        "peakContextTokens": {
+          "median": 60985,
+          "min": 59919,
+          "max": 62051
+        },
+        "costUsd": {
+          "median": 0.9192005000000001,
+          "min": 0.8498214,
+          "max": 0.9885796000000002
+        },
+        "minutes": {
+          "median": 2.0768916666666666,
+          "min": 2.0064333333333333,
+          "max": 2.14735
+        },
+        "apiMinutes": {
+          "median": 1.8918083333333335,
+          "min": 1.78655,
+          "max": 1.9970666666666668
+        },
+        "turns": {
+          "median": 28,
+          "min": 23,
+          "max": 33
+        },
+        "apiCalls": {
+          "median": 27.5,
+          "min": 22,
+          "max": 33
+        },
+        "toolCalls": {
+          "median": 27,
+          "min": 22,
+          "max": 32
+        },
+        "toolRead": {
+          "median": 1,
+          "min": 0,
+          "max": 2
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 26,
+          "min": 20,
+          "max": 32
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 12.5,
+          "min": 10,
+          "max": 15
+        },
+        "docsChars": {
+          "median": 77843.5,
+          "min": 76908,
+          "max": 78779
+        },
+        "checkRuns": {
+          "median": 5,
+          "min": 5,
+          "max": 5
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 24.5,
+          "min": 23,
+          "max": 26
+        },
+        "linesWritten": {
+          "median": 324,
+          "min": 321,
+          "max": 327
+        },
+        "testLines": {
+          "median": 37,
+          "min": 0,
+          "max": 74
+        },
+        "styleLines": {
+          "median": 4.5,
+          "min": 0,
+          "max": 9
+        },
+        "linesRemoved": {
+          "median": 3,
+          "min": 3,
+          "max": 3
+        },
+        "packagesAdded": {
+          "median": 0.5,
+          "min": 0,
+          "max": 1
+        }
+      },
+      "failures": []
+    }
+  }
+}
