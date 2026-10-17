@@ -13,12 +13,12 @@ const posts = [...new Bun.Glob('*/*.md').scanSync('src/content/posts')].map((pat
   return locale === 'en' ? `/posts/${slug}` : `/${locale}/posts/${slug}`
 })
 
-// light mode's muted text is under AA's contrast, a palette choice left open for now
-const ignored = new Set(['color-contrast'])
+// Catppuccin Latte's code colors are under AA's contrast on light mode, a theme choice left open for now
+const codeContrast = (rule: string, target: string) => rule === 'color-contrast' && target.startsWith('pre')
 
 it.each(posts)('%s breaks no axe rule', async (path) => {
   const page = await site.open(path)
-  const broken = (await page.a11y()).filter(rule => !ignored.has(rule.id)).map(rule => `${rule.id}: ${rule.nodes.map(node => node.target).join(', ')}`)
+  const broken = (await page.a11y()).flatMap(rule => rule.nodes.filter(node => !codeContrast(rule.id, node.target)).map(node => `${rule.id}: ${node.target}`))
 
   expect(broken).toEqual([])
 }, 30_000)
