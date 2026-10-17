@@ -333,23 +333,23 @@ Filter its books, open one, mark it a favorite. It is the run of median cost, mo
 
 <Stats items={[{"value":"13K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
-<BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.6,"range":[1.9,2.8]},{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
+<BarChart title="Time to build the site" unit="min" better="lower" digits={1} rows={[{"label":"kay","value":2.6,"range":[1.9,2.8]},{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
 
-<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":348,"range":[333,360]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]}]} bench="llm" />
+<BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":348,"range":[333,360]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
 
-kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site as fast as Astro and faster than the other two, in 25 to 35% fewer lines than any of them.
+kay is the one framework the model had never seen: all it knows comes from the docs in the project. It still builds the site as fast as Astro and faster than the other four, in 22 to 44% fewer lines than any of them.
 
 ### What kay loses
 
-<BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.88,1.11]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
+<BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.88,1.11]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
-<BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":96,"range":[83,116]}]} bench="llm" />
+<BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":96,"range":[83,116]}]} bench="llm" />
 
-Astro builds the site for less. The model already knows Astro, while it learns kay from its docs, reading three times as much, and every call after those reads pays for them again. kay still costs less than SvelteKit and SolidStart, which the model knows too.
+Astro builds the site for less. The model already knows Astro, while it learns kay from its docs, reading three times as much, and every call after those reads pays for them again. kay still costs less than the other four, which the model knows too: Nuxt's agents read the fewest docs of all and still cost half again as much.
 
 <Note title="How it was measured">
 
-kay 1.27.0, its runs a few hours after the others, with the same model and Claude Code, Opus 5.5 at high effort. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. How a run is set up, kept apart from the others and graded has [its own post](/posts/agent-bench); the spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
+kay 1.27.0, its runs a few hours after SvelteKit's, SolidStart's and Astro's and six days before Nuxt's and Next.js's, with the same model and Claude Code, Opus 5.5 at high effort. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. How a run is set up, kept apart from the others and graded has [its own post](/posts/agent-bench); the spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
 

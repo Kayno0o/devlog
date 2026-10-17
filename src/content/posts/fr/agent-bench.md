@@ -1,6 +1,6 @@
 ---
 title: "Un site, construit par un agent de code dans chaque framework"
-description: "Comment je mesure ce qu'un framework web coûte à un agent de code : un cahier des charges, une suite de tests cachée, des exécutions isolées et headless, et ce qui en sort pour kay, SvelteKit, SolidStart et Astro."
+description: "Comment je mesure ce qu'un framework web coûte à un agent de code : un cahier des charges, une suite de tests cachée, des exécutions isolées et headless, et ce qui en sort pour kay, SvelteKit, SolidStart, Astro, Nuxt et Next.js."
 date: 2026-10-16
 tags: [kay, benchmarks, llm]
 draft: true
@@ -29,11 +29,11 @@ Une suite ne vaut que ce contre quoi elle a été prouvée, alors elle tourne au
 
 ## Les starters et leur documentation
 
-Chaque exécution part du générateur de projet du framework, aussi minimal que possible tout en ayant un serveur pour le formulaire : `kay new --template blank --with server`, `sv create --template minimal` avec l'adaptateur Node, le `basic` de SolidStart 2, `create-astro --template minimal` avec l'adaptateur Node. Je ne touche qu'à leurs scripts, pour que `bun run check`, `bun run build` et `bun run start` veuillent dire la même chose partout. Chaque `check` reste celui du starter : celui de kay échoue aussi sur les avertissements, ceux des autres sur les erreurs seulement.
+Chaque exécution part du générateur de projet du framework, aussi minimal que possible tout en ayant un serveur pour le formulaire : `kay new --template blank --with server`, `sv create --template minimal` avec l'adaptateur Node, le `basic` de SolidStart 2, `create-astro --template minimal` avec l'adaptateur Node, `create-nuxt --template minimal` sans module, `create-next-app --empty` avec l'App Router. Je ne touche qu'à leurs scripts, pour que `bun run check`, `bun run build` et `bun run start` veuillent dire la même chose partout, et j'ajoute le `vue-tsc` dont le check de Nuxt a besoin. Chaque `check` reste celui du starter : celui de kay échoue aussi sur les avertissements, ceux des autres sur les erreurs seulement.
 
-La documentation est dans le projet, hors ligne, puisque le bac à sable n'a pas de réseau. Elle diffère autant par sa nature que par sa taille : celle de kay, ce sont le `llms.txt` et les fichiers par sujet que livre son paquet, 0,2 Mo en 18 fichiers. Celles de SvelteKit et SolidStart, les pages que lie leur `llms.txt`, 3,4 et 0,8 Mo. Astro a abandonné son `llms.txt`, donc sa documentation est la source Markdown de son site, 3,0 Mo en 424 fichiers.
+La documentation est dans le projet, hors ligne, puisque le bac à sable n'a pas de réseau. Elle diffère autant par sa nature que par sa taille : celle de kay, ce sont le `llms.txt` et les fichiers par sujet que livre son paquet, 0,2 Mo en 18 fichiers. Celles de SvelteKit, SolidStart et Nuxt, les pages que lie leur `llms.txt`, 3,4, 0,8 et 7,8 Mo. Celle de Next.js, le Markdown des pages que lie son `llms.txt`, 3,1 Mo, plus la documentation de son paquet, vers laquelle pointe l'`AGENTS.md` qu'écrit son générateur. Astro a abandonné son `llms.txt`, donc sa documentation est la source Markdown de son site, 3,0 Mo en 424 fichiers.
 
-La documentation compte plus pour kay que pour les autres : le modèle connaît déjà les trois autres, alors que tout ce qu'il sait de kay vient de ces 18 fichiers.
+La documentation compte plus pour kay que pour les autres : le modèle connaît déjà les cinq autres, alors que tout ce qu'il sait de kay vient de ces 18 fichiers.
 
 ## Des exécutions bien séparées
 
@@ -41,13 +41,13 @@ Chaque exécution est une session Claude Code headless, `claude -p --safe-mode`�
 
 Une fois l'agent arrêté, le correcteur lance `bun run check` et `bun run build`, démarre le site avec `bun run start` sur un port donné, et lance la suite dessus. Une exécution réussit quand les trois passent.
 
-Les exécutions alternent entre frameworks, dans un ordre qui tourne, pour qu'une heure lente de l'API tombe sur tout le monde pareil. Le rapport liste aussi ce que la note ne voit pas : les agents de chaque framework ont lancé `node` ou `python` quelques fois alors que le prompt demande Bun seul, et chaque exécution SvelteKit a modifié son script `start`, une entrée de la notation à relire avant de se fier au résultat.
+Les exécutions alternent entre frameworks, dans un ordre qui tourne, pour qu'une heure lente de l'API tombe sur tout le monde pareil. Le rapport liste aussi ce que la note ne voit pas : les agents de chaque framework ont lancé `node` ou `python` alors que le prompt demande Bun seul, quelques fois par exécution et jusqu'à 16 dans une exécution Nuxt, et chaque exécution SvelteKit a modifié son script `start`, une entrée de la notation à relire avant de se fier au résultat.
 
 ## D'abord une sonde
 
-Une série complète, c'est 5 exécutions par framework, donc une erreur dans le harnais coûte 20 exécutions. Chaque changement commence plutôt par une sonde : une exécution d'un seul framework sous une étiquette jetable, ses résultats et son transcript lus, puis le framework suivant. Une sonde coûte environ un dollar : de 0,79 à 1,27 $ pour le premier tour des quatre, de 0,83 à 1,71 $ pour celles de kay.
+Une série complète, c'est 5 exécutions par framework, donc une erreur dans le harnais coûte 30 exécutions. Chaque changement commence plutôt par une sonde : une exécution d'un seul framework sous une étiquette jetable, ses résultats et son transcript lus, puis le framework suivant. Une sonde coûte environ un dollar : de 0,79 à 1,27 $ pour le premier tour des quatre premiers, 1,20 et 1,42 $ pour celles de Nuxt et Next.js, de 0,83 à 1,71 $ pour celles de kay. La sonde de Next.js a échoué sur la suite, pas sur son site : le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne laisse jamais arriver à une deuxième visite, alors la suite ouvre maintenant chaque visite dans un nouveau contexte de navigateur qui reprend les cookies et le stockage.
 
-<Stats items={[{"value":"20 sur 20","label":"exécutions qui passent chaque vérification et chaque test"},{"value":"27,81 $","label":"toute la série, 20 exécutions aux tarifs API"}]} />
+<Stats items={[{"value":"30 sur 30","label":"exécutions qui passent chaque vérification et chaque test"},{"value":"44,73 $","label":"les 30 exécutions aux tarifs API"}]} />
 
 ## Résultats
 
@@ -55,9 +55,9 @@ Le temps, les lignes écrites, le coût et la documentation lue sont dans l'[art
 
 ### Ce que kay gagne
 
-<BarChart title="Tokens de réflexion" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":2.8,"range":[2.2,4.4]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.4]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
+<BarChart title="Tokens de réflexion" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":2.8,"range":[2.2,4.4]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.4]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
 
-C'est en kay que le modèle réfléchit le moins : un tiers de moins qu'en Astro, trois à quatre fois moins qu'en SvelteKit et SolidStart.
+C'est en kay que le modèle réfléchit le moins : un tiers de moins qu'en Astro, trois à quatre fois moins que dans les quatre autres.
 
 <Stats items={[{"value":"76 contre 0","label":"lignes de tests écrites, kay contre les autres"}]} />
 
@@ -65,14 +65,14 @@ Les agents de kay ont écrit leurs propres tests à chaque exécution, là où a
 
 ### Ce que kay perd
 
-<BarChart title="Tours" unit="tours" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":29,"range":[25,31]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
+<BarChart title="Tours" unit="tours" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":29,"range":[25,31]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
 
-<BarChart title="Plus grand contexte d'un appel" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":45,"range":[43.1,58.9]},{"label":"kay","value":61.7,"range":[58.7,70]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]} bench="llm" />
+<BarChart title="Plus grand contexte d'un appel" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":45,"range":[43.1,58.9]},{"label":"kay","value":61.7,"range":[58.7,70]},{"label":"Nuxt","value":67,"range":[48.4,91.2]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"Next.js","value":90,"range":[71.2,120.1]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]} bench="llm" />
 
-Astro y arrive en moins de tours, avec un contexte plus petit. Apprendre kay dans sa documentation coûte des lectures, et chaque appel suivant les emporte avec lui : le contexte de kay culmine environ un tiers au-dessus de celui d'Astro, tout en restant bien sous ceux de SvelteKit et SolidStart.
+Astro y arrive en moins de tours, avec un contexte plus petit. Apprendre kay dans sa documentation coûte des lectures, et chaque appel suivant les emporte avec lui : le contexte de kay culmine environ un tiers au-dessus de celui d'Astro, tout en restant sous ceux des quatre autres, celui de Nuxt d'un dixième seulement.
 
 <Note title="Comment c'est mesuré">
 
-Claude Opus 5.5 en effort élevé, Claude Code 2.1.289, kay 1.27.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, tous sur Bun, 5 exécutions chacun, celles de kay quelques heures après les autres. Chaque chiffre est la médiane des exécutions réussies, et les 20 ont réussi. Le coût est aux tarifs API, tel que Claude Code le rapporte, exécutions ratées comprises. Le cahier des charges, le prompt, les starters, la suite et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
+Claude Opus 5.5 en effort élevé, Claude Code 2.1.289, kay 1.27.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, tous sur Bun, 5 exécutions chacun, celles de kay quelques heures après celles de SvelteKit, SolidStart et Astro, celles de Nuxt et Next.js six jours plus tard. Chaque chiffre est la médiane des exécutions réussies, et les 30 ont réussi. Le coût est aux tarifs API, tel que Claude Code le rapporte, exécutions ratées comprises. Le cahier des charges, le prompt, les starters, la suite et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
 
 </Note>
