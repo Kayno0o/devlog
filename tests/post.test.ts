@@ -8,6 +8,9 @@ import Toc from '../src/components/toc.kay'
 import { highlight } from '../src/highlight'
 
 const heading = (depth: number, text: string) => ({ depth, id: text.toLowerCase(), text })
+const dataComponent = /^<(?:BarChart|Stats) /
+// the JSON prop, then only quoted attributes up to the tag's end
+const dataProp = /(?:rows|items)=\{(\[.*\])\}(?: [a-z]+="[^"]*")* \/>$/
 
 it('lists a long post\'s sections, and nothing for a short one', async () => {
   const long = await renderToString(Toc, { headings: [heading(2, 'One'), heading(3, 'Inner'), heading(2, 'Two'), heading(2, 'Three'), heading(2, 'Four')] })
@@ -53,4 +56,28 @@ it('frames a page lazily, named for screen readers', async () => {
   const html = await renderToString(Embed, { src: '/llm-bench/bookshelf/books', title: 'The bookshelf' })
 
   expect(html).toContain('src="/llm-bench/bookshelf/books" title="The bookshelf" loading="lazy"')
+})
+
+// a component whose props do not parse shows as raw text in the post, which kay check does not report
+it('gives every chart and stats line of the posts props that parse', async () => {
+  const broken: string[] = []
+
+  for (const path of new Bun.Glob('src/content/posts/*/*.md').scanSync()) {
+    for (const line of (await Bun.file(path).text()).split('\n')) {
+      if (!dataComponent.test(line)) {
+        continue
+      }
+
+      const json = dataProp.exec(line)?.[1]
+
+      try {
+        JSON.parse(json ?? '')
+      }
+      catch {
+        broken.push(`${path}: ${line.slice(0, 60)}`)
+      }
+    }
+  }
+
+  expect(broken).toEqual([])
 })
