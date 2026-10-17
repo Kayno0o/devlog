@@ -29,50 +29,50 @@ A suite is only as good as what it was proven against, so it also runs against a
 
 ## The starters and their docs
 
-Each run starts from the framework's own scaffolder, as minimal as it gets while still having a server for the form: `kay new --template blank --with server`, `sv create --template minimal` with the Node adapter, SolidStart 2's `basic`, `create-astro --template minimal` with the Node adapter, `create-nuxt --template minimal` with no modules, `create-next-app --empty` with the App Router. I only touch their scripts, so that `bun run check`, `bun run build` and `bun run start` mean the same thing everywhere, and add the `vue-tsc` that Nuxt's check needs. Each `check` stays the starter's own: kay's fails on warnings too, the others' on errors only.
+Each run starts from the framework's own scaffolder, as minimal as it gets while still having a server for the form: `kay new --template blank --with server`, `sv create --template minimal` with the Node adapter, SolidStart 2's `basic`, `create-astro --template minimal` with the Node adapter, `create-nuxt --template minimal` with no modules, `create-next-app --empty` with the App Router. I only touch their scripts, so that `bun run check`, `bun run build` and `bun run start` mean the same thing everywhere, and add the `vue-tsc` and TypeScript 6 that Nuxt's check needs. Each `check` stays the starter's own, failing on errors only.
 
-The docs sit offline in the project, since the sandbox has no network. They differ in kind as much as in size: kay's are the `llms.txt` and topic files its package ships, 0.2 MB in 18 files. SvelteKit's, SolidStart's and Nuxt's are the pages their `llms.txt` links, 3.4, 0.8 and 7.8 MB. Next.js's are the Markdown of the pages its `llms.txt` links, 3.1 MB, plus the docs in its package, which the `AGENTS.md` its scaffolder writes points to. Astro dropped its `llms.txt`, so its docs are the Markdown source of its site, 3.0 MB in 424 files.
+The docs sit offline in the project, since the sandbox has no network. They differ in kind as much as in size: kay's are the `llms.txt` and topic files its package ships, 0.6 MB in 39 files. SvelteKit's, SolidStart's and Nuxt's are the pages their `llms.txt` links, 3.4, 0.8 and 7.8 MB. Next.js's are the Markdown of the pages its `llms.txt` links, 3.1 MB, plus the docs in its package, which the `AGENTS.md` its scaffolder writes points to. Astro dropped its `llms.txt`, so its docs are the Markdown source of its site, 3.0 MB in 424 files.
 
-Docs matter more for kay than for anyone else: the model already knows the other five, while everything it knows about kay comes from those 18 files.
+Docs matter more for kay than for anyone else: the other five have years of code and answers on the web the model learned from, while what it knows about kay comes from those 39 files and the package itself.
 
 ## Keeping the runs apart
 
-Each run is one headless Claude Code session, `claude -p --safe-mode`: no project instructions, no hooks, no plugins, no MCP servers, and an empty config directory of its own. It runs under bubblewrap, which hides my workspace, my Claude config and transcripts, the other runs, the reference site and the test browsers, with a private `/tmp` and process list. So the agent cannot peek at the tests, copy a previous run, or check its work in a browser: `check`, the build and its own reasoning are all it has.
+Each run is one headless Claude Code session, `claude -p --safe-mode`: no CLAUDE.md, no hooks, no plugins, no MCP servers, and an empty config directory of its own. It runs under bubblewrap, which hides my workspace, my Claude config and transcripts, the other runs, the reference site and the test browsers, with a private `/tmp` and process list. So the agent cannot peek at the tests, copy a previous run, or check its work in a browser: `check`, the build and its own reasoning are all it has.
 
 Once the agent stops, the grader runs `bun run check` and `bun run build`, starts the site with `bun run start` on a given port, and runs the suite against it. A run passes when all three pass.
 
-Runs alternate between frameworks, in a rotated order, so a slow hour on the API lands on everyone alike. The report also lists what the grade does not catch: every framework's agents reached for `node` or `python` despite the prompt asking for Bun only, a few times per run and up to 16 in one Nuxt run, and every SvelteKit run edited its `start` script, a grading input worth reading before trusting the result.
+The harness alternates runs between frameworks, in a rotated order, so a slow hour on the API lands on everyone alike, but each sitting here covers only some of them: SvelteKit, SolidStart and Astro together, then Nuxt and Next.js one after the other, then kay alone, so time is the measure to read with the most salt. The report also lists what the grade does not catch: in 27 of 30 runs the agent reached for `python`, `node` or another package manager despite the prompt asking for Bun only, up to 16 times in one Nuxt run, and every SvelteKit run edited its `start` script, a grading input worth reading before trusting the result.
 
 ## Probe first
 
 A full sitting is 5 runs per framework, so a mistake in the harness costs 30 runs. Each change starts with a probe instead: one run of one framework under a throwaway label, its results and transcript read, then the next framework. A probe costs about a dollar: $0.79 to $1.27 for the first round of the first four, $1.20 and $1.42 for Nuxt's and Next.js's, $0.83 to $1.71 for kay's. Next.js's probe failed on the suite, not on its site: the favorites test waited for the network to go idle after a reload, which Next's router never lets happen on a second visit, so the suite now opens each visit in a fresh browser context carrying the cookies and storage over.
 
-<Stats items={[{"value":"30 of 30","label":"runs passing every check and test"},{"value":"$44.73","label":"all 30 runs at API prices"}]} />
+<Stats items={[{"value":"30 of 30","label":"runs passing every check and test"},{"value":"$45.15","label":"all 30 runs at API prices"}]} />
 
 ## Results
 
-Time, lines written, cost and docs read are charted in the [kay post](/posts/introducing-kay). Here are the rest, the median run of each framework with the lowest and highest beside it.
+Time, lines written, cost and docs read are charted in the [kay post](/posts/introducing-kay). Here is the rest, the median run of each framework with the lowest and highest beside it.
 
 ### What kay gains
 
-<BarChart title="Thinking tokens" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":2.8,"range":[2.2,4.4]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.4]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
+<BarChart title="Thinking tokens" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":3.1,"range":[2.4,5]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.3]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.4]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
 
-The model thinks least in kay: a third less than in Astro, three to four times less than in the other four.
+The model thinks least in kay: a quarter less than in Astro, about three times less than in the other four.
 
-<Stats items={[{"value":"76 vs 0","label":"lines of tests written, kay against the others"}]} />
+<Stats items={[{"value":"78 vs 0","label":"lines of tests written, kay against the others"}]} />
 
-kay's agents wrote their own tests in every run, where no other framework's agent wrote one. Those lines are left out of every line count, so they cost kay in tokens and earn it nothing in the charts.
+kay's agents wrote their own tests in 4 of 5 runs, where no other framework's agent wrote one. Those lines are left out of every line count, though the tokens that wrote them count everywhere else.
 
 ### What kay loses
 
-<BarChart title="Turns" unit="turns" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":29,"range":[25,31]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
+<BarChart title="Turns" unit="turns" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":27,"range":[21,47]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]},{"label":"kay","value":29,"range":[25,31]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
 
-<BarChart title="Largest context of one call" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":45,"range":[43.1,58.9]},{"label":"kay","value":61.7,"range":[58.7,70]},{"label":"Nuxt","value":67,"range":[48.4,91.2]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"Next.js","value":90,"range":[71.2,120.1]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]} bench="llm" />
+<BarChart title="Largest context of one call" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":45,"range":[43.1,58.9]},{"label":"kay","value":64.8,"range":[58.5,82.7]},{"label":"Nuxt","value":67,"range":[48.4,91.2]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"Next.js","value":90,"range":[71.2,120.1]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]},{"label":"kay","value":61.7,"range":[58.7,70]},{"label":"Nuxt","value":67,"range":[48.4,91.2]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"Next.js","value":90,"range":[71.2,120.1]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]} bench="llm" />
 
-Astro gets there in fewer turns with a smaller context. Learning kay from its docs costs reads, and every call after them carries them along: kay's context peaks about a third above Astro's, still under the other four's, though only a tenth under Nuxt's.
+Astro gets there in fewer turns with a smaller context. Learning kay from its docs costs reads: kay's context peaks over 40% above Astro's, still under the other four's, though only just under Nuxt's.
 
 <Note title="How it was measured">
 
-Claude Opus 5.5 at high effort, Claude Code 2.1.289, kay 1.27.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, all on Bun, 5 runs each, kay's a few hours after SvelteKit's, SolidStart's and Astro's, Nuxt's and Next.js's six days later. Every figure is the median of the passing runs, and all 30 passed. Cost is at API prices, as Claude Code reports it, failed runs included. The spec, the prompt, the starters, the suite and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.27/results.md).
+Claude Opus 5.5 at high effort, Claude Code 2.1.289, kay 1.51.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, all on Bun, 5 runs each, Nuxt's and Next.js's six days after SvelteKit's, SolidStart's and Astro's, kay's a few hours after those. Every figure is the median of the passing runs, and all 30 passed. Cost is at API prices, as Claude Code reports it, failed runs included. The spec, the prompt, the starters, the suite and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
 
 </Note>

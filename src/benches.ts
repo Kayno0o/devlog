@@ -5,7 +5,7 @@ export const benches = {
   synthetic: { date: '2026-10-10' },
   sveltekit: { date: '2026-10-11' },
   astro: { date: '2026-10-10' },
-  llm: { date: '2026-10-10' },
+  llm: { date: '2026-10-17' },
 } satisfies Record<string, { date?: string }>
 
 export type BenchId = keyof typeof benches
