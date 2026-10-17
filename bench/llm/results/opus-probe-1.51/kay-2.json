@@ -1,0 +1,142 @@
+{
+  "framework": "kay",
+  "run": 2,
+  "label": "opus-probe-1.51",
+  "startedAt": "2026-10-17T00:58:11.201Z",
+  "requested": {
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "budgetUsd": 30,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.51.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 128841,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-opus-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 128408,
+    "durationApiMs": 119824,
+    "turns": 33,
+    "costUsd": 0.9885796000000002,
+    "tokens": {
+      "input": 66,
+      "output": 13237,
+      "cacheCreation": 56795,
+      "cacheRead": 1346078
+    },
+    "outputExact": true,
+    "thinkingTokens": 3553,
+    "apiCalls": 33,
+    "peakContextTokens": 62051,
+    "toolCalls": {
+      "Bash": 32
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "bun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "cat > src/routes/contact.kay <<'EOF'\n--- server\nimport { s } from 'kay'\nimport { checkContact } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nconst contactInput = s.Object({\n  name: s.Optional(s.String({ maxLength: 200 })),\n  email: s.Optional(s.String({ maxLength: 320 })),\n  message: s.Optional(s.String({ maxLength: 5000 })),\n})\n\nexport const contact = action(contactInput, (input, ctx) => {\n  const fields = { name: input.name ?? '', email: input.email ?? '', message: input.message ?? '' }\n  const errors = checkContact(fields)\n\n  if (Object.keys(errors).length > 0)\n    return ctx.fail(422, { errors })\n\n  return { name: fields.name.trim() }\n})\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nEOF\ncat > src/components/contact-form.kay <<'EOF'\n---\nimport { contact } from '../routes/contact.kay'\nimport { checkContact } from '../contact'\nimport type { ContactErrors } from '../contact'\n\nconst errors = signal<ContactErrors>(contact.failed()?.data?.errors ?? {})\nconst thanked = signal(contact.succeeded()?.data.name ?? '')\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkContact({\n    name: String(fields.get('name') ?? ''),\n    email: String(fields.get('email') ?? ''),\n    message: String(fields.get('message') ?? ''),\n  })\n\n  errors.set(found)\n  thanked.set('')\n\n  if (Object.keys(found).length === 0) {\n    thanked.set((await contact(fields, { refresh: false })).name)\n    form.reset()\n  }\n}\n---\nif thanked()\n  p(role=\"status\") Thanks, {thanked()}! Your message has been sent.\nform(action={contact} novalidate onSubmit={submit})\n  div\n    label(for=\"contact-name\") Name\n    input#contact-name(name=\"name\" type=\"text\")\n    if errors().name\n      p.error {errors().name}\n  div\n    label(for=\"contact-email\") Email\n    input#contact-email(name=\"email\" type=\"email\")\n    if errors().email\n      p.error {errors().email}\n  div\n    label(for=\"contact-message\") Message\n    textarea#contact-message(name=\"message\")\n    if errors().message\n      p.error {errors().message}\n  button(type=\"submit\") Send\nEOF\nbun run check 2>&1 | tail -40",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "sed -i \"2i import '../app.css'\" src/routes/_layout.kay; head -4 src/routes/_layout.kay; bun run check 2>&1 | tail -5; bunx kay render /about | grep -o '<link rel=\"stylesheet\"[^>]*>'",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run fmt 2>&1 | tail -3; bun run build 2>&1 | tail -15",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bunx kay render /books/frankenstein | grep -o '<h2[^>]*>[^<]*</h2>'; bun run check 2>&1 | tail -1; bun run build 2>&1 | grep -i -E \"error|warn\" ; echo build-exit=$?",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 15,
+      "chars": 76908
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "cat > src/app.css <<'EOF'\nbody { font-family: system-ui, sans-serif; max-width: 48rem; margin: 0 auto; padding: 1rem; line-height: 1.5; }\nheader { display: flex; gap: 1rem; align-items: center; justify-content: space-between; border-bottom: 1px solid #ddd; padding-bottom: .5rem; }\nheader nav { display: flex; gap: 1rem; }\nnav a[aria-current=\"page\"] { font-weight: bold; }\nfooter { border-top: 1px solid #ddd; margin-top: 2rem; padding-top: .5rem; color: #555; }\nbutton[aria-pressed=\"true\"] { background: #222; color: #fff; }\n[role=\"group\"] { display: flex; flex-wrap: wrap; gap: .25rem; margin-bottom: 1rem; }\nform div { display: flex; flex-direction: column; margin-bottom: .75rem; }\n.error { color: #b00020; margin: .25rem 0 0; }\nEOF\npython3 - <<'EOF'\np='src/routes/_layout.kay'\ns=open(p).read()\ns=s.replace(\"--- server\\n\",\"---\\nimport '../app.css'\\n---\\n--- server\\n\",1) if False else s\nopen(p,'w').write(s)\nEOF\ngrep -n -B2 -A12 \"^### Fences\\|fence\" docs/llms/components.md | head -40"
+    ],
+    "resultTokens": {
+      "input": 66,
+      "output": 13237,
+      "cacheCreation": 56795,
+      "cacheRead": 1346078
+    }
+  },
+  "diff": {
+    "files": 23,
+    "added": 330,
+    "removed": 3,
+    "testLines": 0,
+    "styleLines": 9,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.51.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 39,
+    "bytes": 591708
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/opus-probe-1.51/kay-2"
+}
