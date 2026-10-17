@@ -53,8 +53,6 @@ A full sitting is 5 runs per framework, so a mistake in the harness costs 30 run
 
 Time, lines written, cost and docs read are charted in the [kay post](/posts/introducing-kay). Here is the rest, the median run of each framework with the lowest and highest beside it.
 
-### What kay gains
-
 <BarChart title="Thinking tokens" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":3.1,"range":[2.4,5]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.3]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
 
 The model thinks least in kay: a quarter less than in Astro, about three times less than in the other four.
@@ -62,8 +60,6 @@ The model thinks least in kay: a quarter less than in Astro, about three times l
 <Stats items={[{"value":"78 vs 0","label":"lines of tests written, kay against the others"}]} />
 
 kay's agents wrote their own tests in 4 of 5 runs, where no other framework's agent wrote one. Those lines are left out of every line count, though the tokens that wrote them count everywhere else.
-
-### What kay loses
 
 <BarChart title="Turns" unit="turns" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":27,"range":[21,47]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
 

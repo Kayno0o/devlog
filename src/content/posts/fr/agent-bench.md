@@ -53,8 +53,6 @@ Une série complète, c'est 5 exécutions par framework, donc une erreur dans le
 
 Le temps, les lignes écrites, le coût et la documentation lue sont dans l'[article sur kay](/posts/introducing-kay). Voici le reste, l'exécution médiane de chaque framework avec la plus basse et la plus haute à côté.
 
-### Ce que kay gagne
-
 <BarChart title="Tokens de réflexion" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":3.1,"range":[2.4,5]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.3]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
 
 C'est en kay que le modèle réfléchit le moins : un quart de moins qu'en Astro, environ trois fois moins que dans les quatre autres.
@@ -62,8 +60,6 @@ C'est en kay que le modèle réfléchit le moins : un quart de moins qu'en Astr
 <Stats items={[{"value":"78 contre 0","label":"lignes de tests écrites, kay contre les autres"}]} />
 
 Les agents de kay ont écrit leurs propres tests dans 4 exécutions sur 5, là où aucun agent d'un autre framework n'en a écrit un seul. Ces lignes sont exclues de chaque décompte de lignes, mais les tokens qui les ont écrites comptent partout ailleurs.
-
-### Ce que kay perd
 
 <BarChart title="Tours" unit="tours" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":27,"range":[21,47]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
 
