@@ -3,16 +3,8 @@ import { t } from 'kay/i18n'
 import './bar-chart.css'
 import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
-import Astro from '~icons/simple-icons/astro'
-import Next from '~icons/simple-icons/nextdotjs'
-import Nuxt from '~icons/simple-icons/nuxt'
-import Solid from '~icons/simple-icons/solid'
-import Svelte from '~icons/simple-icons/svelte'
-import kay from '../kay-logo.svg'
 import { formatNumber } from '../format'
-
-// A row is named by its framework, then maybe its site: `SvelteKit` or `Astro, painter`.
-const logos = new Map([['kay', 'kay'], ['Svelte', 'svelte'], ['SvelteKit', 'svelte'], ['SolidJS', 'solid'], ['SolidStart', 'solid'], ['Astro', 'astro'], ['Next', 'next'], ['Next.js', 'next'], ['Nuxt', 'nuxt']])
+import FrameworkLogo from './framework-logo.kay'
 
 interface Row {
   label: string
@@ -39,11 +31,6 @@ const ranged = rows.some(row => row.range !== undefined)
 const high = (row: Row) => row.range?.[1] ?? row.value
 const max = () => Math.max(...rows.map(high))
 const share = (part: number, whole: number) => whole === 0 ? 0 : part / whole * 100
-function logo(label: string) {
-  const comma = label.indexOf(',')
-
-  return logos.get(comma === -1 ? label : label.slice(0, comma))
-}
 ---
 figure.chart
   figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
@@ -54,18 +41,7 @@ figure.chart
     for row, i of rows key={row.label}
       span.flex.items-center.justify-end.gap-2.text-sm(class={{ 'font-semibold': highlighted.has(row.label), 'text-subtext': !highlighted.has(row.label) }})
         | {row.label}
-        if logo(row.label) === 'kay'
-          img.size-4(src={kay} alt="")
-        else if logo(row.label) === 'svelte'
-          Svelte.size-4.shrink-0
-        else if logo(row.label) === 'solid'
-          Solid.size-4.shrink-0
-        else if logo(row.label) === 'astro'
-          Astro.size-4.shrink-0
-        else if logo(row.label) === 'next'
-          Next.size-4.shrink-0
-        else if logo(row.label) === 'nuxt'
-          Nuxt.size-4.shrink-0
+        FrameworkLogo(label={row.label})
       .flex.min-w-0.items-center.gap-2
         if row.range
           .chart-range(style={`width: calc((100% - 6rem) * ${high(row) / max()}); --row: ${i}`})
@@ -77,20 +53,22 @@ figure.chart
         else
           .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
           span.text-sm.whitespace-nowrap.tabular-nums {formatNumber(row.value, digits)} {unit}
-  table.sr-only
-    thead
-      tr
-        th(scope="col") {t('chart.name')}
-        th(scope="col") {t('chart.value')}
-        if ranged
-          th(scope="col") {t('chart.runs')}
-    tbody
-      for row of rows key={row.label}
+  // a table takes its content's width whatever its own, so the box hiding it is a div
+  .sr-only
+    table
+      thead
         tr
-          th(scope="row") {row.label}
-          td {formatNumber(row.value, digits)} {unit}
+          th(scope="col") {t('chart.name')}
+          th(scope="col") {t('chart.value')}
           if ranged
-            td {row.range ? `${t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })} ${unit}` : ''}
+            th(scope="col") {t('chart.runs')}
+      tbody
+        for row of rows key={row.label}
+          tr
+            th(scope="row") {row.label}
+            td {formatNumber(row.value, digits)} {unit}
+            if ranged
+              td {row.range ? `${t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })} ${unit}` : ''}
   if ranged
     p.mt-3.text-xs.text-muted {t(`chart.legend.${better ?? 'none'}`)}
   if caption !== undefined

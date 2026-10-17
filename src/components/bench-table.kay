@@ -1,0 +1,62 @@
+---
+import { formatNumber as formatLocaleNumber, t } from 'kay/i18n'
+import type { BenchId } from '../benches'
+import { benchSource } from '../benches'
+import FrameworkLogo from './framework-logo.kay'
+
+// The values are an array, not an object keyed by framework: kay reads a Markdown component's JSON prop two braces deep at most.
+interface Row {
+  label: string
+  /** One value per column, in the same order. */
+  values: number[]
+}
+
+const { title, unit, columns, rows, better = 'lower', bench, source, digits = 1 } = props<{
+  title: string
+  unit: string
+  columns: string[]
+  rows: Row[]
+  better?: 'lower' | 'higher' | undefined
+  bench?: BenchId | undefined
+  source?: string | undefined
+  digits?: number | undefined
+}>()
+
+const caption = bench === undefined ? source : benchSource(bench, source)
+// A row whose values are all whole shows none of the decimals, the others show every one: `2.0` beside `2.3`, `264` beside `228`.
+function format(row: Row, value: number) {
+  if (row.values.every(Number.isInteger)) {
+    return formatLocaleNumber(value, { maximumFractionDigits: 0 })
+  }
+
+  return formatLocaleNumber(value, { minimumFractionDigits: digits, maximumFractionDigits: digits })
+}
+const best = (row: Row) => (better === 'lower' ? Math.min : Math.max)(...row.values)
+// How far a value is from its row's best, as a share of the best: `+16%` slower, or `-12%` fewer.
+const gap = (row: Row, value: number) => formatLocaleNumber(value / best(row) - 1, { style: 'percent', maximumFractionDigits: 0, signDisplay: 'always' })
+---
+figure.chart
+  figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
+    span.font-semibold {title}
+    span.text-sm.text-muted {t('table.legend', { unit, better: t(`chart.better.${better}`) })}
+  .overflow-x-auto
+    table.w-full.text-sm.tabular-nums
+      thead
+        tr
+          th.sticky.left-0.bg-base(scope="col")
+            span.sr-only {t('chart.name')}
+          for column of columns key={column}
+            th.px-2.pb-2.text-right.align-bottom(scope="col" class={column === 'kay' ? 'font-semibold' : 'font-normal text-subtext'})
+              span.inline-flex.items-center.gap-1.5.whitespace-nowrap
+                | {column}
+                FrameworkLogo(label={column})
+      tbody
+        for row of rows key={row.label}
+          tr.border-t.border-surface
+            th.sticky.left-0.bg-base.py-1.5.pr-3.text-left.font-normal.text-subtext(scope="row") {row.label}
+            for value, i of row.values key={i}
+              td.px-2.py-1.5.text-right(class={{ 'bg-accent/20': value === best(row) }})
+                span.block(class={{ 'font-semibold': value === best(row) }}) {format(row, value)}
+                span.block.text-xs(class={{ 'text-muted': value !== best(row) }}) {value === best(row) ? t('table.best') : gap(row, value)}
+  if caption !== undefined
+    p.mt-3.text-xs.text-muted {t('chart.source', { source: caption })}

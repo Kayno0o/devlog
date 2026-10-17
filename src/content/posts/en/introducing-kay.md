@@ -221,9 +221,9 @@ kay writes both pages in 1,900 characters, a third less than Nuxt, the next shor
 
 SolidJS ships less JavaScript, and so does Astro, whose island is the same Solid table. kay's includes its in-place page navigation, which neither app, having no router, carries. Next.js and Nuxt ship 6 to 11 times more than kay.
 
-<BarChart title="Create 1,000 rows" unit="ms" better="lower" rows={[{"label": "Svelte", "value": 25.8}, {"label": "Astro", "value": 26.6}, {"label": "SolidJS", "value": 26.7}, {"label": "Nuxt", "value": 27}, {"label": "kay", "value": 29.8}, {"label": "Next.js", "value": 29.9}]} bench="synthetic" />
+<BenchTable title="Table operations" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Create 1,000 rows", "values": [29.8, 26.7, 25.8, 26.6, 29.9, 27]}, {"label": "Replace 1,000 rows", "values": [25.7, 24.6, 25.9, 24.8, 31.4, 27.9]}, {"label": "Update every 10th row", "values": [2.8, 2.7, 2.7, 2.6, 4.1, 3.4]}, {"label": "Select a row", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.7]}, {"label": "Swap two rows", "values": [2.3, 2, 2.1, 1.9, 20.4, 2.4]}, {"label": "Remove a row", "values": [2, 2, 2.2, 1.8, 3.4, 4.5]}, {"label": "Create 10,000 rows", "values": [264, 228, 232, 236, 362, 267]}, {"label": "Append 1,000 rows", "values": [24.5, 23.3, 24, 23.6, 26.9, 25.6]}, {"label": "Clear 1,000 rows", "values": [3, 2.8, 3.2, 2.7, 5, 4.1]}]} bench="synthetic" />
 
-On the whole table benchmark, kay is first on selecting a row and ahead of Next.js on every operation, of Nuxt on all but creating 1,000 rows. SolidJS, Svelte and Astro beat it on most of the rest: kay trails the fastest by 21% on swapping rows, 15 to 16% on creating 1,000 and 10,000 rows, 11% on removing and clearing, and 4 to 6% on the others.
+kay is first on selecting a row and ahead of Next.js on every operation, of Nuxt on all but creating 1,000 rows. SolidJS, Svelte and Astro beat it on most of the rest, by 21% at most, on swapping rows.
 
 <Note title="How it was measured">
 

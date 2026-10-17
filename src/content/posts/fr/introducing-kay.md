@@ -221,9 +221,9 @@ kay écrit les deux pages en 1 900 caractères, un tiers de moins que Nuxt, le 
 
 SolidJS envoie moins de JavaScript, et Astro aussi, dont l'island est le même tableau Solid. Celui de kay inclut sa navigation de page sur place, dont aucune des deux applis, sans routeur, ne se charge. Next.js et Nuxt en envoient 6 à 11 fois plus que kay.
 
-<BarChart title="Création de 1 000 lignes" unit="ms" better="lower" rows={[{"label": "Svelte", "value": 25.8}, {"label": "Astro", "value": 26.6}, {"label": "SolidJS", "value": 26.7}, {"label": "Nuxt", "value": 27}, {"label": "kay", "value": 29.8}, {"label": "Next.js", "value": 29.9}]} bench="synthetic" />
+<BenchTable title="Opérations sur le tableau" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Créer 1 000 lignes", "values": [29.8, 26.7, 25.8, 26.6, 29.9, 27]}, {"label": "Remplacer 1 000 lignes", "values": [25.7, 24.6, 25.9, 24.8, 31.4, 27.9]}, {"label": "Mettre à jour une ligne sur 10", "values": [2.8, 2.7, 2.7, 2.6, 4.1, 3.4]}, {"label": "Sélectionner une ligne", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.7]}, {"label": "Échanger deux lignes", "values": [2.3, 2, 2.1, 1.9, 20.4, 2.4]}, {"label": "Supprimer une ligne", "values": [2, 2, 2.2, 1.8, 3.4, 4.5]}, {"label": "Créer 10 000 lignes", "values": [264, 228, 232, 236, 362, 267]}, {"label": "Ajouter 1 000 lignes", "values": [24.5, 23.3, 24, 23.6, 26.9, 25.6]}, {"label": "Vider 1 000 lignes", "values": [3, 2.8, 3.2, 2.7, 5, 4.1]}]} bench="synthetic" />
 
-Sur l'ensemble du benchmark du tableau, kay est premier pour sélectionner une ligne et devant Next.js sur chaque opération, devant Nuxt sur toutes sauf la création de 1 000 lignes. SolidJS, Svelte et Astro le battent sur la plupart des autres : kay a 21 % de retard sur le plus rapide pour échanger des lignes, 15 à 16 % pour créer 1 000 et 10 000 lignes, 11 % pour en supprimer une et pour vider le tableau, et 4 à 6 % sur le reste.
+kay est premier pour sélectionner une ligne et devant Next.js sur chaque opération, devant Nuxt sur toutes sauf la création de 1 000 lignes. SolidJS, Svelte et Astro le battent sur la plupart des autres, de 21 % au plus, pour échanger deux lignes.
 
 <Note title="Comment c'est mesuré">
 
