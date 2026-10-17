@@ -201,8 +201,6 @@ Bun does everything underneath: the server, the bundler, the test runner and the
 
 The same products page and the same data for each framework, each written the way its own docs and its js-framework-benchmark entry write it. kay, SolidJS and Svelte are timed behind the same Elysia server, Astro and Nuxt through their own request handlers, and Next.js through its own HTTP server. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
-### What kay gains
-
 <BarChart title="Main-thread script on load, products page" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.2}, {"label": "Astro", "value": 1.3}, {"label": "Nuxt", "value": 5.5}, {"label": "SolidJS", "value": 10.8}, {"label": "Svelte", "value": 14.2}, {"label": "Next.js", "value": 18.6}]} bench="synthetic" />
 
 kay hydrates its islands only, and Astro its two Solid ones. SolidJS, Svelte and Nuxt hydrate the whole page, so they also send its data again as JSON, and Next.js streams its component payload along with the page.
@@ -214,8 +212,6 @@ kay hydrates its islands only, and Astro its two Solid ones. SolidJS, Svelte and
 <BarChart title="Code written, products and table pages" unit="K characters" better="lower" digits={1} rows={[{"label": "kay", "value": 1.9}, {"label": "Nuxt", "value": 2.9}, {"label": "Svelte", "value": 3.3}, {"label": "Astro", "value": 3.4}, {"label": "SolidJS", "value": 3.7}, {"label": "Next.js", "value": 4.1}]} bench="synthetic" source="whitespace and comments left out, as is the bench's server glue" />
 
 kay writes both pages in 1,900 characters, a third less than Nuxt, the next shortest, and about half of SolidJS and Next.js. Characters rather than lines, since a line count depends on the formatting: the Svelte app writes each template on one line, 70 lines in all, which Prettier turns into 130. Pages, layouts, components and config count; the file mounting each app in the bench does not, since Next's is a relay only the bench needs.
-
-### What kay loses
 
 <BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
