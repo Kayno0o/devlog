@@ -211,7 +211,7 @@ kay n'hydrate que ses islands, et Astro ses deux islands Solid. SolidJS, Svelte 
 
 <BarChart title="Code écrit, pages produits et tableau" unit="K caractères" better="lower" digits={1} rows={[{"label": "kay", "value": 1.9}, {"label": "Nuxt", "value": 2.9}, {"label": "Svelte", "value": 3.3}, {"label": "Astro", "value": 3.4}, {"label": "SolidJS", "value": 3.7}, {"label": "Next.js", "value": 4.1}]} bench="synthetic" source="sans les espaces ni les commentaires, ni la glue serveur du benchmark" />
 
-kay écrit les deux pages en 1 900 caractères, un tiers de moins que Nuxt et environ la moitié de SolidJS et Next.js. Des caractères, car les lignes dépendent de la mise en forme : Prettier fait passer les 70 lignes de l'app Svelte à 130.
+Compté en caractères, car les lignes dépendent de la mise en forme : Prettier fait passer les 70 lignes de l'app Svelte à 130.
 
 <BarChart title="JS envoyé, page tableau, gzip" unit="Ko" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
