@@ -7,5 +7,5 @@ a.whitespace-nowrap(href={href})
   if icon
     svg({...icon} class="mr-1 inline-block align-[-0.125em]")
   else if image
-    img(src={image} sizes="16px" alt="" class="mr-1 inline-block size-[1em] align-[-0.125em]")
+    img(src={image} width="16" height="16" alt="" class="mr-1 inline-block size-[1em] align-[-0.125em]")
   slot

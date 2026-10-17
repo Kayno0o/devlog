@@ -12,7 +12,7 @@ header.bg-mantle.px-4.py-4.sm:px-8
       li: a(href="/about") {t('nav.about')}
       li
         a.inline-flex.items-center.gap-1(href="https://kayjs.kaynooo.fr")
-          img.size-4(src={kay} alt="")
+          img.size-4(src={kay} width="16" height="16" alt="")
           | kay
       li
         a.inline-flex.items-center.gap-1(href="/rss.xml")
