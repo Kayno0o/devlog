@@ -213,7 +213,7 @@ kay hydrates its islands only, and Astro its two Solid ones. SolidJS, Svelte and
 
 Counted in characters, as lines depend on formatting: Prettier turns the Svelte app's 70 lines into 130.
 
-<BarChart title="Production build time" unit="s" better="lower" digits={2} rows={[{"label": "Svelte", "value": 0.09}, {"label": "SolidJS", "value": 0.14}, {"label": "kay, no type check", "value": 0.34}, {"label": "Astro", "value": 0.67}, {"label": "kay", "value": 0.8}, {"label": "Nuxt", "value": 1.94}, {"label": "Next.js", "value": 2.14}]} bench="synthetic" />
+<BarChart title="Production build time" unit="s" better="lower" digits={2} rows={[{"label": "Svelte", "value": 0.09}, {"label": "SolidJS", "value": 0.14}, {"label": "kay", "value": 0.34, "note": "no type check"}, {"label": "Astro", "value": 0.67}, {"label": "kay", "value": 0.8}, {"label": "Nuxt", "value": 1.94}, {"label": "Next.js", "value": 2.14}]} bench="synthetic" />
 
 <BarChart title="Build output, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Svelte", "value": 22.5}, {"label": "kay", "value": 33.4}, {"label": "Astro", "value": 138}, {"label": "Next.js", "value": 328.9}, {"label": "Nuxt", "value": 610.7}]} bench="synthetic" source="kay, SolidJS and Svelte bundle no server" />
 
