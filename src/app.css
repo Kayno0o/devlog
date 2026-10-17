@@ -5,12 +5,12 @@
 @source not '../{bench,tests,public}';
 @source not '../*.{md,ts}';
 
-/* Catppuccin Latte and Mocha: light-dark() follows the reader's color scheme with no script. */
+/* Catppuccin Latte and Mocha: light-dark() follows the reader's color scheme with no script. Latte's muted is darkened to reach AA contrast on base and mantle. */
 @theme {
   --color-base: light-dark(#eff1f5, #1e1e2e);
   --color-mantle: light-dark(#e6e9ef, #181825);
   --color-surface: light-dark(#ccd0da, #313244);
-  --color-muted: light-dark(#6c6f85, #9399b2);
+  --color-muted: light-dark(#64677d, #9399b2);
   --color-subtext: light-dark(#5c5f77, #bac2de);
   --color-text: light-dark(#4c4f69, #cdd6f4);
   --color-accent: light-dark(#8839ef, #cba6f7);
