@@ -215,11 +215,9 @@ Counted in characters, as lines depend on formatting: Prettier turns the Svelte 
 
 <BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
-SolidJS ships less JavaScript, and so does Astro, whose island is the same Solid table. kay's includes its in-place page navigation, which neither app, having no router, carries. Next.js and Nuxt ship 6 to 11 times more than kay.
+Astro's island is the same Solid table as the SolidJS app, and neither has a router, where kay's JavaScript includes its in-place page navigation.
 
 <BenchTable title="Table operations" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Create 1,000 rows", "values": [29.8, 26.7, 25.8, 26.6, 29.9, 27]}, {"label": "Replace 1,000 rows", "values": [25.7, 24.6, 25.9, 24.8, 31.4, 27.9]}, {"label": "Update every 10th row", "values": [2.8, 2.7, 2.7, 2.6, 4.1, 3.4]}, {"label": "Select a row", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.7]}, {"label": "Swap two rows", "values": [2.3, 2, 2.1, 1.9, 20.4, 2.4]}, {"label": "Remove a row", "values": [2, 2, 2.2, 1.8, 3.4, 4.5]}, {"label": "Create 10,000 rows", "values": [264, 228, 232, 236, 362, 267]}, {"label": "Append 1,000 rows", "values": [24.5, 23.3, 24, 23.6, 26.9, 25.6]}, {"label": "Clear 1,000 rows", "values": [3, 2.8, 3.2, 2.7, 5, 4.1]}]} bench="synthetic" />
-
-kay is first on selecting a row and ahead of Next.js on every operation, of Nuxt on all but creating 1,000 rows. SolidJS, Svelte and Astro beat it on most of the rest, by 21% at most, on swapping rows.
 
 <Note title="How it was measured">
 
@@ -258,13 +256,11 @@ Filter its books, open one, mark it a favorite. It is the run of median cost, ex
 
 <BarChart title="Lines of code written, tests and styles left out" unit="lines" better="lower" digits={0} rows={[{"label":"kay","value":323,"range":[227,336]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
 
-kay is the one framework the model learns on the spot, from the docs and the package in the project. It still builds the site second only to Astro and faster than the other four, in 27 to 48% fewer lines than any of them.
-
 <BarChart title="Cost of the site, API prices" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.78,1.54]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
 <BarChart title="Docs read" unit="K characters" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":93,"range":[77,107]}]} bench="llm" />
 
-Astro builds the site for less. The model comes in having seen plenty of Astro, while it learns kay from its docs, reading three times as much, and every call after those reads pays for them again. kay still costs less than the other four, which it has seen plenty of too: Nuxt's agents read the fewest docs of all and still cost half again as much.
+kay is the one framework the model learns on the spot, from the docs and the package in the project, where it comes in having seen plenty of the others, and every call after those reads pays for them again.
 
 <Note title="How it was measured">
 
