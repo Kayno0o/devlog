@@ -1,11 +1,14 @@
 --- server
 import { shareCard } from 'kay/image'
 import { posts } from '../../content.config'
+import kayCard from '../../kay-card.png'
 
 export const page = { prerender: posts }
 
 const post = await posts.get(ctx.params.slug) ?? ctx.notFound()
 const { Content } = post
+// A post about kay shares a card with its logo in it.
+const cardImage = post.data.tags.includes('kay') ? kayCard : undefined
 --- script
 import { t } from 'kay/i18n'
 import ArrowLeft from '~icons/tabler/arrow-left'
@@ -18,7 +21,7 @@ head
   title {post.data.title}
   meta(name="description" content={post.data.description})
   meta(property="og:type" content="article")
-  meta(property="og:image" content={shareCard({ title: post.data.title })})
+  meta(property="og:image" content={shareCard({ title: post.data.title, image: cardImage })})
   script(src="/charts.js" type="module")
 article.relative.mx-auto.max-w-2xl
   a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
