@@ -179,7 +179,7 @@ Le script de la page s'exécute sur le serveur puis à nouveau dans le navigateu
 
 Je tiens à la vitesse partout : la rapidité avec laquelle une page se charge et s'exécute, la rapidité de réponse du serveur, la rapidité d'un build ou d'une suite de tests, et le peu dont le serveur a besoin, en mémoire comme pour être déployé.
 
-Je tiens aussi à la quantité de code. J'ai deux applications à moi, une en SvelteKit d'environ 27 000 lignes et une en SolidJS d'environ 34 000, lignes vides et commentaires exclus : à cette taille, chaque ligne qu'un framework économise est une ligne de moins à écrire, à relire et à maintenir en état de marche. Aucune n'est encore migrée vers kay, et ça aura son propre article.
+Je tiens aussi à la quantité de code. J'ai deux applications à moi, une en SvelteKit d'environ 27 000 lignes et une en SolidJS d'environ 34 000, lignes vides et commentaires exclus : à cette taille, chaque ligne qu'un framework économise est une ligne de moins à écrire, à relire et à maintenir en état de marche.
 
 Pendant un temps, j'ai utilisé Astro avec SolidJS dedans : des pages rapides pour peu de code, au prix de deux frameworks et de deux façons d'écrire un composant dans un même projet. SvelteKit, SolidStart et Astro reposent aussi tous sur Vite, qui rend parfois les builds et les tests unitaires lents. kay, c'est ce que j'ai construit pour tout avoir au même endroit, avec Bun seul pour le build et les tests. Il mélange ce que j'ai aimé dans chacun :
 
@@ -219,7 +219,7 @@ Compté en caractères, car les lignes dépendent de la mise en forme : Prettie
 
 <BarChart title="JS envoyé, page tableau, gzip" unit="Ko" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
-L'island d'Astro est le même tableau Solid que l'app SolidJS, et aucune des deux n'a de routeur, là où le JavaScript de kay inclut sa navigation de page sur place.
+L'island d'Astro est le même tableau Solid que l'app SolidJS, et aucune des deux n'a de routeur, là où le JavaScript de kay inclut l'écouteur dont part sa navigation de page sur place.
 
 <BenchTable title="Opérations sur le tableau" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Créer 1 000 lignes", "values": [29.9, 26.6, 28, 26.4, 31.1, 26.8]}, {"label": "Remplacer 1 000 lignes", "values": [25.6, 24.8, 25.6, 24.8, 30.2, 27.7]}, {"label": "Mettre à jour une ligne sur 10", "values": [2.8, 2.7, 2.6, 2.6, 4.2, 3.5]}, {"label": "Sélectionner une ligne", "values": [0.2, 0.3, 1, 0.3, 1.3, 0.6]}, {"label": "Échanger deux lignes", "values": [2.3, 2, 2.1, 2, 20.6, 2.4]}, {"label": "Supprimer une ligne", "values": [2, 2, 2.2, 1.9, 3.3, 4.5]}, {"label": "Créer 10 000 lignes", "values": [260, 229, 234, 227, 364, 271]}, {"label": "Ajouter 1 000 lignes", "values": [24.5, 23.4, 24.2, 23.3, 27, 25.5]}, {"label": "Vider 1 000 lignes", "values": [3, 2.6, 3.2, 2.9, 5.1, 4.2]}]} bench="synthetic" />
 
@@ -231,9 +231,9 @@ kay 1.51.1, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 et Nuxt 
 
 ## De vrais sites, portés vers kay
 
-Trois vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, et deux petits sites d'entreprise depuis Astro, chacun mesuré tel qu'il se déploie contre la version qu'il remplace. [Leur propre article](/posts/ported-to-kay) donne chaque chiffre, et ce que kay perd : des modifications plus lentes à apparaître en développement, plus de JavaScript qu'Astro, des builds plus lents.
+Trois vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, et deux petits sites d'entreprise depuis Astro, chacun mesuré tel qu'il se déploie contre la version qu'il remplace. [Leur propre article](/posts/ported-to-kay) donne chaque chiffre, et ce que kay perd : des modifications de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro.
 
-<Stats items={[{"value": "-86 %", "label": "CPU serveur par visiteur, depuis SvelteKit"}, {"value": "3,1 à 3,4x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"}, {"value": "-17 à -37 %", "label": "lignes de code"}]} />
+<Stats items={[{"value": "-89 %", "label": "CPU serveur par visiteur, depuis SvelteKit"}, {"value": "3,1 à 3,4x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"}, {"value": "-17 à -37 %", "label": "lignes de code"}]} />
 
 ## Pensé aussi pour les LLM
 
@@ -244,7 +244,7 @@ kay est conçu pour être aussi facile à écrire pour un agent de code que pour
 - Typé de bout en bout, templates compris : `kay check` pointe la ligne du `.kay`, si bien qu'un agent corrige ses propres erreurs sans navigateur.
 - Toute la référence est fournie en `llms.txt` et un fichier par sujet, lus à la demande plutôt que cherchés.
 
-Pour le vérifier, Claude Opus 5.5 a construit le même petit site dans chaque framework : un catalogue de livres lu depuis des fichiers Markdown, un filtre par tag qui s'exécute dans le navigateur, un bouton favori, et un formulaire de contact vérifié sur le serveur et dans le navigateur qui fonctionne aussi sans JavaScript. Chaque exécution part du starter du framework avec sa documentation dans le projet, dans un bac à sable sans navigateur ni réseau, et une suite cachée de tests navigateur note le site.
+Pour le vérifier, Claude Opus 5.5 a construit le même petit site dans chaque framework : un catalogue de livres lu depuis des fichiers Markdown, un filtre par tag qui s'exécute dans le navigateur, un bouton favori, et un formulaire de contact vérifié sur le serveur et dans le navigateur qui fonctionne aussi sans JavaScript. Chaque exécution part du starter du framework avec sa documentation dans le projet, dans un bac à sable sans navigateur ni réseau hormis `bun add`, et une suite cachée de tests navigateur note le site.
 
 <Note title="Le site construit par l'agent de kay, en fonctionnement">
 
