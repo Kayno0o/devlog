@@ -4,33 +4,34 @@ A real site ported from SvelteKit to kay: a home page and content pages (the par
 
 ## Conditions (apply to everything below unless a row says otherwise)
 - **SvelteKit:** commit `c860ae5`, served by `bun build/index.ts` through the site's own Bun adapter. Pages are gzip only; static assets are precompressed br.
-- **kay:** kay 1.54.0, commit `3d7736d`, the shipped config: `inlineStyles: true`, the home page prerendered with its contact form as a deferred server island (`server="defer"`), and `site` read from `SITE_URL` at runtime. The build keeps the partner and legal pages (kayjs#1037, #1047, #1048), so every page but the 404 is served from memory; the 404 is rendered per request. Since kay 1.54.0 a page ships only its own style rules and no longer loads the whole stylesheet after the paint (kayjs#1059); the site changed nothing beyond the version bump.
-- **Bun:** 1.4.3 stable (`1.4.3+c6da4a4d3`) for both versions, the kay executable's embedded runtime included (checked with `BUN_BE_BUN=1 ./server --revision`), as in sitting 12; sitting 11 ran 1.4.4 canary. kay is built by calling its CLI with that Bun: the site's `package.json` scripts put npm's `bun` 1.4.2 first on the path, installed as the Tailwind plugin's peer, so kay's builds and executable in sittings before 8 ran on Bun 1.4.2.
+- **kay:** kay 1.54.2, commit `8c314fb`, the shipped config: `inlineStyles: true`, the home page prerendered with its contact form as a deferred server island (`server="defer"`), and `site` read from `SITE_URL` at runtime. The build keeps the partner and legal pages (kayjs#1037, #1047, #1048), so every page but the 404 is served from memory; the 404 is rendered per request. Since kay 1.54.0 a page ships only its own style rules and no longer loads the whole stylesheet after the paint (kayjs#1059). The site changed nothing beyond the version bumps, and 1.54.1 and 1.54.2 change none of the files it ships: its client files are 1.54.0's to the byte.
+- **Bun:** 1.4.3 stable (`1.4.3+c6da4a4d3`) for both versions, the kay executable's embedded runtime included (checked with `BUN_BE_BUN=1 ./server --revision`), as in sittings 12 and 13; sitting 11 ran 1.4.4 canary. kay is built by calling its CLI with that Bun: the site's `package.json` scripts put npm's `bun` 1.4.2 first on the path, installed as the Tailwind plugin's peer, so kay's builds and executable in sittings before 8 ran on Bun 1.4.2.
 - **Machine:** one desktop, Ryzen 5 7600 (12 threads), Linux. Everything runs over loopback, so absolute figures are optimistic and only the ratios carry over.
-- **Date:** 18 Oct 2026, every section in one sitting (sitting 13), both versions interleaved. Figures from different sittings should not be compared, since paints drift 50 ms or more and memory a few MiB.
-- **Background load:** the other projects on the machine held their tests, builds and benches for the whole sitting; load 2.4 at the start, falling after the e2e suite, 3.1 at the end of the production rounds and 0.8 to 2.7 during the dev server rounds.
+- **Date:** 18 Oct 2026, every section in one sitting (sitting 14, about 80 minutes after sitting 13), both versions interleaved. Figures from different sittings should not be compared, since paints drift 50 ms or more and memory a few MiB.
+- **Background load:** the other projects on the machine held their tests, builds and benches for the whole sitting; load 2.3 at the start, its 15-minute average still falling from 15 after a release's CI, 5.5 at the start of the dev server rounds and 0.8 to 1.6 after. One kay home page server round was disturbed (32,268 req/s at 0.030 ms of CPU, against 40,601 in the other) and was run again with SvelteKit's as a pair: the table gives that rerun in its place.
 
 ## Web Vitals (browser)
 Tool: the repo's `tests-e2e/perf.e2e.ts` (Playwright, Chromium), throttled through CDP with Lighthouse presets: slow 4G and 4x CPU for phones (Pixel 7), cable for desktop (1600x900). Cache disabled, page scrolled to the end. 3 rounds alternating between versions; each figure is the median of the 3, in ms.
 
 | Page, device | Metric | SvelteKit | kay |
 |---|---|---|---|
-| Partner page, phone | First paint | 756 | 360 |
-| Partner page, phone | Largest paint | 1,208 | 768 |
-| Partner page, small phone (360 px) | First paint | 748 | 384 |
-| Partner page, small phone | Largest paint | 1,204 | 784 |
-| Partner page, laptop | First paint | 196 | 180 |
-| Partner page, desktop | First paint | 188 | 184 |
-| Home page, phone | First paint = largest paint | 876 | 496 |
-| Home page, small phone | First paint = largest paint | 936 | 560 |
-| Home page, laptop | First paint | 260 | 208 |
-| Home page, laptop | Largest paint | 380 | 264 |
-| Home page, desktop | First paint | 268 | 220 |
-| Home page, desktop | Largest paint | 376 | 268 |
+| Partner page, phone | First paint | 752 | 372 |
+| Partner page, phone | Largest paint | 1,208 | 784 |
+| Partner page, small phone (360 px) | First paint | 756 | 376 |
+| Partner page, small phone | Largest paint | 1,192 | 772 |
+| Partner page, laptop | First paint | 196 | 184 |
+| Partner page, desktop | First paint | 196 | 184 |
+| Home page, phone | First paint = largest paint | 868 | 496 |
+| Home page, small phone | First paint = largest paint | 916 | 568 |
+| Home page, laptop | First paint | 288 | 216 |
+| Home page, laptop | Largest paint | 416 | 256 |
+| Home page, desktop | First paint | 276 | 212 |
+| Home page, desktop | Largest paint | 408 | 272 |
 
-- Layout shift is at most 0.0065 on kay (the partner page on the small phone, 0.0000 in sitting 12, not traced; at most 0.0020 elsewhere) and 0.0005 on SvelteKit. Both are well under the 0.1 "good" threshold.
-- The partner page on desktop and laptop is 4 to 16 ms ahead on kay, where sitting 12 had it level and sitting 11 12 to 16 ms behind.
-- **Partner page largest paint** on a phone: 768 ms, from 800 in sitting 12 and 852 in sitting 11, where the logo it paints last arrived after kay's runtime script, 14.8 KB brotli. On kay 1.17.4, before that script grew, it painted at 736 ms (sitting 6).
+- Layout shift is at most 0.0065 on kay (the partner page on the small phone, as in sitting 13 and 0.0000 in sitting 12, not traced; at most 0.0020 elsewhere) and 0.0006 on SvelteKit. Both are well under the 0.1 "good" threshold.
+- The partner page on desktop and laptop is 12 ms ahead on kay, where sitting 12 had it level and sitting 11 12 to 16 ms behind.
+- SvelteKit's home page on laptop and desktop is 8 to 36 ms slower than in sitting 13, one round of three running 60 to 90 ms slow.
+- **Partner page largest paint** on a phone: 784 ms, 768 in sitting 13, 800 in sitting 12 and 852 in sitting 11, where the logo it paints last arrived after kay's runtime script, 14.8 KB brotli. On kay 1.17.4, before that script grew, it painted at 736 ms (sitting 6).
 - TTFB is not reported, since CDP throttling leaves Navigation Timing's `responseStart` unthrottled.
 - **Honest note:** the phone paints need `inlineStyles`, which is opt-in. On kay 1.14.0 (sitting 2), with the stylesheet linked as kay does by default, kay's phone first paint was 85 to 140 ms behind SvelteKit, because its stylesheet downloads alongside the fonts, scripts and logos. Inlining costs about 2 KB more per page and no stylesheet caching between pages.
 
@@ -78,46 +79,47 @@ Tool: oha 1.16 in Docker on the host network, `accept-encoding: gzip, deflate, b
 
 | Endpoint | Metric | SvelteKit | kay | Unit |
 |---|---|---|---|---|
-| Home page | Requests per second | 781 to 793 | 40,887 to 41,493 | req/s |
-| Home page | CPU per request | 1.56 to 1.60 | 0.023 | ms |
-| Home page | TTFB p50, 1 connection | 1.22 | 0.05 | ms |
-| Home page, uncompressed | CPU per request | 0.98 | 0.10 | ms |
-| Contact form island (`/?kay_island=0`) | Requests per second | | 7,082 to 7,099 | req/s |
-| Contact form island | CPU per request, body sent | | 0.15 ms, 1.3 KB zstd | |
-| Partner page | Requests per second | 4,111 to 4,153 | 40,782 to 41,500 | req/s |
+| Home page | Requests per second | 779 to 786 | 39,940 to 40,601 | req/s |
+| Home page | CPU per request | 1.58 to 1.62 | 0.024 | ms |
+| Home page | TTFB p50, 1 connection | 1.22 to 1.23 | 0.05 | ms |
+| Home page, uncompressed | CPU per request | 0.96 | 0.10 | ms |
+| Contact form island (`/?kay_island=0`) | Requests per second | | 7,011 to 7,033 | req/s |
+| Contact form island | CPU per request, body sent | | 0.15 to 0.16 ms, 1.3 KB zstd | |
+| Partner page | Requests per second | 4,109 to 4,133 | 40,887 to 41,044 | req/s |
 | Partner page | CPU per request | 0.27 | 0.022 | ms |
-| Legal notice | Requests per second | 4,942 to 5,142 | 41,725 to 42,085 | req/s |
-| 404 page | Requests per second | 5,168 to 5,195 | 7,197 to 7,201 | req/s |
-| 404 page | CPU per request | 0.22 | 0.17 | ms |
-| Hero image, WebP | Requests per second | 42,791 to 42,966 | 51,784 to 51,993 | req/s |
-| Hero image, AVIF | Requests per second | 46,719 to 46,984 | 55,253 to 56,322 | req/s |
-| Health check | Requests per second | 63,291 to 64,464 | 70,193 to 70,774 | req/s |
-| Cold start to first 200 | Median of 15 spawns | 19.4 to 19.7 | 25.8 | ms |
-| RSS after start | | 38 | 57 | MiB |
-| RSS peak, home page load | | 130 to 137 | 88 to 89 | MiB |
+| Legal notice | Requests per second | 4,966 to 5,072 | 41,624 to 41,759 | req/s |
+| 404 page | Requests per second | 5,084 to 5,147 | 7,193 to 7,227 | req/s |
+| 404 page | CPU per request | 0.22 | 0.16 to 0.17 | ms |
+| Hero image, WebP | Requests per second | 41,453 to 41,512 | 51,035 to 51,102 | req/s |
+| Hero image, AVIF | Requests per second | 45,572 to 46,283 | 54,150 to 54,965 | req/s |
+| Health check | Requests per second | 63,137 to 64,023 | 69,970 to 70,174 | req/s |
+| Cold start to first 200 | Median of 15 spawns | 19.7 to 20.1 | 25.6 to 27.3 | ms |
+| RSS after start | | 38 | 56 to 57 | MiB |
+| RSS peak, home page load | | 132 to 135 | 85 to 88 | MiB |
 
-- **Home page:** kay serves it from memory, as any prerendered page, so it serves at 51 to 53 times SvelteKit's rate, for a 68th to a 70th of its CPU per request. Only the contact form is rendered per visitor, fetched by the browser about a screen before it scrolls into view: page and form together cost about 0.17 ms of CPU against SvelteKit's 1.6 ms.
-- **Partner and legal pages:** kept by the build since kay 1.53.3, so served from memory like the home page, at 9.8 to 10.1 times SvelteKit's rate for the partner page and 8.1 to 8.5 for the legal notice, for about a twelfth of its CPU per request. In sitting 11, rendered per request, they were level with SvelteKit.
-- **404 page:** still rendered per request, at 1.39 times SvelteKit's rate (1.36 to 1.39 in sitting 12, 0.89 to 0.95 in sitting 11).
-- **Gzip only** (`accept-encoding: gzip`): kay serves the home page at 40,070 req/s and the partner page at 41,234, against SvelteKit's 785 and 4,120.
-- **Contact form island:** sent as zstd since sitting 12, now that oha offers it, 7.1k req/s at 0.15 ms of CPU; sitting 11 measured 8.7k at 0.20 ms with 1.1 KB br.
-- **RSS after start** went from 53 to 54 MiB in sitting 12 to 57; not traced.
+- **Home page:** kay serves it from memory, as any prerendered page, so it serves at 51 to 52 times SvelteKit's rate, for a 66th to a 68th of its CPU per request. Only the contact form is rendered per visitor, fetched by the browser about a screen before it scrolls into view: page and form together cost about 0.17 to 0.18 ms of CPU against SvelteKit's 1.6 ms.
+- **Partner and legal pages:** kept by the build since kay 1.53.3, so served from memory like the home page, at 9.9 to 10.0 times SvelteKit's rate for the partner page and 8.2 to 8.4 for the legal notice, for about a twelfth of its CPU per request. In sitting 11, rendered per request, they were level with SvelteKit.
+- **404 page:** still rendered per request, at 1.40 to 1.42 times SvelteKit's rate (1.39 in sitting 13, 1.36 to 1.39 in sitting 12, 0.89 to 0.95 in sitting 11).
+- **Gzip only** (`accept-encoding: gzip`): kay serves the home page at 39,075 req/s and the partner page at 40,248, against SvelteKit's 786 and 4,220.
+- **Contact form island:** sent as zstd since sitting 12, now that oha offers it, 7.0k req/s at 0.15 to 0.16 ms of CPU; sitting 11 measured 8.7k at 0.20 ms with 1.1 KB br.
+- **RSS after start** went from 53 to 54 MiB in sitting 12 to 57 in sitting 13 and 56 to 57 here; not traced.
 - **Health check:** kay's answers on `/_kay/health`, SvelteKit's on `/healthz`.
-- On images, SvelteKit serves static files, while kay serves resized variants through an image route, here at 1.21 to 1.22 times SvelteKit's rate for WebP and 1.18 to 1.21 for AVIF. Sitting 12 measured 1.24 to 1.25 and 1.17 to 1.18, sitting 11 1.06 to 1.13 and 1.05 to 1.07, and sitting 10, on a busier machine, 53.3k to 54.2k (WebP) and 58.9k to 60.0k req/s (AVIF), 1.3 to 1.5 times SvelteKit's (kayjs#301).
+- On images, SvelteKit serves static files, while kay serves resized variants through an image route, here at 1.23 times SvelteKit's rate for WebP and 1.17 to 1.21 for AVIF. Sitting 13 measured 1.21 to 1.22 and 1.18 to 1.21, sitting 12 1.24 to 1.25 and 1.17 to 1.18, sitting 11 1.06 to 1.13 and 1.05 to 1.07, and sitting 10, on a busier machine, 53.3k to 54.2k (WebP) and 58.9k to 60.0k req/s (AVIF), 1.3 to 1.5 times SvelteKit's (kayjs#301).
 
 ## Build and deploy
 Tool: hyperfine. Cold runs cleared caches (`.svelte-kit` and `node_modules/.cache`, or `.kay`): 3 runs. Warm runs kept the caches: 1 warmup and 5 runs. Figures are medians.
 
 | Metric | SvelteKit | kay | Unit |
 |---|---|---|---|
-| Build, cold caches (`vite build` / `kay build --compile`) | 4.18 (3.90 to 6.06) | 2.98 | s |
-| Build, warm caches | 1.78 | 1.39 | s |
+| Build, cold caches (`vite build` / `kay build --compile`) | 4.08 (3.55 to 4.22) | 3.14 (3.06 to 3.15) | s |
+| Build, warm caches | 1.84 | 1.40 | s |
 | Server code, Bun runtime left out | 14.5 (`build/` + production `node_modules`) | 21.8 (executable minus an empty program compiled the same way, 90.8 MB) | MB |
 | Docker image | 246 (oven/bun) | 197 (debian slim + one executable) | MB |
 | Docker image, gzipped (`docker save \| gzip -1`) | 122 | 96 | MB |
 
 - kay's build includes prerendering the home page and keeping the partner and legal pages.
-- **kay's warm build is 23% slower than in sitting 11** (1.13 s), as in sitting 12, between Bun 1.4.3 stable and 1.4.4 canary there; not traced. SvelteKit's, 1.74 s in sitting 11, is within 3%.
+- **kay's warm build is 24% slower than in sitting 11** (1.13 s), as in sittings 12 and 13, between Bun 1.4.3 stable and 1.4.4 canary there; not traced. SvelteKit's, 1.74 s in sitting 11, is 6% slower.
+- **kay's cold build** took 3.14 s, from 2.98 in sitting 13 on the same client files; not traced.
 - **Bun 1.4.4 builds kay more slowly (sitting 8):** the same tree built warm in 0.85 s on Bun 1.4.2 and 1.09 s on 1.4.4, about 28% slower; kay 1.24.4 took 0.83 s on 1.4.2 (sitting 7).
 - **Docker images** grew on both sides between sittings 11 and 12 (from 229 and 186 MB), as the base images moved.
 - **kay's server code:** the client build (2.9 MB in sitting 11, 3.2 on kay 1.31.0), `public/` (4.0 MB), the prerendered page (0.3 MB) and the AVIF encoder's WebAssembly (3.5 MB), the rest about 10 MB of code and bytecode; none of these was measured again since sitting 11. The kay executable with the Bun runtime is 112.6 MB, 111.8 on kay 1.37.6. SvelteKit's server code was not measured again.
@@ -136,42 +138,43 @@ Tool: cloc 2.10 (`--force-lang=C,kay`) on `git archive` of each commit, without 
 | Config and tooling | 236 | 168 | lines |
 | Total | 3,037 | 2,510 | lines |
 
-Counted at kay 1.54.0's commit (`3d7736d`), the same lines as kay 1.53.3's (`ab1cde1`). Since `06c8739` (kay 1.37.6, sitting 11) the kay side lost 3 component lines and 2 of config.
+Counted at kay 1.54.2's commit (`8c314fb`), the same lines as kay 1.54.0's (`3d7736d`) and 1.53.3's (`ab1cde1`). Since `06c8739` (kay 1.37.6, sitting 11) the kay side lost 3 component lines and 2 of config.
 - **Correction:** sitting 10 gave kay's components as 883 lines, application 1,531, total 2,543. Those counted the 24 `//` comment lines in `.kay` files as code; with them excluded, as the tool line above says, `56e5d18` counts 859, 1,507 and 2,519.
 
 ## Dev server
-`vite dev` (SvelteKit `c860ae5`) against `kay dev` (kay 1.54.0, commit `3d7736d`), each run from a scratch copy of its commit on its own port, two rounds alternating the two. Browser: headless Chromium, 1280x800, unthrottled over loopback, the site's own CSP enforced. Figures are medians, with the range in brackets.
+`vite dev` (SvelteKit `c860ae5`) against `kay dev` (kay 1.54.2, commit `8c314fb`), each run from a scratch copy of its commit on its own port, two rounds alternating the two. Browser: headless Chromium, 1280x800, unthrottled over loopback, the site's own CSP enforced. Figures are medians, with the range in brackets.
 
 | Metric | SvelteKit | kay | Unit |
 |---|---|---|---|
-| Startup to first 200, caches cleared (`.svelte-kit` and `node_modules/.vite`, or `.kay`) | 950 (921 to 978) | 871 (868 to 875) | ms |
-| Startup to first 200, warm (10 launches) | 479 (448 to 524) | 341 (331 to 358) | ms |
-| Startup to the home page's first 200, warm | 1,467 (1,410 to 1,490) | 363 (354 to 381) | ms |
-| First load of the home page, fresh server and browser (load event) | 1,653 (1,628 to 1,677) | 134 (134 to 134) | ms |
+| Startup to first 200, caches cleared (`.svelte-kit` and `node_modules/.vite`, or `.kay`) | 971 (961 to 980) | 875 (871 to 879) | ms |
+| Startup to first 200, warm (10 launches) | 428 (418 to 502) | 342 (335 to 348) | ms |
+| Startup to the home page's first 200, warm | 1,406 (1,355 to 1,606) | 366 (356 to 371) | ms |
+| First load of the home page, fresh server and browser (load event) | 1,742 (1,729 to 1,756) | 128 (128 to 128) | ms |
 | Requests for it | 166 | 27 | requests |
-| First load of the partner page (load event) | 727 (714 to 740) | 75 (73 to 77) | ms |
-| Requests for it | 84 | 21 to 22 | requests |
-| Template edit to screen (14 edits) | 34 (31 to 45) | 42 (40 to 118) | ms |
-| Style edit to screen | 33 (31 to 41) | 73 (69 to 80) | ms |
-| Server code edit to screen | never by itself; 86 (79 to 91) from a manual reload | 55 (53 to 69) | ms |
+| First load of the partner page (load event) | 754 (753 to 754) | 73 (71 to 76) | ms |
+| Requests for it | 84 | 22 | requests |
+| Template edit to screen (14 edits) | 34 (31 to 49) | 42 (41 to 120) | ms |
+| Style edit to screen | 34 (32 to 42) | 71 (67 to 85) | ms |
+| Server code edit to screen | never by itself; 86 (80 to 99) from a manual reload | 55 (52 to 60) | ms |
 | Page state kept through the edit (template / style / server) | 14 / 14 / 0 of 14 | 14 / 14 / 14 of 14 | edits |
 | Scroll position kept (template / style / server) | 12 / 14 / 14 of 14 | 12 / 14 / 14 of 14 | edits |
-| Memory at rest, PSS (RSS) of the process tree | 382 (407), 1 process | 258 (385), 4 processes | MiB |
-| Memory after 21 edits, PSS (RSS) | 491 (517) | 351 (482) | MiB |
+| Memory at rest, PSS (RSS) of the process tree | 442 (466), 1 process | 258 (384), 4 processes | MiB |
+| Memory after 21 edits, PSS (RSS) | 536 (560) | 345 (475) | MiB |
 
 - **Edits:** the partner page is open with a marker set on `window` and scrolled 300 px. One edit a kind in turn, 7 rounds, each timed from the file write to the moment the page shows it, checked after every DOM mutation and every task. The template edit changes a link's text, the style edit a rule appended to `app.css`, the server code edit a value the page's server code returns (a `--- server` fence in kay, `+page.server.ts` in SvelteKit), only in the copies.
 - **SvelteKit's server code edits:** Vite reloads nothing when `+page.server.ts` changes, so after 10 s the page was reloaded by hand and the time from that reload is given; the marker is lost each time.
-- **kay's edits:** the running server takes a page edit in instead of restarting, so template and server code edits reach the screen about 6 and 5 times sooner than on kay 1.37.3 (257 and 258 ms, when each edit restarted the server); style edits take 73 ms, 67 in sitting 12 and 96 on kay 1.37.3.
-- **Startup:** kay's cold startup is 871 ms, from 1,351 in sitting 12 and 1,040 on kay 1.37.3, now ahead of SvelteKit's, as since kay 1.54.0 the first server no longer waits for the `.kay/types` tree to be written.
-- **kay's first load** of the home page takes 134 ms in 27 requests, from 120 ms in 26 in sitting 12; not traced.
-- **SvelteKit's cold home page** varied from 2,048 to 9,641 ms over the two cold runs.
+- **kay's edits:** the running server takes a page edit in instead of restarting, so template and server code edits reach the screen about 6 and 5 times sooner than on kay 1.37.3 (257 and 258 ms, when each edit restarted the server); style edits take 71 ms, 73 in sitting 13, 67 in sitting 12 and 96 on kay 1.37.3.
+- **Startup:** kay's cold startup is 875 ms, 871 in sitting 13, from 1,351 in sitting 12 and 1,040 on kay 1.37.3, ahead of SvelteKit's, as since kay 1.54.0 the first server no longer waits for the `.kay/types` tree to be written.
+- **kay's first load** of the home page takes 128 ms in 27 requests, 134 in sitting 13 and 120 ms in 26 in sitting 12; not traced.
+- **SvelteKit's cold home page** held at 1,946 to 1,998 ms over the two cold runs, where sitting 13 had it vary from 2,048 to 9,641; its memory at rest was 442 MiB PSS, 382 in sitting 13.
 - **Memory:** kay runs `kay dev`, the server, the spare and the client builder it keeps as four processes, whose RSS counts shared pages several times, so PSS is the fair figure.
 - **First load:** Vite serves each module on its own (166 requests for the home page); kay serves a bundled client (27).
 - **Harness fix:** a first pass bypassed the CSP in the browser, under which kay up to 1.34.0 opened one more live-reload connection per edit and stalled after six (kayjs#275, fixed in 1.35.0). With the site's CSP, as a developer's browser has it, kay is unaffected; the figures above come from that.
 
 ## Earlier sittings
 Kept for what the shipped config no longer shows; compare them within their own sitting only.
-- **kay 1.53.3 (sitting 12, `ab1cde1`, 14 GB in swap):** every server figure within a few percent of sitting 13's, the 404 page and the contact form island about 4% slower; a page's JavaScript 14.4 KB brotli (partner page) and 32.2 (home page), the partner page's largest paint on a phone 800 ms with no layout shift, RSS 53 to 54 MiB at rest, and kay dev's cold startup 1,351 ms.
+- **kay 1.54.0 (sitting 13, `3d7736d`, earlier the same evening):** the same client files to the byte and every figure within noise of sitting 14's; kay's cold build 2.98 s, the partner page's largest paint on a phone 768 ms, and SvelteKit's cold home page in dev 2,048 to 9,641 ms.
+- **kay 1.53.3 (sitting 12, `ab1cde1`, 14 GB in swap):** every server figure within a few percent of sitting 14's, the 404 page and the contact form island about 4% slower; a page's JavaScript 14.4 KB brotli (partner page) and 32.2 (home page), the partner page's largest paint on a phone 800 ms with no layout shift, RSS 53 to 54 MiB at rest, and kay dev's cold startup 1,351 ms.
 - **kay 1.37.6 on Bun 1.4.4 canary (sitting 11, `06c8739`):** the partner, legal and 404 pages rendered per request served at 0.89 to 1.02 times SvelteKit's rate (3.9k to 4.8k req/s) for 1.1 to 1.2 times its CPU per request (0.25 to 0.31 ms), the partner page sent as 20.7 KB gzip around a stylesheet deflated once at start; the home page at 35.7k to 35.9k req/s, 47 times SvelteKit, for 0.028 to 0.029 ms of CPU; client JavaScript 35.9 KB brotli in 15 files and CSS 13.9 KB; warm build 1.13 s.
 - **kay dev on kay 1.37.3 (sitting 11, `d468a60`):** a page edit restarted the server (147 to 199 ms by kay's log, kept warm by a spare process), so template and server code edits reached the screen in 257 and 258 ms, style edits in 96 without a restart; startup 1,040 ms with cold caches and 555 warm, 251 MiB PSS at rest and 333 after 21 edits.
 - **kay 1.31.0 (sitting 10, `56e5d18`, a job queue on the machine using about one core in bursts):** client JavaScript 46.1 KB brotli in 33 files, the hero image served at 53.3k to 54.2k req/s (WebP) and 58.9k to 60.0k (AVIF), 1.3 to 1.5 times SvelteKit's; the other figures within noise of sitting 11's.
@@ -189,5 +192,5 @@ Kept for what the shipped config no longer shows; compare them within their own 
 - Comparisons of paint figures across sittings, and older kay versions' figures (1.10.x to 1.12.0).
 - The SvelteKit desktop home page whole-page weight moved between sittings (655 KB in one, 432 KB in another, lazy images loading differently). Only the phone weights are stable.
 - Memory: kay holds 1.5 times SvelteKit's RSS at rest; its peak under home page load is lower, since that page is served from memory. The bytecode accounts for about 3 MiB of the resting gap; the rest was not traced.
-- Cold start: SvelteKit's moved from 19.4 to 31 ms across sittings 4 to 13, more than the 6 ms gap here.
+- Cold start: SvelteKit's moved from 19.4 to 31 ms across sittings 4 to 14, more than the 6 to 7 ms gap here.
 - The Docker images compile and install inside Docker with the image's own Bun, which was not checked, so they only compare sizes.
