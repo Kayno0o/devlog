@@ -4,6 +4,8 @@
 @source not './**/*.{ts,md}';
 @source not '../{bench,tests,public}';
 @source not '../*.{md,ts}';
+/* public/charts.js adds it, which the build cannot see. */
+@source inline('in-view');
 
 /* Catppuccin Latte and Mocha: light-dark() follows the reader's color scheme with no script. Latte's muted is darkened to reach AA contrast on base and mantle. */
 @theme {
