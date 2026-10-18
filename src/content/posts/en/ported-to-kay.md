@@ -12,8 +12,6 @@ The [kay post](/posts/introducing-kay) measures kay on a products page and on a 
 
 I ported a real site from SvelteKit to kay: a home page and content pages, about 3,000 lines over 22 Svelte components. Both versions were measured in one sitting, runs interleaved, over loopback: the ratios carry over, the absolute numbers are optimistic.
 
-### What kay gains
-
 <Stats items={[{"value": "-89%", "label": "server CPU per visitor"}, {"value": "-54%", "label": "requests in home page"}, {"value": "-20%", "label": "Docker image"}, {"value": "-17%", "label": "lines of code"}]} />
 
 <BarChart title="First paint on a phone, content page" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 360}, {"label": "SvelteKit", "value": 756}]} bench="sveltekit" source="Lighthouse Pixel 7 preset (slow 4G, 4x CPU), median of 3 runs" />
@@ -35,8 +33,6 @@ kay's build keeps the content pages too, as they take nothing from the request, 
 <BarChart title="Build, cold caches" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.98}, {"label": "SvelteKit", "value": 4.18}]} bench="sveltekit" source="hyperfine, median of 3 runs" />
 
 Under load, kay peaks at 88 to 89 MiB of memory against SvelteKit's 130 to 137. The home page a phone downloads drops from 706 to 546 KB, mostly images: kay serves AVIF at the width drawn.
-
-### What kay loses
 
 <BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 57}]} bench="sveltekit" source="RSS after start" />
 
@@ -61,8 +57,6 @@ kay 1.54.0 on Bun 1.4.3, the dev server included. Paints come from Playwright un
 
 Two small business sites moved to kay from Astro: a cattery and a house painter. Each was built and served as it deploys, Astro's standalone server under Bun against kay's one executable, both behind nginx with HTTP/2, TLS and brotli.
 
-### What kay gains
-
 <Stats items={[{"value": "-32 to -37%", "label": "lines of code"}, {"value": "2.2 to 3.5x", "label": "faster cold start"}, {"value": "-27 to -85%", "label": "CSS per page"}]} />
 
 <BarChart title="Requests per second, a content page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay, painter", "value": 39805}, {"label": "kay, cattery", "value": 39322}, {"label": "Astro, cattery", "value": 12648}, {"label": "Astro, painter", "value": 11798}]} bench="astro" source="32 clients through nginx for 5 s" />
@@ -75,8 +69,6 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 - **Lighter images**, served as AVIF at the width drawn: 55 against 143 KB and 36 against 161 KB per page on desktop, 115 against 143 KB and 105 against 185 KB on a phone.
 - **Faster paints on the cattery**: on a phone, the largest paint lands at 1.78 s instead of 2.73 s, and a phone downloads 201 KB per page instead of 256.
-
-### What kay loses
 
 <BarChart title="JS shipped per page, brotli" unit="KB" better="lower" rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 13.1}, {"label": "kay, painter", "value": 13.1}]} bench="astro" source="average over every page" />
 

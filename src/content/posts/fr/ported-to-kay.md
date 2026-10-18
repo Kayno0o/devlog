@@ -12,8 +12,6 @@ L'[article sur kay](/posts/introducing-kay) mesure kay sur une page de produits 
 
 J'ai porté un vrai site de SvelteKit vers kay : une page d'accueil et des pages de contenu, environ 3 000 lignes réparties sur 22 composants Svelte. Les deux versions ont été mesurées en une seule séance, exécutions entrelacées, en loopback : les ratios se transposent, les chiffres absolus sont optimistes.
 
-### Ce que kay gagne
-
 <Stats items={[{"value": "-89 %", "label": "CPU serveur par visiteur"}, {"value": "-54 %", "label": "requêtes sur la page d'accueil"}, {"value": "-20 %", "label": "image Docker"}, {"value": "-17 %", "label": "lignes de code"}]} />
 
 <BarChart title="Premier rendu sur mobile, page de contenu" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 360}, {"label": "SvelteKit", "value": 756}]} bench="sveltekit" source="preset Lighthouse Pixel 7 (4G lente, CPU 4x), médiane de 3 exécutions" />
@@ -35,8 +33,6 @@ Le build de kay garde aussi les pages de contenu, qui ne prennent rien de la req
 <BarChart title="Build, caches froids" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.98}, {"label": "SvelteKit", "value": 4.18}]} bench="sveltekit" source="hyperfine, médiane de 3 exécutions" />
 
 Sous charge, kay culmine à 88 à 89 Mio de mémoire contre 130 à 137 pour SvelteKit. La page d'accueil téléchargée par un mobile passe de 706 à 546 Ko, surtout grâce aux images : kay sert de l'AVIF à la largeur affichée.
-
-### Ce que kay perd
 
 <BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 57}]} bench="sveltekit" source="RSS après le démarrage" />
 
@@ -61,8 +57,6 @@ kay 1.54.0 sur Bun 1.4.3, serveur de dev compris. Les rendus viennent de Playwri
 
 Deux petits sites d'entreprise sont passés d'Astro à kay : un élevage de chats et un peintre en bâtiment. Chacun a été construit et servi comme il se déploie, le serveur standalone d'Astro sous Bun contre l'unique exécutable de kay, tous deux derrière nginx avec HTTP/2, TLS et brotli.
 
-### Ce que kay gagne
-
 <Stats items={[{"value": "-32 à -37 %", "label": "lignes de code"}, {"value": "2,2 à 3,5x", "label": "démarrage à froid plus rapide"}, {"value": "-27 à -85 %", "label": "CSS par page"}]} />
 
 <BarChart title="Requêtes par seconde, une page de contenu" unit="req/s" better="higher" digits={0} rows={[{"label": "kay, peintre", "value": 39805}, {"label": "kay, élevage", "value": 39322}, {"label": "Astro, élevage", "value": 12648}, {"label": "Astro, peintre", "value": 11798}]} bench="astro" source="32 clients via nginx pendant 5 s" />
@@ -75,8 +69,6 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
 
 - **Des images plus légères**, servies en AVIF à la largeur affichée : 55 contre 143 Ko et 36 contre 161 Ko par page sur desktop, 115 contre 143 Ko et 105 contre 185 Ko sur mobile.
 - **Des rendus plus rapides sur le site de l'élevage** : sur mobile, le plus gros rendu arrive à 1,78 s au lieu de 2,73 s, et un mobile télécharge 201 Ko par page au lieu de 256.
-
-### Ce que kay perd
 
 <BarChart title="JS envoyé par page, brotli" unit="Ko" better="lower" rows={[{"label": "Astro, peintre", "value": 0.4}, {"label": "Astro, élevage", "value": 5.2}, {"label": "kay, élevage", "value": 13.1}, {"label": "kay, peintre", "value": 13.1}]} bench="astro" source="moyenne sur toutes les pages" />
 
