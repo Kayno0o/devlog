@@ -1,5 +1,6 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
+import { benches } from '../src/benches'
 import BarChart from '../src/components/bar-chart.kay'
 
 const rows = [{ label: 'kay', value: 4788 }, { label: 'Svelte', value: 3853 }]
@@ -30,8 +31,8 @@ it('opens a bench\'s source with its name and ends it with its date', async () =
   const detailed = await renderToString(BarChart, { title: 'Build', unit: 's', rows, bench: 'sveltekit', source: 'hyperfine, 3 runs' })
   const plain = await renderToString(BarChart, { title: 'Build', unit: 's', rows, bench: 'synthetic' })
 
-  expect(detailed).toContain('Source: SvelteKit port, hyperfine, 3 runs, 2026-10-11')
-  expect(plain).toContain('Source: kay\'s bench, 2026-10-17')
+  expect(detailed).toContain(`Source: SvelteKit port, hyperfine, 3 runs, ${benches.sveltekit.date}`)
+  expect(plain).toContain(`Source: kay's bench, ${benches.synthetic.date}`)
 })
 
 it('puts each framework\'s logo before its name, a site after the comma included', async () => {

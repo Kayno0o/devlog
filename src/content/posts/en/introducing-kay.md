@@ -179,7 +179,7 @@ The page script runs on the server and again in the browser, so the server-only 
 
 I care about speed everywhere: how fast a page loads and runs, how fast the server answers, how fast a build or a test run finishes, and how little the server needs, in memory and in what it takes to deploy.
 
-I also care about how much code it takes. I have two apps of my own, one in SvelteKit at about 27,000 lines and one in SolidJS at about 34,000, blanks and comments left out: at that size, every line a framework saves is one less to write, read and keep working. Neither is migrated to kay yet, and that will get its own post.
+I also care about how much code it takes. I have two apps of my own, one in SvelteKit at about 27,000 lines and one in SolidJS at about 34,000, blanks and comments left out: at that size, every line a framework saves is one less to write, read and keep working.
 
 For a while I used Astro with SolidJS inside: fast pages for little code, at the price of two frameworks and two ways to write a component in one project. SvelteKit, SolidStart and Astro also all build on Vite, which sometimes makes builds and unit tests slow. kay is what I built to have it all in one place, built and tested by Bun alone. It mixes what I liked in each:
 
@@ -219,7 +219,7 @@ Counted in characters, as lines depend on formatting: Prettier turns the Svelte 
 
 <BarChart title="JS shipped, table page, gzip" unit="KB" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.7}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
 
-Astro's island is the same Solid table as the SolidJS app, and neither has a router, where kay's JavaScript includes its in-place page navigation.
+Astro's island is the same Solid table as the SolidJS app, and neither has a router, where kay's JavaScript includes the listener its in-place page navigation starts from.
 
 <BenchTable title="Table operations" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Create 1,000 rows", "values": [29.9, 26.6, 28, 26.4, 31.1, 26.8]}, {"label": "Replace 1,000 rows", "values": [25.6, 24.8, 25.6, 24.8, 30.2, 27.7]}, {"label": "Update every 10th row", "values": [2.8, 2.7, 2.6, 2.6, 4.2, 3.5]}, {"label": "Select a row", "values": [0.2, 0.3, 1, 0.3, 1.3, 0.6]}, {"label": "Swap two rows", "values": [2.3, 2, 2.1, 2, 20.6, 2.4]}, {"label": "Remove a row", "values": [2, 2, 2.2, 1.9, 3.3, 4.5]}, {"label": "Create 10,000 rows", "values": [260, 229, 234, 227, 364, 271]}, {"label": "Append 1,000 rows", "values": [24.5, 23.4, 24.2, 23.3, 27, 25.5]}, {"label": "Clear 1,000 rows", "values": [3, 2.6, 3.2, 2.9, 5.1, 4.2]}]} bench="synthetic" />
 
@@ -231,9 +231,9 @@ kay 1.51.1, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt
 
 ## Real sites, ported to kay
 
-Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. [Their own post](/posts/ported-to-kay) has every figure, and what kay loses: slower edits in the dev server, more JavaScript than Astro, slower builds.
+Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. [Their own post](/posts/ported-to-kay) has every figure, and what kay loses: slower style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro.
 
-<Stats items={[{"value": "-86%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "3.1 to 3.4x", "label": "requests per second on a content page, from Astro"}, {"value": "-17 to -37%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-89%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "3.1 to 3.4x", "label": "requests per second on a content page, from Astro"}, {"value": "-17 to -37%", "label": "lines of code"}]} />
 
 ## Built for LLMs too
 
@@ -244,7 +244,7 @@ kay is meant to be as easy for a coding agent to write as for me:
 - Typed end to end, templates included: `kay check` points at the `.kay` line, so an agent fixes its own mistakes without a browser.
 - The whole reference ships as `llms.txt` and one file per topic, read on demand instead of searched for.
 
-To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network, and a hidden suite of browser tests grades the site.
+To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network but `bun add`, and a hidden suite of browser tests grades the site.
 
 <Note title="The site kay's agent built, running">
 

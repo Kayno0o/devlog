@@ -14,43 +14,46 @@ J'ai porté un vrai site de SvelteKit vers kay : une page d'accueil et des page
 
 ### Ce que kay gagne
 
-<Stats items={[{"value": "-86 %", "label": "CPU serveur par visiteur"}, {"value": "-57 %", "label": "requêtes sur la page d'accueil"}, {"value": "-19 %", "label": "image Docker"}, {"value": "-17 %", "label": "lignes de code"}]} />
+<Stats items={[{"value": "-89 %", "label": "CPU serveur par visiteur"}, {"value": "-54 %", "label": "requêtes sur la page d'accueil"}, {"value": "-20 %", "label": "image Docker"}, {"value": "-17 %", "label": "lignes de code"}]} />
 
-<BarChart title="Premier rendu sur mobile, page de contenu" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 400}, {"label": "SvelteKit", "value": 744}]} bench="sveltekit" source="preset Lighthouse Pixel 7 (4G lente, CPU 4x), médiane de 3 exécutions" />
+<BarChart title="Premier rendu sur mobile, page de contenu" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 360}, {"label": "SvelteKit", "value": 756}]} bench="sveltekit" source="preset Lighthouse Pixel 7 (4G lente, CPU 4x), médiane de 3 exécutions" />
 
-<BarChart title="JavaScript côté client, brotli" unit="Ko" better="lower" rows={[{"label": "kay", "value": 35.9}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="tous les fichiers écrits par le build" />
+<BarChart title="JavaScript côté client, brotli" unit="Ko" better="lower" rows={[{"label": "kay", "value": 46.2}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="tous les fichiers écrits par le build" />
 
-Une page ne charge que la partie dont ses islands ont besoin : 16 Ko sur une page de contenu.
+Une page ne charge que la partie dont ses islands ont besoin : 14 Ko sur une page de contenu.
 
 La page d'accueil est prérendue, et son formulaire de contact, la seule partie qui diffère selon le visiteur, est une server island différée : le navigateur la récupère environ un écran avant qu'elle n'entre dans la vue, tandis que kay sert la page elle-même depuis la mémoire.
 
-<BarChart title="Requêtes par seconde, page d'accueil" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 35722}, {"label": "SvelteKit", "value": 764}]} bench="sveltekit" source="oha, 64 connexions pendant 10 s, 2 passes, la plus lente de kay" />
+<BarChart title="Requêtes par seconde, page d'accueil" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 40887}, {"label": "SvelteKit", "value": 793}]} bench="sveltekit" source="oha, 64 connexions pendant 10 s, 2 passes, la plus lente de kay" />
 
 L'essentiel de cet écart vient du prérendu, pas de la vitesse de rendu : quand kay rendait toute la page à chaque requête, comme SvelteKit, il la servait à environ deux fois le débit de SvelteKit.
 
-<BarChart title="Build, caches froids" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.97}, {"label": "SvelteKit", "value": 3.92}]} bench="sveltekit" source="hyperfine, médiane de 3 exécutions" />
+<BarChart title="Requêtes par seconde, page de contenu" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 39862}, {"label": "SvelteKit", "value": 4202}]} bench="sveltekit" source="oha, 64 connexions pendant 10 s, 2 passes, la plus lente de kay" />
 
-Sous charge, kay culmine à 85 Mio de mémoire contre 131 à 134 pour SvelteKit. La page d'accueil téléchargée par un mobile passe de 706 à 558 Ko, surtout grâce aux images : kay sert de l'AVIF à la largeur affichée.
+Le build de kay garde aussi les pages de contenu, qui ne prennent rien de la requête, si bien qu'elles sont servies elles aussi depuis la mémoire. Seule la 404 est encore rendue à chaque requête, à 1,4 fois le débit de SvelteKit pour moins de CPU.
+
+<BarChart title="Build, caches froids" unit="s" better="lower" digits={2} rows={[{"label": "kay", "value": 2.98}, {"label": "SvelteKit", "value": 4.18}]} bench="sveltekit" source="hyperfine, médiane de 3 exécutions" />
+
+Sous charge, kay culmine à 88 à 89 Mio de mémoire contre 130 à 137 pour SvelteKit. La page d'accueil téléchargée par un mobile passe de 706 à 546 Ko, surtout grâce aux images : kay sert de l'AVIF à la largeur affichée.
 
 ### Ce que kay perd
 
-<BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 55}]} bench="sveltekit" source="RSS après le démarrage" />
+<BarChart title="Mémoire du serveur au repos" unit="Mio" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 38}, {"label": "kay", "value": 57}]} bench="sveltekit" source="RSS après le démarrage" />
 
 - **L'inlining a un prix.** Le rendu sur mobile ci-dessus vient de la feuille de styles inlinée, que ce portage activait avant que kay 1.46 en fasse le réglage par défaut pour les feuilles de moins de 14 Ko environ une fois compressées : avec la feuille liée, kay 1.14 rendait de 85 à 140 ms derrière SvelteKit. L'inlining coûte environ 2 Ko par page, et la feuille de styles n'est plus mise en cache d'une page à l'autre.
-- **Pages courtes avec styles inlinés.** Les pages rendues à chaque requête portent toute la feuille de styles, si bien que kay les sert à 0,9 à 1,0 fois le débit de SvelteKit, pour 1,1 à 1,2 fois son CPU par requête. Avec la feuille liée, kay 1.16.6 les servait à 1,8 à 2,2 fois le débit de SvelteKit.
 
 ### En développement
 
-<BarChart title="Premier chargement de la page d'accueil, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 97}, {"label": "SvelteKit", "value": 1654}]} bench="sveltekit" source="Chromium headless, événement load, médiane de 2 passes" />
+<BarChart title="Premier chargement de la page d'accueil, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "kay", "value": 134}, {"label": "SvelteKit", "value": 1653}]} bench="sveltekit" source="Chromium headless, événement load, médiane de 2 passes" />
 
-<BarChart title="Modification de template à l'écran, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 37}, {"label": "kay", "value": 257}]} bench="sveltekit" source="de l'écriture du fichier à son affichage, médiane de 14 modifications" />
+<BarChart title="Modification de template à l'écran, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 34}, {"label": "kay", "value": 42}]} bench="sveltekit" source="de l'écriture du fichier à son affichage, médiane de 14 modifications" />
 
-- **kay charge les pages plus vite.** Les deux démarrent en une seconde environ avec les caches vides, mais kay sert un client groupé, 19 requêtes pour la page d'accueil contre 166 modules pour Vite, si bien que la page d'accueil répond en 571 ms après un démarrage à chaud contre 1 440. Ses processus occupent 251 Mio contre 415 pour Vite.
-- **Vite applique les modifications plus tôt.** kay redémarre son serveur à chaque modification de template, si bien qu'elle s'affiche en 260 ms environ contre 40 pour Vite ; une modification de style est appliquée sans redémarrage, en 96 ms contre 38. kay affiche une modification du code serveur dans les mêmes 260 ms en gardant l'état de la page, ce que SvelteKit n'affiche qu'après un rechargement manuel.
+- **kay charge les pages plus vite.** Il démarre en 871 ms avec les caches vides contre 950 pour Vite, et sert un client groupé, 27 requêtes pour la page d'accueil contre 166 modules pour Vite, si bien que la page d'accueil répond en 363 ms après un démarrage à chaud contre 1 467. Ses processus occupent 258 Mio contre 382 pour Vite.
+- **Vite applique les modifications de style plus tôt.** kay prend en compte une modification de template ou de code serveur sans redémarrer son serveur, mais une modification de style s'affiche en 73 ms contre 33 pour Vite. kay affiche une modification du code serveur en 55 ms en gardant l'état de la page, ce que SvelteKit n'affiche qu'après un rechargement manuel.
 
 <Note title="Comment c'est mesuré">
 
-kay 1.37.6 sur Bun 1.4.4 canary, kay 1.37.3 pour le serveur de dev. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
+kay 1.54.0 sur Bun 1.4.3, serveur de dev compris. Les rendus viennent de Playwright sous les presets mobile et bureau de Lighthouse, médiane de 3 exécutions ; les builds de hyperfine, médiane de 3 exécutions à froid ; le serveur de oha, 10 s à 64 connexions, deux passes. Le code du site est privé, donc la trace est [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), chaque chiffre avec ses conditions.
 
 </Note>
 
