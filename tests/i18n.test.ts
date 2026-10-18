@@ -1,6 +1,7 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
 import { testSite } from 'kay/test'
+import { benches } from '../src/benches'
 import BarChart from '../src/components/bar-chart.kay'
 import PostMeta from '../src/components/post-meta.kay'
 import { pageWeight } from '../src/page-weight'
@@ -63,7 +64,7 @@ it('writes a post\'s dates, reading time and chart in French', async () => {
   expect(meta).toContain('2 min de lecture')
   expect(chart).toContain('plus bas, c\'est mieux')
   expect(chart).toContain('1\u202F234,5 ms')
-  expect(chart).toContain('Source\u00A0: ports Astro, 2026-10-10')
+  expect(chart).toContain(`Source\u00A0: ports Astro, ${benches.astro.date}`)
 })
 
 it('weighs a French page in French', async () => {

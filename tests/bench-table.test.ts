@@ -1,5 +1,6 @@
 import { expect, it } from 'bun:test'
 import { renderToString } from 'kay/server'
+import { benches } from '../src/benches'
 import BenchTable from '../src/components/bench-table.kay'
 
 const columns = ['kay', 'SolidJS', 'Svelte']
@@ -12,7 +13,7 @@ it('marks each row\'s best cells and gives the others their gap to it', async ()
   expect(html).toContain('<span class="block text-xs text-muted">+21%</span>')
   expect(html).toContain('<span class="block text-xs text-muted">+400%</span>')
   expect(html).toContain('ms, lower is better')
-  expect(html).toContain('Source: kay\'s bench, 2026-10-17')
+  expect(html).toContain(`Source: kay's bench, ${benches.synthetic.date}`)
 })
 
 it('heads a column per framework, in order, kay in bold', async () => {
