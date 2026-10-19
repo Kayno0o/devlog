@@ -4,15 +4,12 @@ import Next from '~icons/simple-icons/nextdotjs'
 import Nuxt from '~icons/simple-icons/nuxt'
 import Solid from '~icons/simple-icons/solid'
 import Svelte from '~icons/simple-icons/svelte'
+import { frameworkOf } from '../frameworks'
 import kay from '../kay-logo.svg'
-
-// A label is a framework, then maybe its site: `SvelteKit` or `Astro, painter`.
-const logos = new Map([['kay', 'kay'], ['Svelte', 'svelte'], ['SvelteKit', 'svelte'], ['SolidJS', 'solid'], ['SolidStart', 'solid'], ['Astro', 'astro'], ['Next', 'next'], ['Next.js', 'next'], ['Nuxt', 'nuxt']])
 
 const { label } = props<{ label: string }>()
 
-const comma = label.indexOf(',')
-const logo = logos.get(comma === -1 ? label : label.slice(0, comma))
+const logo = frameworkOf(label)
 ---
 if logo === 'kay'
   img.size-4(src={kay} width="16" height="16" alt="")

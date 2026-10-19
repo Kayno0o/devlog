@@ -84,3 +84,11 @@ it('writes a row\'s note after its value, telling two rows of one framework apar
   expect(html).toContain('<th scope="row">kay (no type check)</th>')
   expect(html.match(/chart-bar-highlight/g)).toHaveLength(2)
 })
+
+it('tints each framework\'s bar with its color, sites included', async () => {
+  const html = await renderToString(BarChart, { title: 'Memory', unit: 'MB', rows: [{ label: 'Astro, cattery', value: 283 }, { label: 'SvelteKit', value: 130 }, { label: 'Reference', value: 90 }] })
+
+  expect(html).toContain('--tint: var(--framework-astro)')
+  expect(html).toContain('--tint: var(--framework-svelte)')
+  expect(html.match(/--tint/g)).toHaveLength(2)
+})

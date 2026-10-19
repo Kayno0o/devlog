@@ -1,8 +1,20 @@
 @reference '../app.css';
 
 @layer components {
+  /* Brand colors, mixed into the gray only enough to tell the frameworks apart. */
+  .chart {
+    --framework-kay: var(--color-accent);
+    --framework-svelte: #ff3e00;
+    --framework-solid: light-dark(#446b9e, #76b3e1);
+    --framework-astro: #bc52ee;
+    --framework-next: var(--color-text);
+    --framework-nuxt: #00dc82;
+  }
+
   .chart-bar {
-    @apply h-3 min-w-0.5 rounded-r bg-muted;
+    @apply h-3 min-w-0.5 rounded-r;
+
+    background-color: color-mix(in oklab, var(--color-muted) 65%, var(--tint, var(--color-muted)));
   }
 
   .chart-bar-highlight {
