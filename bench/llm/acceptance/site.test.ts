@@ -272,11 +272,13 @@ describeSite('contact', () => {
   const shown = async (page: Page, text: string): Promise<boolean> => await page.getByText(text, { exact: true }).filter({ visible: true }).count() > 0
   const appears = async (page: Page, text: string): Promise<void> => page.getByText(text, { exact: true }).filter({ visible: true }).first().waitFor()
   const send = async (page: Page): Promise<void> => click(page.getByRole('button', { name: 'Send', exact: true }))
+  // by accessible name: getByLabel matches a wrapping label's text, which takes in a server-rendered textarea's text
+  const field = (page: Page, name: string): Locator => page.getByRole('textbox', { name, exact: true })
 
   async function fill(page: Page, name: string, email: string, message: string): Promise<void> {
-    await page.getByLabel('Name', { exact: true }).fill(name)
-    await page.getByLabel('Email', { exact: true }).fill(email)
-    await page.getByLabel('Message', { exact: true }).fill(message)
+    await field(page, 'Name').fill(name)
+    await field(page, 'Email').fill(email)
+    await field(page, 'Message').fill(message)
   }
 
   test('has the form', async () => {
@@ -284,8 +286,8 @@ describeSite('contact', () => {
       expect(await page.title()).toBe('Contact | Bookshelf')
       expect(await texts(h1(page))).toEqual(['Contact'])
       expect(await page.locator('form[novalidate]').count()).toBe(1)
-      expect(await page.getByLabel('Message', { exact: true }).evaluate(element => element.tagName)).toBe('TEXTAREA')
-      expect(await page.getByLabel('Email', { exact: true }).getAttribute('type')).toBe('email')
+      expect(await field(page, 'Message').evaluate(element => element.tagName)).toBe('TEXTAREA')
+      expect(await field(page, 'Email').getAttribute('type')).toBe('email')
     })
   }, timeout)
 
@@ -302,9 +304,9 @@ describeSite('contact', () => {
       await appears(page, errors.emailFormat)
       expect(await shown(page, errors.message)).toBe(true)
       expect(await shown(page, errors.name)).toBe(false)
-      expect(await page.getByLabel('Name', { exact: true }).inputValue()).toBe('Ada')
-      expect(await page.getByLabel('Email', { exact: true }).inputValue()).toBe('not-an-email')
-      expect(await page.getByLabel('Message', { exact: true }).inputValue()).toBe('Too short')
+      expect(await field(page, 'Name').inputValue()).toBe('Ada')
+      expect(await field(page, 'Email').inputValue()).toBe('not-an-email')
+      expect(await field(page, 'Message').inputValue()).toBe('Too short')
 
       await fill(page, '  Ada Lovelace ', 'ada@example.com', 'I would like to suggest a book for the shelf.')
       await send(page)
