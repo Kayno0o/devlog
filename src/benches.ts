@@ -10,6 +10,8 @@ export const benches = {
   sveltekit: { date: '2026-10-19' },
   astro: { date: '2026-10-18' },
   llm: { date: '2026-10-17' },
+  // Opus's runs beside Sonnet's, dated by Sonnet's.
+  llmModels: { date: '2026-10-19' },
 } satisfies Record<string, { date?: string }>
 
 export type BenchId = keyof typeof benches

@@ -81,6 +81,7 @@ export default defineMessages({
     sveltekit: 'port SvelteKit',
     astro: 'ports Astro',
     llm: 'benchmark LLM, Opus 5.5, effort high, médiane des runs réussis',
+    llmModels: 'benchmark LLM, Opus 5.5 en effort high et Sonnet 5.5 en medium, médiane des runs réussis',
   },
   notFound: {
     title: 'Rien ici',
