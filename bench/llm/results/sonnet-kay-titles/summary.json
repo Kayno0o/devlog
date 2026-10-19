@@ -1,0 +1,188 @@
+{
+  "label": "sonnet-kay-titles",
+  "model": "claude-sonnet-5-5",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-19T16:16:25.571Z",
+  "to": "2026-10-19T16:24:10.922Z",
+  "frameworks": {
+    "kay": {
+      "runs": 5,
+      "passed": 5,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.51.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [],
+      "spent": {
+        "costUsd": 1.3019264,
+        "totalTokens": 1971281,
+        "minutes": 8.04775
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 32,
+          "min": 26,
+          "max": 38
+        },
+        "cacheWriteTokens": {
+          "median": 28403,
+          "min": 24426,
+          "max": 32996
+        },
+        "cacheReadTokens": {
+          "median": 348485,
+          "min": 252096,
+          "max": 477775
+        },
+        "outputTokens": {
+          "median": 7350,
+          "min": 7119,
+          "max": 8019
+        },
+        "thinkingTokens": {
+          "median": 988,
+          "min": 790,
+          "max": 1067
+        },
+        "totalTokens": {
+          "median": 384295,
+          "min": 289812,
+          "max": 518828
+        },
+        "peakContextTokens": {
+          "median": 32259,
+          "min": 29807,
+          "max": 38377
+        },
+        "costUsd": {
+          "median": 0.24814600000000003,
+          "min": 0.24352120000000005,
+          "max": 0.30780499999999994
+        },
+        "minutes": {
+          "median": 1.4436833333333334,
+          "min": 1.19755,
+          "max": 2.4639
+        },
+        "apiMinutes": {
+          "median": 1.1725166666666667,
+          "min": 1.0269,
+          "max": 2.3182
+        },
+        "turns": {
+          "median": 16,
+          "min": 13,
+          "max": 19
+        },
+        "apiCalls": {
+          "median": 16,
+          "min": 13,
+          "max": 19
+        },
+        "toolCalls": {
+          "median": 15,
+          "min": 12,
+          "max": 18
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 15,
+          "min": 12,
+          "max": 18
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 0,
+          "max": 2
+        },
+        "docsCalls": {
+          "median": 4,
+          "min": 3,
+          "max": 6
+        },
+        "docsChars": {
+          "median": 28980,
+          "min": 24984,
+          "max": 32666
+        },
+        "checkRuns": {
+          "median": 4,
+          "min": 2,
+          "max": 6
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "filesChanged": {
+          "median": 22,
+          "min": 22,
+          "max": 22
+        },
+        "linesWritten": {
+          "median": 310,
+          "min": 301,
+          "max": 315
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "linesRemoved": {
+          "median": 3,
+          "min": 3,
+          "max": 3
+        },
+        "packagesAdded": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "failures": []
+    }
+  }
+}
