@@ -92,3 +92,12 @@ it('tints each framework\'s bar with its color, sites included', async () => {
   expect(html).toContain('--tint: var(--framework-svelte)')
   expect(html.match(/--tint/g)).toHaveLength(2)
 })
+
+it('names each group once, sets off every group after the first, and keeps the group in the table', async () => {
+  const html = await renderToString(BarChart, { title: 'Cost', unit: 'USD', rows: [{ label: 'Astro', group: 'Sonnet 5.5', value: 0.12 }, { label: 'Nuxt', group: 'Sonnet 5.5', value: 0.15 }, { label: 'Astro', group: 'Opus 5.5', value: 0.78 }] })
+
+  expect(html.match(/>Sonnet 5\.5</g)).toHaveLength(1)
+  expect(html.match(/>Opus 5\.5</g)).toHaveLength(1)
+  expect(html.match(/border-t/g)).toHaveLength(1)
+  expect(html).toContain('<th scope="row">Astro, Opus 5.5</th>')
+})
