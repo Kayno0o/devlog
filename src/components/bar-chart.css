@@ -6,7 +6,7 @@
     --framework-kay: var(--color-accent);
     --framework-svelte: #ff3e00;
     --framework-solid: light-dark(#446b9e, #76b3e1);
-    --framework-astro: #bc52ee;
+    --framework-astro: light-dark(#e5317a, #f38ba8);
     --framework-next: var(--color-text);
     --framework-nuxt: #00dc82;
   }
