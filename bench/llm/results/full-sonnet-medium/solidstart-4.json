@@ -1,0 +1,163 @@
+{
+  "framework": "solidstart",
+  "run": 4,
+  "label": "full-sonnet-medium",
+  "startedAt": "2026-10-19T14:48:07.383Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "@solidjs/start": "2.0.6",
+    "solid-js": "1.9.17",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 212843,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 212321,
+    "durationApiMs": 150503,
+    "turns": 31,
+    "costUsd": 0.4313951999999999,
+    "tokens": {
+      "input": 60,
+      "output": 15603,
+      "cacheCreation": 31937,
+      "cacheRead": 737486
+    },
+    "outputExact": true,
+    "thinkingTokens": 3206,
+    "apiCalls": 30,
+    "peakContextTokens": 37318,
+    "toolCalls": {
+      "Bash": 30
+    },
+    "toolErrors": 4,
+    "checkRuns": [
+      {
+        "command": "mkdir -p src/lib src/routes/books && rm -rf src/components && \ncat > src/lib/books.ts <<'EOF'\nimport { marked } from \"marked\";\nimport { parse } from \"yaml\";\n\nexport type Book = {\n  slug: string;\n  title: string;\n  author: string;\n  year: number;\n  rating: number;\n  tags: string[];\n  html: string;\n};\n\nconst files = import.meta.glob(\"../../content/books/*.md\", {\n  query: \"?raw\",\n  import: \"default\",\n  eager: true\n}) as Record<string, string>;\n\nfunction load(path: string, raw: string): Book {\n  const m = raw.replace(/\\r\\n/g, \"\\n\").match(/^---\\n([\\s\\S]*?)\\n---\\n?([\\s\\S]*)$/);\n  const data = (m ? parse(m[1]) : {}) as Record<string, any>;\n  return {\n    slug: path.replace(/^.*\\//, \"\").replace(/\\.md$/, \"\"),\n    title: String(data.title),\n    author: String(data.author),\n    year: Number(data.year),\n    rating: Number(data.rating),\n    tags: (data.tags ?? []).map(String),\n    html: marked.parse(m ? m[2] : raw, { async: false }) as string\n  };\n}\n\nconst cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);\n\nexport const books: Book[] = Object.entries(files)\n  .map(([p, raw]) => load(p, raw))\n  .sort((a, b) => cmp(a.title, b.title));\n\nexport const getBook = (slug: string) => books.find(b => b.slug === slug);\n\nexport const topRated = () =>\n  [...books].sort((a, b) => b.rating - a.rating || cmp(a.title, b.title)).slice(0, 3);\n\nexport const allTags = () => [...new Set(books.flatMap(b => b.tags))].sort(cmp);\nEOF\ncat > src/lib/favorites.ts <<'EOF'\nimport { createSignal } from \"solid-js\";\n\nconst KEY = \"bookshelf:favorites\";\nconst [favs, setFavs] = createSignal<string[]>([]);\nlet loaded = false;\n\nexport function loadFavorites() {\n  if (loaded) return;\n  loaded = true;\n  try {\n    const v = JSON.parse(localStorage.getItem(KEY) ?? \"[]\");\n    if (Array.isArray(v)) setFavs(v.map(String));\n  } catch {}\n}\n\nexport const isFavorite = (slug: string) => favs().includes(slug);\n\nexport function toggleFavorite(slug: string) {\n  const next = isFavorite(slug) ? favs().filter(s => s !== slug) : [...favs(), slug];\n  setFavs(next);\n  try {\n    localStorage.setItem(KEY, JSON.stringify(next));\n  } catch {}\n}\nEOF\ncat > src/lib/contact.ts <<'EOF'\nexport type ContactValues = { name: string; email: string; message: string };\nexport type ContactErrors = Partial<Record<keyof ContactValues, string>>;\n\nexport function validate(v: ContactValues): ContactErrors {\n  const e: ContactErrors = {};\n  if (!v.name) e.name = \"Name is required.\";\n  if (!v.email) e.email = \"Email is required.\";\n  else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v.email)) e.email = \"Enter a valid email address.\";\n  if (v.message.length < 20) e.message = \"Message must be at least 20 characters.\";\n  return e;\n}\nEOF\ncat > src/app.tsx <<'EOF'\nimport { MetaProvider } from \"@solidjs/meta\";\nimport { Router, useLocation } from \"@solidjs/router\";\nimport { FileRoutes } from \"@solidjs/start/router\";\nimport { Suspense } from \"solid-js\";\nimport \"./app.css\";\n\nfunction Layout(props: { children?: any }) {\n  const loc = useLocation();\n  const cur = (p: string) =>\n    loc.pathname === p || loc.pathname.startsWith(p + \"/\") ? (\"page\" as const) : undefined;\n  return (\n    <>\n      <header>\n        <a href=\"/\">Bookshelf</a>\n        <nav aria-label=\"Main\">\n          <a href=\"/books\" aria-current={cur(\"/books\")}>Books</a>\n          <a href=\"/about\" aria-current={cur(\"/about\")}>About</a>\n          <a href=\"/contact\" aria-current={cur(\"/contact\")}>Contact</a>\n        </nav>\n      </header>\n      <main>\n        <Suspense>{props.children}</Suspense>\n      </main>\n      <footer>© Bookshelf</footer>\n    </>\n  );\n}\n\nexport default function App() {\n  return (\n    <Router root={props => <MetaProvider><Layout>{props.children}</Layout></MetaProvider>}>\n      <FileRoutes />\n    </Router>\n  );\n}\nEOF\ncat > src/app.css <<'EOF'\nbody { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 48rem; padding: 1rem; }\nheader { display: flex; gap: 1.5rem; align-items: center; }\nnav { display: flex; gap: 1rem; }\nnav a[aria-current=\"page\"] { font-weight: bold; }\nfooter { margin-top: 2rem; }\nbutton[aria-pressed=\"true\"] { font-weight: bold; }\n.error { color: #b00020; }\nlabel { display: block; margin-top: 0.75rem; }\nEOF\ncat > src/components.tsx 2>/dev/null <<'EOF'\nEOF\nrm src/components.tsx\nmkdir src/components\ncat > src/components/NotFound.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { HttpStatusCode } from \"@solidjs/start\";\n\nexport default function NotFound() {\n  return (\n    <>\n      <Title>Not found | Bookshelf</Title>\n      <HttpStatusCode code={404} />\n      <h1>Not found</h1>\n      <a href=\"/books\">Back to the books</a>\n    </>\n  );\n}\nEOF\ncat > 'src/routes/[...404].tsx' <<'EOF'\nimport NotFound from \"~/components/NotFound\";\n\nexport default NotFound;\nEOF\ncat > src/routes/index.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { For } from \"solid-js\";\nimport { topRated } from \"~/lib/books\";\n\nexport default function Home() {\n  return (\n    <>\n      <Title>Bookshelf</Title>\n      <h1>Bookshelf</h1>\n      <p>A small catalog of classic books.</p>\n      <h2>Top rated</h2>\n      <ol>\n        <For each={topRated()}>{b => <li><a href={`/books/${b.slug}`}>{b.title}</a></li>}</For>\n      </ol>\n    </>\n  );\n}\nEOF\ncat > src/routes/about.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\n\nexport default function About() {\n  return (\n    <>\n      <Title>About | Bookshelf</Title>\n      <h1>About</h1>\n      <p>Bookshelf lists a few classic books worth reading.</p>\n    </>\n  );\n}\nEOF\ncat > src/routes/books/index.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { For, Show, createSignal, onMount } from \"solid-js\";\nimport { allTags, books } from \"~/lib/books\";\nimport { isFavorite, loadFavorites } from \"~/lib/favorites\";\n\nexport default function Books() {\n  const [tag, setTag] = createSignal<string | null>(null);\n  onMount(loadFavorites);\n  const shown = () => books.filter(b => !tag() || b.tags.includes(tag()!));\n  return (\n    <>\n      <Title>Books | Bookshelf</Title>\n      <h1>All books</h1>\n      <div role=\"group\" aria-label=\"Filter by tag\">\n        <button type=\"button\" aria-pressed={tag() === null ? \"true\" : \"false\"} onClick={() => setTag(null)}>\n          All\n        </button>\n        <For each={allTags()}>\n          {t => (\n            <button type=\"button\" aria-pressed={tag() === t ? \"true\" : \"false\"} onClick={() => setTag(t)}>\n              {t}\n            </button>\n          )}\n        </For>\n      </div>\n      <ul aria-label=\"Books\">\n        <For each={shown()}>\n          {b => (\n            <li>\n              <a href={`/books/${b.slug}`}>{b.title}</a> <span>{b.author}, {b.year}</span>\n              <Show when={isFavorite(b.slug)}> <strong>Favorite</strong></Show>\n            </li>\n          )}\n        </For>\n      </ul>\n    </>\n  );\n}\nEOF\ncat > 'src/routes/books/[slug].tsx' <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { useParams } from \"@solidjs/router\";\nimport { For, Show, onMount } from \"solid-js\";\nimport NotFound from \"~/components/NotFound\";\nimport { getBook } from \"~/lib/books\";\nimport { isFavorite, loadFavorites, toggleFavorite } from \"~/lib/favorites\";\n\nexport default function BookPage() {\n  const params = useParams();\n  onMount(loadFavorites);\n  return (\n    <Show when={getBook(params.slug!)} fallback={<NotFound />}>\n      {b => (\n        <>\n          <Title>{b().title} | Bookshelf</Title>\n          <h1>{b().title}</h1>\n          <p>by {b().author}</p>\n          <p>Published in {b().year}</p>\n          <p>Rating: {b().rating}/5</p>\n          <ul>\n            <For each={b().tags}>{t => <li><a href=\"/books\">{t}</a></li>}</For>\n          </ul>\n          <div innerHTML={b().html} />\n          <button type=\"button\" onClick={() => toggleFavorite(b().slug)}>\n            {isFavorite(b().slug) ? \"Remove from favorites\" : \"Add to favorites\"}\n          </button>\n        </>\n      )}\n    </Show>\n  );\n}\nEOF\ncat > src/routes/contact.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { action, useSubmission } from \"@solidjs/router\";\nimport { Show } from \"solid-js\";\nimport { validate, type ContactErrors, type ContactValues } from \"~/lib/contact\";\n\ntype Result = { values: ContactValues; errors: ContactErrors; ok: boolean };\n\nfunction read(data: FormData | URLSearchParams): ContactValues {\n  const g = (k: string) => (data.get(k) ?? \"\").toString().trim();\n  return { name: g(\"name\"), email: g(\"email\"), message: g(\"message\") };\n}\n\nasync function send(values: ContactValues): Promise<Result> {\n  \"use server\";\n  const errors = validate(values);\n  return { values, errors, ok: Object.keys(errors).length === 0 };\n}\n\nconst sendMessage = action(async (data: FormData | URLSearchParams): Promise<Result> => {\n  const values = read(data);\n  const errors = validate(values);\n  if (Object.keys(errors).length) return { values, errors, ok: false };\n  return send(values);\n}, \"contact\");\n\nexport default function Contact() {\n  const sub = useSubmission(sendMessage);\n  const res = () => sub.result as Result | undefined;\n  const err = (k: keyof ContactValues) => res()?.errors[k];\n  return (\n    <>\n      <Title>Contact | Bookshelf</Title>\n      <h1>Contact</h1>\n      <Show when={res()?.ok}>\n        <p>Thanks, {res()!.values.name}! Your message has been sent.</p>\n      </Show>\n      <form action={sendMessage} method=\"post\" novalidate>\n        <label>\n          Name\n          <input type=\"text\" name=\"name\" value={res()?.values.name ?? \"\"} />\n        </label>\n        <Show when={err(\"name\")}><span class=\"error\">{err(\"name\")}</span></Show>\n        <label>\n          Email\n          <input type=\"email\" name=\"email\" value={res()?.values.email ?? \"\"} />\n        </label>\n        <Show when={err(\"email\")}><span class=\"error\">{err(\"email\")}</span></Show>\n        <label>\n          Message\n          <textarea name=\"message\">{res()?.values.message ?? \"\"}</textarea>\n        </label>\n        <Show when={err(\"message\")}><span class=\"error\">{err(\"message\")}</span></Show>\n        <div><button type=\"submit\">Send</button></div>\n      </form>\n    </>\n  );\n}\nEOF\nbun run check && bun run build 2>&1 | tail -5",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "pkill -f \"output/server\" ; python3 - <<'EOF'\np='src/routes/contact.tsx'\ns=open(p).read()\na=s.index('async function send')\nb=s.index('export default')\ns=s[:a]+'''const sendMessage = action(async (data: FormData): Promise<Result> => {\n  \"use server\";\n  const values = read(data);\n  const errors = validate(values);\n  return { values, errors, ok: Object.keys(errors).length === 0 };\n}, \"contact\");\n\n'''+s[b:]\ns=s.replace('const sub = useSubmission(sendMessage);\\n  const res = () => sub.result as Result | undefined;','''const sub = useSubmission(sendMessage);\n  const run = useAction(sendMessage);\n  const [local, setLocal] = createSignal<Result>();\n  const res = () => local() ?? (sub.result as Result | undefined);\n  const onSubmit = async (e: SubmitEvent) => {\n    e.preventDefault();\n    const values = read(new FormData(e.currentTarget as HTMLFormElement));\n    const errors = validate(values);\n    if (Object.keys(errors).length) return setLocal({ values, errors, ok: false });\n    setLocal(undefined);\n    await run(new FormData(e.currentTarget as HTMLFormElement));\n  };''')\ns=s.replace('import { action, useSubmission }','import { action, useAction, useSubmission }').replace('import { Show }','import { Show, createSignal }')\ns=s.replace('<form action={sendMessage} method=\"post\" novalidate>','<form action={sendMessage} method=\"post\" novalidate onSubmit={onSubmit}>')\nopen(p,'w').write(s)\nEOF\nbun run check && bun run build 2>&1 | grep -i error\n(PORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production bun run start >/tmp/s.log 2>&1 &) ; sleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run check && bun run build 2>&1 | grep -i error\n(PORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production bun run start >/tmp/s.log 2>&1 &) ; sleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/routes/contact.tsx'\ns=open(p).read()\ns=s.replace('const sendMessage = action(async (data: FormData): Promise<Result> => {','async function process(data: FormData): Promise<Result> {')\ns=s.replace('''ok: Object.keys(errors).length === 0 };\n}, \"contact\");''','''ok: Object.keys(errors).length === 0 };\n}\n\nconst sendMessage = action(process, \"contact\");''')\nopen(p,'w').write(s)\nEOF\nbun run check && bun run build 2>&1 | grep -i error\nkill $(pgrep -f \"bun .output/server\"); sleep 1\n(PORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production bun run start >/tmp/s.log 2>&1 &) ; sleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | grep -i error\nfor p in $(pgrep bun); do kill $p 2>/dev/null; done; sleep 1\nPORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production setsid bun .output/server/index.mjs >/tmp/s.log 2>&1 &\nsleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run check; bun run build 2>&1 | tail -15",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "python3 - <<'EOF'\np='src/routes/contact.tsx'\ns=open(p).read()\na=s.index('async function send')\nb=s.index('export default')\ns=s[:a]+'''async function process(data: FormData): Promise<Result> {\n  \"use server\";\n  const values = read(data);\n  const errors = validate(values);\n  return { values, errors, ok: Object.keys(errors).length === 0 };\n}\n\nconst sendMessage = action(process, \"contact\");\n\n'''+s[b:]\ns=s.replace('const sub = useSubmission(sendMessage);\\n  const res = () => sub.result as Result | undefined;','''const sub = useSubmission(sendMessage);\n  const run = useAction(sendMessage);\n  const [local, setLocal] = createSignal<Result>();\n  const res = () => local() ?? (sub.result as Result | undefined);\n  const onSubmit = async (e: SubmitEvent) => {\n    e.preventDefault();\n    const form = e.currentTarget as HTMLFormElement;\n    const values = read(new FormData(form));\n    const errors = validate(values);\n    if (Object.keys(errors).length) return setLocal({ values, errors, ok: false });\n    setLocal(undefined);\n    await run(new FormData(form));\n  };''')\ns=s.replace('import { action, useSubmission }','import { action, useAction, useSubmission }').replace('import { Show }','import { Show, createSignal }')\ns=s.replace('<form action={sendMessage} method=\"post\" novalidate>','<form action={sendMessage} method=\"post\" novalidate onSubmit={onSubmit}>')\nopen(p,'w').write(s)\nEOF\nbun run check && bun run build 2>&1 | grep -i \"error\"\nfor p in $(pgrep bun); do kill $p 2>/dev/null; done; sleep 1\nPORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production setsid bun .output/server/index.mjs >/tmp/s.log 2>&1 &\nsleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "mkdir -p src/middleware && cat > src/middleware/index.ts <<'EOF'\nimport { createMiddleware } from \"@solidjs/start/middleware\";\nimport { getRequestEvent } from \"solid-js/web\";\nimport { handleContact } from \"~/lib/contact-server\";\n\nexport default createMiddleware([\n  async (event, next) => {\n    const url = new URL(event.req.url);\n    if (event.req.method === \"POST\" && url.pathname === \"/contact\") {\n      const result = handleContact(await event.req.formData());\n      const re = getRequestEvent();\n      if (re) re.locals.contact = result;\n      (event as any).req = new Request(event.req.url, { method: \"GET\", headers: event.req.headers });\n    }\n    return next();\n  }\n]);\nEOF\ncat > src/lib/contact-server.ts <<'EOF'\nimport { validate, type ContactValues } from \"./contact\";\n\nexport type Result = { values: ContactValues; errors: ReturnType<typeof validate>; ok: boolean };\n\nexport function handleContact(data: FormData | URLSearchParams): Result {\n  const g = (k: string) => (data.get(k) ?? \"\").toString().trim();\n  const values = { name: g(\"name\"), email: g(\"email\"), message: g(\"message\") };\n  const errors = validate(values);\n  return { values, errors, ok: Object.keys(errors).length === 0 };\n}\nEOF\ncat >> src/global.d.ts <<'EOF'\n\ndeclare namespace App {\n  interface RequestEventLocals {\n    contact?: import(\"~/lib/contact-server\").Result;\n  }\n}\nEOF\ncat > vite.config.ts <<'EOF'\nimport { defineConfig } from \"vite\";\nimport { nitro } from \"nitro/vite\";\n\nimport { solidStart } from \"@solidjs/start/config\";\n\nexport default defineConfig({\n  plugins: [solidStart({ middleware: \"./src/middleware/index.ts\" }),\n    nitro()\n  ]\n});\nEOF\ncat > src/routes/contact.tsx <<'EOF'\nimport { Title } from \"@solidjs/meta\";\nimport { Show, createSignal } from \"solid-js\";\nimport { getRequestEvent, isServer } from \"solid-js/web\";\nimport { validate, type ContactValues } from \"~/lib/contact\";\nimport { handleContact, type Result } from \"~/lib/contact-server\";\n\nasync function send(data: FormData): Promise<Result> {\n  \"use server\";\n  return handleContact(data);\n}\n\nfunction initial(): Result | undefined {\n  if (isServer) return getRequestEvent()?.locals.contact;\n  const el = document.getElementById(\"contact-data\");\n  return el?.textContent ? JSON.parse(el.textContent) : undefined;\n}\n\nexport default function Contact() {\n  const [res, setRes] = createSignal<Result | undefined>(initial());\n  const err = (k: keyof ContactValues) => res()?.errors[k];\n  const onSubmit = async (e: SubmitEvent) => {\n    e.preventDefault();\n    const form = e.currentTarget as HTMLFormElement;\n    const data = new FormData(form);\n    const local = handleContact(data);\n    if (!local.ok) return setRes(local);\n    setRes(await send(data));\n  };\n  return (\n    <>\n      <Title>Contact | Bookshelf</Title>\n      <h1>Contact</h1>\n      <Show when={res()?.ok}>\n        <p>Thanks, {res()!.values.name}! Your message has been sent.</p>\n      </Show>\n      <form action=\"/contact\" method=\"post\" novalidate onSubmit={onSubmit}>\n        <label>\n          Name\n          <input type=\"text\" name=\"name\" value={res()?.values.name ?? \"\"} />\n        </label>\n        <Show when={err(\"name\")}><span class=\"error\">{err(\"name\")}</span></Show>\n        <label>\n          Email\n          <input type=\"email\" name=\"email\" value={res()?.values.email ?? \"\"} />\n        </label>\n        <Show when={err(\"email\")}><span class=\"error\">{err(\"email\")}</span></Show>\n        <label>\n          Message\n          <textarea name=\"message\">{res()?.values.message ?? \"\"}</textarea>\n        </label>\n        <Show when={err(\"message\")}><span class=\"error\">{err(\"message\")}</span></Show>\n        <div><button type=\"submit\">Send</button></div>\n      </form>\n      <Show when={isServer && res()}>\n        <script type=\"application/json\" id=\"contact-data\" innerHTML={JSON.stringify(res()).replace(/</g, \"\\\\u003c\")} />\n      </Show>\n    </>\n  );\n}\nEOF\nbun run check && bun run build 2>&1 | grep -i \"error\"\nfor p in $(pgrep bun); do kill $p 2>/dev/null; done; sleep 1\nPORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production setsid bun .output/server/index.mjs >/tmp/s.log 2>&1 &\nsleep 2\ncurl -s -i -X POST localhost:4719/contact -d 'name=+Ann+&email=bad&message=short' | head -c 300; echo\ncurl -s -X POST localhost:4719/contact -d 'name=+Ann+&email=a@b.co&message=this+is+a+long+enough+message' | grep -o '<h1.*</form>'",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 5,
+      "chars": 21781
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [
+      "pkill -f \"output/server\" ; python3 - <<'EOF'\np='src/routes/contact.tsx'\ns=open(p).read()\na=s.index('async function send')\nb=s.index('export default')\ns=s[:a]+'''const sendMessage = action(async (data: FormData): Promise<Result> => {\n  \"use server\";\n  const values = read(data);\n  const errors = validate(values);\n  return { values, errors, ok: Object.keys(errors).length === 0 };\n}, \"contact\");\n\n'''+s[b:]\ns=s.replace('const sub = useSubmission(sendMessage);\\n  const res = () => sub.result as Result | undefined;','''const sub = useSubmission(sendMessage);\n  const run = useAction(sendMessage);\n  const [local, setLocal] = createSignal<Result>();\n  const res = () => local() ?? (sub.result as Result | undefined);\n  const onSubmit = async (e: SubmitEvent) => {\n    e.preventDefault();\n    const values = read(new FormData(e.currentTarget as HTMLFormElement));\n    const errors = validate(values);\n    if (Object.keys(errors).length) return setLocal({ values, errors, ok: false });\n    setLocal(undefined);\n    await run(new FormData(e.currentTarget as HTMLFormElement));\n  };''')\ns=s.replace('import { action, useSubmission }','import { action, useAction, useSubmission }').replace('import { Show }','import { Show, createSignal }')\ns=s.replace('<form action={sendMessage} method=\"post\" novalidate>','<form action={sendMessage} method=\"post\" novalidate onSubmit={onSubmit}>')\nopen(p,'w').write(s)\nEOF\nbun run check && bun run build 2>&1 | grep -i error\n(PORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production bun run start >/tmp/s.log 2>&1 &) ; sleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+      "python3 - <<'EOF'\np='src/routes/contact.tsx'\ns=open(p).read()\ns=s.replace('const sendMessage = action(async (data: FormData): Promise<Result> => {','async function process(data: FormData): Promise<Result> {')\ns=s.replace('''ok: Object.keys(errors).length === 0 };\n}, \"contact\");''','''ok: Object.keys(errors).length === 0 };\n}\n\nconst sendMessage = action(process, \"contact\");''')\nopen(p,'w').write(s)\nEOF\nbun run check && bun run build 2>&1 | grep -i error\nkill $(pgrep -f \"bun .output/server\"); sleep 1\n(PORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production bun run start >/tmp/s.log 2>&1 &) ; sleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'",
+      "python3 - <<'EOF'\np='src/routes/contact.tsx'\ns=open(p).read()\na=s.index('async function send')\nb=s.index('export default')\ns=s[:a]+'''async function process(data: FormData): Promise<Result> {\n  \"use server\";\n  const values = read(data);\n  const errors = validate(values);\n  return { values, errors, ok: Object.keys(errors).length === 0 };\n}\n\nconst sendMessage = action(process, \"contact\");\n\n'''+s[b:]\ns=s.replace('const sub = useSubmission(sendMessage);\\n  const res = () => sub.result as Result | undefined;','''const sub = useSubmission(sendMessage);\n  const run = useAction(sendMessage);\n  const [local, setLocal] = createSignal<Result>();\n  const res = () => local() ?? (sub.result as Result | undefined);\n  const onSubmit = async (e: SubmitEvent) => {\n    e.preventDefault();\n    const form = e.currentTarget as HTMLFormElement;\n    const values = read(new FormData(form));\n    const errors = validate(values);\n    if (Object.keys(errors).length) return setLocal({ values, errors, ok: false });\n    setLocal(undefined);\n    await run(new FormData(form));\n  };''')\ns=s.replace('import { action, useSubmission }','import { action, useAction, useSubmission }').replace('import { Show }','import { Show, createSignal }')\ns=s.replace('<form action={sendMessage} method=\"post\" novalidate>','<form action={sendMessage} method=\"post\" novalidate onSubmit={onSubmit}>')\nopen(p,'w').write(s)\nEOF\nbun run check && bun run build 2>&1 | grep -i \"error\"\nfor p in $(pgrep bun); do kill $p 2>/dev/null; done; sleep 1\nPORT=4719 HOST=127.0.0.1 ORIGIN=http://localhost:4719 NODE_ENV=production setsid bun .output/server/index.mjs >/tmp/s.log 2>&1 &\nsleep 2\ncurl -s localhost:4719/contact | grep -o '<form[^>]*>'"
+    ],
+    "resultTokens": {
+      "input": 60,
+      "output": 15603,
+      "cacheCreation": 31937,
+      "cacheRead": 737486
+    }
+  },
+  "diff": {
+    "files": 19,
+    "added": 307,
+    "removed": 119,
+    "testLines": 0,
+    "styleLines": 8,
+    "dependenciesAdded": [
+      "marked",
+      "yaml"
+    ],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://docs.solidjs.com/llms.txt and the pages it links",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 273,
+    "bytes": 844791
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-sonnet-medium/solidstart-4"
+}
