@@ -4,6 +4,7 @@ import './bar-chart.css'
 import type { BenchId } from '../benches'
 import { benchSource } from '../benches'
 import { formatNumber } from '../format'
+import { frameworkOf } from '../frameworks'
 import FrameworkLogo from './framework-logo.kay'
 
 interface Row {
@@ -33,6 +34,12 @@ const ranged = rows.some(row => row.range !== undefined)
 const name = (row: Row) => row.note === undefined ? row.label : `${row.label} (${row.note})`
 const high = (row: Row) => row.range?.[1] ?? row.value
 const max = () => Math.max(...rows.map(high))
+// Each framework tints its bar with its own color, read by bar-chart.css.
+const tint = (row: Row) => {
+  const framework = frameworkOf(row.label)
+
+  return framework === undefined ? '' : `--tint: var(--framework-${framework}); `
+}
 const share = (part: number, whole: number) => whole === 0 ? 0 : part / whole * 100
 ---
 figure.chart
@@ -48,7 +55,7 @@ figure.chart
       .flex.min-w-0.items-center.gap-2
         if row.range
           .chart-range(style={`width: calc((100% - 6rem) * ${high(row) / max()}); --row: ${i}`})
-            .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: ${share(row.value, high(row))}%`})
+            .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`${tint(row)}width: ${share(row.value, high(row))}%`})
             .chart-range-tick(style={`left: ${share(row.range[0], high(row))}%`})
           span.flex.flex-col.text-sm.leading-tight.whitespace-nowrap.tabular-nums
             span
@@ -57,7 +64,7 @@ figure.chart
                 span.ml-1.text-muted ({row.note})
             span.text-xs.text-muted {t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })}
         else
-          .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
+          .chart-bar(class={{ 'chart-bar-highlight': highlighted.has(row.label) }} style={`${tint(row)}width: calc((100% - 6rem) * ${row.value / max()}); --row: ${i}`})
           span.text-sm.whitespace-nowrap.tabular-nums
             | {formatNumber(row.value, digits)} {unit}
             if row.note !== undefined
