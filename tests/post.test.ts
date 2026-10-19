@@ -13,6 +13,7 @@ const frontmatter = /^---\n[\s\S]*?\n---\n/
 const code = /<(pre|code)\b[\s\S]*?<\/\1>/g
 // a capitalized tag left in the HTML, raw or escaped
 const componentLeft = /<[A-Z]|&lt;[A-Z]/
+const rankedChart = /<BarChart title="([^"]*)"[^\n]*?better="(lower|higher)"[^\n]*?rows=\{(\[.*\])\}/g
 
 it('lists a long post\'s sections, and nothing for a short one', async () => {
   const long = await renderToString(Toc, { headings: [heading(2, 'One'), heading(3, 'Inner'), heading(2, 'Two'), heading(2, 'Three'), heading(2, 'Four')] })
@@ -74,4 +75,21 @@ it('leaves no component of the posts as text', async () => {
   }
 
   expect(left).toEqual([])
+})
+
+it('ranks each group of a post\'s charts from best to worst', async () => {
+  const unranked: string[] = []
+
+  for (const path of new Bun.Glob('src/content/posts/*/*.md').scanSync()) {
+    for (const [, title, better, json] of (await Bun.file(path).text()).matchAll(rankedChart)) {
+      const rows: { group?: string, value: number }[] = JSON.parse(json ?? '[]')
+      const sign = better === 'lower' ? 1 : -1
+
+      if (rows.some((row, i) => i > 0 && row.group === rows[i - 1]?.group && sign * (row.value - (rows[i - 1]?.value ?? 0)) < 0)) {
+        unranked.push(`${path}: ${title}`)
+      }
+    }
+  }
+
+  expect(unranked).toEqual([])
 })
