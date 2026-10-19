@@ -3,7 +3,7 @@ title: "Cinq frameworks, mesurés deux fois"
 description: "Cinq frameworks web mesurés deux fois : un benchmark synthétique qui chronomètre la même page de produits dans le navigateur, sur le serveur et au build, et un agent de code qui construit le même site dans chacun."
 date: 2026-10-19
 tags: [benchmarks, llm]
-draft: true
+draft: false
 ---
 
 Deux benchmarks, cinq frameworks chacun. Le premier est synthétique : la même page de produits et le même tableau dans chaque framework, chronométrés dans le navigateur, sur le serveur et au build. Le second confie le même petit site à un agent de code dans chaque framework et compte ce que sa construction a coûté. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
