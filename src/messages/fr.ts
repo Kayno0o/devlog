@@ -77,6 +77,7 @@ export default defineMessages({
   },
   benches: {
     synthetic: 'bench de kay',
+    syntheticNeutral: 'benchmark synthétique',
     sveltekit: 'port SvelteKit',
     astro: 'ports Astro',
     llm: 'benchmark LLM, Opus 5.5, effort high, médiane des runs réussis',
