@@ -7,7 +7,8 @@ it('lists the posts, leaving drafts out', async () => {
   const home = await site.visit('/')
 
   expect(home.status).toBe(200)
-  expect(home.text('section[aria-labelledby="posts-title"] ol')).toBe('Nothing published yet.')
+  expect(home.links()).toContain('/posts/five-frameworks')
+  expect(home.links()).not.toContain('/posts/introducing-kay')
 })
 
 it('names its author, and gives contact links in the footer', async () => {

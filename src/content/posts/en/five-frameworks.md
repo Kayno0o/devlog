@@ -3,7 +3,7 @@ title: "Five frameworks, measured twice"
 description: "Five web frameworks measured twice: a synthetic bench timing the same products page in the browser, on the server and at build time, and a coding agent building the same site in each."
 date: 2026-10-19
 tags: [benchmarks, llm]
-draft: true
+draft: false
 ---
 
 Two benchmarks, five frameworks each. The first is synthetic: the same products page and table in every framework, timed in the browser, on the server and at build time. The second hands the same small site to a coding agent in every framework and counts what building it cost. Every bench here ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
