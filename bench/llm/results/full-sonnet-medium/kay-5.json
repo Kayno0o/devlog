@@ -1,0 +1,125 @@
+{
+  "framework": "kay",
+  "run": 5,
+  "label": "full-sonnet-medium",
+  "startedAt": "2026-10-19T14:56:02.970Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "kay": "1.51.0",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 88897,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 88403,
+    "durationApiMs": 83105,
+    "turns": 14,
+    "costUsd": 0.23074039999999998,
+    "tokens": {
+      "input": 26,
+      "output": 6687,
+      "cacheCreation": 27228,
+      "cacheRead": 274532
+    },
+    "outputExact": true,
+    "thinkingTokens": 1051,
+    "apiCalls": 13,
+    "peakContextTokens": 32609,
+    "toolCalls": {
+      "Bash": 13
+    },
+    "toolErrors": 1,
+    "checkRuns": [
+      {
+        "command": "mkdir -p src/content src/components src/routes/books && git mv content/books src/content/books && rmdir content 2>/dev/null\ncat > kay.config.ts <<'E'\nimport { defineConfig } from 'kay/server'\n\nexport default defineConfig({\n  lang: 'en',\n  seo: { name: 'Bookshelf', titleTemplate: '%s | Bookshelf', description: 'A small catalog of classic books.' },\n})\nE\ncat > src/content.config.ts <<'E'\nimport { s } from 'kay'\nimport { collection } from 'kay/content'\n\nexport const books = collection('content/books', {\n  schema: s.Object({\n    title: s.String(),\n    author: s.String(),\n    year: s.Number(),\n    rating: s.Number(),\n    tags: s.Array(s.String(), { default: [] }),\n  }),\n  sort: (a, b) => a.data.title.localeCompare(b.data.title),\n})\nE\ncat > src/favorites.ts <<'E'\nimport { persisted } from 'kay'\n\nexport const favorites = persisted<string[]>('favorites', [], { storage: 'local' })\nE\ncat > src/contact.ts <<'E'\nexport interface Message { name: string, email: string, message: string }\nexport type MessageErrors = Partial<Record<keyof Message, string>>\n\nexport function checkMessage(input: Message): MessageErrors {\n  const errors: MessageErrors = {}\n  const email = input.email.trim()\n\n  if (input.name.trim() === '')\n    errors.name = 'Name is required.'\n\n  if (email === '')\n    errors.email = 'Email is required.'\n  else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))\n    errors.email = 'Enter a valid email address.'\n\n  if (input.message.trim().length < 20)\n    errors.message = 'Message must be at least 20 characters.'\n\n  return errors\n}\nE\ncat > src/routes/_layout.kay <<'E'\n--- server\nimport { books } from '../content.config'\n\nconst parts = ctx.url.pathname.split('/')\nconst section = parts[1]\nconst known = parts[1] === 'books' && parts[2] ? (await books.get(parts[2])) !== undefined : true\nconst inBooks = section === 'books' && known && parts.length <= 3\n---\nheader\n  a(href=\"/\" aria-current={undefined}) Bookshelf\n  nav(aria-label=\"Main\")\n    a(href=\"/books\" aria-current={inBooks ? 'page' : undefined}) Books\n    a(href=\"/about\") About\n    a(href=\"/contact\") Contact\nmain\n  slot\nfooter © Bookshelf\nE\ncat > src/routes/index.kay <<'E'\n--- server\nimport { books } from '../content.config'\n\nconst top = (await books.all())\n  .sort((a, b) => b.data.rating - a.data.rating || a.data.title.localeCompare(b.data.title))\n  .slice(0, 3)\n---\nhead\n  title(raw) Bookshelf\nh1 Bookshelf\np A small catalog of classic books.\nh2 Top rated\nol\n  for book of top key={book.slug}\n    li: a(href={`/books/${book.slug}`}) {book.data.title}\nE\ncat > src/routes/about.kay <<'E'\nhead\n  title About\nh1 About\np Bookshelf lists a few classic books worth reading.\nE\ncat > src/routes/_404.kay <<'E'\nhead\n  title Not found\nh1 Not found\na(href=\"/books\") Back to the books\nE\ncat > src/routes/books/index.kay <<'E'\n--- server\nimport { books } from '../../content.config'\nimport BookList from '../../components/book-list.kay'\n\nconst list = (await books.all()).map(book => ({\n  slug: book.slug,\n  title: book.data.title,\n  author: book.data.author,\n  year: book.data.year,\n  tags: book.data.tags,\n}))\nconst tags = [...new Set(list.flatMap(book => book.tags))].sort()\n---\nhead\n  title Books\nh1 All books\nBookList(books={list} tags={tags})\nE\ncat > src/components/book-list.kay <<'E'\n---\nimport { favorites } from '../favorites'\n\ninterface Item { slug: string, title: string, author: string, year: number, tags: string[] }\n\nconst { books, tags } = props<{ books: Item[], tags: string[] }>()\nconst selected = signal('')\nconst shown = memo(() => books.filter(book => selected() === '' || book.tags.includes(selected())))\n---\ndiv(role=\"group\" aria-label=\"Filter by tag\")\n  button(type=\"button\" aria-pressed={selected() === '' ? 'true' : 'false'} onClick={() => selected = ''}) All\n  for tag of tags key={tag}\n    button(type=\"button\" aria-pressed={selected() === tag ? 'true' : 'false'} onClick={() => selected = tag}) {tag}\nul(aria-label=\"Books\")\n  for book of shown() key={book.slug}\n    li\n      a(href={`/books/${book.slug}`}) {book.title}\n      span  {book.author}, {book.year}\n      if favorites().includes(book.slug)\n        strong  Favorite\nE\ncat > src/components/favorite-button.kay <<'E'\n---\nimport { favorites } from '../favorites'\n\nconst { slug } = props<{ slug: string }>()\n\nfunction toggle() {\n  favorites.set(list => list.includes(slug) ? list.filter(s => s !== slug) : [...list, slug])\n}\n---\nbutton(type=\"button\" onClick={toggle})\n  if favorites().includes(slug)\n    | Remove from favorites\n  else\n    | Add to favorites\nE\ncat > 'src/routes/books/[slug].kay' <<'E'\n--- server\nimport { books } from '../../content.config'\nimport FavoriteButton from '../../components/favorite-button.kay'\n\nconst book = await books.get(ctx.params.slug) ?? ctx.notFound()\nconst { Content } = book\n---\nhead\n  title {book.data.title}\nh1 {book.data.title}\np by {book.data.author}\np Published in {book.data.year}\np Rating: {book.data.rating}/5\nul\n  for tag of book.data.tags key={tag}\n    li: a(href=\"/books\") {tag}\nFavoriteButton(slug={book.slug})\narticle\n  Content\nE\ncat > src/routes/contact.kay <<'E'\n--- server\nimport { s } from 'kay'\nimport { checkMessage } from '../contact'\nimport ContactForm from '../components/contact-form.kay'\n\nexport const send = action(\n  s.Object({\n    name: s.String({ maxLength: 200 }),\n    email: s.String({ maxLength: 200 }),\n    message: s.String({ maxLength: 5000 }),\n  }),\n  (input, ctx) => {\n    const errors = checkMessage(input)\n\n    if (Object.keys(errors).length > 0)\n      return ctx.fail(422, { errors, values: input })\n\n    return { name: input.name.trim() }\n  },\n)\n---\nhead\n  title Contact\nh1 Contact\nContactForm\nE\ncat > src/components/contact-form.kay <<'E'\n---\nimport { send } from '../routes/contact.kay'\nimport { checkMessage } from '../contact'\nimport type { MessageErrors } from '../contact'\n\nconst errors = signal<MessageErrors>(send.failed()?.data?.errors ?? {})\nconst thanked = signal<string | undefined>(send.succeeded()?.data.name)\nconst values = send.failed()?.data?.values\n\nasync function submit(event: SubmitEvent) {\n  event.preventDefault()\n  const form = event.currentTarget as HTMLFormElement\n  const fields = new FormData(form)\n  const found = checkMessage({\n    name: String(fields.get('name')),\n    email: String(fields.get('email')),\n    message: String(fields.get('message')),\n  })\n\n  errors.set(found)\n  thanked.set(undefined)\n\n  if (Object.keys(found).length === 0) {\n    const result = await send(fields, { refresh: false })\n    thanked.set(result.name)\n    form.reset()\n  }\n}\n---\nif thanked() !== undefined\n  p Thanks, {thanked()}! Your message has been sent.\nform(action={send} novalidate onSubmit={submit})\n  div\n    label(for=\"name\") Name\n    input#name(type=\"text\" name=\"name\" value={values?.name ?? ''})\n    if errors().name\n      p.error {errors().name}\n  div\n    label(for=\"email\") Email\n    input#email(type=\"email\" name=\"email\" value={values?.email ?? ''})\n    if errors().email\n      p.error {errors().email}\n  div\n    label(for=\"message\") Message\n    textarea#message(name=\"message\") {values?.message ?? ''}\n    if errors().message\n      p.error {errors().message}\n  button(type=\"submit\") Send\nE\nbun run fmt 2>&1 | tail -5; bun run check 2>&1 | tail -30",
+        "failed": false,
+        "errors": 0
+      },
+      {
+        "command": "bun run build 2>&1 | tail -8\nPORT=4701 HOST=127.0.0.1 ORIGIN=http://localhost:4701 NODE_ENV=production bun run start >/tmp/s.log 2>&1 &\nsleep 3\nfor p in / /books /books/dracula /books/nope /contact /about; do echo \"== $p\"; curl -s -o /tmp/o -w \"%{http_code}\\n\" localhost:4701$p; grep -o '<title>[^<]*</title>\\|aria-current=\"page\"[^>]*>[^<]*' /tmp/o; done\ncurl -s localhost:4701/ | grep -o '<ol.*</ol>'\ncurl -s localhost:4701/books | grep -o '<ul aria-label.*</ul>' | head -c 600\ncurl -s localhost:4701/books/dracula | grep -o '<h1.*</article>' | head -c 900\ncurl -s -i -X POST -H 'Origin: http://localhost:4701' -d 'name= &email=x&message=hi' localhost:4701/contact | head -40",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 6,
+      "chars": 41454
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [],
+    "resultTokens": {
+      "input": 26,
+      "output": 6687,
+      "cacheCreation": 27228,
+      "cacheRead": 274532
+    }
+  },
+  "diff": {
+    "files": 22,
+    "added": 321,
+    "removed": 3,
+    "testLines": 0,
+    "styleLines": 0,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "kay 1.51.0 package (llms.txt, llms/)",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 39,
+    "bytes": 591708
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-sonnet-medium/kay-5"
+}

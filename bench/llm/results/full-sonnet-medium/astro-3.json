@@ -1,0 +1,121 @@
+{
+  "framework": "astro",
+  "run": 3,
+  "label": "full-sonnet-medium",
+  "startedAt": "2026-10-19T14:28:38.864Z",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "versions": {
+    "bun": "1.4.3",
+    "astro": "7.3.8",
+    "claude": "2.1.289"
+  },
+  "session": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallMs": 44746,
+    "leftoverProcesses": 0
+  },
+  "sandbox": [
+    "/home/kaynooo/Workspace",
+    "/home/kaynooo/.claude",
+    "/home/kaynooo/.cache/claude-tmp",
+    "/home/kaynooo/.cache/llm-bench",
+    "/home/kaynooo/.cache/ms-playwright"
+  ],
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "claudeVersion": "2.1.289",
+    "loaded": {
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "plugins": [
+        "cc-plugin-agents-md",
+        "cc-plugin-plugin-authoring"
+      ],
+      "mcpServers": []
+    },
+    "outcome": "success",
+    "durationMs": 44260,
+    "durationApiMs": 34867,
+    "turns": 7,
+    "costUsd": 0.11790759999999999,
+    "tokens": {
+      "input": 14,
+      "output": 5496,
+      "cacheCreation": 11926,
+      "cacheRead": 76078
+    },
+    "outputExact": true,
+    "thinkingTokens": 471,
+    "apiCalls": 7,
+    "peakContextTokens": 17307,
+    "toolCalls": {
+      "Bash": 6
+    },
+    "toolErrors": 0,
+    "checkRuns": [
+      {
+        "command": "mkdir -p src/layouts src/lib src/pages/books\ncat > astro.config.mjs <<'E'\n// @ts-check\nimport { defineConfig } from 'astro/config';\nimport node from '@astrojs/node';\n\nexport default defineConfig({\n  output: 'server',\n  adapter: node({ mode: 'standalone' }),\n});\nE\ncat > src/content.config.ts <<'E'\nimport { defineCollection } from 'astro:content';\nimport { glob } from 'astro/loaders';\nimport { z } from 'astro/zod';\n\nconst books = defineCollection({\n  loader: glob({ base: './content/books', pattern: '**/*.md' }),\n  schema: z.object({\n    title: z.string(),\n    author: z.string(),\n    year: z.number(),\n    rating: z.number().min(1).max(5),\n    tags: z.array(z.string()),\n  }),\n});\n\nexport const collections = { books };\nE\ncat > src/lib/contact.ts <<'E'\nexport type Errors = { name?: string; email?: string; message?: string };\n\nexport function validate(v: { name: string; email: string; message: string }): Errors {\n  const e: Errors = {};\n  if (!v.name.trim()) e.name = 'Name is required.';\n  const email = v.email.trim();\n  if (!email) e.email = 'Email is required.';\n  else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) e.email = 'Enter a valid email address.';\n  if (v.message.trim().length < 20) e.message = 'Message must be at least 20 characters.';\n  return e;\n}\nE\ncat > src/layouts/Layout.astro <<'E'\n---\ninterface Props { title: string }\nconst { title } = Astro.props;\nconst path = Astro.url.pathname.replace(/\\/+$/, '') || '/';\nconst is = (p: string) => path === p || path.startsWith(p + '/');\nconst current = Astro.response.status === 404 ? '' : is('/books') ? 'books' : is('/about') ? 'about' : is('/contact') ? 'contact' : '';\nconst links = [['books', 'Books', '/books'], ['about', 'About', '/about'], ['contact', 'Contact', '/contact']];\n---\n<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width\" />\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\" />\n    <title>{title}</title>\n  </head>\n  <body>\n    <header>\n      <a href=\"/\">Bookshelf</a>\n      <nav aria-label=\"Main\">\n        {links.map(([k, label, href]) => <a href={href} aria-current={current === k ? 'page' : undefined}>{label}</a>)}\n      </nav>\n    </header>\n    <main><slot /></main>\n    <footer>© Bookshelf</footer>\n  </body>\n</html>\nE\ncat > src/pages/index.astro <<'E'\n---\nimport Layout from '../layouts/Layout.astro';\nimport { getCollection } from 'astro:content';\nconst top = (await getCollection('books'))\n  .sort((a, b) => b.data.rating - a.data.rating || (a.data.title < b.data.title ? -1 : a.data.title > b.data.title ? 1 : 0))\n  .slice(0, 3);\n---\n<Layout title=\"Bookshelf\">\n  <h1>Bookshelf</h1>\n  <p>A small catalog of classic books.</p>\n  <h2>Top rated</h2>\n  <ol>{top.map((b) => <li><a href={`/books/${b.id}`}>{b.data.title}</a></li>)}</ol>\n</Layout>\nE\ncat > src/pages/about.astro <<'E'\n---\nimport Layout from '../layouts/Layout.astro';\n---\n<Layout title=\"About | Bookshelf\">\n  <h1>About</h1>\n  <p>Bookshelf lists a few classic books worth reading.</p>\n</Layout>\nE\ncat > src/pages/404.astro <<'E'\n---\nimport Layout from '../layouts/Layout.astro';\nAstro.response.status = 404;\n---\n<Layout title=\"Not found | Bookshelf\">\n  <h1>Not found</h1>\n  <a href=\"/books\">Back to the books</a>\n</Layout>\nE\ncat > src/pages/books/index.astro <<'E'\n---\nimport Layout from '../../layouts/Layout.astro';\nimport { getCollection } from 'astro:content';\nconst books = (await getCollection('books')).sort((a, b) => (a.data.title < b.data.title ? -1 : a.data.title > b.data.title ? 1 : 0));\nconst tags = [...new Set(books.flatMap((b) => b.data.tags))].sort();\n---\n<Layout title=\"Books | Bookshelf\">\n  <h1>All books</h1>\n  <div role=\"group\" aria-label=\"Filter by tag\" id=\"filter\">\n    <button type=\"button\" aria-pressed=\"true\" data-tag=\"\">All</button>\n    {tags.map((t) => <button type=\"button\" aria-pressed=\"false\" data-tag={t}>{t}</button>)}\n  </div>\n  <ul aria-label=\"Books\">\n    {books.map((b) => (\n      <li data-slug={b.id} data-tags={JSON.stringify(b.data.tags)}>\n        <a href={`/books/${b.id}`}>{b.data.title}</a>\n        <span>{b.data.author}, {b.data.year}</span>\n        <strong class=\"fav\" hidden>Favorite</strong>\n      </li>\n    ))}\n  </ul>\n</Layout>\n<script>\n  let favs: string[] = [];\n  try { favs = JSON.parse(localStorage.getItem('favorites') || '[]'); } catch {}\n  const items = document.querySelectorAll<HTMLElement>('ul[aria-label=\"Books\"] li');\n  items.forEach((li) => {\n    const f = li.querySelector<HTMLElement>('.fav');\n    if (f) f.hidden = !favs.includes(li.dataset.slug!);\n  });\n  const buttons = document.querySelectorAll<HTMLButtonElement>('#filter button');\n  buttons.forEach((btn) =>\n    btn.addEventListener('click', () => {\n      const tag = btn.dataset.tag!;\n      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));\n      items.forEach((li) => {\n        li.hidden = !!tag && !JSON.parse(li.dataset.tags!).includes(tag);\n      });\n    }),\n  );\n</script>\nE\ncat > src/pages/books/[slug].astro <<'E'\n---\nimport Layout from '../../layouts/Layout.astro';\nimport { getEntry, render } from 'astro:content';\nconst entry = await getEntry('books', Astro.params.slug!);\nif (!entry) return Astro.rewrite('/404');\nconst { Content } = await render(entry);\nconst { title, author, year, rating, tags } = entry.data;\n---\n<Layout title={`${title} | Bookshelf`}>\n  <h1>{title}</h1>\n  <p>by {author}</p>\n  <p>Published in {year}</p>\n  <p>Rating: {rating}/5</p>\n  <ul>{tags.map((t) => <li><a href=\"/books\">{t}</a></li>)}</ul>\n  <div><Content /></div>\n  <button type=\"button\" id=\"fav\" data-slug={entry.id}>Add to favorites</button>\n</Layout>\n<script>\n  const btn = document.getElementById('fav') as HTMLButtonElement;\n  const slug = btn.dataset.slug!;\n  const read = (): string[] => { try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch { return []; } };\n  const show = () => { btn.textContent = read().includes(slug) ? 'Remove from favorites' : 'Add to favorites'; };\n  btn.addEventListener('click', () => {\n    const f = read();\n    localStorage.setItem('favorites', JSON.stringify(f.includes(slug) ? f.filter((s) => s !== slug) : [...f, slug]));\n    show();\n  });\n  show();\n</script>\nE\ncat > src/pages/contact.astro <<'E'\n---\nimport Layout from '../layouts/Layout.astro';\nimport { validate, type Errors } from '../lib/contact';\nlet values = { name: '', email: '', message: '' };\nlet errors: Errors = {};\nlet success = '';\nif (Astro.request.method === 'POST') {\n  const d = await Astro.request.formData();\n  const g = (k: string) => String(d.get(k) ?? '');\n  values = { name: g('name'), email: g('email'), message: g('message') };\n  errors = validate(values);\n  if (!Object.keys(errors).length) success = `Thanks, ${values.name.trim()}! Your message has been sent.`;\n}\n---\n<Layout title=\"Contact | Bookshelf\">\n  <h1>Contact</h1>\n  {success && <p id=\"success\">{success}</p>}\n  {!success && (\n  <form method=\"post\" action=\"/contact\" novalidate id=\"contact\">\n    <div>\n      <label for=\"name\">Name</label>\n      <input type=\"text\" id=\"name\" name=\"name\" value={values.name} />\n      <span class=\"error\" data-for=\"name\">{errors.name}</span>\n    </div>\n    <div>\n      <label for=\"email\">Email</label>\n      <input type=\"email\" id=\"email\" name=\"email\" value={values.email} />\n      <span class=\"error\" data-for=\"email\">{errors.email}</span>\n    </div>\n    <div>\n      <label for=\"message\">Message</label>\n      <textarea id=\"message\" name=\"message\">{values.message}</textarea>\n      <span class=\"error\" data-for=\"message\">{errors.message}</span>\n    </div>\n    <button type=\"submit\">Send</button>\n  </form>\n  )}\n</Layout>\n<script>\n  import { validate } from '../lib/contact';\n  const form = document.getElementById('contact') as HTMLFormElement | null;\n  form?.addEventListener('submit', (ev) => {\n    const v = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;\n    const errors = validate({ name: v('name'), email: v('email'), message: v('message') }) as Record<string, string>;\n    form.querySelectorAll<HTMLElement>('.error').forEach((el) => { el.textContent = errors[el.dataset.for!] ?? ''; });\n    if (Object.keys(errors).length) ev.preventDefault();\n  });\n</script>\nE\nbun run check 2>&1 | tail -15; bun run build 2>&1 | tail -5",
+        "failed": false,
+        "errors": 0
+      }
+    ],
+    "checkErrors": 0,
+    "docs": {
+      "calls": 3,
+      "chars": 12746
+    },
+    "outside": [],
+    "skippedLines": 0,
+    "otherRuntimes": [],
+    "resultTokens": {
+      "input": 14,
+      "output": 5496,
+      "cacheCreation": 11926,
+      "cacheRead": 76078
+    }
+  },
+  "diff": {
+    "files": 10,
+    "added": 201,
+    "removed": 20,
+    "testLines": 0,
+    "styleLines": 0,
+    "dependenciesAdded": [],
+    "gradingConfigChanged": []
+  },
+  "grade": {
+    "check": {
+      "ok": true,
+      "errors": 0
+    },
+    "build": {
+      "ok": true
+    },
+    "acceptance": {
+      "pass": 24,
+      "fail": 0,
+      "failures": []
+    },
+    "passed": true
+  },
+  "docs": {
+    "source": "https://github.com/withastro/docs src/content/docs/en",
+    "revision": "ce41ff8b0ddca4e26b5cbf588cd81bd10572060c",
+    "fetchedAt": "2026-10-17T00:55:14.560Z",
+    "files": 426,
+    "bytes": 2999356
+  },
+  "workspace": "/home/kaynooo/.cache/llm-bench/full-sonnet-medium/astro-3"
+}

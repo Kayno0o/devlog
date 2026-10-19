@@ -1,0 +1,1141 @@
+{
+  "label": "full-sonnet-medium",
+  "model": "claude-sonnet-5-5",
+  "requested": {
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "budgetUsd": 5,
+    "minutes": 90
+  },
+  "claude": "2.1.289",
+  "from": "2026-10-19T14:00:30.229Z",
+  "to": "2026-10-19T15:05:02.220Z",
+  "frameworks": {
+    "kay": {
+      "runs": 5,
+      "passed": 4,
+      "versions": {
+        "bun": "1.4.3",
+        "kay": "1.51.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [],
+      "spent": {
+        "costUsd": 1.2618745999999998,
+        "totalTokens": 1972078,
+        "minutes": 7.042633333333334
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 30,
+          "min": 26,
+          "max": 40
+        },
+        "cacheWriteTokens": {
+          "median": 27038,
+          "min": 25652,
+          "max": 30920
+        },
+        "cacheReadTokens": {
+          "median": 327833,
+          "min": 274532,
+          "max": 453313
+        },
+        "outputTokens": {
+          "median": 6849.5,
+          "min": 6114,
+          "max": 7432
+        },
+        "thinkingTokens": {
+          "median": 815.5,
+          "min": 572,
+          "max": 1051
+        },
+        "totalTokens": {
+          "median": 362712,
+          "min": 308473,
+          "max": 487633
+        },
+        "peakContextTokens": {
+          "median": 32419,
+          "min": 31033,
+          "max": 36301
+        },
+        "costUsd": {
+          "median": 0.2471001,
+          "min": 0.22534140000000003,
+          "max": 0.27245459999999994
+        },
+        "minutes": {
+          "median": 1.4069083333333334,
+          "min": 1.20075,
+          "max": 1.99385
+        },
+        "apiMinutes": {
+          "median": 1.2869333333333333,
+          "min": 1.0982833333333333,
+          "max": 1.8367833333333334
+        },
+        "turns": {
+          "median": 16,
+          "min": 14,
+          "max": 20
+        },
+        "apiCalls": {
+          "median": 15,
+          "min": 13,
+          "max": 20
+        },
+        "toolCalls": {
+          "median": 15,
+          "min": 13,
+          "max": 19
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 15,
+          "min": 13,
+          "max": 19
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        },
+        "docsCalls": {
+          "median": 4.5,
+          "min": 3,
+          "max": 6
+        },
+        "docsChars": {
+          "median": 31133.5,
+          "min": 28610,
+          "max": 41454
+        },
+        "checkRuns": {
+          "median": 3.5,
+          "min": 2,
+          "max": 5
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 22,
+          "min": 22,
+          "max": 22
+        },
+        "linesWritten": {
+          "median": 310.5,
+          "min": 308,
+          "max": 321
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "linesRemoved": {
+          "median": 3,
+          "min": 3,
+          "max": 3
+        },
+        "packagesAdded": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "failures": [
+        {
+          "run": 2,
+          "outcome": "success",
+          "check": true,
+          "build": true,
+          "failures": [
+            "books > lists every book by title with its author and year",
+            "book pages > /books/around-the-world-in-eighty-days shows the book",
+            "book pages > /books/dracula shows the book",
+            "book pages > /books/frankenstein shows the book",
+            "book pages > /books/moby-dick shows the book",
+            "book pages > /books/pride-and-prejudice shows the book",
+            "book pages > /books/the-picture-of-dorian-gray shows the book",
+            "book pages > /books/the-time-machine shows the book",
+            "book pages > /books/treasure-island shows the book",
+            "about > shows its text",
+            "contact > has the form",
+            "not found > /books/no-such-book answers 404 with the 404 page",
+            "not found > /no-such-page answers 404 with the 404 page"
+          ]
+        }
+      ]
+    },
+    "sveltekit": {
+      "runs": 5,
+      "passed": 3,
+      "versions": {
+        "bun": "1.4.3",
+        "@sveltejs/kit": "3.0.1",
+        "svelte": "5.57.2",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "marked",
+        "yaml"
+      ],
+      "spent": {
+        "costUsd": 1.8727888,
+        "totalTokens": 3460675,
+        "minutes": 13.919583333333334
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 58,
+          "min": 58,
+          "max": 64
+        },
+        "cacheWriteTokens": {
+          "median": 29257,
+          "min": 29075,
+          "max": 29779
+        },
+        "cacheReadTokens": {
+          "median": 668438,
+          "min": 655125,
+          "max": 738707
+        },
+        "outputTokens": {
+          "median": 12719,
+          "min": 12697,
+          "max": 13188
+        },
+        "thinkingTokens": {
+          "median": 2721,
+          "min": 2368,
+          "max": 2736
+        },
+        "totalTokens": {
+          "median": 710941,
+          "min": 696977,
+          "max": 781247
+        },
+        "peakContextTokens": {
+          "median": 34638,
+          "min": 34456,
+          "max": 35160
+        },
+        "costUsd": {
+          "median": 0.3827116,
+          "min": 0.3746310000000001,
+          "max": 0.39395539999999996
+        },
+        "minutes": {
+          "median": 3.26385,
+          "min": 2.44615,
+          "max": 3.318216666666667
+        },
+        "apiMinutes": {
+          "median": 1.9935,
+          "min": 1.9658333333333333,
+          "max": 2.6909666666666667
+        },
+        "turns": {
+          "median": 30,
+          "min": 29,
+          "max": 32
+        },
+        "apiCalls": {
+          "median": 29,
+          "min": 29,
+          "max": 32
+        },
+        "toolCalls": {
+          "median": 29,
+          "min": 28,
+          "max": 31
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 29,
+          "min": 28,
+          "max": 31
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 2,
+          "min": 0,
+          "max": 4
+        },
+        "docsCalls": {
+          "median": 5,
+          "min": 4,
+          "max": 6
+        },
+        "docsChars": {
+          "median": 12142,
+          "min": 10857,
+          "max": 13736
+        },
+        "checkRuns": {
+          "median": 4,
+          "min": 3,
+          "max": 5
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 16,
+          "min": 16,
+          "max": 16
+        },
+        "linesWritten": {
+          "median": 309,
+          "min": 303,
+          "max": 314
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 14,
+          "min": 0,
+          "max": 21
+        },
+        "linesRemoved": {
+          "median": 4,
+          "min": 4,
+          "max": 5
+        },
+        "packagesAdded": {
+          "median": 1,
+          "min": 1,
+          "max": 1
+        }
+      },
+      "failures": [
+        {
+          "run": 3,
+          "outcome": "success",
+          "check": true,
+          "build": true,
+          "failures": [
+            "books > lists every book by title with its author and year",
+            "books > filters by tag in the browser",
+            "book pages > /books/around-the-world-in-eighty-days shows the book",
+            "book pages > /books/dracula shows the book",
+            "book pages > /books/frankenstein shows the book",
+            "book pages > /books/moby-dick shows the book",
+            "book pages > /books/pride-and-prejudice shows the book",
+            "book pages > /books/the-picture-of-dorian-gray shows the book",
+            "book pages > /books/the-time-machine shows the book",
+            "book pages > /books/treasure-island shows the book",
+            "favorites > toggle on the book page, survive a reload and show on the books list"
+          ]
+        },
+        {
+          "run": 4,
+          "outcome": "success",
+          "check": true,
+          "build": true,
+          "failures": [
+            "books > lists every book by title with its author and year",
+            "books > filters by tag in the browser",
+            "book pages > /books/around-the-world-in-eighty-days shows the book",
+            "book pages > /books/dracula shows the book",
+            "book pages > /books/frankenstein shows the book",
+            "book pages > /books/moby-dick shows the book",
+            "book pages > /books/pride-and-prejudice shows the book",
+            "book pages > /books/the-picture-of-dorian-gray shows the book",
+            "book pages > /books/the-time-machine shows the book",
+            "book pages > /books/treasure-island shows the book",
+            "favorites > toggle on the book page, survive a reload and show on the books list"
+          ]
+        }
+      ]
+    },
+    "solidstart": {
+      "runs": 5,
+      "passed": 5,
+      "versions": {
+        "bun": "1.4.3",
+        "@solidjs/start": "2.0.6",
+        "solid-js": "1.9.17",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "marked",
+        "yaml"
+      ],
+      "spent": {
+        "costUsd": 1.4270353999999998,
+        "totalTokens": 1919125,
+        "minutes": 11.175216666666667
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 26,
+          "min": 24,
+          "max": 60
+        },
+        "cacheWriteTokens": {
+          "median": 20313,
+          "min": 20145,
+          "max": 31937
+        },
+        "cacheReadTokens": {
+          "median": 223119,
+          "min": 185996,
+          "max": 737486
+        },
+        "outputTokens": {
+          "median": 10505,
+          "min": 9579,
+          "max": 15603
+        },
+        "thinkingTokens": {
+          "median": 1895,
+          "min": 1420,
+          "max": 3206
+        },
+        "totalTokens": {
+          "median": 253937,
+          "min": 216670,
+          "max": 785086
+        },
+        "peakContextTokens": {
+          "median": 25694,
+          "min": 25526,
+          "max": 37318
+        },
+        "costUsd": {
+          "median": 0.23071779999999997,
+          "min": 0.2164112,
+          "max": 0.4313951999999999
+        },
+        "minutes": {
+          "median": 1.7699666666666667,
+          "min": 1.4664833333333334,
+          "max": 3.5473833333333333
+        },
+        "apiMinutes": {
+          "median": 1.4156,
+          "min": 1.2463,
+          "max": 2.508383333333333
+        },
+        "turns": {
+          "median": 14,
+          "min": 12,
+          "max": 31
+        },
+        "apiCalls": {
+          "median": 13,
+          "min": 12,
+          "max": 30
+        },
+        "toolCalls": {
+          "median": 13,
+          "min": 11,
+          "max": 30
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 13,
+          "min": 11,
+          "max": 30
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 2,
+          "min": 0,
+          "max": 4
+        },
+        "docsCalls": {
+          "median": 4,
+          "min": 3,
+          "max": 6
+        },
+        "docsChars": {
+          "median": 17097,
+          "min": 12475,
+          "max": 22807
+        },
+        "checkRuns": {
+          "median": 5,
+          "min": 2,
+          "max": 8
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 2
+        },
+        "filesChanged": {
+          "median": 17,
+          "min": 15,
+          "max": 19
+        },
+        "linesWritten": {
+          "median": 299,
+          "min": 291,
+          "max": 346
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 8
+        },
+        "linesRemoved": {
+          "median": 79,
+          "min": 74,
+          "max": 119
+        },
+        "packagesAdded": {
+          "median": 1,
+          "min": 1,
+          "max": 2
+        }
+      },
+      "failures": []
+    },
+    "astro": {
+      "runs": 5,
+      "passed": 4,
+      "versions": {
+        "bun": "1.4.3",
+        "astro": "7.3.8",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [],
+      "spent": {
+        "costUsd": 0.6099087999999999,
+        "totalTokens": 434356,
+        "minutes": 4.667716666666666
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 14,
+          "min": 10,
+          "max": 14
+        },
+        "cacheWriteTokens": {
+          "median": 11873,
+          "min": 11539,
+          "max": 13423
+        },
+        "cacheReadTokens": {
+          "median": 74284,
+          "min": 48137,
+          "max": 79606
+        },
+        "outputTokens": {
+          "median": 5794.5,
+          "min": 5496,
+          "max": 6172
+        },
+        "thinkingTokens": {
+          "median": 604,
+          "min": 471,
+          "max": 695
+        },
+        "totalTokens": {
+          "median": 92806.5,
+          "min": 65366,
+          "max": 97349
+        },
+        "peakContextTokens": {
+          "median": 17254,
+          "min": 16920,
+          "max": 18804
+        },
+        "costUsd": {
+          "median": 0.12011340000000001,
+          "min": 0.11260339999999999,
+          "max": 0.129938
+        },
+        "minutes": {
+          "median": 0.9247333333333334,
+          "min": 0.7457666666666667,
+          "max": 1.1318666666666666
+        },
+        "apiMinutes": {
+          "median": 0.6923333333333334,
+          "min": 0.5811166666666666,
+          "max": 0.8719333333333333
+        },
+        "turns": {
+          "median": 7,
+          "min": 5,
+          "max": 8
+        },
+        "apiCalls": {
+          "median": 7,
+          "min": 5,
+          "max": 7
+        },
+        "toolCalls": {
+          "median": 6,
+          "min": 4,
+          "max": 7
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 6,
+          "min": 4,
+          "max": 7
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "docsCalls": {
+          "median": 2,
+          "min": 2,
+          "max": 3
+        },
+        "docsChars": {
+          "median": 11174,
+          "min": 7846,
+          "max": 12746
+        },
+        "checkRuns": {
+          "median": 1,
+          "min": 1,
+          "max": 2
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 10,
+          "min": 9,
+          "max": 11
+        },
+        "linesWritten": {
+          "median": 234.5,
+          "min": 201,
+          "max": 280
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 7
+        },
+        "linesRemoved": {
+          "median": 16.5,
+          "min": 14,
+          "max": 20
+        },
+        "packagesAdded": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "failures": [
+        {
+          "run": 5,
+          "outcome": "success",
+          "check": true,
+          "build": true,
+          "failures": [
+            "layout > /about has the header, nav and footer"
+          ]
+        }
+      ]
+    },
+    "nuxt": {
+      "runs": 5,
+      "passed": 5,
+      "versions": {
+        "bun": "1.4.3",
+        "nuxt": "4.6.1",
+        "vue": "3.5.44",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "@nuxt/content",
+        "better-sqlite3",
+        "zod"
+      ],
+      "spent": {
+        "costUsd": 0.7940048,
+        "totalTokens": 867362,
+        "minutes": 10.562266666666666
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 24,
+          "min": 16,
+          "max": 32
+        },
+        "cacheWriteTokens": {
+          "median": 13808,
+          "min": 11868,
+          "max": 14773
+        },
+        "cacheReadTokens": {
+          "median": 159728,
+          "min": 93878,
+          "max": 240170
+        },
+        "outputTokens": {
+          "median": 7192,
+          "min": 6732,
+          "max": 8421
+        },
+        "thinkingTokens": {
+          "median": 1069,
+          "min": 885,
+          "max": 1358
+        },
+        "totalTokens": {
+          "median": 180345,
+          "min": 112706,
+          "max": 263325
+        },
+        "peakContextTokens": {
+          "median": 19189,
+          "min": 17249,
+          "max": 20154
+        },
+        "costUsd": {
+          "median": 0.1545562,
+          "min": 0.1357196,
+          "max": 0.19111599999999998
+        },
+        "minutes": {
+          "median": 2.0841,
+          "min": 1.2782666666666667,
+          "max": 3.0633833333333333
+        },
+        "apiMinutes": {
+          "median": 0.8759,
+          "min": 0.77655,
+          "max": 1.4758666666666667
+        },
+        "turns": {
+          "median": 12,
+          "min": 8,
+          "max": 17
+        },
+        "apiCalls": {
+          "median": 12,
+          "min": 8,
+          "max": 16
+        },
+        "toolCalls": {
+          "median": 11,
+          "min": 7,
+          "max": 16
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 11,
+          "min": 7,
+          "max": 16
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 2
+        },
+        "docsCalls": {
+          "median": 2,
+          "min": 2,
+          "max": 3
+        },
+        "docsChars": {
+          "median": 7106,
+          "min": 6782,
+          "max": 7507
+        },
+        "checkRuns": {
+          "median": 3,
+          "min": 2,
+          "max": 7
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "filesChanged": {
+          "median": 15,
+          "min": 14,
+          "max": 16
+        },
+        "linesWritten": {
+          "median": 248,
+          "min": 237,
+          "max": 268
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 5
+        },
+        "linesRemoved": {
+          "median": 6,
+          "min": 6,
+          "max": 7
+        },
+        "packagesAdded": {
+          "median": 2,
+          "min": 2,
+          "max": 3
+        }
+      },
+      "failures": []
+    },
+    "next": {
+      "runs": 5,
+      "passed": 5,
+      "versions": {
+        "bun": "1.4.3",
+        "next": "16.4.2",
+        "react": "19.3.0",
+        "claude": "2.1.289"
+      },
+      "dependenciesAdded": [
+        "gray-matter",
+        "marked"
+      ],
+      "spent": {
+        "costUsd": 0.7951702,
+        "totalTokens": 679309,
+        "minutes": 6.336783333333333
+      },
+      "measures": {
+        "inputTokens": {
+          "median": 14,
+          "min": 14,
+          "max": 28
+        },
+        "cacheWriteTokens": {
+          "median": 14995,
+          "min": 12633,
+          "max": 18281
+        },
+        "cacheReadTokens": {
+          "median": 90317,
+          "min": 73469,
+          "max": 206777
+        },
+        "outputTokens": {
+          "median": 7100,
+          "min": 6304,
+          "max": 9552
+        },
+        "thinkingTokens": {
+          "median": 917,
+          "min": 670,
+          "max": 1235
+        },
+        "totalTokens": {
+          "median": 114916,
+          "min": 93131,
+          "max": 233586
+        },
+        "peakContextTokens": {
+          "median": 20376,
+          "min": 18014,
+          "max": 23662
+        },
+        "costUsd": {
+          "median": 0.1542554,
+          "min": 0.1354038,
+          "max": 0.2058474
+        },
+        "minutes": {
+          "median": 1.3658666666666666,
+          "min": 0.8107333333333333,
+          "max": 1.7580333333333333
+        },
+        "apiMinutes": {
+          "median": 0.72715,
+          "min": 0.6549333333333334,
+          "max": 1.1854833333333332
+        },
+        "turns": {
+          "median": 8,
+          "min": 7,
+          "max": 15
+        },
+        "apiCalls": {
+          "median": 7,
+          "min": 7,
+          "max": 14
+        },
+        "toolCalls": {
+          "median": 7,
+          "min": 6,
+          "max": 14
+        },
+        "toolRead": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "toolWrite": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolEdit": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolBash": {
+          "median": 7,
+          "min": 6,
+          "max": 14
+        },
+        "toolGlob": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolGrep": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "toolErrors": {
+          "median": 2,
+          "min": 1,
+          "max": 3
+        },
+        "docsCalls": {
+          "median": 3,
+          "min": 2,
+          "max": 4
+        },
+        "docsChars": {
+          "median": 7977,
+          "min": 2657,
+          "max": 11542
+        },
+        "checkRuns": {
+          "median": 2,
+          "min": 1,
+          "max": 6
+        },
+        "failedCheckRuns": {
+          "median": 0,
+          "min": 0,
+          "max": 1
+        },
+        "checkErrors": {
+          "median": 0,
+          "min": 0,
+          "max": 3
+        },
+        "filesChanged": {
+          "median": 17,
+          "min": 17,
+          "max": 18
+        },
+        "linesWritten": {
+          "median": 355,
+          "min": 346,
+          "max": 382
+        },
+        "testLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "styleLines": {
+          "median": 0,
+          "min": 0,
+          "max": 0
+        },
+        "linesRemoved": {
+          "median": 8,
+          "min": 6,
+          "max": 11
+        },
+        "packagesAdded": {
+          "median": 2,
+          "min": 2,
+          "max": 2
+        }
+      },
+      "failures": []
+    }
+  }
+}
