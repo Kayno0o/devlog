@@ -1,6 +1,6 @@
 ---
 title: "Next.js, Nuxt, Astro, Svelte, Solid : mesurés, puis confiés à une IA"
-description: "La même app dans cinq frameworks, chronométrée dans le navigateur, sur le serveur et au build. Puis le même site construit par un agent de code dans chacun, et ce que ça lui a coûté."
+description: "La même app dans cinq frameworks, chronométrée dans le navigateur, sur le serveur et au build. Puis le même site construit dans chacun par un agent de code, sur un modèle cher et un moins cher, et ce que ça a coûté."
 date: 2026-10-19
 tags: [benchmarks, llm]
 draft: false
@@ -73,27 +73,31 @@ Chaque run est une session Claude Code headless, `claude -p --safe-mode` : ni C
 
 Quand l'agent s'arrête, le script de notation lance `bun run check` et `bun run build`, démarre le site avec `bun run start` sur un port donné et lance la suite dessus. Un run est réussi quand les trois passent.
 
-Les runs alternent entre frameworks dans un ordre qui tourne, pour qu'une heure lente de l'API pénalise tout le monde pareil. Mais chaque session n'en couvrait qu'une partie, SvelteKit, SolidStart et Astro ensemble, puis Nuxt et Next.js six jours plus tard, donc les temps sont à prendre avec des pincettes. Le rapport relève aussi ce que la notation ne voit pas : dans 24 runs sur 25, l'agent a lancé `python`, `node` ou un autre gestionnaire de paquets alors que le prompt demandait Bun uniquement (16 fois dans un run Nuxt), et chaque run SvelteKit a modifié son script `start`, dont dépend la notation.
+Les runs alternent entre frameworks dans un ordre qui tourne, pour qu'une heure lente de l'API pénalise tout le monde pareil. Mais chaque session d'Opus n'en couvrait qu'une partie, SvelteKit, SolidStart et Astro ensemble, puis Nuxt et Next.js six jours plus tard, donc ses temps sont à prendre avec des pincettes ; ceux de Sonnet ont tourné d'une traite. Le rapport relève aussi ce que la notation ne voit pas : dans 24 runs Opus sur 25, l'agent a lancé `python`, `node` ou un autre gestionnaire de paquets alors que le prompt demandait Bun uniquement (16 fois dans un run Nuxt), contre 4 sur 25 pour Sonnet, et chaque run SvelteKit des deux modèles a modifié son script `start`, dont dépend la notation.
 
 ### D'abord un run d'essai
 
-Une session complète, c'est 5 runs par framework : un bug dans le banc de test en gâche donc 25. Chaque changement commence plutôt par un run d'essai d'un seul framework, dont je lis les résultats et le transcript avant de passer au suivant. Un essai coûte environ un dollar, et il les vaut bien : celui de Next.js a échoué, à cause de la suite et pas du site. Le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne fait jamais à la deuxième visite ; la suite ouvre donc maintenant chaque visite dans un nouveau contexte de navigateur, qui reprend les cookies et le stockage.
+Une session complète, c'est 5 runs par framework : un bug dans le banc de test en gâche donc 25. Chaque changement commence plutôt par un run d'essai d'un seul framework, dont je lis les résultats et le transcript avant de passer au suivant. Un essai coûte environ un dollar, et il les vaut bien : celui de Next.js a échoué, à cause de la suite et pas du site. Le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne fait jamais à la deuxième visite ; la suite ouvre donc maintenant chaque visite dans un nouveau contexte de navigateur, qui reprend les cookies et le stockage. Les runs de Sonnet en ont trouvé un autre : la suite cherchait les champs du formulaire par le texte de leur label, qui inclut le texte qu'un serveur remet dans un textarea, si bien qu'un site SolidStart qui marchait a échoué. Elle les cherche maintenant par leur nom accessible, et chaque site d'Opus passe toujours.
 
-<Stats items={[{"value":"25 sur 25","label":"runs qui passent toutes les vérifications et tous les tests"},{"value":"39,93 $","label":"les 25 runs, aux tarifs de l'API"}]} />
+<Stats items={[{"value":"25 sur 25","label":"runs Opus qui passent toutes les vérifications et tous les tests"},{"value":"22 sur 25","label":"runs Sonnet qui passent toutes les vérifications et tous les tests"},{"value":"39,93 $ contre 5,50 $","label":"les 25 runs, Opus contre Sonnet, aux tarifs de l'API"}]} />
 
 ### Résultats
 
-Chaque graphique montre le run médian de chaque framework, avec le plus bas et le plus haut à côté.
+Opus 5.5 en effort high, c'est le haut de gamme : les mêmes 25 runs ont donc aussi été confiés à Sonnet 5.5 en effort medium, plus proche de ce qu'une équipe utiliserait au quotidien. Chaque graphique montre le run réussi médian de chaque framework, avec le plus bas et le plus haut à côté.
 
-<BarChart title="Tokens écrits, réflexion comprise" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":17,"range":[15.8,23.9]},{"label":"SvelteKit","value":25.3,"range":[21.1,36.6]},{"label":"Nuxt","value":28.7,"range":[20.1,36.2]},{"label":"Next.js","value":29.7,"range":[24.4,46.6]},{"label":"SolidStart","value":33.9,"range":[32.2,44.6]}]} bench="llm" />
+Chaque échec de Sonnet est un bug qu'un navigateur aurait montré tout de suite, et l'agent n'en avait pas. Deux fois, le store des favoris de SvelteKit écrivait son état pendant le rendu de la page, ce que Svelte refuse une fois la page hydratée : la liste des livres et leurs pages tombaient sur la page d'erreur. Une fois, le layout d'Astro comparait le chemin à `/about`, qu'une page prérendue voit comme `/about/` : aucun lien de la nav n'était marqué actif.
 
-<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
+<BarChart title="Tokens écrits, réflexion comprise" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro, Opus","value":17,"range":[15.8,23.9]},{"label":"Astro, Sonnet","value":5.8,"range":[5.5,6.2]},{"label":"SvelteKit, Opus","value":25.3,"range":[21.1,36.6]},{"label":"SvelteKit, Sonnet","value":12.7,"range":[12.7,13.2]},{"label":"Nuxt, Opus","value":28.7,"range":[20.1,36.2]},{"label":"Nuxt, Sonnet","value":7.2,"range":[6.7,8.4]},{"label":"Next.js, Opus","value":29.7,"range":[24.4,46.6]},{"label":"Next.js, Sonnet","value":7.1,"range":[6.3,9.6]},{"label":"SolidStart, Opus","value":33.9,"range":[32.2,44.6]},{"label":"SolidStart, Sonnet","value":10.5,"range":[9.6,15.6]}]} bench="llmModels" />
+
+<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"Astro, Opus","value":2.6,"range":[2.5,3.6]},{"label":"Astro, Sonnet","value":0.9,"range":[0.7,1.1]},{"label":"SvelteKit, Opus","value":4.5,"range":[3.3,12.4]},{"label":"SvelteKit, Sonnet","value":3.3,"range":[2.4,3.3]},{"label":"Next.js, Opus","value":5.9,"range":[4.8,8.5]},{"label":"Next.js, Sonnet","value":1.4,"range":[0.8,1.8]},{"label":"Nuxt, Opus","value":7.9,"range":[4.3,9.5]},{"label":"Nuxt, Sonnet","value":2.1,"range":[1.3,3.1]},{"label":"SolidStart, Opus","value":9.3,"range":[6.5,12.9]},{"label":"SolidStart, Sonnet","value":1.8,"range":[1.5,3.5]}]} bench="llmModels" />
+
+<BarChart title="Coût du site, aux tarifs de l'API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro, Opus","value":0.78,"range":[0.75,1.12]},{"label":"Astro, Sonnet","value":0.12,"range":[0.11,0.13]},{"label":"Nuxt, Opus","value":1.46,"range":[0.91,1.8]},{"label":"Nuxt, Sonnet","value":0.15,"range":[0.14,0.19]},{"label":"SvelteKit, Opus","value":1.52,"range":[1.23,2.22]},{"label":"SvelteKit, Sonnet","value":0.38,"range":[0.37,0.39]},{"label":"Next.js, Opus","value":1.87,"range":[1.37,2.85]},{"label":"Next.js, Sonnet","value":0.15,"range":[0.14,0.21]},{"label":"SolidStart, Opus","value":1.94,"range":[1.86,2.79]},{"label":"SolidStart, Sonnet","value":0.23,"range":[0.22,0.43]}]} bench="llmModels" />
+
+À partir d'ici, les graphiques sont ceux d'Opus seul.
 
 Le style était libre et non noté, donc les comptes de lignes laissent le CSS de côté : de 77 à 113 lignes dans les runs médians.
 
 <BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
-
-<BarChart title="Coût du site, aux tarifs de l'API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
 
 <BarChart title="Tokens de réflexion" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.3]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
 
@@ -105,6 +109,6 @@ Le style était libre et non noté, donc les comptes de lignes laissent le CSS d
 
 <Note title="Comment c'est mesuré">
 
-Claude Opus 5.5 en effort high, Claude Code 2.1.289, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1 et Next.js 16.4.2, tous sur Bun, 5 runs chacun, ceux de Nuxt et Next.js six jours après les autres. Chaque chiffre est la médiane des runs réussis, et les 25 ont réussi. Le coût est aux tarifs de l'API, tel que Claude Code le rapporte. Le cahier des charges, le prompt, les starters, la suite et chaque run sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
+Claude Opus 5.5 en effort high et Claude Sonnet 5.5 en effort medium, Claude Code 2.1.289, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1 et Next.js 16.4.2, tous sur Bun, 5 runs chacun par modèle. Les runs Nuxt et Next.js d'Opus ont tourné six jours après ses autres, et tous ceux de Sonnet le 19 octobre. Chaque chiffre est la médiane des runs réussis. Le coût est aux tarifs de l'API, tel que Claude Code le rapporte. Le cahier des charges, le prompt, les starters, la suite et chaque run sont dans bench/llm : [les runs d'Opus](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md) et [ceux de Sonnet](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-sonnet-medium/results.md).
 
 </Note>

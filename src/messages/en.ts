@@ -81,6 +81,7 @@ export default defineMessages({
     sveltekit: 'SvelteKit port',
     astro: 'Astro ports',
     llm: 'LLM benchmark, Opus 5.5, effort high, median of the passing runs',
+    llmModels: 'LLM benchmark, Opus 5.5 at high effort and Sonnet 5.5 at medium, median of the passing runs',
   },
   notFound: {
     title: 'Nothing here',
