@@ -14,7 +14,7 @@ const posts = [...new Bun.Glob('*/*.md').scanSync('src/content/posts')].map((pat
 })
 
 it.each(posts)('%s breaks no axe rule', async (path) => {
-  const page = await site.open(path)
+  await using page = await site.open(path)
   const broken = (await page.a11y()).flatMap(rule => rule.nodes.map(node => `${rule.id}: ${node.target}`))
 
   expect(broken).toEqual([])
