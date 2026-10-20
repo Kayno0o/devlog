@@ -1,6 +1,6 @@
 ---
 title: "kayjs: fast to run, easy to write"
-description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte and Astro.
+description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte, Astro, Next.js and Nuxt.
 date: 2026-10-09
 tags: [kay, benchmarks]
 draft: true
@@ -225,15 +225,15 @@ Astro's island is the same Solid table as the SolidJS app, and neither has a rou
 
 <Note title="How it was measured">
 
-kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt 4.6.1, on Bun 1.4.3 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it serves only through its own HTTP server, so its renders would carry a socket round trip the others never pay. Builds are clean production builds, kay's with and without its type check, which Next.js runs too and the others skip; their size is what each deploys, without the dependencies it runs on or source maps. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Code is counted at kay 1.51.1, in characters other than whitespace and comments: pages, layouts, components and config, not the file mounting each app in the bench. Formatted by each framework's formatter, kay fmt for kay and Prettier for the others, cloc 2.10 counts kay 73 lines, Nuxt 122, Svelte 130, Astro 175, SolidJS 182 and Next.js 211.
+kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt 4.6.1, on Bun 1.4.3 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it serves only through its own HTTP server, so its renders would carry a socket round trip the others never pay. Builds are clean production builds, kay's with and without its type check, which Next.js runs too and the others skip; their size is what each deploys, without the dependencies it runs on or source maps. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Code is counted at kay 1.60.0, in characters other than whitespace and comments: pages, layouts, components and config, not the file mounting each app in the bench. Formatted by each framework's formatter, kay fmt for kay and Prettier for the others, cloc 2.10 counts kay 73 lines, Nuxt 122, Svelte 130, Astro 175, SolidJS 182 and Next.js 211.
 
 </Note>
 
 ## Real sites, ported to kay
 
-Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. [Their own post](/posts/ported-to-kay) has every figure, and what kay loses: slower style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro.
+Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. [Their own post](/posts/ported-to-kay) has every figure, and what kay loses: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro.
 
-<Stats items={[{"value": "-89%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "2.9 to 3.3x", "label": "requests per second on a content page, from Astro"}, {"value": "-17 to -37%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-88%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "2.9 to 3.3x", "label": "requests per second on a content page, from Astro"}, {"value": "-16 to -37%", "label": "lines of code"}]} />
 
 ## Built for LLMs too
 
