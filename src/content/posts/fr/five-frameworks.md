@@ -12,19 +12,19 @@ Deux questions sur les cinq mêmes frameworks. À quelle vitesse tournent-ils, u
 
 Chaque framework affiche la même page de produits avec les mêmes données, écrite comme le feraient sa propre doc et son entrée du js-framework-benchmark. SolidJS et Svelte tournent derrière le même serveur Elysia, Astro et Nuxt derrière leurs propres gestionnaires de requêtes, et Next.js derrière son propre serveur HTTP.
 
-<BarChart title="Temps de script au chargement, page produits" unit="ms" better="lower" rows={[{"label":"Astro","value":1.3},{"label":"Nuxt","value":5.3},{"label":"SolidJS","value":10.7},{"label":"Svelte","value":13.8},{"label":"Next.js","value":18.8}]} bench="syntheticNeutral" />
+<BarChart title="Temps de script au chargement, page produits" unit="ms" better="lower" rows={[{"label":"Astro","value":1.2},{"label":"Nuxt","value":5.3},{"label":"SolidJS","value":10.8},{"label":"Svelte","value":14.3},{"label":"Next.js","value":18.8}]} bench="syntheticNeutral" />
 
 Si Astro exécute si peu au chargement, c'est qu'il n'hydrate que ses deux islands Solid. SolidJS, Svelte et Nuxt hydratent toute la page, et renvoient donc ses données une deuxième fois en JSON, et Next.js envoie le payload de ses composants en flux avec le HTML.
 
 <BarChart title="HTML envoyé, page produits, gzip" unit="Ko" better="lower" rows={[{"label":"Astro","value":10.3},{"label":"Svelte","value":15.7},{"label":"SolidJS","value":21.6},{"label":"Nuxt","value":23.5},{"label":"Next.js","value":23.6}]} bench="syntheticNeutral" />
 
-<BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label":"Svelte","value":3796},{"label":"Astro","value":1827},{"label":"SolidJS","value":1697},{"label":"Nuxt","value":585}]} bench="syntheticNeutral" />
+<BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label":"Svelte","value":3886},{"label":"Astro","value":1822},{"label":"SolidJS","value":1748},{"label":"Nuxt","value":588}]} bench="syntheticNeutral" />
 
 <BarChart title="Code écrit, pages produits et tableau" unit="K caractères" better="lower" digits={1} rows={[{"label":"Nuxt","value":2.9},{"label":"Svelte","value":3.3},{"label":"Astro","value":3.4},{"label":"SolidJS","value":3.7},{"label":"Next.js","value":4.1}]} bench="syntheticNeutral" source="sans les espaces ni les commentaires, ni la glue serveur du benchmark" />
 
 Le code est compté en caractères, car un nombre de lignes mesure surtout le formateur : Prettier fait passer l'app Svelte de 70 à 130 lignes.
 
-<BarChart title="Temps de build de production" unit="s" better="lower" digits={2} rows={[{"label":"Svelte","value":0.09},{"label":"SolidJS","value":0.14},{"label":"Astro","value":0.63},{"label":"Nuxt","value":1.99},{"label":"Next.js","value":2.14}]} bench="syntheticNeutral" />
+<BarChart title="Temps de build de production" unit="s" better="lower" digits={2} rows={[{"label":"Svelte","value":0.09},{"label":"SolidJS","value":0.14},{"label":"Astro","value":0.6},{"label":"Nuxt","value":1.97},{"label":"Next.js","value":2.15}]} bench="syntheticNeutral" />
 
 <BarChart title="Taille du build, gzip" unit="Ko" better="lower" rows={[{"label":"SolidJS","value":8.2},{"label":"Svelte","value":22.5},{"label":"Astro","value":138.1},{"label":"Next.js","value":328.9},{"label":"Nuxt","value":610.7}]} bench="syntheticNeutral" source="SolidJS et Svelte n'empaquettent aucun serveur" />
 
@@ -32,7 +32,7 @@ Le code est compté en caractères, car un nombre de lignes mesure surtout le fo
 
 L'island d'Astro est exactement le même tableau Solid que l'app SolidJS, et aucune des deux n'embarque de routeur.
 
-<BenchTable title="Opérations sur le tableau" unit="ms" columns={["SolidJS","Svelte","Astro","Next.js","Nuxt"]} rows={[{"label":"Créer 1 000 lignes","values":[26.1,27.6,26.7,29.6,26.9]},{"label":"Remplacer 1 000 lignes","values":[24.7,25.7,24.7,29.8,27.5]},{"label":"Mettre à jour une ligne sur 10","values":[2.7,2.6,2.7,4,3.5]},{"label":"Sélectionner une ligne","values":[0.3,0.9,0.3,1.2,0.6]},{"label":"Échanger deux lignes","values":[2,2.1,1.9,20.4,2.4]},{"label":"Supprimer une ligne","values":[1.9,2.2,1.9,3.2,4.5]},{"label":"Créer 10 000 lignes","values":[227,230,236,363,267]},{"label":"Ajouter 1 000 lignes","values":[23.6,23.9,23.4,26.6,25.8]},{"label":"Vider 1 000 lignes","values":[2.7,3.2,2.8,5,4.3]}]} bench="syntheticNeutral" />
+<BenchTable title="Opérations sur le tableau" unit="ms" columns={["SolidJS","Svelte","Astro","Next.js","Nuxt"]} rows={[{"label":"Créer 1 000 lignes","values":[26.6,26.8,26.5,29.8,26.9]},{"label":"Remplacer 1 000 lignes","values":[24.5,25.8,24.4,30.3,27.8]},{"label":"Mettre à jour une ligne sur 10","values":[2.7,2.8,2.7,4,3.5]},{"label":"Sélectionner une ligne","values":[0.3,1,0.3,1.2,0.6]},{"label":"Échanger deux lignes","values":[2.1,2.1,2,20.6,2.5]},{"label":"Supprimer une ligne","values":[2,2.2,1.9,3.3,4.5]},{"label":"Créer 10 000 lignes","values":[228,231,239,363,267]},{"label":"Ajouter 1 000 lignes","values":[23.4,23.9,23.4,26.9,25.4]},{"label":"Vider 1 000 lignes","values":[2.7,3.2,2.7,5,4.1]}]} bench="syntheticNeutral" />
 
 <Note title="Comment c'est mesuré">
 
