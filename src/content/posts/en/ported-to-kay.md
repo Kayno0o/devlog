@@ -18,13 +18,13 @@ I ported a real site from SvelteKit to kay: a home page and content pages, about
 
 <BarChart title="Client JavaScript, brotli" unit="KB" better="lower" rows={[{"label": "kay", "value": 30.6}, {"label": "SvelteKit", "value": 70.1}]} bench="sveltekit" source="every file the build writes" />
 
-A page loads only the part its islands need: 13 KB on a content page.
+A page loads only what its islands need of it: 13 KB on a content page.
 
 The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
 
 <BarChart title="Requests per second, home page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 40963}, {"label": "SvelteKit", "value": 787}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
 
-Most of that gap is prerendering, not rendering speed: when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
+Most of that gap is prerendering, not rendering speed: when kay 1.16 rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
 
 <BarChart title="Requests per second, content page" unit="req/s" better="higher" digits={0} rows={[{"label": "kay", "value": 43014}, {"label": "SvelteKit", "value": 4228}]} bench="sveltekit" source="oha, 64 connections for 10 s, 2 rounds, kay's slower round" />
 
@@ -36,7 +36,7 @@ Under load, kay peaks at 92 MiB of memory against SvelteKit's 134 to 136. The ho
 
 <BarChart title="Server memory at rest" unit="MiB" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 39}, {"label": "kay", "value": 55}]} bench="sveltekit" source="RSS after start" />
 
-- **Inlining has a price.** The phone paint above comes from inlining the stylesheet, which this port turned on before kay 1.46 made it the default for stylesheets compressing under about 14 KB: with it linked, kay 1.14 painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
+Inlining has a price: the phone paint above comes from inlining the stylesheet, which this port turned on before kay 1.46 made it the default for stylesheets compressing under about 14 KB: with it linked, kay 1.14 painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
 
 ### In development
 
@@ -72,7 +72,7 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 <BarChart title="JS shipped per page, brotli" unit="KB" better="lower" rows={[{"label": "Astro, painter", "value": 0.4}, {"label": "Astro, cattery", "value": 5.2}, {"label": "kay, cattery", "value": 12.3}, {"label": "kay, painter", "value": 12.5}]} bench="astro" source="average over every page" />
 
-- **More JavaScript.** The painter's site shipped 0.4 KB on Astro, a few plain scripts inlined in its pages, and ships 12.5 KB on kay; the cattery's goes from 5.2 to 12.3 KB.
+- **More JavaScript.** The painter's site shipped only a few plain scripts on Astro, inlined in its pages.
 - **A heavier painter site on phones.** A phone downloads 147 KB per page against 87 KB, mostly fonts (107 against 35 KB) and that script.
 - **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image, which `astro build` does not: 6.9 against 2.2 s on the cattery and 3.7 against 2.0 s on the painter, the cattery's build peaking at 2.0 GB against 1.0.
 

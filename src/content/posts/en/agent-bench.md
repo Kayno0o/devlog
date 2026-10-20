@@ -6,7 +6,7 @@ tags: [kay, benchmarks, llm]
 draft: true
 ---
 
-The [kay post](/posts/introducing-kay) gives this benchmark one section and four charts. This post is the whole of it: how a run works, what keeps it honest, and every measure, the ones that did not fit there included.
+The [kay post](/posts/introducing-kay) gives this benchmark one section and four charts. This post is the whole of it: how a run works, what keeps it honest, and every measure, the ones that did not fit there included. The [five frameworks post](/posts/five-frameworks) runs the same bench without kay, on Sonnet 5.5 too.
 
 The question is simple: when a coding agent builds a site, what does the framework cost it? Tokens, time, turns, docs read, check errors, lines of code. A framework an agent writes cheaply and correctly is one I can hand work to, and kay is meant to be one.
 
@@ -45,13 +45,13 @@ The harness alternates runs between frameworks, in a rotated order, so a slow ho
 
 ## Probe first
 
-A full sitting is 5 runs per framework, so a mistake in the harness costs 30 runs. Each change starts with a probe instead: one run of one framework under a throwaway label, its results and transcript read, then the next framework. A probe costs about a dollar: $0.79 to $1.27 for the first round of the first four, $1.20 and $1.42 for Nuxt's and Next.js's, $0.83 to $1.71 for kay's. Next.js's probe failed on the suite, not on its site: the favorites test waited for the network to go idle after a reload, which Next's router never lets happen on a second visit, so the suite now opens each visit in a fresh browser context carrying the cookies and storage over.
+A full sitting is 5 runs per framework, so a mistake in the harness costs 30 runs. Each change starts with a probe instead: one run of one framework under a throwaway label, its results and transcript read, then the next framework. A probe costs about a dollar: $0.79 to $1.27 for the first round of kay, SvelteKit, SolidStart and Astro, $1.20 and $1.42 for Nuxt's and Next.js's, $0.83 to $1.71 for kay's later ones. Next.js's probe failed on the suite, not on its site: the favorites test waited for the network to go idle after a reload, which Next's router never lets happen on a second visit, so the suite now opens each visit in a fresh browser context carrying the cookies and storage over.
 
 <Stats items={[{"value":"30 of 30","label":"runs passing every check and test"},{"value":"$45.15","label":"all 30 runs at API prices"}]} />
 
 ## Results
 
-Each chart shows the median run of each framework, with the lowest and highest beside it.
+Each chart shows each framework's median over its runs, with the lowest and highest beside it.
 
 <Stats items={[{"value":"13K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
 
@@ -79,6 +79,6 @@ Learning kay from its docs costs reads, and those reads fill the context.
 
 <Note title="How it was measured">
 
-Claude Opus 5.5 at high effort, Claude Code 2.1.289, kay 1.51.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, all on Bun, 5 runs each, Nuxt's and Next.js's six days after SvelteKit's, SolidStart's and Astro's, kay's a few hours after those. Every figure is the median of the passing runs, and all 30 passed. Cost is at API prices, as Claude Code reports it, failed runs included. The spec, the prompt, the starters, the suite and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
+Claude Opus 5.5 at high effort, Claude Code 2.1.289, kay 1.51.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, all on Bun, 5 runs each, Nuxt's and Next.js's six days after SvelteKit's, SolidStart's and Astro's, kay's a few hours after those. Every figure is the median of the passing runs. Cost is at API prices, as Claude Code reports it. The spec, the prompt, the starters, the suite and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
 
 </Note>
