@@ -1,7 +1,7 @@
 ---
 title: "kayjs : rapide à exécuter, simple à écrire"
 description: Pourquoi j'ai construit mon propre framework web sur Bun, comment un fichier .kay devient du HTML et des islands, et ce qu'il coûte face à SolidJS, Svelte, Astro, Next.js et Nuxt.
-date: 2026-10-09
+date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
 ---
@@ -231,7 +231,7 @@ kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 et Nuxt 
 
 ## De vrais sites, portés vers kay
 
-Trois vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, et deux petits sites d'entreprise depuis Astro, chacun mesuré tel qu'il se déploie face à la version qu'il remplace. [Leur propre article](/posts/ported-to-kay) donne chaque chiffre, et ce que kay perd : des modifications de template et de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro.
+Trois vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, et deux petits sites d'entreprise depuis Astro, chacun mesuré tel qu'il se déploie face à la version qu'il remplace. Ce que kay y perd : des modifications de template et de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro.
 
 <Stats items={[{"value": "-88 %", "label": "CPU serveur par visiteur, depuis SvelteKit"}, {"value": "2,9 à 3,3x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"}, {"value": "-16 à -37 %", "label": "lignes de code"}]} />
 
@@ -268,7 +268,7 @@ kay est le seul framework que le modèle apprend sur le moment, dans la document
 
 <Note title="Comment c'est mesuré">
 
-kay 1.51.0, ses exécutions une semaine après celles de SvelteKit, SolidStart et Astro et quelques heures après celles de Nuxt et Next.js, avec le même modèle et le même Claude Code, Opus 5.5 en effort élevé. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. La façon dont une exécution est préparée, isolée des autres et notée a [son propre article](/posts/agent-bench) ; le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
+kay 1.51.0, ses exécutions une semaine après celles de SvelteKit, SolidStart et Astro et quelques heures après celles de Nuxt et Next.js, avec le même modèle et le même Claude Code, Opus 5.5 en effort élevé. Une exécution réussit quand le `check` du starter, le build et tous les tests d'acceptation passent ; chaque framework a réussi ses 5 exécutions, et chaque chiffre est la médiane de ces exécutions. Le coût est aux tarifs API, tel que Claude Code le rapporte. La façon dont une exécution est préparée, isolée des autres et notée est décrite dans l'[article sur les cinq frameworks](/posts/five-frameworks) ; le cahier des charges, le prompt, les starters et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
 
 </Note>
 

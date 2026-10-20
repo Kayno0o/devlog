@@ -1,12 +1,12 @@
 ---
 title: "Three real sites, moved to kay"
 description: "A SvelteKit site and two Astro sites ported to kay and measured as they deploy: server load, paints, images, builds, memory and the dev server, what kay loses included."
-date: 2026-10-17
+date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
 ---
 
-The [kay post](/posts/introducing-kay) measures kay on a products page and on a coding agent's build. A products page only goes so far, so this post is three real sites moved to kay: one from SvelteKit, two from Astro, each measured against the version it replaced. Every bench here ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+A benchmark on a products page only goes so far, so here are three real sites moved to kay: one from SvelteKit, two from Astro, each measured against the version it replaced. Every bench here ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 ## A real site, ported from SvelteKit
 

@@ -1,7 +1,7 @@
 ---
 title: "kayjs: fast to run, easy to write"
 description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte, Astro, Next.js and Nuxt.
-date: 2026-10-09
+date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
 ---
@@ -231,7 +231,7 @@ kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt
 
 ## Real sites, ported to kay
 
-Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. [Their own post](/posts/ported-to-kay) has every figure, and what kay loses: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro.
+Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. What kay loses there: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro.
 
 <Stats items={[{"value": "-88%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "2.9 to 3.3x", "label": "requests per second on a content page, from Astro"}, {"value": "-16 to -37%", "label": "lines of code"}]} />
 
@@ -268,7 +268,7 @@ kay is the one framework the model learns on the spot, from the docs and the pac
 
 <Note title="How it was measured">
 
-kay 1.51.0, its runs a week after SvelteKit's, SolidStart's and Astro's and a few hours after Nuxt's and Next.js's, with the same model and Claude Code, Opus 5.5 at high effort. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. How a run is set up, kept apart from the others and graded has [its own post](/posts/agent-bench); the spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
+kay 1.51.0, its runs a week after SvelteKit's, SolidStart's and Astro's and a few hours after Nuxt's and Next.js's, with the same model and Claude Code, Opus 5.5 at high effort. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. How a run is set up, kept apart from the others and graded is in the [five frameworks post](/posts/five-frameworks); the spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
 
 </Note>
 
