@@ -201,27 +201,139 @@ Bun fait tout en dessous : le serveur, le bundler, le lanceur de tests et le dr
 
 La même page de produits et les mêmes données pour chaque framework, chacun écrit comme le font sa propre documentation et son entrée du js-framework-benchmark. kay, SolidJS et Svelte sont chronométrés derrière le même serveur Elysia, Astro et Nuxt à travers leurs propres gestionnaires de requêtes, et Next.js à travers son propre serveur HTTP. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
 
-<BarChart title="Script du thread principal au chargement, page produits" unit="ms" better="lower" rows={[{"label": "kay", "value": 0.3}, {"label": "Astro", "value": 1.2}, {"label": "Nuxt", "value": 5.3}, {"label": "SolidJS", "value": 10.8}, {"label": "Svelte", "value": 14.3}, {"label": "Next.js", "value": 18.8}]} bench="synthetic" />
+<BarChart
+  title="Script du thread principal au chargement, page produits"
+  unit="ms"
+  better="lower"
+  rows={[
+    {"label": "kay", "value": 0.3},
+    {"label": "Astro", "value": 1.2},
+    {"label": "Nuxt", "value": 5.3},
+    {"label": "SolidJS", "value": 10.8},
+    {"label": "Svelte", "value": 14.3},
+    {"label": "Next.js", "value": 18.8}
+  ]}
+  bench="synthetic"
+/>
 
 kay n'hydrate que ses islands, et Astro ses deux islands Solid. SolidJS, Svelte et Nuxt hydratent toute la page, et renvoient donc aussi ses données en JSON, et Next.js envoie le payload de ses composants en flux avec la page.
 
-<BarChart title="HTML envoyé, page produits, gzip" unit="Ko" better="lower" rows={[{"label": "kay", "value": 8.4}, {"label": "Astro", "value": 10.3}, {"label": "Svelte", "value": 15.7}, {"label": "SolidJS", "value": 21.6}, {"label": "Nuxt", "value": 23.5}, {"label": "Next.js", "value": 23.6}]} bench="synthetic" />
+<BarChart
+  title="HTML envoyé, page produits, gzip"
+  unit="Ko"
+  better="lower"
+  rows={[
+    {"label": "kay", "value": 8.4},
+    {"label": "Astro", "value": 10.3},
+    {"label": "Svelte", "value": 15.7},
+    {"label": "SolidJS", "value": 21.6},
+    {"label": "Nuxt", "value": 23.5},
+    {"label": "Next.js", "value": 23.6}
+  ]}
+  bench="synthetic"
+/>
 
-<BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label": "kay", "value": 4208}, {"label": "Svelte", "value": 3886}, {"label": "Astro", "value": 1822}, {"label": "SolidJS", "value": 1748}, {"label": "Nuxt", "value": 588}]} bench="synthetic" />
+<BarChart
+  title="Rendu serveur, page produits"
+  unit="rendus/s"
+  better="higher"
+  digits={0}
+  rows={[
+    {"label": "kay", "value": 4208},
+    {"label": "Svelte", "value": 3886},
+    {"label": "Astro", "value": 1822},
+    {"label": "SolidJS", "value": 1748},
+    {"label": "Nuxt", "value": 588}
+  ]}
+  bench="synthetic"
+/>
 
-<BarChart title="Code écrit, pages produits et tableau" unit="K caractères" better="lower" digits={1} rows={[{"label": "kay", "value": 1.9}, {"label": "Nuxt", "value": 2.9}, {"label": "Svelte", "value": 3.3}, {"label": "Astro", "value": 3.4}, {"label": "SolidJS", "value": 3.7}, {"label": "Next.js", "value": 4.1}]} bench="synthetic" source="sans les espaces ni les commentaires, ni la glue serveur du benchmark" />
+<BarChart
+  title="Code écrit, pages produits et tableau"
+  unit="K caractères"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "kay", "value": 1.9},
+    {"label": "Nuxt", "value": 2.9},
+    {"label": "Svelte", "value": 3.3},
+    {"label": "Astro", "value": 3.4},
+    {"label": "SolidJS", "value": 3.7},
+    {"label": "Next.js", "value": 4.1}
+  ]}
+  bench="synthetic"
+  source="sans les espaces ni les commentaires, ni la glue serveur du benchmark"
+/>
 
 Compté en caractères, car les lignes dépendent de la mise en forme : Prettier fait passer les 70 lignes de l'app Svelte à 130.
 
-<BarChart title="Temps de build de production" unit="s" better="lower" digits={2} rows={[{"label": "Svelte", "value": 0.09}, {"label": "SolidJS", "value": 0.14}, {"label": "kay", "value": 0.39, "note": "sans vérification de types"}, {"label": "Astro", "value": 0.6}, {"label": "kay", "value": 0.87}, {"label": "Nuxt", "value": 1.97}, {"label": "Next.js", "value": 2.15}]} bench="synthetic" />
+<BarChart
+  title="Temps de build de production"
+  unit="s"
+  better="lower"
+  digits={2}
+  rows={[
+    {"label": "Svelte", "value": 0.09},
+    {"label": "SolidJS", "value": 0.14},
+    {"label": "kay", "value": 0.39, "note": "sans vérification de types"},
+    {"label": "Astro", "value": 0.6},
+    {"label": "kay", "value": 0.87},
+    {"label": "Nuxt", "value": 1.97},
+    {"label": "Next.js", "value": 2.15}
+  ]}
+  bench="synthetic"
+/>
 
-<BarChart title="Sortie du build, gzip" unit="Ko" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Svelte", "value": 22.5}, {"label": "kay", "value": 40.5}, {"label": "Astro", "value": 138.1}, {"label": "Next.js", "value": 328.9}, {"label": "Nuxt", "value": 610.7}]} bench="synthetic" source="kay, SolidJS et Svelte n'empaquettent aucun serveur" />
+<BarChart
+  title="Sortie du build, gzip"
+  unit="Ko"
+  better="lower"
+  rows={[
+    {"label": "SolidJS", "value": 8.2},
+    {"label": "Svelte", "value": 22.5},
+    {"label": "kay", "value": 40.5},
+    {"label": "Astro", "value": 138.1},
+    {"label": "Next.js", "value": 328.9},
+    {"label": "Nuxt", "value": 610.7}
+  ]}
+  bench="synthetic"
+  source="kay, SolidJS et Svelte n'empaquettent aucun serveur"
+/>
 
-<BarChart title="JS envoyé, page tableau, gzip" unit="Ko" better="lower" rows={[{"label": "SolidJS", "value": 8.2}, {"label": "Astro", "value": 9.6}, {"label": "kay", "value": 11.9}, {"label": "Svelte", "value": 22.5}, {"label": "Nuxt", "value": 71.8}, {"label": "Next.js", "value": 134.3}]} bench="synthetic" />
+<BarChart
+  title="JS envoyé, page tableau, gzip"
+  unit="Ko"
+  better="lower"
+  rows={[
+    {"label": "SolidJS", "value": 8.2},
+    {"label": "Astro", "value": 9.6},
+    {"label": "kay", "value": 11.9},
+    {"label": "Svelte", "value": 22.5},
+    {"label": "Nuxt", "value": 71.8},
+    {"label": "Next.js", "value": 134.3}
+  ]}
+  bench="synthetic"
+/>
 
 L'island d'Astro est le même tableau Solid que l'app SolidJS, et aucune des deux n'a de routeur, là où le JavaScript de kay inclut l'écouteur dont part sa navigation de page sur place.
 
-<BenchTable title="Opérations sur le tableau" unit="ms" columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]} rows={[{"label": "Créer 1 000 lignes", "values": [29.5, 26.6, 26.8, 26.5, 29.8, 26.9]}, {"label": "Remplacer 1 000 lignes", "values": [25.2, 24.5, 25.8, 24.4, 30.3, 27.8]}, {"label": "Mettre à jour une ligne sur 10", "values": [2.8, 2.7, 2.8, 2.7, 4, 3.5]}, {"label": "Sélectionner une ligne", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.6]}, {"label": "Échanger deux lignes", "values": [2.3, 2.1, 2.1, 2, 20.6, 2.5]}, {"label": "Supprimer une ligne", "values": [2, 2, 2.2, 1.9, 3.3, 4.5]}, {"label": "Créer 10 000 lignes", "values": [259, 228, 231, 239, 363, 267]}, {"label": "Ajouter 1 000 lignes", "values": [24.2, 23.4, 23.9, 23.4, 26.9, 25.4]}, {"label": "Vider 1 000 lignes", "values": [3, 2.7, 3.2, 2.7, 5, 4.1]}]} bench="synthetic" />
+<BenchTable
+  title="Opérations sur le tableau"
+  unit="ms"
+  columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]}
+  rows={[
+    {"label": "Créer 1 000 lignes", "values": [29.5, 26.6, 26.8, 26.5, 29.8, 26.9]},
+    {"label": "Remplacer 1 000 lignes", "values": [25.2, 24.5, 25.8, 24.4, 30.3, 27.8]},
+    {"label": "Mettre à jour une ligne sur 10", "values": [2.8, 2.7, 2.8, 2.7, 4, 3.5]},
+    {"label": "Sélectionner une ligne", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.6]},
+    {"label": "Échanger deux lignes", "values": [2.3, 2.1, 2.1, 2, 20.6, 2.5]},
+    {"label": "Supprimer une ligne", "values": [2, 2, 2.2, 1.9, 3.3, 4.5]},
+    {"label": "Créer 10 000 lignes", "values": [259, 228, 231, 239, 363, 267]},
+    {"label": "Ajouter 1 000 lignes", "values": [24.2, 23.4, 23.9, 23.4, 26.9, 25.4]},
+    {"label": "Vider 1 000 lignes", "values": [3, 2.7, 3.2, 2.7, 5, 4.1]}
+  ]}
+  bench="synthetic"
+/>
 
 <Note title="Comment c'est mesuré">
 
@@ -233,7 +345,13 @@ kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 et Nuxt 
 
 Quatre vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, deux petits sites d'entreprise depuis Astro, et une petite app avec connexion depuis Elysia et Solid, chacun mesuré tel qu'il se déploie face à la version qu'il remplace. Ce que kay y perd : des modifications de template et de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro, plus de décalage de mise en page sur mobile et un build plus lent qu'Elysia et Solid.
 
-<Stats items={[{"value": "-88 %", "label": "CPU serveur par visiteur, depuis SvelteKit"}, {"value": "2,9 à 3,3x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"}, {"value": "-16 à -40 %", "label": "lignes de code"}]} />
+<Stats
+  items={[
+    {"value": "-88 %", "label": "CPU serveur par visiteur, depuis SvelteKit"},
+    {"value": "2,9 à 3,3x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"},
+    {"value": "-16 à -40 %", "label": "lignes de code"}
+  ]}
+/>
 
 ## Pensé aussi pour les LLM
 
@@ -256,13 +374,68 @@ Filtrez ses livres, ouvrez-en un, mettez-le en favori. C'est l'exécution au co�
 
 <Stats items={[{"value":"13K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
 
-<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"kay","value":3.4,"range":[1.8,4.7]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
+<BarChart
+  title="Temps pour construire le site"
+  unit="min"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "value": 2.6, "range": [2.5, 3.6]},
+    {"label": "kay", "value": 3.4, "range": [1.8, 4.7]},
+    {"label": "SvelteKit", "value": 4.5, "range": [3.3, 12.4]},
+    {"label": "Next.js", "value": 5.9, "range": [4.8, 8.5]},
+    {"label": "Nuxt", "value": 7.9, "range": [4.3, 9.5]},
+    {"label": "SolidStart", "value": 9.3, "range": [6.5, 12.9]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":323,"range":[227,336]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
+<BarChart
+  title="Lignes de code écrites, hors tests et styles"
+  unit="lignes"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "kay", "value": 323, "range": [227, 336]},
+    {"label": "Nuxt", "value": 444, "range": [437, 476]},
+    {"label": "Astro", "value": 463, "range": [440, 491]},
+    {"label": "SvelteKit", "value": 472, "range": [455, 518]},
+    {"label": "SolidStart", "value": 537, "range": [523, 549]},
+    {"label": "Next.js", "value": 616, "range": [537, 636]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.78,1.54]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
+<BarChart
+  title="Coût du site, tarifs API"
+  unit="USD"
+  better="lower"
+  digits={2}
+  rows={[
+    {"label": "Astro", "value": 0.78, "range": [0.75, 1.12]},
+    {"label": "kay", "value": 0.95, "range": [0.78, 1.54]},
+    {"label": "Nuxt", "value": 1.46, "range": [0.91, 1.8]},
+    {"label": "SvelteKit", "value": 1.52, "range": [1.23, 2.22]},
+    {"label": "Next.js", "value": 1.87, "range": [1.37, 2.85]},
+    {"label": "SolidStart", "value": 1.94, "range": [1.86, 2.79]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":93,"range":[77,107]}]} bench="llm" />
+<BarChart
+  title="Documentation lue"
+  unit="K caractères"
+  digits={0}
+  rows={[
+    {"label": "Nuxt", "value": 14, "range": [8, 22]},
+    {"label": "Astro", "value": 29, "range": [8, 38]},
+    {"label": "SolidStart", "value": 52, "range": [26, 64]},
+    {"label": "Next.js", "value": 84, "range": [70, 114]},
+    {"label": "SvelteKit", "value": 89, "range": [49, 103]},
+    {"label": "kay", "value": 93, "range": [77, 107]}
+  ]}
+  bench="llm"
+/>
 
 kay est le seul framework que le modèle apprend sur le moment, dans la documentation et le paquet du projet, là où il arrive en ayant vu beaucoup des autres, et chaque appel après ces lectures les repaie.
 

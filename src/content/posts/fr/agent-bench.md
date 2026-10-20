@@ -47,7 +47,12 @@ Le harnais alterne les exécutions entre frameworks, dans un ordre qui tourne, p
 
 Une série complète, c'est 5 exécutions par framework, donc une erreur dans le harnais coûte 30 exécutions. Chaque changement commence plutôt par une sonde : une exécution d'un seul framework sous une étiquette jetable, ses résultats et son transcript lus, puis le framework suivant. Une sonde coûte environ un dollar : de 0,79 à 1,27 $ pour le premier tour de kay, SvelteKit, SolidStart et Astro, 1,20 et 1,42 $ pour celles de Nuxt et Next.js, de 0,83 à 1,71 $ pour les suivantes de kay. La sonde de Next.js a échoué sur la suite, pas sur son site : le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne laisse jamais arriver à une deuxième visite, alors la suite ouvre maintenant chaque visite dans un nouveau contexte de navigateur qui reprend les cookies et le stockage.
 
-<Stats items={[{"value":"30 sur 30","label":"exécutions qui passent chaque vérification et chaque test"},{"value":"45,15 $","label":"les 30 exécutions aux tarifs API"}]} />
+<Stats
+  items={[
+    {"value": "30 sur 30", "label": "exécutions qui passent chaque vérification et chaque test"},
+    {"value": "45,15 $", "label": "les 30 exécutions aux tarifs API"}
+  ]}
+/>
 
 ## Résultats
 
@@ -55,25 +60,122 @@ Chaque graphique montre la médiane de chaque framework sur ses exécutions, ave
 
 <Stats items={[{"value":"13K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
 
-<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"Astro","value":2.6,"range":[2.5,3.6]},{"label":"kay","value":3.4,"range":[1.8,4.7]},{"label":"SvelteKit","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","value":9.3,"range":[6.5,12.9]}]} bench="llm" />
+<BarChart
+  title="Temps pour construire le site"
+  unit="min"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "value": 2.6, "range": [2.5, 3.6]},
+    {"label": "kay", "value": 3.4, "range": [1.8, 4.7]},
+    {"label": "SvelteKit", "value": 4.5, "range": [3.3, 12.4]},
+    {"label": "Next.js", "value": 5.9, "range": [4.8, 8.5]},
+    {"label": "Nuxt", "value": 7.9, "range": [4.3, 9.5]},
+    {"label": "SolidStart", "value": 9.3, "range": [6.5, 12.9]}
+  ]}
+  bench="llm"
+/>
 
 Les agents de kay n'ont écrit aucun CSS, là où les autres en ont écrit une centaine de lignes dans une exécution typique, donc les comptes de lignes laissent les styles de côté.
 
-<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"kay","value":323,"range":[227,336]},{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
+<BarChart
+  title="Lignes de code écrites, hors tests et styles"
+  unit="lignes"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "kay", "value": 323, "range": [227, 336]},
+    {"label": "Nuxt", "value": 444, "range": [437, 476]},
+    {"label": "Astro", "value": 463, "range": [440, 491]},
+    {"label": "SvelteKit", "value": 472, "range": [455, 518]},
+    {"label": "SolidStart", "value": 537, "range": [523, 549]},
+    {"label": "Next.js", "value": 616, "range": [537, 636]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Coût du site, tarifs API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","value":0.78,"range":[0.75,1.12]},{"label":"kay","value":0.95,"range":[0.78,1.54]},{"label":"Nuxt","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","value":1.94,"range":[1.86,2.79]}]} bench="llm" />
+<BarChart
+  title="Coût du site, tarifs API"
+  unit="USD"
+  better="lower"
+  digits={2}
+  rows={[
+    {"label": "Astro", "value": 0.78, "range": [0.75, 1.12]},
+    {"label": "kay", "value": 0.95, "range": [0.78, 1.54]},
+    {"label": "Nuxt", "value": 1.46, "range": [0.91, 1.8]},
+    {"label": "SvelteKit", "value": 1.52, "range": [1.23, 2.22]},
+    {"label": "Next.js", "value": 1.87, "range": [1.37, 2.85]},
+    {"label": "SolidStart", "value": 1.94, "range": [1.86, 2.79]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Tokens de réflexion" unit="K tokens" better="lower" digits={1} rows={[{"label":"kay","value":3.1,"range":[2.4,5]},{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.3]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
+<BarChart
+  title="Tokens de réflexion"
+  unit="K tokens"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "kay", "value": 3.1, "range": [2.4, 5]},
+    {"label": "Astro", "value": 4.3, "range": [3.5, 5.7]},
+    {"label": "SvelteKit", "value": 8.5, "range": [8, 13.3]},
+    {"label": "Nuxt", "value": 10.2, "range": [7.5, 13.8]},
+    {"label": "Next.js", "value": 10.6, "range": [8.8, 20.7]},
+    {"label": "SolidStart", "value": 11.5, "range": [9.7, 15.6]}
+  ]}
+  bench="llm"
+/>
 
 <Stats items={[{"value":"78 contre 0","label":"lignes de tests écrites, kay contre les autres"}]} />
 
 Les agents de kay ont écrit leurs propres tests dans 4 exécutions sur 5, là où aucun agent d'un autre framework n'en a écrit un seul. Ces lignes sont exclues de chaque décompte de lignes, mais les tokens qui les ont écrites comptent partout ailleurs.
 
-<BarChart title="Tours" unit="tours" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"kay","value":27,"range":[21,47]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
+<BarChart
+  title="Tours"
+  unit="tours"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "Astro", "value": 24, "range": [21, 31]},
+    {"label": "kay", "value": 27, "range": [21, 47]},
+    {"label": "SvelteKit", "value": 40, "range": [30, 51]},
+    {"label": "Nuxt", "value": 47, "range": [30, 56]},
+    {"label": "Next.js", "value": 50, "range": [38, 72]},
+    {"label": "SolidStart", "value": 53, "range": [45, 74]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Documentation lue" unit="K caractères" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]},{"label":"kay","value":93,"range":[77,107]}]} bench="llm" />
+<BarChart
+  title="Documentation lue"
+  unit="K caractères"
+  digits={0}
+  rows={[
+    {"label": "Nuxt", "value": 14, "range": [8, 22]},
+    {"label": "Astro", "value": 29, "range": [8, 38]},
+    {"label": "SolidStart", "value": 52, "range": [26, 64]},
+    {"label": "Next.js", "value": 84, "range": [70, 114]},
+    {"label": "SvelteKit", "value": 89, "range": [49, 103]},
+    {"label": "kay", "value": 93, "range": [77, 107]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Plus grand contexte d'un appel" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":45,"range":[43.1,58.9]},{"label":"kay","value":64.8,"range":[58.5,82.7]},{"label":"Nuxt","value":67,"range":[48.4,91.2]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"Next.js","value":90,"range":[71.2,120.1]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]} bench="llm" />
+<BarChart
+  title="Plus grand contexte d'un appel"
+  unit="K tokens"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "value": 45, "range": [43.1, 58.9]},
+    {"label": "kay", "value": 64.8, "range": [58.5, 82.7]},
+    {"label": "Nuxt", "value": 67, "range": [48.4, 91.2]},
+    {"label": "SvelteKit", "value": 80.1, "range": [73.7, 106.6]},
+    {"label": "Next.js", "value": 90, "range": [71.2, 120.1]},
+    {"label": "SolidStart", "value": 91.7, "range": [84.7, 114.1]}
+  ]}
+  bench="llm"
+/>
 
 Apprendre kay dans sa documentation coûte des lectures, qui remplissent le contexte.
 
