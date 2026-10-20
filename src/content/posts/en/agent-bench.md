@@ -6,7 +6,7 @@ tags: [kay, benchmarks, llm]
 draft: true
 ---
 
-This post is the whole of one benchmark: how a run works, what keeps it honest, and every measure it takes. The [five frameworks post](/posts/five-frameworks) runs the same bench without kay, on Sonnet 5.5 too.
+The [kay post](/posts/introducing-kay) gives this benchmark one section and four charts. This post is the whole of it: how a run works, what keeps it honest, and every measure, the ones that did not fit there included. The [five frameworks post](/posts/five-frameworks) runs the same bench without kay, on Sonnet 5.5 too.
 
 The question is simple: when a coding agent builds a site, what does the framework cost it? Tokens, time, turns, docs read, check errors, lines of code. A framework an agent writes cheaply and correctly is one I can hand work to, and kay is meant to be one.
 
