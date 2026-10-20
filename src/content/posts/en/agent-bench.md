@@ -1,12 +1,12 @@
 ---
 title: "One site, built by a coding agent in every framework"
 description: "How I measure what a web framework costs a coding agent: one spec, a hidden test suite, sandboxed headless runs, and what came out for kay, SvelteKit, SolidStart, Astro, Nuxt and Next.js."
-date: 2026-10-16
+date: 2026-10-20
 tags: [kay, benchmarks, llm]
 draft: true
 ---
 
-The [kay post](/posts/introducing-kay) gives this benchmark one section and four charts. This post is the whole of it: how a run works, what keeps it honest, and every measure, the ones that did not fit there included. The [five frameworks post](/posts/five-frameworks) runs the same bench without kay, on Sonnet 5.5 too.
+This post is the whole of one benchmark: how a run works, what keeps it honest, and every measure it takes. The [five frameworks post](/posts/five-frameworks) runs the same bench without kay, on Sonnet 5.5 too.
 
 The question is simple: when a coding agent builds a site, what does the framework cost it? Tokens, time, turns, docs read, check errors, lines of code. A framework an agent writes cheaply and correctly is one I can hand work to, and kay is meant to be one.
 

@@ -1,12 +1,12 @@
 ---
 title: "Trois vrais sites, passés à kay"
 description: "Un site SvelteKit et deux sites Astro portés vers kay et mesurés tels qu'ils se déploient : charge serveur, affichages, images, builds, mémoire et serveur de développement, ce que kay perd compris."
-date: 2026-10-17
+date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
 ---
 
-L'[article sur kay](/posts/introducing-kay) mesure kay sur une page de produits et sur le build d'un agent de code. Une page de produits ne mène pas bien loin, alors voici trois vrais sites passés à kay : un depuis SvelteKit, deux depuis Astro, chacun mesuré contre la version qu'il remplace. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
+Un benchmark sur une page de produits ne mène pas bien loin, alors voici trois vrais sites passés à kay : un depuis SvelteKit, deux depuis Astro, chacun mesuré contre la version qu'il remplace. Tous les benchmarks de cet article ont tourné sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
 
 ## Un vrai site, porté depuis SvelteKit
 
