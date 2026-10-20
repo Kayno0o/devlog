@@ -6,7 +6,7 @@ tags: [kay, benchmarks]
 draft: true
 ---
 
-A benchmark on a products page only goes so far, so here are three real sites moved to kay: one from SvelteKit, two from Astro, each measured against the version it replaced. Every bench here ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+The [kay post](/posts/introducing-kay) measures kay on a products page and on a coding agent's build. A products page only goes so far, so this post is three real sites moved to kay: one from SvelteKit, two from Astro, each measured against the version it replaced. Every bench here ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 ## A real site, ported from SvelteKit
 

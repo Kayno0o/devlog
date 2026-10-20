@@ -6,7 +6,7 @@ tags: [kay, benchmarks, llm]
 draft: true
 ---
 
-Cet article présente un benchmark en entier : comment se déroule une exécution, ce qui la garde honnête, et chaque mesure qu'il prend. L'[article sur les cinq frameworks](/posts/five-frameworks) refait le même benchmark sans kay, avec Sonnet 5.5 en plus.
+L'[article sur kay](/posts/introducing-kay) donne à ce benchmark une section et quatre graphiques. Cet article présente l'ensemble : comment se déroule une exécution, ce qui la garde honnête, et chaque mesure, y compris celles qui n'avaient pas leur place là-bas. L'[article sur les cinq frameworks](/posts/five-frameworks) refait le même benchmark sans kay, avec Sonnet 5.5 en plus.
 
 La question est simple : quand un agent de code construit un site, combien le framework lui coûte-t-il ? Des tokens, du temps, des tours, de la documentation lue, des erreurs de vérification, des lignes de code. Un framework qu'un agent écrit à moindre coût et correctement, c'est un framework auquel je peux confier du travail, et kay est fait pour en être un.
 
