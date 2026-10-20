@@ -7,7 +7,7 @@ export const benches = {
   synthetic,
   // The same bench, named without kay for a post that leaves kay out.
   syntheticNeutral: synthetic,
-  sveltekit: { date: '2026-10-19' },
+  sveltekit: { date: '2026-10-20' },
   astro: { date: '2026-10-18' },
   llm: { date: '2026-10-17' },
   // Opus's runs beside Sonnet's, dated by Sonnet's.
