@@ -231,9 +231,9 @@ kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt
 
 ## Real sites, ported to kay
 
-Three real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, and two small business sites from Astro, each measured as it deploys against the version it replaced. What kay loses there: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro.
+Four real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, two small business sites from Astro, and a small signed-in app from Elysia and Solid, each measured as it deploys against the version it replaced. What kay loses there: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro, more layout shift on phones and a slower build than Elysia and Solid.
 
-<Stats items={[{"value": "-88%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "2.9 to 3.3x", "label": "requests per second on a content page, from Astro"}, {"value": "-16 to -37%", "label": "lines of code"}]} />
+<Stats items={[{"value": "-88%", "label": "server CPU per visitor, from SvelteKit"}, {"value": "2.9 to 3.3x", "label": "requests per second on a content page, from Astro"}, {"value": "-16 to -40%", "label": "lines of code"}]} />
 
 ## Built for LLMs too
 
