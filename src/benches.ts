@@ -9,6 +9,7 @@ export const benches = {
   syntheticNeutral: synthetic,
   sveltekit: { date: '2026-10-20' },
   astro: { date: '2026-10-18' },
+  elysiaSolid: { date: '2026-10-19' },
   llm: { date: '2026-10-17' },
   // Opus's runs beside Sonnet's, dated by Sonnet's.
   llmModels: { date: '2026-10-19' },

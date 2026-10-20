@@ -80,6 +80,7 @@ export default defineMessages({
     syntheticNeutral: 'synthetic bench',
     sveltekit: 'SvelteKit port',
     astro: 'Astro ports',
+    elysiaSolid: 'Elysia + Solid port',
     llm: 'LLM benchmark, Opus 5.5, effort high, median of the passing runs',
     llmModels: 'LLM benchmark, Opus 5.5 at high effort and Sonnet 5.5 at medium, median of the passing runs',
   },
