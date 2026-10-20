@@ -6,7 +6,7 @@ tags: [kay, benchmarks, llm]
 draft: true
 ---
 
-L'[article sur kay](/posts/introducing-kay) donne à ce benchmark une section et quatre graphiques. Cet article présente l'ensemble : comment se déroule une exécution, ce qui la garde honnête, et chaque mesure, y compris celles qui n'avaient pas leur place là-bas.
+L'[article sur kay](/posts/introducing-kay) donne à ce benchmark une section et quatre graphiques. Cet article présente l'ensemble : comment se déroule une exécution, ce qui la garde honnête, et chaque mesure, y compris celles qui n'avaient pas leur place là-bas. L'[article sur les cinq frameworks](/posts/five-frameworks) refait le même benchmark sans kay, avec Sonnet 5.5 en plus.
 
 La question est simple : quand un agent de code construit un site, combien le framework lui coûte-t-il ? Des tokens, du temps, des tours, de la documentation lue, des erreurs de vérification, des lignes de code. Un framework qu'un agent écrit à moindre coût et correctement, c'est un framework auquel je peux confier du travail, et kay est fait pour en être un.
 
@@ -25,7 +25,7 @@ Chaque texte que cherchent les tests est donné mot pour mot : une exécution n
 
 Une exécution est notée par une suite Playwright que l'agent ne voit jamais : 11 tests qui pilotent Chromium sans interface, lancés une fois par page ou par livre quand c'est pertinent. Ils vérifient la mise en page et son lien courant, les livres les mieux notés dans l'ordre, la liste et son filtre, chaque page de livre, les favoris après un rechargement, le formulaire avec et sans JavaScript, et la 404.
 
-Une suite ne vaut que ce contre quoi elle a été prouvée, alors elle tourne aussi contre un site de référence construit avec Bun seul, sans aucun framework. Si la référence échoue, c'est la suite qui a tort, pas les frameworks.
+Une suite ne vaut que ce contre quoi elle a été validée, alors elle tourne aussi contre un site de référence construit avec Bun seul, sans aucun framework. Si la référence échoue, c'est la suite qui a tort, pas les frameworks.
 
 ## Les starters et leur documentation
 
@@ -41,17 +41,17 @@ Chaque exécution est une session Claude Code headless, `claude -p --safe-mode`�
 
 Une fois l'agent arrêté, le correcteur lance `bun run check` et `bun run build`, démarre le site avec `bun run start` sur un port donné, et lance la suite dessus. Une exécution réussit quand les trois passent.
 
-Le harnais alterne les exécutions entre frameworks, dans un ordre qui tourne, pour qu'une heure lente de l'API tombe sur tout le monde pareil, mais chaque séance ici n'en couvre qu'une partie : SvelteKit, SolidStart et Astro ensemble, puis Nuxt et Next.js l'un après l'autre, puis kay seul, donc le temps est la mesure à lire avec le plus de recul. Le rapport liste aussi ce que la note ne voit pas : dans 27 exécutions sur 30, l'agent a lancé `python`, `node` ou un autre gestionnaire de paquets alors que le prompt demande Bun seul, jusqu'à 16 fois dans une exécution Nuxt, et chaque exécution SvelteKit a modifié son script `start`, une entrée de la notation à relire avant de se fier au résultat.
+Le harnais alterne les exécutions entre frameworks, dans un ordre qui tourne, pour qu'une heure lente de l'API touche tout le monde de la même façon, mais chaque séance ici n'en couvre qu'une partie : SvelteKit, SolidStart et Astro ensemble, puis Nuxt et Next.js l'un après l'autre, puis kay seul, donc le temps est la mesure à lire avec le plus de recul. Le rapport liste aussi ce que la note ne voit pas : dans 27 exécutions sur 30, l'agent a lancé `python`, `node` ou un autre gestionnaire de paquets alors que le prompt demande Bun seul, jusqu'à 16 fois dans une exécution Nuxt, et chaque exécution SvelteKit a modifié son script `start`, une donnée dont dépend la notation, à relire avant de se fier au résultat.
 
 ## D'abord une sonde
 
-Une série complète, c'est 5 exécutions par framework, donc une erreur dans le harnais coûte 30 exécutions. Chaque changement commence plutôt par une sonde : une exécution d'un seul framework sous une étiquette jetable, ses résultats et son transcript lus, puis le framework suivant. Une sonde coûte environ un dollar : de 0,79 à 1,27 $ pour le premier tour des quatre premiers, 1,20 et 1,42 $ pour celles de Nuxt et Next.js, de 0,83 à 1,71 $ pour celles de kay. La sonde de Next.js a échoué sur la suite, pas sur son site : le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne laisse jamais arriver à une deuxième visite, alors la suite ouvre maintenant chaque visite dans un nouveau contexte de navigateur qui reprend les cookies et le stockage.
+Une série complète, c'est 5 exécutions par framework, donc une erreur dans le harnais coûte 30 exécutions. Chaque changement commence plutôt par une sonde : une exécution d'un seul framework sous une étiquette jetable, ses résultats et son transcript lus, puis le framework suivant. Une sonde coûte environ un dollar : de 0,79 à 1,27 $ pour le premier tour de kay, SvelteKit, SolidStart et Astro, 1,20 et 1,42 $ pour celles de Nuxt et Next.js, de 0,83 à 1,71 $ pour les suivantes de kay. La sonde de Next.js a échoué sur la suite, pas sur son site : le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne laisse jamais arriver à une deuxième visite, alors la suite ouvre maintenant chaque visite dans un nouveau contexte de navigateur qui reprend les cookies et le stockage.
 
 <Stats items={[{"value":"30 sur 30","label":"exécutions qui passent chaque vérification et chaque test"},{"value":"45,15 $","label":"les 30 exécutions aux tarifs API"}]} />
 
 ## Résultats
 
-Chaque graphique montre l'exécution médiane de chaque framework, avec la plus basse et la plus haute à côté.
+Chaque graphique montre la médiane de chaque framework sur ses exécutions, avec la plus basse et la plus haute à côté.
 
 <Stats items={[{"value":"13K contre 17K à 34K","label":"tokens écrits, kay contre les autres"}]} />
 
@@ -79,6 +79,6 @@ Apprendre kay dans sa documentation coûte des lectures, qui remplissent le cont
 
 <Note title="Comment c'est mesuré">
 
-Claude Opus 5.5 en effort élevé, Claude Code 2.1.289, kay 1.51.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, tous sur Bun, 5 exécutions chacun, celles de Nuxt et Next.js six jours après celles de SvelteKit, SolidStart et Astro, celles de kay quelques heures après. Chaque chiffre est la médiane des exécutions réussies, et les 30 ont réussi. Le coût est aux tarifs API, tel que Claude Code le rapporte, exécutions ratées comprises. Le cahier des charges, le prompt, les starters, la suite et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
+Claude Opus 5.5 en effort élevé, Claude Code 2.1.289, kay 1.51.0, SvelteKit 3.0.1, SolidStart 2.0.6, Astro 7.3.8, Nuxt 4.6.1, Next.js 16.4.2, tous sur Bun, 5 exécutions chacun, celles de Nuxt et Next.js six jours après celles de SvelteKit, SolidStart et Astro, celles de kay quelques heures après. Chaque chiffre est la médiane des exécutions réussies. Le coût est aux tarifs API, tel que Claude Code le rapporte. Le cahier des charges, le prompt, les starters, la suite et chaque exécution sont dans [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
 
 </Note>
