@@ -1,18 +1,18 @@
 ---
 title: "kayjs : rapide à exécuter, simple à écrire"
-description: Pourquoi j'ai construit mon propre framework web sur Bun, comment un fichier .kay devient du HTML et des islands, et ce qu'il coûte face à SolidJS, Svelte et Astro.
+description: Pourquoi j'ai construit mon propre framework web sur Bun, comment un fichier .kay devient du HTML et des islands, et ce qu'il coûte face à SolidJS, Svelte, Astro, Next.js et Nuxt.
 date: 2026-10-09
 tags: [kay, benchmarks]
 draft: true
 ---
 
-Oui, encore un framework JavaScript. Ma défense : c'est celui que j'avais envie d'utiliser.
+Oui, encore un framework JavaScript. Pour ma défense, c'est celui que j'avais envie d'utiliser.
 
 kay tourne sur Bun et Elysia. Un fichier `.kay` est un composant : des blocs TypeScript, puis un template indenté façon pug. Les pages sont rendues en HTML pur côté serveur, et seules les parties interactives, les islands, embarquent du JavaScript. C'est encore expérimental, donc attendez-vous à des changements cassants pendant un moment.
 
 ## À quoi ressemble un composant
 
-La même page en kay, dans les trois frameworks dont il s'inspire, puis en Next.js et Nuxt, chacune passant son propre vérificateur :
+La même page en kay, dans les trois frameworks dont il s'inspire, puis en Next.js et Nuxt, chacune validée par son propre vérificateur :
 
 <Tabs label="Une page dans six frameworks">
 
@@ -110,7 +110,7 @@ const greeting = 'Hello from the server'
 <Counter client:load />
 ```
 
-La partie serveur se rend comme dans kay. Astro laisse l'état dans le navigateur à un composant d'un autre framework, ici SolidJS, dans son propre fichier et hydraté comme une island.
+La partie serveur est rendue comme dans kay. Astro laisse l'état dans le navigateur à un composant d'un autre framework, ici SolidJS, dans son propre fichier et hydraté comme une island.
 
 </Tab>
 
@@ -147,7 +147,7 @@ export default function Page() {
 }
 ```
 
-La page est un composant serveur et se rend comme dans kay. L'état demande un composant client, dans son propre fichier marqué `'use client'`.
+La page est un composant serveur, rendue comme dans kay. L'état demande un composant client, dans son propre fichier marqué `'use client'`.
 
 </Tab>
 
@@ -184,7 +184,7 @@ Je tiens aussi à la quantité de code. J'ai deux applications à moi, une en Sv
 Pendant un temps, j'ai utilisé Astro avec SolidJS dedans : des pages rapides pour peu de code, au prix de deux frameworks et de deux façons d'écrire un composant dans un même projet. SvelteKit, SolidStart et Astro reposent aussi tous sur Vite, qui rend parfois les builds et les tests unitaires lents. kay, c'est ce que j'ai construit pour tout avoir au même endroit, avec Bun seul pour le build et les tests. Il mélange ce que j'ai aimé dans chacun :
 
 - **Astro** : le bloc TypeScript en haut, les islands comme seul JavaScript qu'une page embarque, les content collections.
-- **pug** : des templates indentés sans balises fermantes. J'ai adoré pug il y a longtemps et je n'ai jamais vu un framework le supporter. C'est court à écrire, rapide à lire, et moins de tokens pour un agent.
+- **pug** : des templates indentés sans balises fermantes. J'ai adoré pug il y a longtemps et je n'ai jamais vu un framework le prendre en charge. C'est court à écrire, rapide à lire, et moins de tokens pour un agent.
 - **SolidJS** : les signals et les mises à jour fines, pas de DOM virtuel.
 - **Svelte et SvelteKit** : un compilateur qui fait le travail en amont, des routes basées sur les fichiers avec des layouts, des form actions typées.
 
@@ -225,15 +225,15 @@ L'island d'Astro est le même tableau Solid que l'app SolidJS, et aucune des deu
 
 <Note title="Comment c'est mesuré">
 
-kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 et Nuxt 4.6.1, sur Bun 1.4.3 et Chromium 151 headless. Chaque chiffre est la médiane de trois passes du benchmark entier. Dans une passe, les chargements de page sont des médianes de 10 chargements à froid, les opérations sur le tableau des médianes de 10 exécutions après 2 échauffements, et le rendu serveur est mesuré en processus par mitata. Next.js n'y figure pas : il ne sert qu'à travers son propre serveur HTTP, donc chacun de ses rendus paierait un aller-retour par socket que les autres n'ont jamais. Les builds sont des builds de production à neuf, celui de kay avec et sans sa vérification de types, que Next.js fait aussi et que les autres sautent ; leur taille est ce que chacun déploie, sans les dépendances dont il a besoin pour tourner ni les source maps. Chaque tableau et ses notes sont dans le [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md) de kay, et `bun run bench` dans le dépôt de kay le relance. Le code est compté sur kay 1.51.1, en caractères hors espaces et commentaires : pages, layouts, composants et config, sans le fichier qui branche chaque app dans le benchmark. Mis en forme par le formateur de chaque framework, kay fmt pour kay et Prettier pour les autres, cloc 2.10 compte 73 lignes pour kay, 122 pour Nuxt, 130 pour Svelte, 175 pour Astro, 182 pour SolidJS et 211 pour Next.js.
+kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 et Nuxt 4.6.1, sur Bun 1.4.3 et Chromium 151 headless. Chaque chiffre est la médiane de trois passes du benchmark entier. Dans une passe, les chargements de page sont des médianes de 10 chargements à froid, les opérations sur le tableau des médianes de 10 exécutions après 2 échauffements, et le rendu serveur est mesuré en processus par mitata. Next.js n'y figure pas : il ne sert qu'à travers son propre serveur HTTP, donc chacun de ses rendus paierait un aller-retour par socket que les autres ne paient jamais. Les builds sont des builds de production depuis zéro, celui de kay avec et sans sa vérification de types, que Next.js fait aussi et que les autres sautent ; leur taille est ce que chacun déploie, sans les dépendances dont il a besoin pour tourner ni les source maps. Chaque tableau et ses notes sont dans le [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md) de kay, et `bun run bench` dans le dépôt de kay le relance. Le code est compté sur kay 1.60.0, en caractères hors espaces et commentaires : pages, layouts, composants et config, sans le fichier qui branche chaque app dans le benchmark. Mis en forme par le formateur de chaque framework, kay fmt pour kay et Prettier pour les autres, cloc 2.10 compte 73 lignes pour kay, 122 pour Nuxt, 130 pour Svelte, 175 pour Astro, 182 pour SolidJS et 211 pour Next.js.
 
 </Note>
 
 ## De vrais sites, portés vers kay
 
-Trois vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, et deux petits sites d'entreprise depuis Astro, chacun mesuré tel qu'il se déploie contre la version qu'il remplace. [Leur propre article](/posts/ported-to-kay) donne chaque chiffre, et ce que kay perd : des modifications de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro.
+Trois vrais sites sont passés à kay : un depuis SvelteKit, environ 3 000 lignes sur 22 composants, et deux petits sites d'entreprise depuis Astro, chacun mesuré tel qu'il se déploie face à la version qu'il remplace. [Leur propre article](/posts/ported-to-kay) donne chaque chiffre, et ce que kay perd : des modifications de template et de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro.
 
-<Stats items={[{"value": "-89 %", "label": "CPU serveur par visiteur, depuis SvelteKit"}, {"value": "2,9 à 3,3x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"}, {"value": "-17 à -37 %", "label": "lignes de code"}]} />
+<Stats items={[{"value": "-88 %", "label": "CPU serveur par visiteur, depuis SvelteKit"}, {"value": "2,9 à 3,3x", "label": "requêtes par seconde sur une page de contenu, depuis Astro"}, {"value": "-16 à -37 %", "label": "lignes de code"}]} />
 
 ## Pensé aussi pour les LLM
 
@@ -274,7 +274,7 @@ kay 1.51.0, ses exécutions une semaine après celles de SvelteKit, SolidStart e
 
 ## Faut-il l'utiliser ?
 
-Pour un projet perso, un site personnel ou un site de petite entreprise, si ce que vous avez vu plus haut vous plaît : foncez, et dites-moi ce qui casse. Pour tout ce qui vous ferait réveiller la nuit, pas encore. kay est un projet d'une seule personne, il n'a pas d'écosystème à proprement parler, et une version mineure peut encore casser votre code : le tilde dans sa plage de versions n'est pas là pour rien. Lisez le changelog avant chaque mise à jour, ou profitez de la surprise.
+Pour un projet annexe, un site personnel ou un site de petite entreprise, si ce que vous avez vu plus haut vous plaît : foncez, et dites-moi ce qui casse. Pour tout ce qui pourrait vous valoir un réveil en pleine nuit, pas encore. kay est un projet d'une seule personne, il n'a pas d'écosystème à proprement parler, et une version mineure peut encore casser votre code : le tilde dans sa plage de versions n'est pas là pour rien. Lisez le changelog avant chaque mise à jour, ou profitez de la surprise.
 
 ## Essayer
 

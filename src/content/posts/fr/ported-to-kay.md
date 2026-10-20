@@ -45,7 +45,7 @@ L'inlining a un prix : le rendu sur mobile ci-dessus vient de la feuille de sty
 <BarChart title="Modification de template à l'écran, serveur de dev" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 34}, {"label": "kay", "value": 47}]} bench="sveltekit" source="de l'écriture du fichier à son affichage, médiane de 14 modifications" />
 
 - **kay charge les pages plus vite.** Il démarre en 915 ms avec les caches vides contre 1 258 pour Vite, et sert un client groupé, 24 requêtes pour la page d'accueil contre 166 modules pour Vite, si bien que la page d'accueil répond en 381 ms après un démarrage à chaud contre 1 741. Ses processus occupent 239 Mio contre 400 pour Vite.
-- **Vite applique les modifications de style plus tôt.** kay prend en compte une modification de template ou de code serveur sans redémarrer son serveur, mais une modification de style s'affiche en 71 ms contre 34 pour Vite. kay affiche une modification du code serveur en 59 ms en gardant l'état de la page, ce que SvelteKit n'affiche qu'après un rechargement manuel.
+- **Vite affiche plus tôt les modifications de template et de style.** kay prend en compte une modification de template ou de code serveur sans redémarrer son serveur, mais une modification de style s'affiche en 71 ms contre 34 pour Vite. kay affiche une modification du code serveur en 59 ms en gardant l'état de la page, ce que SvelteKit n'affiche qu'après un rechargement manuel.
 
 <Note title="Comment c'est mesuré">
 

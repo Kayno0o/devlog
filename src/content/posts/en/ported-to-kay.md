@@ -45,7 +45,7 @@ Inlining has a price: the phone paint above comes from inlining the stylesheet, 
 <BarChart title="Template edit to screen, dev server" unit="ms" better="lower" digits={0} rows={[{"label": "SvelteKit", "value": 34}, {"label": "kay", "value": 47}]} bench="sveltekit" source="file write to the page showing it, median of 14 edits" />
 
 - **kay loads pages faster.** It starts in 915 ms with cold caches against Vite's 1,258, and serves a bundled client, 24 requests for the home page against Vite's 166 modules, so the home page answers in 381 ms from a warm start against 1,741. Its processes hold 239 MiB against Vite's 400.
-- **Vite applies style edits sooner.** kay takes a template or server code edit in without restarting its server, but a style edit shows in 71 ms against Vite's 34. kay shows a server code edit in 59 ms with the page's state kept, which SvelteKit only shows after a manual reload.
+- **Vite shows template and style edits sooner.** kay takes a template or server code edit in without restarting its server, but a style edit shows in 71 ms against Vite's 34. kay shows a server code edit in 59 ms with the page's state kept, which SvelteKit only shows after a manual reload.
 
 <Note title="How it was measured">
 
