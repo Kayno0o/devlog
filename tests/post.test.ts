@@ -13,7 +13,12 @@ const frontmatter = /^---\n[\s\S]*?\n---\n/
 const code = /<(pre|code)\b[\s\S]*?<\/\1>/g
 // a capitalized tag left in the HTML, raw or escaped
 const componentLeft = /<[A-Z]|&lt;[A-Z]/
-const rankedChart = /<BarChart title="([^"]*)"[^\n]*?better="(lower|higher)"[^\n]*?rows=\{(\[.*\])\}/g
+// a chart spreads one attribute per line, and its rows one per line
+const chart = /^<BarChart\n([\s\S]*?)\n\/>$/gm
+const chartTitle = /^ {2}title="([^"]*)"$/m
+const chartBetter = /^ {2}better="(lower|higher)"$/m
+const chartRows = /^ {2}rows=\{(\[[\s\S]*?\n {2}\])\}$/m
+const oneLineComponent = /^<[A-Z]\w* .{100,}\/>$/m
 
 it('lists a long post\'s sections, and nothing for a short one', async () => {
   const long = await renderToString(Toc, { headings: [heading(2, 'One'), heading(3, 'Inner'), heading(2, 'Two'), heading(2, 'Three'), heading(2, 'Four')] })
@@ -79,11 +84,21 @@ it('leaves no component of the posts as text', async () => {
 
 it('ranks each group of a post\'s charts from best to worst', async () => {
   const unranked: string[] = []
+  let ranked = 0
 
   for (const path of new Bun.Glob('src/content/posts/*/*.md').scanSync()) {
-    for (const [, title, better, json] of (await Bun.file(path).text()).matchAll(rankedChart)) {
-      const rows: { group?: string, value: number }[] = JSON.parse(json ?? '[]')
+    for (const [, body = ''] of (await Bun.file(path).text()).matchAll(chart)) {
+      const better = body.match(chartBetter)?.[1]
+
+      if (better === undefined) {
+        continue
+      }
+
+      const title = body.match(chartTitle)?.[1]
+      const rows: { group?: string, value: number }[] = JSON.parse(body.match(chartRows)?.[1] ?? '[]')
       const sign = better === 'lower' ? 1 : -1
+
+      ranked++
 
       if (rows.some((row, i) => i > 0 && row.group === rows[i - 1]?.group && sign * (row.value - (rows[i - 1]?.value ?? 0)) < 0)) {
         unranked.push(`${path}: ${title}`)
@@ -91,5 +106,20 @@ it('ranks each group of a post\'s charts from best to worst', async () => {
     }
   }
 
+  expect(ranked).toBeGreaterThan(50)
   expect(unranked).toEqual([])
+})
+
+it('spreads a long component over one attribute per line', async () => {
+  const long: string[] = []
+
+  for (const path of new Bun.Glob('src/content/posts/*/*.md').scanSync()) {
+    const line = (await Bun.file(path).text()).match(oneLineComponent)?.[0]
+
+    if (line !== undefined) {
+      long.push(`${path}: ${line.slice(0, 60)}`)
+    }
+  }
+
+  expect(long).toEqual([])
 })

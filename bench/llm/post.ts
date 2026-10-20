@@ -1,4 +1,4 @@
-// Prints the Stats and BarChart lines of the post's "Built for LLMs too" section from one label's summary.json.
+// Prints the Stats and BarChart components of the post's "Built for LLMs too" section from one label's summary.json.
 // bun bench/llm/post.ts <label>
 import { join } from 'node:path'
 import process from 'node:process'
@@ -41,6 +41,40 @@ if (`${messages.benches.llm}, ${benches.llm.date}` !== source) {
   console.error(`benches.llm in src/messages/en.ts, then its date in src/benches.ts, should read: ${source}`)
 }
 
+// JSON as the posts write it: a space after each colon and comma.
+function compact(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(compact).join(', ')}]`
+  }
+
+  if (value !== null && typeof value === 'object') {
+    return `{${Object.entries(value).map(([key, item]) => `${JSON.stringify(key)}: ${compact(item)}`).join(', ')}}`
+  }
+
+  return JSON.stringify(value)
+}
+
+// One attribute per line, and a list of objects one per line, as the posts lay out their components; an undefined attribute is left out.
+function component(tag: string, attributes: [string, string | number | object[] | undefined][]): string {
+  const lines = attributes.flatMap(([name, value]) => {
+    if (value === undefined) {
+      return []
+    }
+
+    if (typeof value === 'string') {
+      return `  ${name}="${value}"`
+    }
+
+    if (typeof value === 'number') {
+      return `  ${name}={${value}}`
+    }
+
+    return `  ${name}={[\n${value.map(item => `    ${compact(item)}`).join(',\n')}\n  ]}`
+  })
+
+  return [`<${tag}`, ...lines, '/>'].join('\n')
+}
+
 function chart(title: string, unit: string, key: string, digits: number, { scale = 1, lowerIsBetter = true } = {}): string {
   const round = (value: number): number => Number((value / scale).toFixed(digits))
   const rows = frameworks.map(([framework]) => {
@@ -49,7 +83,7 @@ function chart(title: string, unit: string, key: string, digits: number, { scale
     return { label: names[framework] ?? framework, value: round(median), range: [round(min), round(max)] }
   }).toSorted((a, b) => a.value - b.value)
 
-  return `<BarChart title="${title}" unit="${unit}" ${lowerIsBetter ? 'better="lower" ' : ''}digits={${digits}} rows={${JSON.stringify(rows)}} bench="llm" />`
+  return component('BarChart', [['title', title], ['unit', unit], ['better', lowerIsBetter ? 'lower' : undefined], ['digits', digits], ['rows', rows], ['bench', 'llm']])
 }
 
 const others = frameworks.filter(([framework]) => framework !== 'kay').map(([framework]) => median(framework, 'outputTokens'))
@@ -61,7 +95,7 @@ const stats = [
 ]
 
 console.log([
-  `<Stats items={${JSON.stringify(stats)}} />`,
+  component('Stats', [['items', stats]]),
   chart('Time to build the site', 'min', 'minutes', 1),
   chart('Lines of code written, tests and styles left out', 'lines', 'linesWritten', 0),
   chart('Cost of the site, API prices', 'USD', 'costUsd', 2),

@@ -12,27 +12,131 @@ Deux questions sur les cinq mêmes frameworks. À quelle vitesse tournent-ils, u
 
 Chaque framework affiche la même page de produits avec les mêmes données, écrite comme le feraient sa propre doc et son entrée du js-framework-benchmark. SolidJS et Svelte tournent derrière le même serveur Elysia, Astro et Nuxt derrière leurs propres gestionnaires de requêtes, et Next.js derrière son propre serveur HTTP.
 
-<BarChart title="Temps de script au chargement, page produits" unit="ms" better="lower" rows={[{"label":"Astro","value":1.2},{"label":"Nuxt","value":5.3},{"label":"SolidJS","value":10.8},{"label":"Svelte","value":14.3},{"label":"Next.js","value":18.8}]} bench="syntheticNeutral" />
+<BarChart
+  title="Temps de script au chargement, page produits"
+  unit="ms"
+  better="lower"
+  rows={[
+    {"label": "Astro", "value": 1.2},
+    {"label": "Nuxt", "value": 5.3},
+    {"label": "SolidJS", "value": 10.8},
+    {"label": "Svelte", "value": 14.3},
+    {"label": "Next.js", "value": 18.8}
+  ]}
+  bench="syntheticNeutral"
+/>
 
 Si Astro exécute si peu au chargement, c'est qu'il n'hydrate que ses deux islands Solid. SolidJS, Svelte et Nuxt hydratent toute la page, et renvoient donc ses données une deuxième fois en JSON, et Next.js envoie le payload de ses composants en flux avec le HTML.
 
-<BarChart title="HTML envoyé, page produits, gzip" unit="Ko" better="lower" rows={[{"label":"Astro","value":10.3},{"label":"Svelte","value":15.7},{"label":"SolidJS","value":21.6},{"label":"Nuxt","value":23.5},{"label":"Next.js","value":23.6}]} bench="syntheticNeutral" />
+<BarChart
+  title="HTML envoyé, page produits, gzip"
+  unit="Ko"
+  better="lower"
+  rows={[
+    {"label": "Astro", "value": 10.3},
+    {"label": "Svelte", "value": 15.7},
+    {"label": "SolidJS", "value": 21.6},
+    {"label": "Nuxt", "value": 23.5},
+    {"label": "Next.js", "value": 23.6}
+  ]}
+  bench="syntheticNeutral"
+/>
 
-<BarChart title="Rendu serveur, page produits" unit="rendus/s" better="higher" digits={0} rows={[{"label":"Svelte","value":3886},{"label":"Astro","value":1822},{"label":"SolidJS","value":1748},{"label":"Nuxt","value":588}]} bench="syntheticNeutral" />
+<BarChart
+  title="Rendu serveur, page produits"
+  unit="rendus/s"
+  better="higher"
+  digits={0}
+  rows={[
+    {"label": "Svelte", "value": 3886},
+    {"label": "Astro", "value": 1822},
+    {"label": "SolidJS", "value": 1748},
+    {"label": "Nuxt", "value": 588}
+  ]}
+  bench="syntheticNeutral"
+/>
 
-<BarChart title="Code écrit, pages produits et tableau" unit="K caractères" better="lower" digits={1} rows={[{"label":"Nuxt","value":2.9},{"label":"Svelte","value":3.3},{"label":"Astro","value":3.4},{"label":"SolidJS","value":3.7},{"label":"Next.js","value":4.1}]} bench="syntheticNeutral" source="sans les espaces ni les commentaires, ni la glue serveur du benchmark" />
+<BarChart
+  title="Code écrit, pages produits et tableau"
+  unit="K caractères"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Nuxt", "value": 2.9},
+    {"label": "Svelte", "value": 3.3},
+    {"label": "Astro", "value": 3.4},
+    {"label": "SolidJS", "value": 3.7},
+    {"label": "Next.js", "value": 4.1}
+  ]}
+  bench="syntheticNeutral"
+  source="sans les espaces ni les commentaires, ni la glue serveur du benchmark"
+/>
 
 Le code est compté en caractères, car un nombre de lignes mesure surtout le formateur : Prettier fait passer l'app Svelte de 70 à 130 lignes.
 
-<BarChart title="Temps de build de production" unit="s" better="lower" digits={2} rows={[{"label":"Svelte","value":0.09},{"label":"SolidJS","value":0.14},{"label":"Astro","value":0.6},{"label":"Nuxt","value":1.97},{"label":"Next.js","value":2.15}]} bench="syntheticNeutral" />
+<BarChart
+  title="Temps de build de production"
+  unit="s"
+  better="lower"
+  digits={2}
+  rows={[
+    {"label": "Svelte", "value": 0.09},
+    {"label": "SolidJS", "value": 0.14},
+    {"label": "Astro", "value": 0.6},
+    {"label": "Nuxt", "value": 1.97},
+    {"label": "Next.js", "value": 2.15}
+  ]}
+  bench="syntheticNeutral"
+/>
 
-<BarChart title="Taille du build, gzip" unit="Ko" better="lower" rows={[{"label":"SolidJS","value":8.2},{"label":"Svelte","value":22.5},{"label":"Astro","value":138.1},{"label":"Next.js","value":328.9},{"label":"Nuxt","value":610.7}]} bench="syntheticNeutral" source="SolidJS et Svelte n'empaquettent aucun serveur" />
+<BarChart
+  title="Taille du build, gzip"
+  unit="Ko"
+  better="lower"
+  rows={[
+    {"label": "SolidJS", "value": 8.2},
+    {"label": "Svelte", "value": 22.5},
+    {"label": "Astro", "value": 138.1},
+    {"label": "Next.js", "value": 328.9},
+    {"label": "Nuxt", "value": 610.7}
+  ]}
+  bench="syntheticNeutral"
+  source="SolidJS et Svelte n'empaquettent aucun serveur"
+/>
 
-<BarChart title="JS envoyé, page tableau, gzip" unit="Ko" better="lower" rows={[{"label":"SolidJS","value":8.2},{"label":"Astro","value":9.6},{"label":"Svelte","value":22.5},{"label":"Nuxt","value":71.8},{"label":"Next.js","value":134.3}]} bench="syntheticNeutral" />
+<BarChart
+  title="JS envoyé, page tableau, gzip"
+  unit="Ko"
+  better="lower"
+  rows={[
+    {"label": "SolidJS", "value": 8.2},
+    {"label": "Astro", "value": 9.6},
+    {"label": "Svelte", "value": 22.5},
+    {"label": "Nuxt", "value": 71.8},
+    {"label": "Next.js", "value": 134.3}
+  ]}
+  bench="syntheticNeutral"
+/>
 
 L'island d'Astro est exactement le même tableau Solid que l'app SolidJS, et aucune des deux n'embarque de routeur.
 
-<BenchTable title="Opérations sur le tableau" unit="ms" columns={["SolidJS","Svelte","Astro","Next.js","Nuxt"]} rows={[{"label":"Créer 1 000 lignes","values":[26.6,26.8,26.5,29.8,26.9]},{"label":"Remplacer 1 000 lignes","values":[24.5,25.8,24.4,30.3,27.8]},{"label":"Mettre à jour une ligne sur 10","values":[2.7,2.8,2.7,4,3.5]},{"label":"Sélectionner une ligne","values":[0.3,1,0.3,1.2,0.6]},{"label":"Échanger deux lignes","values":[2.1,2.1,2,20.6,2.5]},{"label":"Supprimer une ligne","values":[2,2.2,1.9,3.3,4.5]},{"label":"Créer 10 000 lignes","values":[228,231,239,363,267]},{"label":"Ajouter 1 000 lignes","values":[23.4,23.9,23.4,26.9,25.4]},{"label":"Vider 1 000 lignes","values":[2.7,3.2,2.7,5,4.1]}]} bench="syntheticNeutral" />
+<BenchTable
+  title="Opérations sur le tableau"
+  unit="ms"
+  columns={["SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]}
+  rows={[
+    {"label": "Créer 1 000 lignes", "values": [26.6, 26.8, 26.5, 29.8, 26.9]},
+    {"label": "Remplacer 1 000 lignes", "values": [24.5, 25.8, 24.4, 30.3, 27.8]},
+    {"label": "Mettre à jour une ligne sur 10", "values": [2.7, 2.8, 2.7, 4, 3.5]},
+    {"label": "Sélectionner une ligne", "values": [0.3, 1, 0.3, 1.2, 0.6]},
+    {"label": "Échanger deux lignes", "values": [2.1, 2.1, 2, 20.6, 2.5]},
+    {"label": "Supprimer une ligne", "values": [2, 2.2, 1.9, 3.3, 4.5]},
+    {"label": "Créer 10 000 lignes", "values": [228, 231, 239, 363, 267]},
+    {"label": "Ajouter 1 000 lignes", "values": [23.4, 23.9, 23.4, 26.9, 25.4]},
+    {"label": "Vider 1 000 lignes", "values": [2.7, 3.2, 2.7, 5, 4.1]}
+  ]}
+  bench="syntheticNeutral"
+/>
 
 <Note title="Comment c'est mesuré">
 
@@ -79,7 +183,13 @@ Les runs alternent entre frameworks dans un ordre qui tourne, pour qu'une heure 
 
 Une session complète, c'est 5 runs par framework : un bug dans le banc de test en gâche donc 25. Chaque changement commence plutôt par un run d'essai d'un seul framework, dont je lis les résultats et le transcript avant de passer au suivant. Un essai coûte environ un dollar, et il les vaut bien : celui de Next.js a échoué, à cause de la suite et pas du site. Le test des favoris attendait que le réseau se calme après un rechargement, ce que le routeur de Next ne fait jamais à la deuxième visite ; la suite ouvre donc maintenant chaque visite dans un nouveau contexte de navigateur, qui reprend les cookies et le stockage. Les runs de Sonnet en ont trouvé un autre : la suite cherchait les champs du formulaire par le texte de leur label, qui inclut le texte qu'un serveur remet dans un textarea, si bien qu'un site SolidStart qui marchait a échoué. Elle les cherche maintenant par leur nom accessible, et chaque site d'Opus passe toujours.
 
-<Stats items={[{"value":"25 sur 25","label":"runs Opus qui passent toutes les vérifications et tous les tests"},{"value":"22 sur 25","label":"runs Sonnet qui passent toutes les vérifications et tous les tests"},{"value":"39,93 $ contre 5,50 $","label":"les 25 runs, Opus contre Sonnet, aux tarifs de l'API"}]} />
+<Stats
+  items={[
+    {"value": "25 sur 25", "label": "runs Opus qui passent toutes les vérifications et tous les tests"},
+    {"value": "22 sur 25", "label": "runs Sonnet qui passent toutes les vérifications et tous les tests"},
+    {"value": "39,93 $ contre 5,50 $", "label": "les 25 runs, Opus contre Sonnet, aux tarifs de l'API"}
+  ]}
+/>
 
 ### Résultats
 
@@ -87,25 +197,143 @@ Opus 5.5 en effort high, c'est le haut de gamme : les mêmes 25 runs ont donc a
 
 Chaque échec de Sonnet est un bug qu'un navigateur aurait montré tout de suite, et l'agent n'en avait pas. Deux fois, le store des favoris de SvelteKit écrivait son état pendant le rendu de la page, ce que Svelte refuse une fois la page hydratée : la liste des livres et leurs pages tombaient sur la page d'erreur. Une fois, le layout d'Astro comparait le chemin à `/about`, qu'une page prérendue voit comme `/about/` : aucun lien de la nav n'était marqué actif.
 
-<BarChart title="Tokens écrits, réflexion comprise" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","group":"Sonnet 5.5","value":5.8,"range":[5.5,6.2]},{"label":"Next.js","group":"Sonnet 5.5","value":7.1,"range":[6.3,9.6]},{"label":"Nuxt","group":"Sonnet 5.5","value":7.2,"range":[6.7,8.4]},{"label":"SolidStart","group":"Sonnet 5.5","value":10.5,"range":[9.6,15.6]},{"label":"SvelteKit","group":"Sonnet 5.5","value":12.7,"range":[12.7,13.2]},{"label":"Astro","group":"Opus 5.5","value":17,"range":[15.8,23.9]},{"label":"SvelteKit","group":"Opus 5.5","value":25.3,"range":[21.1,36.6]},{"label":"Nuxt","group":"Opus 5.5","value":28.7,"range":[20.1,36.2]},{"label":"Next.js","group":"Opus 5.5","value":29.7,"range":[24.4,46.6]},{"label":"SolidStart","group":"Opus 5.5","value":33.9,"range":[32.2,44.6]}]} bench="llmModels" />
+<BarChart
+  title="Tokens écrits, réflexion comprise"
+  unit="K tokens"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "group": "Sonnet 5.5", "value": 5.8, "range": [5.5, 6.2]},
+    {"label": "Next.js", "group": "Sonnet 5.5", "value": 7.1, "range": [6.3, 9.6]},
+    {"label": "Nuxt", "group": "Sonnet 5.5", "value": 7.2, "range": [6.7, 8.4]},
+    {"label": "SolidStart", "group": "Sonnet 5.5", "value": 10.5, "range": [9.6, 15.6]},
+    {"label": "SvelteKit", "group": "Sonnet 5.5", "value": 12.7, "range": [12.7, 13.2]},
+    {"label": "Astro", "group": "Opus 5.5", "value": 17, "range": [15.8, 23.9]},
+    {"label": "SvelteKit", "group": "Opus 5.5", "value": 25.3, "range": [21.1, 36.6]},
+    {"label": "Nuxt", "group": "Opus 5.5", "value": 28.7, "range": [20.1, 36.2]},
+    {"label": "Next.js", "group": "Opus 5.5", "value": 29.7, "range": [24.4, 46.6]},
+    {"label": "SolidStart", "group": "Opus 5.5", "value": 33.9, "range": [32.2, 44.6]}
+  ]}
+  bench="llmModels"
+/>
 
-<BarChart title="Temps pour construire le site" unit="min" better="lower" digits={1} rows={[{"label":"Astro","group":"Sonnet 5.5","value":0.9,"range":[0.7,1.1]},{"label":"Next.js","group":"Sonnet 5.5","value":1.4,"range":[0.8,1.8]},{"label":"SolidStart","group":"Sonnet 5.5","value":1.8,"range":[1.5,3.5]},{"label":"Nuxt","group":"Sonnet 5.5","value":2.1,"range":[1.3,3.1]},{"label":"SvelteKit","group":"Sonnet 5.5","value":3.3,"range":[2.4,3.3]},{"label":"Astro","group":"Opus 5.5","value":2.6,"range":[2.5,3.6]},{"label":"SvelteKit","group":"Opus 5.5","value":4.5,"range":[3.3,12.4]},{"label":"Next.js","group":"Opus 5.5","value":5.9,"range":[4.8,8.5]},{"label":"Nuxt","group":"Opus 5.5","value":7.9,"range":[4.3,9.5]},{"label":"SolidStart","group":"Opus 5.5","value":9.3,"range":[6.5,12.9]}]} bench="llmModels" />
+<BarChart
+  title="Temps pour construire le site"
+  unit="min"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "group": "Sonnet 5.5", "value": 0.9, "range": [0.7, 1.1]},
+    {"label": "Next.js", "group": "Sonnet 5.5", "value": 1.4, "range": [0.8, 1.8]},
+    {"label": "SolidStart", "group": "Sonnet 5.5", "value": 1.8, "range": [1.5, 3.5]},
+    {"label": "Nuxt", "group": "Sonnet 5.5", "value": 2.1, "range": [1.3, 3.1]},
+    {"label": "SvelteKit", "group": "Sonnet 5.5", "value": 3.3, "range": [2.4, 3.3]},
+    {"label": "Astro", "group": "Opus 5.5", "value": 2.6, "range": [2.5, 3.6]},
+    {"label": "SvelteKit", "group": "Opus 5.5", "value": 4.5, "range": [3.3, 12.4]},
+    {"label": "Next.js", "group": "Opus 5.5", "value": 5.9, "range": [4.8, 8.5]},
+    {"label": "Nuxt", "group": "Opus 5.5", "value": 7.9, "range": [4.3, 9.5]},
+    {"label": "SolidStart", "group": "Opus 5.5", "value": 9.3, "range": [6.5, 12.9]}
+  ]}
+  bench="llmModels"
+/>
 
-<BarChart title="Coût du site, aux tarifs de l'API" unit="USD" better="lower" digits={2} rows={[{"label":"Astro","group":"Sonnet 5.5","value":0.12,"range":[0.11,0.13]},{"label":"Next.js","group":"Sonnet 5.5","value":0.15,"range":[0.14,0.21]},{"label":"Nuxt","group":"Sonnet 5.5","value":0.15,"range":[0.14,0.19]},{"label":"SolidStart","group":"Sonnet 5.5","value":0.23,"range":[0.22,0.43]},{"label":"SvelteKit","group":"Sonnet 5.5","value":0.38,"range":[0.37,0.39]},{"label":"Astro","group":"Opus 5.5","value":0.78,"range":[0.75,1.12]},{"label":"Nuxt","group":"Opus 5.5","value":1.46,"range":[0.91,1.8]},{"label":"SvelteKit","group":"Opus 5.5","value":1.52,"range":[1.23,2.22]},{"label":"Next.js","group":"Opus 5.5","value":1.87,"range":[1.37,2.85]},{"label":"SolidStart","group":"Opus 5.5","value":1.94,"range":[1.86,2.79]}]} bench="llmModels" />
+<BarChart
+  title="Coût du site, aux tarifs de l'API"
+  unit="USD"
+  better="lower"
+  digits={2}
+  rows={[
+    {"label": "Astro", "group": "Sonnet 5.5", "value": 0.12, "range": [0.11, 0.13]},
+    {"label": "Next.js", "group": "Sonnet 5.5", "value": 0.15, "range": [0.14, 0.21]},
+    {"label": "Nuxt", "group": "Sonnet 5.5", "value": 0.15, "range": [0.14, 0.19]},
+    {"label": "SolidStart", "group": "Sonnet 5.5", "value": 0.23, "range": [0.22, 0.43]},
+    {"label": "SvelteKit", "group": "Sonnet 5.5", "value": 0.38, "range": [0.37, 0.39]},
+    {"label": "Astro", "group": "Opus 5.5", "value": 0.78, "range": [0.75, 1.12]},
+    {"label": "Nuxt", "group": "Opus 5.5", "value": 1.46, "range": [0.91, 1.8]},
+    {"label": "SvelteKit", "group": "Opus 5.5", "value": 1.52, "range": [1.23, 2.22]},
+    {"label": "Next.js", "group": "Opus 5.5", "value": 1.87, "range": [1.37, 2.85]},
+    {"label": "SolidStart", "group": "Opus 5.5", "value": 1.94, "range": [1.86, 2.79]}
+  ]}
+  bench="llmModels"
+/>
 
 À partir d'ici, les graphiques sont ceux d'Opus seul.
 
 Le style était libre et non noté, donc les comptes de lignes laissent le CSS de côté : de 77 à 113 lignes dans les runs médians.
 
-<BarChart title="Lignes de code écrites, hors tests et styles" unit="lignes" better="lower" digits={0} rows={[{"label":"Nuxt","value":444,"range":[437,476]},{"label":"Astro","value":463,"range":[440,491]},{"label":"SvelteKit","value":472,"range":[455,518]},{"label":"SolidStart","value":537,"range":[523,549]},{"label":"Next.js","value":616,"range":[537,636]}]} bench="llm" />
+<BarChart
+  title="Lignes de code écrites, hors tests et styles"
+  unit="lignes"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "Nuxt", "value": 444, "range": [437, 476]},
+    {"label": "Astro", "value": 463, "range": [440, 491]},
+    {"label": "SvelteKit", "value": 472, "range": [455, 518]},
+    {"label": "SolidStart", "value": 537, "range": [523, 549]},
+    {"label": "Next.js", "value": 616, "range": [537, 636]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Tokens de réflexion" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":4.3,"range":[3.5,5.7]},{"label":"SvelteKit","value":8.5,"range":[8,13.3]},{"label":"Nuxt","value":10.2,"range":[7.5,13.8]},{"label":"Next.js","value":10.6,"range":[8.8,20.7]},{"label":"SolidStart","value":11.5,"range":[9.7,15.6]}]} bench="llm" />
+<BarChart
+  title="Tokens de réflexion"
+  unit="K tokens"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "value": 4.3, "range": [3.5, 5.7]},
+    {"label": "SvelteKit", "value": 8.5, "range": [8, 13.3]},
+    {"label": "Nuxt", "value": 10.2, "range": [7.5, 13.8]},
+    {"label": "Next.js", "value": 10.6, "range": [8.8, 20.7]},
+    {"label": "SolidStart", "value": 11.5, "range": [9.7, 15.6]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Tours de l'agent" unit="tours" better="lower" digits={0} rows={[{"label":"Astro","value":24,"range":[21,31]},{"label":"SvelteKit","value":40,"range":[30,51]},{"label":"Nuxt","value":47,"range":[30,56]},{"label":"Next.js","value":50,"range":[38,72]},{"label":"SolidStart","value":53,"range":[45,74]}]} bench="llm" />
+<BarChart
+  title="Tours de l'agent"
+  unit="tours"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "Astro", "value": 24, "range": [21, 31]},
+    {"label": "SvelteKit", "value": 40, "range": [30, 51]},
+    {"label": "Nuxt", "value": 47, "range": [30, 56]},
+    {"label": "Next.js", "value": 50, "range": [38, 72]},
+    {"label": "SolidStart", "value": 53, "range": [45, 74]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Doc lue" unit="K caractères" digits={0} rows={[{"label":"Nuxt","value":14,"range":[8,22]},{"label":"Astro","value":29,"range":[8,38]},{"label":"SolidStart","value":52,"range":[26,64]},{"label":"Next.js","value":84,"range":[70,114]},{"label":"SvelteKit","value":89,"range":[49,103]}]} bench="llm" />
+<BarChart
+  title="Doc lue"
+  unit="K caractères"
+  digits={0}
+  rows={[
+    {"label": "Nuxt", "value": 14, "range": [8, 22]},
+    {"label": "Astro", "value": 29, "range": [8, 38]},
+    {"label": "SolidStart", "value": 52, "range": [26, 64]},
+    {"label": "Next.js", "value": 84, "range": [70, 114]},
+    {"label": "SvelteKit", "value": 89, "range": [49, 103]}
+  ]}
+  bench="llm"
+/>
 
-<BarChart title="Plus gros contexte en un seul appel" unit="K tokens" better="lower" digits={1} rows={[{"label":"Astro","value":45,"range":[43.1,58.9]},{"label":"Nuxt","value":67,"range":[48.4,91.2]},{"label":"SvelteKit","value":80.1,"range":[73.7,106.6]},{"label":"Next.js","value":90,"range":[71.2,120.1]},{"label":"SolidStart","value":91.7,"range":[84.7,114.1]}]} bench="llm" />
+<BarChart
+  title="Plus gros contexte en un seul appel"
+  unit="K tokens"
+  better="lower"
+  digits={1}
+  rows={[
+    {"label": "Astro", "value": 45, "range": [43.1, 58.9]},
+    {"label": "Nuxt", "value": 67, "range": [48.4, 91.2]},
+    {"label": "SvelteKit", "value": 80.1, "range": [73.7, 106.6]},
+    {"label": "Next.js", "value": 90, "range": [71.2, 120.1]},
+    {"label": "SolidStart", "value": 91.7, "range": [84.7, 114.1]}
+  ]}
+  bench="llm"
+/>
 
 <Note title="Comment c'est mesuré">
 
