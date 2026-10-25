@@ -17,10 +17,12 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }))
 
 const brotli = (text: string): number => brotliCompressSync(text).length
 const weight = /This page: ([\d.]+) KB/
+// the hook measures sizes itself, so these only satisfy the page's type
+const sizes = { fileSize: async () => undefined, htmlSize: async (html: string) => brotli(html) }
 
 async function transform(body: string): Promise<string> {
   const html = `<html><head><link rel="stylesheet" href="/app.css"><link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head><body>${body}<footer><span data-page-weight></span></footer></body></html>`
-  const page: RenderedPage = { path: '/', locale: 'en', html, file: async url => url in files ? join(dir, url) : undefined }
+  const page: RenderedPage = { path: '/', locale: 'en', html, file: async url => url in files ? join(dir, url) : undefined, ...sizes }
 
   return pageWeight.transformPage!(page)
 }
@@ -48,7 +50,7 @@ describe('pageWeight', () => {
   })
 
   it('leaves a page without the footer slot as it is', async () => {
-    const page: RenderedPage = { path: '/404', locale: 'en', html: '<p>Nothing here</p>', file: async () => undefined }
+    const page: RenderedPage = { path: '/404', locale: 'en', html: '<p>Nothing here</p>', file: async () => undefined, ...sizes }
 
     expect(await pageWeight.transformPage!(page)).toBe(page.html)
   })
