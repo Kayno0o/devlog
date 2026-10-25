@@ -68,7 +68,7 @@ it('writes a post\'s dates, reading time and chart in French', async () => {
 })
 
 it('weighs a French page in French', async () => {
-  const html = await pageWeight.transformPage!({ path: '/fr', locale: 'fr', html: '<html><body><footer><span data-page-weight></span></footer></body></html>', file: async () => undefined })
+  const html = await pageWeight.transformPage!({ path: '/fr', locale: 'fr', html: '<html><body><footer><span data-page-weight></span></footer></body></html>', file: async () => undefined, fileSize: async () => undefined, htmlSize: async () => 0 })
 
   expect(html).toMatch(/Cette page\u00A0: \d+,\d\u00A0Ko, sans JavaScript\.<\/span>/)
 })
