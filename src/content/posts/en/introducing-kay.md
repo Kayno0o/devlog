@@ -206,12 +206,12 @@ The same products page and the same data for each framework, each written the wa
   unit="ms"
   better="lower"
   rows={[
-    {"label": "kay", "value": 0.3},
-    {"label": "Astro", "value": 1.2},
-    {"label": "Nuxt", "value": 5.3},
+    {"label": "kay", "value": 0.4},
+    {"label": "Astro", "value": 1.3},
+    {"label": "Nuxt", "value": 5.2},
     {"label": "SolidJS", "value": 10.8},
     {"label": "Svelte", "value": 14.3},
-    {"label": "Next.js", "value": 18.8}
+    {"label": "Next.js", "value": 18.6}
   ]}
   bench="synthetic"
 />
@@ -239,11 +239,11 @@ kay hydrates its islands only, and Astro its two Solid ones. SolidJS, Svelte and
   better="higher"
   digits={0}
   rows={[
-    {"label": "kay", "value": 4208},
-    {"label": "Svelte", "value": 3886},
-    {"label": "Astro", "value": 1822},
-    {"label": "SolidJS", "value": 1748},
-    {"label": "Nuxt", "value": 588}
+    {"label": "kay", "value": 3983},
+    {"label": "Svelte", "value": 3861},
+    {"label": "Astro", "value": 1898},
+    {"label": "SolidJS", "value": 1712},
+    {"label": "Nuxt", "value": 583}
   ]}
   bench="synthetic"
 />
@@ -275,11 +275,11 @@ Counted in characters, as lines depend on formatting: Prettier turns the Svelte 
   rows={[
     {"label": "Svelte", "value": 0.09},
     {"label": "SolidJS", "value": 0.14},
-    {"label": "kay", "value": 0.39, "note": "no type check"},
-    {"label": "Astro", "value": 0.6},
-    {"label": "kay", "value": 0.87},
-    {"label": "Nuxt", "value": 1.97},
-    {"label": "Next.js", "value": 2.15}
+    {"label": "kay", "value": 0.46, "note": "no type check"},
+    {"label": "kay", "value": 0.58},
+    {"label": "Astro", "value": 1.19},
+    {"label": "Next.js", "value": 2.18},
+    {"label": "Nuxt", "value": 2.58}
   ]}
   bench="synthetic"
 />
@@ -291,10 +291,10 @@ Counted in characters, as lines depend on formatting: Prettier turns the Svelte 
   rows={[
     {"label": "SolidJS", "value": 8.2},
     {"label": "Svelte", "value": 22.5},
-    {"label": "kay", "value": 40.5},
-    {"label": "Astro", "value": 138.1},
-    {"label": "Next.js", "value": 328.9},
-    {"label": "Nuxt", "value": 610.7}
+    {"label": "kay", "value": 65.9},
+    {"label": "Astro", "value": 137.8},
+    {"label": "Next.js", "value": 328.6},
+    {"label": "Nuxt", "value": 614.7}
   ]}
   bench="synthetic"
   source="kay, SolidJS and Svelte bundle no server"
@@ -307,9 +307,9 @@ Counted in characters, as lines depend on formatting: Prettier turns the Svelte 
   rows={[
     {"label": "SolidJS", "value": 8.2},
     {"label": "Astro", "value": 9.6},
-    {"label": "kay", "value": 11.9},
+    {"label": "kay", "value": 12.5},
     {"label": "Svelte", "value": 22.5},
-    {"label": "Nuxt", "value": 71.8},
+    {"label": "Nuxt", "value": 72.3},
     {"label": "Next.js", "value": 134.3}
   ]}
   bench="synthetic"
@@ -322,22 +322,22 @@ Astro's island is the same Solid table as the SolidJS app, and neither has a rou
   unit="ms"
   columns={["kay", "SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]}
   rows={[
-    {"label": "Create 1,000 rows", "values": [29.5, 26.6, 26.8, 26.5, 29.8, 26.9]},
-    {"label": "Replace 1,000 rows", "values": [25.2, 24.5, 25.8, 24.4, 30.3, 27.8]},
-    {"label": "Update every 10th row", "values": [2.8, 2.7, 2.8, 2.7, 4, 3.5]},
-    {"label": "Select a row", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.6]},
-    {"label": "Swap two rows", "values": [2.3, 2.1, 2.1, 2, 20.6, 2.5]},
-    {"label": "Remove a row", "values": [2, 2, 2.2, 1.9, 3.3, 4.5]},
-    {"label": "Create 10,000 rows", "values": [259, 228, 231, 239, 363, 267]},
-    {"label": "Append 1,000 rows", "values": [24.2, 23.4, 23.9, 23.4, 26.9, 25.4]},
-    {"label": "Clear 1,000 rows", "values": [3, 2.7, 3.2, 2.7, 5, 4.1]}
+    {"label": "Create 1,000 rows", "values": [29.6, 26.9, 26.1, 26.4, 29.9, 26.4]},
+    {"label": "Replace 1,000 rows", "values": [25.5, 24.3, 25.9, 24.5, 29.9, 27.4]},
+    {"label": "Update every 10th row", "values": [2.8, 2.7, 2.6, 2.6, 4.1, 3.5]},
+    {"label": "Select a row", "values": [0.2, 0.3, 1, 0.3, 1.2, 0.7]},
+    {"label": "Swap two rows", "values": [2.4, 2.1, 2.1, 1.9, 20.4, 2.5]},
+    {"label": "Remove a row", "values": [2, 2, 2.2, 1.9, 3.2, 4.4]},
+    {"label": "Create 10,000 rows", "values": [262, 226, 232, 234, 360, 266]},
+    {"label": "Append 1,000 rows", "values": [23.9, 22.9, 23.4, 23.1, 26.6, 25.4]},
+    {"label": "Clear 1,000 rows", "values": [3, 2.6, 3.2, 2.5, 5, 4.2]}
   ]}
   bench="synthetic"
 />
 
 <Note title="How it was measured">
 
-kay 1.60.0, solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt 4.6.1, on Bun 1.4.3 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it serves only through its own HTTP server, so its renders would carry a socket round trip the others never pay. Builds are clean production builds, kay's with and without its type check, which Next.js runs too and the others skip; their size is what each deploys, without the dependencies it runs on or source maps. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Code is counted at kay 1.60.0, in characters other than whitespace and comments: pages, layouts, components and config, not the file mounting each app in the bench. Formatted by each framework's formatter, kay fmt for kay and Prettier for the others, cloc 2.10 counts kay 73 lines, Nuxt 122, Svelte 130, Astro 175, SolidJS 182 and Next.js 211.
+kay 1.82.0, solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 and Nuxt 4.6.2, on Bun 1.4.4 and headless Chromium 151. Each figure is the median of three runs of the whole bench. Within a run, page loads are medians of 10 cold loads, table operations medians of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it serves only through its own HTTP server, so its renders would carry a socket round trip the others never pay. Builds are clean production builds, kay's with and without its type check, which Next.js runs too and the others skip; their size is what each deploys, without the dependencies it runs on or source maps. Every table and its notes are in kay's [bench/results.md](https://github.com/Kayno0o/kayjs/blob/main/bench/results.md), and `bun run bench` in kay's repository runs it again. Code is counted at kay 1.82.0, in characters other than whitespace and comments: pages, layouts, components and config, not the file mounting each app in the bench. Formatted by each framework's formatter, kay fmt for kay and Prettier for the others, cloc 2.10 counts kay 73 lines, Nuxt 122, Svelte 130, Astro 175, SolidJS 182 and Next.js 211.
 
 </Note>
 

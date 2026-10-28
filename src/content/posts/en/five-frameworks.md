@@ -2,6 +2,7 @@
 title: "Next.js, Nuxt, Astro, Svelte, Solid: benchmarked, then handed to an AI"
 description: "The same app in five frameworks, timed in the browser, on the server and at build time. Then the same site built in each by a coding agent, on an expensive model and a cheaper one, and what it cost."
 date: 2026-10-19
+updated: 2026-10-28
 tags: [benchmarks, llm]
 draft: false
 ---
@@ -17,11 +18,11 @@ Each framework renders the same products page from the same data, written the wa
   unit="ms"
   better="lower"
   rows={[
-    {"label": "Astro", "value": 1.2},
-    {"label": "Nuxt", "value": 5.3},
+    {"label": "Astro", "value": 1.3},
+    {"label": "Nuxt", "value": 5.2},
     {"label": "SolidJS", "value": 10.8},
     {"label": "Svelte", "value": 14.3},
-    {"label": "Next.js", "value": 18.8}
+    {"label": "Next.js", "value": 18.6}
   ]}
   bench="syntheticNeutral"
 />
@@ -48,10 +49,10 @@ Astro runs so little on load because it only hydrates its two Solid islands. Sol
   better="higher"
   digits={0}
   rows={[
-    {"label": "Svelte", "value": 3886},
-    {"label": "Astro", "value": 1822},
-    {"label": "SolidJS", "value": 1748},
-    {"label": "Nuxt", "value": 588}
+    {"label": "Svelte", "value": 3861},
+    {"label": "Astro", "value": 1898},
+    {"label": "SolidJS", "value": 1712},
+    {"label": "Nuxt", "value": 583}
   ]}
   bench="syntheticNeutral"
 />
@@ -82,9 +83,9 @@ Code is counted in characters, since a line count mostly measures the formatter:
   rows={[
     {"label": "Svelte", "value": 0.09},
     {"label": "SolidJS", "value": 0.14},
-    {"label": "Astro", "value": 0.6},
-    {"label": "Nuxt", "value": 1.97},
-    {"label": "Next.js", "value": 2.15}
+    {"label": "Astro", "value": 1.19},
+    {"label": "Next.js", "value": 2.18},
+    {"label": "Nuxt", "value": 2.58}
   ]}
   bench="syntheticNeutral"
 />
@@ -96,9 +97,9 @@ Code is counted in characters, since a line count mostly measures the formatter:
   rows={[
     {"label": "SolidJS", "value": 8.2},
     {"label": "Svelte", "value": 22.5},
-    {"label": "Astro", "value": 138.1},
-    {"label": "Next.js", "value": 328.9},
-    {"label": "Nuxt", "value": 610.7}
+    {"label": "Astro", "value": 137.8},
+    {"label": "Next.js", "value": 328.6},
+    {"label": "Nuxt", "value": 614.7}
   ]}
   bench="syntheticNeutral"
   source="SolidJS and Svelte bundle no server"
@@ -112,7 +113,7 @@ Code is counted in characters, since a line count mostly measures the formatter:
     {"label": "SolidJS", "value": 8.2},
     {"label": "Astro", "value": 9.6},
     {"label": "Svelte", "value": 22.5},
-    {"label": "Nuxt", "value": 71.8},
+    {"label": "Nuxt", "value": 72.3},
     {"label": "Next.js", "value": 134.3}
   ]}
   bench="syntheticNeutral"
@@ -125,22 +126,22 @@ Astro's island is the very same Solid table as the SolidJS app, and neither ship
   unit="ms"
   columns={["SolidJS", "Svelte", "Astro", "Next.js", "Nuxt"]}
   rows={[
-    {"label": "Create 1,000 rows", "values": [26.6, 26.8, 26.5, 29.8, 26.9]},
-    {"label": "Replace 1,000 rows", "values": [24.5, 25.8, 24.4, 30.3, 27.8]},
-    {"label": "Update every 10th row", "values": [2.7, 2.8, 2.7, 4, 3.5]},
-    {"label": "Select a row", "values": [0.3, 1, 0.3, 1.2, 0.6]},
-    {"label": "Swap two rows", "values": [2.1, 2.1, 2, 20.6, 2.5]},
-    {"label": "Remove a row", "values": [2, 2.2, 1.9, 3.3, 4.5]},
-    {"label": "Create 10,000 rows", "values": [228, 231, 239, 363, 267]},
-    {"label": "Append 1,000 rows", "values": [23.4, 23.9, 23.4, 26.9, 25.4]},
-    {"label": "Clear 1,000 rows", "values": [2.7, 3.2, 2.7, 5, 4.1]}
+    {"label": "Create 1,000 rows", "values": [26.9, 26.1, 26.4, 29.9, 26.4]},
+    {"label": "Replace 1,000 rows", "values": [24.3, 25.9, 24.5, 29.9, 27.4]},
+    {"label": "Update every 10th row", "values": [2.7, 2.6, 2.6, 4.1, 3.5]},
+    {"label": "Select a row", "values": [0.3, 1, 0.3, 1.2, 0.7]},
+    {"label": "Swap two rows", "values": [2.1, 2.1, 1.9, 20.4, 2.5]},
+    {"label": "Remove a row", "values": [2, 2.2, 1.9, 3.2, 4.4]},
+    {"label": "Create 10,000 rows", "values": [226, 232, 234, 360, 266]},
+    {"label": "Append 1,000 rows", "values": [22.9, 23.4, 23.1, 26.6, 25.4]},
+    {"label": "Clear 1,000 rows", "values": [2.6, 3.2, 2.5, 5, 4.2]}
   ]}
   bench="syntheticNeutral"
 />
 
 <Note title="How it was measured">
 
-solid-js 1.9.15, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.0 and Nuxt 4.6.1, on Bun 1.4.3 and headless Chromium 151. Each figure is the median of three full runs of the bench. Within a run, a page load is the median of 10 cold loads, a table operation the median of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it only serves through its own HTTP server, so each render would pay a network round trip the others don't. Builds are clean production builds, Next.js's including the type check it runs and the others skip. Their size is what each one deploys, without its runtime dependencies or source maps. Code is counted in characters, whitespace and comments left out: pages, layouts, components and config, not the file plugging each app into the bench. Formatted by Prettier, cloc 2.10 counts 122 lines for Nuxt, 130 for Svelte, 175 for Astro, 182 for SolidJS and 211 for Next.js.
+solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 and Nuxt 4.6.2, on Bun 1.4.4 and headless Chromium 151. Each figure is the median of three full runs of the bench. Within a run, a page load is the median of 10 cold loads, a table operation the median of 10 runs after 2 warmups, and server rendering is measured in-process by mitata. Next.js sits that one out: it only serves through its own HTTP server, so each render would pay a network round trip the others don't. Builds are clean production builds, Next.js's including the type check it runs and the others skip. Their size is what each one deploys, without its runtime dependencies or source maps. Code is counted in characters, whitespace and comments left out: pages, layouts, components and config, not the file plugging each app into the bench. Formatted by Prettier, cloc 2.10 counts 122 lines for Nuxt, 130 for Svelte, 175 for Astro, 182 for SolidJS and 211 for Next.js.
 
 </Note>
 
