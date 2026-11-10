@@ -22,7 +22,7 @@ kay runs on Bun and Elysia. A `.kay` file is one component: TypeScript fences, t
   items={[
     {"value": "-88%", "label": "server CPU per visitor, a SvelteKit site moved to kay"},
     {"value": "-16 to -40%", "label": "lines of code, four sites moved to kay"},
-    {"value": "13K vs 17K to 34K", "label": "tokens a coding agent writes for one site, kay against five others"}
+    {"value": "-24 to -62%", "label": "tokens a coding agent writes for one site, kay against five other frameworks"}
   ]}
 />
 

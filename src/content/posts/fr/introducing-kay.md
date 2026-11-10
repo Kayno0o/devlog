@@ -14,7 +14,7 @@ kay tourne sur Bun et Elysia. Un fichier `.kay` est un composant : des blocs Ty
   items={[
     {"value": "-88 %", "label": "CPU serveur par visiteur, un site SvelteKit passé à kay"},
     {"value": "-16 à -40 %", "label": "lignes de code, quatre sites passés à kay"},
-    {"value": "13K contre 17K à 34K", "label": "tokens écrits par un agent de code pour un site, kay contre cinq autres"}
+    {"value": "-24 à -62 %", "label": "tokens écrits par un agent de code pour un site, kay contre cinq autres frameworks"}
   ]}
 />
 

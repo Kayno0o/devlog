@@ -13,7 +13,7 @@ Quand un agent de code construit un site, le framework pèse lourd dans la factu
   items={[
     {"value": "25 sur 25", "label": "runs Opus qui passent toutes les vérifications et tous les tests"},
     {"value": "22 sur 25", "label": "runs Sonnet qui passent toutes les vérifications et tous les tests"},
-    {"value": "39,93 $ contre 5,50 $", "label": "les 25 runs, Opus contre Sonnet, aux tarifs de l'API"}
+    {"value": "7,3x", "label": "le coût d'Opus face à Sonnet, 39,93 $ et 5,50 $ pour 25 runs chacun aux tarifs de l'API"}
   ]}
 />
 

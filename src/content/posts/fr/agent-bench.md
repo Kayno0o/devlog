@@ -11,7 +11,7 @@ Chaque autre framework du [benchmark d'agent de code](/posts/coding-agent-bench)
 <Stats
   items={[
     {"value": "30 sur 30", "label": "runs qui passent chaque vérification et chaque test, ceux de kay compris"},
-    {"value": "13K contre 17K à 34K", "label": "tokens écrits, kay contre les autres"},
+    {"value": "-24 à -62 %", "label": "tokens écrits, kay contre les cinq autres frameworks"},
     {"value": "78 contre 0", "label": "lignes de tests écrites, kay contre les autres"}
   ]}
 />

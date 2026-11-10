@@ -1,9 +1,10 @@
 ---
 const { items } = props<{ items: { value: string, label: string }[] }>()
 ---
-// The gaps let the border color through, a hairline between the tiles.
-dl(class="stats grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-px overflow-hidden rounded border border-border bg-border")
+// The gaps let the border color through, a hairline between the tiles; tiles grow to fill their row, so a lone last one spans it instead of leaving an empty cell.
+dl(class="stats flex flex-wrap gap-px overflow-hidden rounded border border-border bg-border")
   for item of items key={item.label}
-    .flex.flex-col-reverse.gap-1.bg-surface.px-4.py-3
+    // Reversed so the value reads first while the label stays its term; justify-end packs both at the top, values aligned across a row.
+    .flex.flex-[1_1_10rem].flex-col-reverse.justify-end.gap-1.bg-surface.px-4.py-3
       dt.text-sm.leading-snug.text-subtext {item.label}
       dd.font-display.text-2xl.font-semibold.tabular-nums {item.value}

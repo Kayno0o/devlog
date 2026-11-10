@@ -21,7 +21,7 @@ When a coding agent builds a site, the framework decides much of the bill: token
   items={[
     {"value": "25 of 25", "label": "Opus runs passing every check and test"},
     {"value": "22 of 25", "label": "Sonnet runs passing every check and test"},
-    {"value": "$39.93 vs $5.50", "label": "all 25 runs, Opus against Sonnet, at API prices"}
+    {"value": "7.3x", "label": "the cost of Opus against Sonnet, $39.93 and $5.50 for 25 runs each at API prices"}
   ]}
 />
 

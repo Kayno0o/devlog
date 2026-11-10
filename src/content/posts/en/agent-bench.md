@@ -19,7 +19,7 @@ Every other framework in the [coding-agent bench](/posts/coding-agent-bench) com
 <Stats
   items={[
     {"value": "30 of 30", "label": "runs passing every check and test, kay's included"},
-    {"value": "13K vs 17K to 34K", "label": "tokens written, kay against the others"},
+    {"value": "-24 to -62%", "label": "tokens written, kay against the other five frameworks"},
     {"value": "78 vs 0", "label": "lines of tests written, kay against the others"}
   ]}
 />
