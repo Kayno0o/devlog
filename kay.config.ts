@@ -14,7 +14,7 @@ export default defineConfig({
   fonts: [{ fontsource: '@fontsource/inter', weights: [700] }],
   images: { card: { background: '#1e1e2e', color: '#cdd6f4' } },
   // Nothing here is interactive: pages load fully and ship no script.
-  navigation: false,
+  client: { navigation: false },
   seo: {
     name: 'devlog',
     titleTemplate: '%s | devlog',
