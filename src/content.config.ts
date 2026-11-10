@@ -8,6 +8,7 @@ import Stats from './components/stats.kay'
 import Tab from './components/tab.kay'
 import Tabs from './components/tabs.kay'
 import { highlight } from './highlight'
+import { social } from './social'
 
 export const posts = collection('content/posts', {
   localized: true,
@@ -18,6 +19,7 @@ export const posts = collection('content/posts', {
     updated: s.Optional(s.Date()),
     tags: s.Array(s.String(), { default: [] }),
     draft: s.Optional(s.Boolean()),
+    social: s.Optional(social),
   }),
   components: { BarChart, BenchTable, Embed, Note, Stats, Tab, Tabs },
   highlight,
