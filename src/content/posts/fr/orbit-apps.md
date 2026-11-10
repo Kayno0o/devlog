@@ -43,6 +43,8 @@ Chaque app dépend d'un même paquet du workspace, le shell. Dans `kay.config.ts
 
 La palette liste d'abord les pages de l'app elle-même, puis récupère depuis le navigateur les fonctions de toutes les autres apps, si bien que Ctrl K, dans n'importe quelle app, mène à une page de n'importe quelle autre. Le look est partagé aussi : presque noir, Space Grotesk, ni halo ni ombre, et chaque app ne choisit que sa couleur d'accent.
 
+![La page d'accueil de vulcan : l'en-tête du shell avec la recherche Ctrl K et le sélecteur d'apps, au-dessus des outils rangés par groupes](./img/orbit-vulcan.png)
+
 ## Une requête n'atteint une app que par relay
 
 relay fait tourner nginx dans un conteneur qui lit un dossier de config généré. Le login est une app kay à part, sur kayjs-auth : pas d'inscription, des comptes créés en ligne de commande, un second facteur TOTP obligatoire, et nginx l'interroge à chaque requête vers un site placé derrière le login.
@@ -54,6 +56,8 @@ Le login seul n'arrêterait pas une requête envoyée directement au port d'une 
 Le podcast de pulsar, c'est trois apps au travail. pulsar choisit les articles et un modèle écrit le script, en listant les noms étrangers qu'il emploie avec leur respelling pour le français, comme Copilot devenu « Copaïlotte ». nymph lit le script avec ces respellings, et pulsar cale les chapitres sur les pauses de la voix.
 
 selene utilise la même voix : whisper transforme ce que je dis en texte, et la réponse revient parlée. Son outil de bibliothèque interroge pallas, qui cherche dans les livres hors ligne et les articles de pulsar, une étape JSON à la fois, et répond avec une liste de sources. Chaque app envoie ses erreurs serveur à hubble.
+
+![La page Ask de selene : une question sur une fenêtre ouverte, et sa réponse qui désigne celle de la chambre](./img/orbit-selene.png)
 
 ## La carte est un ciel
 

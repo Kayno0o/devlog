@@ -51,6 +51,8 @@ Every app depends on one workspace package, the shell. In `kay.config.ts`, one c
 
 The palette lists the app's own pages first, then fetches every other app's features from the browser, so Ctrl K in any app reaches a page of any other. The look is shared too: near-black, Space Grotesk, no glow or shadow, and each app picks only its accent colour.
 
+![vulcan's home page: the shell's header with the Ctrl K search and the app switcher, above the tools sorted in groups](./img/orbit-vulcan.png)
+
 ## A request reaches an app only through relay
 
 relay runs nginx in a container that reads one folder of generated config. The login is a separate kay app on kayjs-auth: no sign-up, accounts created from the command line, a TOTP second factor required, and nginx asks it about every request to a site behind the login.
@@ -62,6 +64,8 @@ The login alone would not stop a request sent straight to an app's port. So rela
 pulsar's podcast is three apps at work. pulsar picks the articles and a model writes the script, listing the foreign names it uses respelled for French, such as Copilot as "Copaïlotte". nymph reads the script with those respellings, and pulsar times the chapters from the voice's pauses.
 
 selene uses the same voice: whisper turns what I say into text, and the answer comes back spoken. Its library tool asks pallas, which searches the offline books and pulsar's articles, one JSON step at a time, and answers with a list of sources. Every app sends its server errors to hubble.
+
+![selene's Ask page: a question in French about an open window, and its answer naming the bedroom window](./img/orbit-selene.png)
 
 ## The map is a sky
 
