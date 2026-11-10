@@ -62,7 +62,19 @@ A test walks every command of every bin through the completion protocol, then ch
 
 The kit sorts every run into a terminal, a CI log, a pipe or a coding agent. Only a terminal gets colour, glyphs, links and spinners. A pipe or a CI log gets plain lines that stay greppable, `error: demo greet: give a name` then a `hint:` line. An agent, which pays for every token it reads, gets tab-separated tables and one-line JSON, and help without its examples.
 
-Prompts follow the same rule: off a terminal, a prompt fails at once with exit 2 instead of waiting for a line that will never come. The colours come from a theme, with presets for high contrast, no colour or plain ASCII, and a project can bring its own as a JSON file of at most 64 KiB, so a theme file can never run anything.
+Prompts follow the same rule: off a terminal, a prompt fails at once with exit 2 instead of waiting for a line that will never come.
+
+## Every bin draws with the same marks
+
+One theme holds the colours and glyphs every bin draws with. A status line starts with one of four marks, a green ✓, a dimmed ›, a yellow ▲ or a red ✗, and a status word gets one of five badges, the same in every bin:
+
+```
+✓ success   ✗ failure   ● running   ○ waiting   - skipped
+```
+
+The default colours are ANSI names, not fixed values, so the terminal's own palette decides what green is, and the bins follow [my desktop theme](/posts/chamfer-theme) without knowing it exists. The kit ships four presets: the default, high contrast, `mono` with bold and dim only, and `ascii` for a terminal without the glyphs. A `theme.json` in my config folder or in a project restyles every bin at once. It is JSON only and at most 64 KiB, so a project's theme file can never run anything.
+
+No theme changes what is printed off a terminal, where the marks read `ok:`, `note:`, `warning:` and `error:`.
 
 ## --help loads no command
 
