@@ -51,11 +51,9 @@ The Team tab holds my box, my party, a gear bag and a plan of the areas I am goi
 
 It picks the four techniques of each member together, for power and for the coverage the party still lacks, and hands out the gear in the bag. For a plan, the types met in those areas weigh more and a level shortfall costs. Every member comes with a reason in plain text, and an audit tool compares my current party with the recommendation.
 
-<Note title="Screenshot to come: the Team tab">
+![The recommended party: six temtem from a test box, each with its level, the reason it was picked and its four techniques](./img/temtem-recommended-party.png)
 
-The recommended party with each member's reason and techniques.
-
-</Note>
+The box is test data. Temtem art © Crema.
 
 ## The Tempedia fills itself
 

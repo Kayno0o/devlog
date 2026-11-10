@@ -43,11 +43,9 @@ L'onglet Team contient ma boîte, mon équipe, un sac d'équipement et un plan d
 
 Il choisit ensemble les quatre techniques de chaque membre, pour la puissance et pour la couverture qui manque encore à l'équipe, et distribue l'équipement du sac. Pour un plan, les types rencontrés dans ces zones pèsent plus et un retard de niveau coûte. Chaque membre vient avec sa raison en toutes lettres, et un outil d'audit compare mon équipe actuelle à la recommandation.
 
-<Note title="Capture d'écran à venir : l'onglet Team">
+![L'équipe recommandée : six temtem d'une boîte de test, chacun avec son niveau, la raison de son choix et ses quatre techniques](./img/temtem-recommended-party.png)
 
-L'équipe recommandée avec la raison et les techniques de chaque membre.
-
-</Note>
+La boîte est une boîte de test. Illustrations de Temtem © Crema.
 
 ## Le Tempedia se remplit tout seul
 
