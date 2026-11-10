@@ -3,8 +3,8 @@ import ChevronRight from '~icons/tabler/chevron-right'
 
 const { title } = props<{ title: string }>()
 ---
-details.note.group.rounded.bg-mantle.px-4.py-3
-  summary(class="flex cursor-pointer items-center gap-1 font-semibold [&::-webkit-details-marker]:hidden")
-    ChevronRight(class="size-4 shrink-0 transition-transform group-open:rotate-90")
+details.note.group.rounded.border.border-border-strong.px-4.py-3
+  summary(class="flex cursor-pointer items-center gap-1.5 font-semibold [&::-webkit-details-marker]:hidden")
+    ChevronRight(class="size-4 shrink-0 text-accent transition-transform group-open:rotate-90")
     span {title}
   slot

@@ -10,9 +10,14 @@ export default defineConfig({
   plugins: [tailwind],
   extensions: [pageWeight],
   favicon: { image: 'src/favicon.png', svg: 'src/favicon.svg' },
-  // Only the share cards draw in it; the pages keep the system font.
-  fonts: [{ fontsource: '@fontsource/inter', weights: [700] }],
-  images: { card: { background: '#1e1e2e', color: '#cdd6f4' } },
+  // Chakra Petch for headings and share cards, IBM Plex Sans for text, JetBrains Mono for dates, units and code: the orbit apps' faces.
+  fonts: [
+    { fontsource: '@fontsource/chakra-petch', weights: [600] },
+    { fontsource: '@fontsource/ibm-plex-sans', weights: [400, 600] },
+    { fontsource: '@fontsource/ibm-plex-sans', weights: [400], styles: ['italic'] },
+    { fontsource: '@fontsource/jetbrains-mono', weights: [400] },
+  ],
+  images: { card: { font: { family: 'Chakra Petch', weight: 600 }, background: '#090c13', color: '#dbe0ea' } },
   // Nothing here is interactive: pages load fully and ship no script.
   client: { navigation: false },
   seo: {

@@ -1,0 +1,70 @@
+@reference './app.css';
+
+/* Only the home page loads it: the posts on a rail, the date before it on wide screens, above the post on phones. */
+@layer components {
+  .timeline-entry {
+    @apply grid gap-x-3;
+
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+
+    @variant sm {
+      grid-template-columns: 7.5rem 1.5rem minmax(0, 1fr);
+    }
+  }
+
+  .timeline-when {
+    @apply col-start-2 row-start-1 flex gap-3 pt-5 font-mono text-sm text-muted tabular-nums sm:flex-col sm:gap-0 sm:py-6 sm:text-right;
+
+    /* Grid placements are written out: an `sm:col-start-*` inside @apply never reached the built stylesheet. */
+    @variant sm {
+      grid-column-start: 1;
+    }
+
+    & time {
+      @apply text-subtext;
+    }
+  }
+
+  .timeline-rail {
+    @apply relative col-start-1 row-span-2 row-start-1;
+
+    @variant sm {
+      grid-column-start: 2;
+      grid-row-end: span 1;
+    }
+
+    &::before {
+      @apply absolute inset-y-0 left-1/2 w-px bg-border-strong;
+
+      content: '';
+    }
+  }
+
+  .timeline-entry:first-child .timeline-rail::before {
+    @apply top-7 sm:top-8;
+  }
+
+  .timeline-entry:last-child .timeline-rail::before {
+    @apply bottom-[calc(100%-1.75rem)] sm:bottom-[calc(100%-2rem)];
+  }
+
+  .timeline-node {
+    @apply absolute top-6 left-1/2 size-2.5 -translate-x-1/2 rounded-full border-[1.5px] border-subtext bg-base sm:top-7;
+  }
+
+  .timeline-node-kay {
+    @apply border-accent-fill bg-accent-fill;
+  }
+
+  .timeline-post {
+    @apply col-start-2 block border-b border-border pt-1 pb-6 no-underline sm:py-6;
+
+    @variant sm {
+      grid-column-start: 3;
+    }
+  }
+
+  .timeline-entry:last-child .timeline-post {
+    @apply border-b-0;
+  }
+}

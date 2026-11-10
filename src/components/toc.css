@@ -1,16 +1,31 @@
 @reference '../app.css';
 
 @layer components {
-  /* In the flow on narrow screens; beside the post and sticky once there is room on its right. */
+  /* In a box in the flow on narrow screens; beside the post and sticky once there is room on its right. */
   .toc {
-    @apply mb-10 xl:absolute xl:inset-y-0 xl:left-full xl:mb-0 xl:ml-10 xl:w-52;
+    @apply mb-10 xl:absolute xl:inset-y-0 xl:left-full xl:mb-0 xl:ml-12 xl:w-52;
   }
 
   .toc-list {
-    @apply border-l-2 border-surface pl-4 text-sm xl:sticky xl:top-8;
+    @apply rounded border border-border bg-surface p-4 text-sm xl:sticky xl:top-24 xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0;
 
     & ol {
-      @apply flex flex-col gap-1;
+      @apply flex flex-col border-l border-border-strong;
+    }
+
+    & a {
+      @apply relative block py-1 pl-4 leading-snug text-muted no-underline hover:text-text;
+    }
+
+    /* public/post.js marks the section being read; its node sits on the rail. */
+    & a[aria-current] {
+      @apply text-text;
+
+      &::before {
+        @apply absolute top-[0.6rem] -left-1 size-[7px] rounded-full bg-accent-fill;
+
+        content: '';
+      }
     }
   }
 }

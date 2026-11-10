@@ -8,21 +8,21 @@
     }
 
     & hr {
-      @apply my-10 border-surface;
+      @apply my-10 border-border;
     }
 
     & :not(pre) > code {
-      @apply rounded bg-mantle px-1.5 py-0.5 font-mono text-[0.875em];
+      @apply rounded-sm border border-border bg-surface-strong px-1 py-px font-mono text-[0.875em];
     }
 
     & pre {
-      @apply overflow-x-auto rounded p-4 font-mono text-sm leading-normal;
+      @apply overflow-x-auto rounded border border-border p-4 font-mono text-sm leading-relaxed;
 
-      /* Shiki writes the theme's background inline; the code block sits on the mantle instead. */
-      background-color: var(--color-mantle) !important;
+      /* Shiki writes the theme's background inline; the code block sits on the surface instead. */
+      background-color: var(--color-surface) !important;
 
       &[data-language]::before {
-        @apply mb-2 block font-sans text-xs text-muted;
+        @apply mb-3 block font-mono text-xs text-muted;
 
         content: attr(data-language);
       }
@@ -32,7 +32,7 @@
       @apply block w-full overflow-x-auto text-sm tabular-nums;
 
       & :is(th, td) {
-        @apply border-b border-surface px-3 py-2 text-left;
+        @apply border-b border-border px-3 py-2 text-left;
       }
 
       & th {
@@ -52,8 +52,9 @@
       @apply mt-2;
     }
 
-    & .note :not(pre) > code {
-      @apply bg-surface;
+    /* A panel opening on code meets its tab label. */
+    & .tab-panel > pre:first-child {
+      @apply rounded-tl-none;
     }
   }
 }

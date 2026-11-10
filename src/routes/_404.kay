@@ -4,5 +4,5 @@ import { t } from 'kay/i18n'
 head
   title {t('notFound.title')}
 .mx-auto.max-w-2xl
-  h1.mb-3.text-2xl.font-semibold {t('notFound.title')}
+  h1.mb-4.font-display.text-4xl.leading-tight.font-semibold {t('notFound.title')}
   a(href="/") {t('notFound.back')}

@@ -5,18 +5,23 @@ import kay from '../kay-logo.svg'
 
 const others = locales().filter(code => code !== locale())
 ---
-header.bg-mantle.px-4.py-4.sm:px-8
-  nav.flex.items-center.justify-between.gap-4(aria-label={t('nav.label')})
-    a.font-mono.text-lg.font-semibold.no-underline(href="/") devlog
-    ul.flex.items-center.gap-5.text-sm
-      li: a(href="/about") {t('nav.about')}
+header.sticky.top-0.z-10.border-b.border-border.bg-base.px-4.sm:px-8
+  nav(
+    class="mx-auto flex min-h-14 max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2"
+    aria-label={t('nav.label')}
+  )
+    a.inline-flex.items-center.gap-2.5.font-mono.text-lg.font-medium.no-underline(href="/")
+      span.brand-mark(aria-hidden="true") K#[span _]
+      | devlog
+    ul.flex.flex-wrap.items-center.gap-x-5.gap-y-1.text-sm
+      li: a.text-subtext.no-underline.hover:text-text(href="/about") {t('nav.about')}
       li
-        a.inline-flex.items-center.gap-1(href="https://kayjs.kaynooo.fr")
+        a.inline-flex.items-center.gap-1.5.text-subtext.no-underline.hover:text-text(href="https://kayjs.kaynooo.fr")
           img.size-4(src={kay} width="16" height="16" alt="")
           | kay
       li
-        a.inline-flex.items-center.gap-1(href="/rss.xml")
+        a.inline-flex.items-center.gap-1.5.text-subtext.no-underline.hover:text-text(href="/rss.xml")
           Rss.size-4
           | RSS
       for code of others key={code}
-        li: a(href={alternate(code)} hreflang={code} lang={code}) {localeName(code)}
+        li: a.text-subtext.no-underline.hover:text-text(href={alternate(code)} hreflang={code} lang={code}) {localeName(code)}

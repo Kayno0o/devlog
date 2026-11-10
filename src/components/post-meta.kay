@@ -9,10 +9,12 @@ const { date, updated, minutes, tags = [] } = props<{
   tags?: string[] | undefined
 }>()
 ---
-p.flex.flex-wrap.gap-x-4.font-mono.text-sm.text-muted
+.flex.flex-wrap.items-center.gap-x-4.gap-y-2.font-mono.text-sm.text-muted.tabular-nums
   time(datetime={date.toISOString()}) {formatDate(date)}
   if updated
     span {t('post.updated')} #[time(datetime={updated.toISOString()}) {formatDate(updated)}]
   span {t('post.readingTime', { minutes })}
-  for tag of tags key={tag}
-    span \#{tag}
+  if tags.length > 0
+    ul.flex.flex-wrap.gap-1.5
+      for tag of tags key={tag}
+        li.tag(class={{ 'tag-kay': tag === 'kay' }}) {tag}

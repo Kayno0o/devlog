@@ -34,15 +34,15 @@ const best = (row: Row) => (better === 'lower' ? Math.min : Math.max)(...row.val
 // How far a value is from its row's best, as a share of the best: `+16%` slower, or `-12%` fewer.
 const gap = (row: Row, value: number) => formatLocaleNumber(value / best(row) - 1, { style: 'percent', maximumFractionDigits: 0, signDisplay: 'always' })
 ---
-figure.chart
-  figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
+figure.chart.rounded.border.border-border.bg-surface.p-4
+  figcaption.mb-4.flex.flex-wrap.items-baseline.justify-between.gap-x-4
     span.font-semibold {title}
-    span.text-sm.text-muted {t('table.legend', { unit, better: t(`chart.better.${better}`) })}
+    span.label {t('table.legend', { unit, better: t(`chart.better.${better}`) })}
   .overflow-x-auto
     table.w-full.text-sm.tabular-nums
       thead
         tr
-          th.sticky.left-0.bg-base(scope="col")
+          th.sticky.left-0.bg-surface(scope="col")
             span.sr-only {t('chart.name')}
           for column of columns key={column}
             th.px-2.pb-2.text-right.align-bottom(scope="col" class={column === 'kay' ? 'font-semibold' : 'font-normal text-subtext'})
@@ -51,11 +51,11 @@ figure.chart
                 FrameworkLogo(label={column})
       tbody
         for row of rows key={row.label}
-          tr.border-t.border-surface
-            th.sticky.left-0.bg-base.py-1.5.pr-3.text-left.font-normal.text-subtext(scope="row") {row.label}
+          tr.border-t.border-border
+            th.sticky.left-0.bg-surface.py-1.5.pr-3.text-left.font-normal.text-subtext(scope="row") {row.label}
             for value, i of row.values key={i}
               td.px-2.py-1.5.text-right(class={{ 'bg-accent/20': value === best(row) }})
                 span.block(class={{ 'font-semibold': value === best(row) }}) {format(row, value)}
                 span.block.text-xs(class={{ 'text-muted': value !== best(row) }}) {value === best(row) ? t('table.best') : gap(row, value)}
   if caption !== undefined
-    p.mt-3.text-xs.text-muted {t('chart.source', { source: caption })}
+    p.mt-4.border-t.border-border.pt-3.font-mono.text-xs.text-muted {t('chart.source', { source: caption })}

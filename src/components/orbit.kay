@@ -1,0 +1,18 @@
+---
+import './orbit.css'
+
+// Each ring, as the half-axes of an ellipse around the box's center, with its body's size, period and starting point.
+const rings = [
+  { rx: 64, ry: 22, size: 4, period: '15s', start: '-2s' },
+  { rx: 99, ry: 38, size: 6, period: '26s', start: '-9s' },
+  { rx: 141, ry: 54, size: 5, period: '48s', start: '-31s' },
+]
+const path = (rx: number, ry: number) => `M ${160 + rx} 160 A ${rx} ${ry} 0 1 1 ${160 - rx} 160 A ${rx} ${ry} 0 1 1 ${160 + rx} 160`
+---
+.orbit.rotate-[-20deg](aria-hidden="true")
+  svg(viewBox="0 0 320 320" fill="none")
+    for ring of rings key={ring.rx}
+      ellipse.stroke-border-strong(cx="160" cy="160" rx={ring.rx} ry={ring.ry} stroke-width="1")
+    circle.fill-accent-fill(cx="160" cy="160" r="6")
+  for ring of rings key={ring.rx}
+    span.orbit-body(style={`width: ${ring.size}px; height: ${ring.size}px; margin: -${ring.size / 2}px 0 0 -${ring.size / 2}px; offset-path: path('${path(ring.rx, ring.ry)}'); --period: ${ring.period}; --start: ${ring.start}`})

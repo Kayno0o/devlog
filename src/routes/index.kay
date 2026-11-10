@@ -6,32 +6,45 @@ const entries = await posts.all()
 import { t, T } from 'kay/i18n'
 import Github from '~icons/simple-icons/github'
 import IconLink from '../components/icon-link.kay'
-import PostMeta from '../components/post-meta.kay'
+import Orbit from '../components/orbit.kay'
+import { formatDate } from '../format'
 import kay from '../kay-logo.svg'
+import '../home.css'
 ---
 head
   title(raw) {t('home.title')}
-.mx-auto.max-w-2xl
-  section.mb-12
-    h1.mb-3.text-3xl.font-semibold {t('home.greeting')}
-    p.mb-3.text-subtext
-      T(key="home.who")
-        @about(text)
-          a(href="/about") {text}
-        @code(text)
-          IconLink(href="https://github.com/Kayno0o" icon={Github}) {text}
-    p.text-subtext
-      T(key="home.notes")
-        @kay(text)
-          IconLink(href="https://kayjs.kaynooo.fr" image={kay}) {text}
+.mx-auto.max-w-6xl
+  section.mb-14.flex.items-center.justify-between.gap-10
+    .flex.max-w-2xl.flex-col.gap-4
+      h1.font-display.text-4xl.leading-tight.font-semibold.sm:text-5xl {t('home.greeting')}
+      p.text-subtext
+        T(key="home.who")
+          @about(text)
+            a(href="/about") {text}
+          @code(text)
+            IconLink(href="https://github.com/Kayno0o" icon={Github}) {text}
+      p.text-lg.text-subtext
+        T(key="home.notes")
+          @kay(text)
+            IconLink(href="https://kayjs.kaynooo.fr" image={kay}) {text}
+    .hidden.lg:block
+      Orbit
   section(aria-labelledby="posts-title")
-    h2#posts-title.mb-4.font-mono.text-sm.tracking-wide.text-muted.uppercase {t('home.posts')}
-    ol.flex.flex-col.gap-6
+    h2#posts-title.label.border-b.border-border.pb-4 {t('home.posts')} · {entries.length}
+    // The posts on a dated trajectory: the date, a rail with one node per post, filled for a post about kay, then the post.
+    ol.timeline
       for post of entries key={post.slug}
-        li
-          a.group.block.no-underline(href={`/posts/${post.slug}`})
-            PostMeta(date={post.data.date} minutes={post.readingTime})
-            h3.text-lg.font-semibold.group-hover:underline.group-hover:decoration-accent {post.data.title}
-            p.text-subtext {post.data.description}
+        li.timeline-entry
+          p.timeline-when
+            time(datetime={post.data.date.toISOString()}) {formatDate(post.data.date)}
+            span {t('post.readingTime', { minutes: post.readingTime })}
+          span.timeline-rail
+            span.timeline-node(class={{ 'timeline-node-kay': post.data.tags.includes('kay') }})
+          a.timeline-post.group(href={`/posts/${post.slug}`})
+            h3.font-display.text-2xl.leading-tight.font-semibold.group-hover:underline.group-hover:decoration-accent {post.data.title}
+            p.mt-1.text-subtext {post.data.description}
+            ul.mt-3.flex.flex-wrap.gap-1.5
+              for tag of post.data.tags key={tag}
+                li.tag(class={{ 'tag-kay': tag === 'kay' }}) {tag}
       else
-        li.text-subtext {t('home.empty')}
+        li.py-6.text-subtext {t('home.empty')}

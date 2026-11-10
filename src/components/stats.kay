@@ -1,8 +1,9 @@
 ---
 const { items } = props<{ items: { value: string, label: string }[] }>()
 ---
-dl(class="stats grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4")
+// The gaps let the border color through, a hairline between the tiles.
+dl(class="stats grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-px overflow-hidden rounded border border-border bg-border")
   for item of items key={item.label}
-    .flex.flex-col-reverse.gap-1.border-l-2.border-accent.pl-3
-      dt.text-sm.text-subtext {item.label}
-      dd.text-2xl.font-semibold.tabular-nums {item.value}
+    .flex.flex-col-reverse.gap-1.bg-surface.px-4.py-3
+      dt.text-sm.leading-snug.text-subtext {item.label}
+      dd.font-display.text-2xl.font-semibold.tabular-nums {item.value}

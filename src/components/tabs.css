@@ -6,11 +6,11 @@
     @apply flex flex-wrap gap-x-1;
 
     & > .tab-label {
-      @apply cursor-pointer rounded-t px-3 py-1 text-sm text-subtext hover:text-text;
+      @apply cursor-pointer rounded-t border border-b-0 border-transparent px-3 py-1 font-mono text-xs text-muted hover:text-text;
     }
 
     & > .tab-input:checked + .tab-label {
-      @apply bg-mantle text-text;
+      @apply border-border bg-surface text-text;
     }
 
     & > .tab-input:focus-visible + .tab-label {

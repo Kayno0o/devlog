@@ -9,12 +9,13 @@ a.skip-link(href="#main-content") {t('site.skipLink')}
 Header
 main#main-content.w-full.grow.px-4.py-10.sm:px-8
   slot
-footer.flex.flex-wrap.justify-between.gap-x-6.gap-y-2.border-t-2.border-surface.px-4.py-4.text-sm.text-muted.sm:px-8
-  p
-    T(key="footer.builtWith")
-      @kay(text)
-        a(href="https://github.com/Kayno0o/kayjs") {text}
-    |  #[span(data-page-weight)]
-  ul.flex.gap-5
-    li: a(href="mailto:contact@kaynooo.fr") contact@kaynooo.fr
-    li: a(href="https://github.com/Kayno0o/devlog") {t('footer.source')}
+footer.mt-12.border-t.border-border.px-4.py-5.text-sm.text-muted.sm:px-8
+  .mx-auto.flex.max-w-6xl.flex-wrap.justify-between.gap-x-6.gap-y-2
+    p
+      T(key="footer.builtWith")
+        @kay(text)
+          a(href="https://github.com/Kayno0o/kayjs") {text}
+      |  #[span.font-mono(data-page-weight)]
+    ul.flex.gap-5
+      li: a(href="mailto:contact@kaynooo.fr") contact@kaynooo.fr
+      li: a(href="https://github.com/Kayno0o/devlog") {t('footer.source')}

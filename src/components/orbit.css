@@ -1,0 +1,31 @@
+@reference '../app.css';
+
+@layer components {
+  /* Three tilted orbits around kay's amber star, drawn in a fixed 320px box so the paths of the moving bodies share the ellipses' coordinates. */
+  .orbit {
+    @apply relative size-80 shrink-0;
+
+    & svg {
+      @apply absolute inset-0 size-full;
+    }
+
+    & .orbit-body {
+      @apply absolute top-0 left-0 rounded-full bg-text;
+
+      offset-rotate: 0deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .orbit .orbit-body {
+      animation: orbit var(--period) linear infinite;
+      animation-delay: var(--start);
+    }
+  }
+
+  @keyframes orbit {
+    to {
+      offset-distance: 100%;
+    }
+  }
+}

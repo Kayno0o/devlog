@@ -49,11 +49,11 @@ const tint = (row: Row) => {
 }
 const share = (part: number, whole: number) => whole === 0 ? 0 : part / whole * 100
 ---
-figure.chart
-  figcaption.mb-3.flex.flex-wrap.items-baseline.justify-between.gap-x-4
+figure.chart.rounded.border.border-border.bg-surface.p-4
+  figcaption.mb-4.flex.flex-wrap.items-baseline.justify-between.gap-x-4
     span.font-semibold {title}
     if better
-      span.text-sm.text-muted {t(`chart.better.${better}`)}
+      span.label {t(`chart.better.${better}`)}
   div(class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1.5 gap-y-1" aria-hidden="true")
     for row, i of rows key={name(row)}
       if opensGroup(i)
@@ -95,6 +95,6 @@ figure.chart
             if ranged
               td {row.range ? `${t('chart.range', { low: formatNumber(row.range[0], digits), high: formatNumber(row.range[1], digits) })} ${unit}` : ''}
   if ranged
-    p.mt-3.text-xs.text-muted {t(`chart.legend.${better ?? 'none'}`)}
+    p.mt-4.border-t.border-border.pt-3.text-xs.text-muted {t(`chart.legend.${better ?? 'none'}`)}
   if caption !== undefined
-    p.text-xs.text-muted(class={ranged ? 'mt-1' : 'mt-3'}) {t('chart.source', { source: caption })}
+    p.font-mono.text-xs.text-muted(class={ranged ? 'mt-1' : 'mt-4 border-t border-border pt-3'}) {t('chart.source', { source: caption })}

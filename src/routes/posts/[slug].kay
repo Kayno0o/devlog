@@ -22,18 +22,19 @@ head
   meta(name="description" content={post.data.description})
   meta(property="og:type" content="article")
   meta(property="og:image" content={shareCard({ title: post.data.title, image: cardImage })})
-  script(src="/charts.js" type="module")
+  script(src="/post.js" type="module")
 article.relative.mx-auto.max-w-2xl
-  a.mb-8.inline-flex.items-center.gap-1.text-sm(href="/")
+  a.mb-8.inline-flex.items-center.gap-1.text-sm.text-subtext.no-underline.hover:text-text(href="/")
     ArrowLeft.size-4
     | {t('post.all')}
-  header.mb-10
-    h1.mb-3.text-3xl.font-semibold.text-balance {post.data.title}
+  header.mb-10.flex.flex-col.gap-4.border-b.border-border.pb-8
     PostMeta(date={post.data.date} updated={post.data.updated} minutes={post.readingTime} tags={post.data.tags})
+    h1.font-display.text-4xl.leading-tight.font-semibold.sm:text-5xl {post.data.title}
+    p.text-lg.text-subtext {post.data.description}
   Toc(headings={post.headings})
   .prose
     Content
-  footer.mt-12.border-t-2.border-surface.pt-4.text-sm.text-muted
+  footer.mt-12.border-t.border-border.pt-4.text-sm.text-muted
     a.inline-flex.items-center.gap-1(href={`https://github.com/Kayno0o/devlog/blob/main/${post.file}`})
       Pencil.size-4
       | {t('post.suggestFix')}

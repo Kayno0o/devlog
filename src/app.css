@@ -4,20 +4,28 @@
 @source not './**/*.{ts,md}';
 @source not '../{bench,tests,public}';
 @source not '../*.{md,ts}';
-/* public/charts.js adds it, which the build cannot see. */
+/* public/post.js adds it, which the build cannot see. */
 @source inline('in-view');
 
-/* Catppuccin Latte and Mocha: light-dark() follows the reader's color scheme with no script. Latte's muted is darkened to reach AA contrast on base and mantle. */
+/* The orbit apps' sky: one ground, boxes a step up from it framed by a hairline, kay's amber as the one accent. Light mode is a printed star atlas, and light-dark() follows the reader's color scheme with no script. */
 @theme {
-  --color-base: light-dark(#eff1f5, #1e1e2e);
-  --color-mantle: light-dark(#e6e9ef, #181825);
-  --color-surface: light-dark(#ccd0da, #313244);
-  --color-muted: light-dark(#64677d, #9399b2);
-  --color-subtext: light-dark(#5c5f77, #bac2de);
-  --color-text: light-dark(#4c4f69, #cdd6f4);
-  --color-accent: light-dark(#8839ef, #cba6f7);
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --color-base: light-dark(#eef1f6, #090c13);
+  --color-surface: light-dark(#e4e9f1, #10141e);
+  --color-surface-strong: light-dark(#d8dfea, #171c29);
+  --color-text: light-dark(#141b2b, #dbe0ea);
+  --color-subtext: light-dark(#3a4458, #aab2c3);
+  --color-muted: light-dark(#566176, #7f889c);
+  --color-border: color-mix(in srgb, var(--color-text) 11%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--color-text) 20%, transparent);
+  /* The text accent darkens to AA on the light ground; marks and bars, which need 3:1 only, keep a brighter amber. */
+  --color-accent: light-dark(#95580a, #f5b83d);
+  --color-accent-fill: light-dark(#b8730a, #f5b83d);
+  --color-star: light-dark(#141b2b, #ffffff);
+  --color-star-cool: light-dark(#283c78, #c8d4ff);
+  --color-star-warm: light-dark(#785014, #ffe6c4);
+  --font-display: 'Chakra Petch', system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -31,8 +39,37 @@
     color-scheme: light dark;
   }
 
+  html {
+    scroll-padding-top: 5rem;
+  }
+
   body {
-    @apply flex min-h-screen flex-col bg-base font-sans text-text antialiased;
+    @apply isolate flex min-h-screen flex-col bg-base font-sans text-text antialiased;
+  }
+
+  /* The stars sit on a fixed layer of their own, painted once, as the orbit shell's do: a fixed page background repaints the whole viewport on every scroll frame. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 23px 41px, color-mix(in srgb, var(--color-star) 32%, transparent) 0.7px, transparent 1.3px),
+      radial-gradient(circle at 131px 97px, color-mix(in srgb, var(--color-star) 18%, transparent) 0.6px, transparent 1.2px),
+      radial-gradient(circle at 79px 157px, color-mix(in srgb, var(--color-star-cool) 24%, transparent) 0.6px, transparent 1.2px),
+      radial-gradient(circle at 211px 29px, color-mix(in srgb, var(--color-star) 14%, transparent) 0.6px, transparent 1.2px),
+      radial-gradient(circle at 53px 223px, color-mix(in srgb, var(--color-star-warm) 26%, transparent) 0.7px, transparent 1.3px),
+      radial-gradient(circle at 167px 181px, color-mix(in srgb, var(--color-star) 12%, transparent) 0.5px, transparent 1.1px),
+      radial-gradient(circle at 293px 113px, color-mix(in srgb, var(--color-star-cool) 28%, transparent) 0.8px, transparent 1.4px),
+      radial-gradient(circle at 37px 311px, color-mix(in srgb, var(--color-star) 16%, transparent) 0.6px, transparent 1.2px),
+      radial-gradient(circle at 389px 359px, color-mix(in srgb, var(--color-star) 36%, transparent) 0.9px, transparent 1.5px),
+      radial-gradient(circle at 101px 433px, color-mix(in srgb, var(--color-star-cool) 20%, transparent) 0.6px, transparent 1.2px);
+    background-size: 173px 173px, 173px 173px, 173px 173px, 241px 241px, 241px 241px, 241px 241px, 337px 337px, 337px 337px, 461px 461px, 461px 461px;
+  }
+
+  :is(h1, h2, h3) {
+    @apply text-balance;
   }
 
   a {
@@ -45,6 +82,40 @@
 }
 
 @layer components {
+  /* A small uppercase caption in mono: section names, units, the contents title. */
+  .label {
+    @apply font-mono text-xs tracking-[0.08em] text-muted uppercase;
+  }
+
+  .tag {
+    @apply rounded-sm border border-border-strong px-1.5 font-mono text-xs text-subtext;
+  }
+
+  .tag-kay {
+    @apply border-accent/45 text-accent;
+  }
+
+  /* The header's K_ prompt, its cursor blinking where motion is welcome. */
+  .brand-mark {
+    @apply inline-flex size-7 items-center justify-center rounded border border-border-strong bg-surface font-mono text-sm;
+
+    & > span {
+      @apply text-accent;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      & > span {
+        animation: blink 1.2s steps(1) infinite;
+      }
+    }
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
   .skip-link {
     @apply absolute top-0 left-0 z-100 -translate-y-full bg-base px-2 py-1 text-accent transition-transform focus:translate-y-0;
   }
@@ -57,7 +128,7 @@
     }
 
     & :is(h2, h3, h4) {
-      @apply mt-12 scroll-mt-6 font-semibold text-balance;
+      @apply mt-12 font-display font-semibold leading-tight;
 
       & a {
         @apply relative no-underline hover:underline;
@@ -76,11 +147,11 @@
     }
 
     & h2 {
-      @apply text-2xl;
+      @apply text-3xl;
     }
 
     & h3 {
-      @apply text-xl;
+      @apply text-2xl;
     }
 
     & :is(ul, ol) {

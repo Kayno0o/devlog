@@ -35,7 +35,7 @@ it('shows a post\'s date, its update, its reading time and its tags', async () =
 
   expect(meta).toContain('updated <time datetime="2026-10-12T00:00:00.000Z">Oct 12, 2026</time>')
   expect(meta).toContain('2 min read')
-  expect(meta).toContain('#kay')
+  expect(meta).toContain('<li class="tag tag-kay">kay</li>')
   expect(plain).not.toContain('updated')
 })
 
