@@ -1,12 +1,20 @@
 ---
 title: "Two Astro sites, moved to kay"
-description: "Two small business sites ported from Astro to kay and measured as they deploy: server load, paints, images, builds and memory, what kay loses included."
+description: "Two small business sites ported from Astro to kay and measured as they deploy: load, paints, images, memory and builds, losses included."
 date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
+social:
+  x: "Two small business sites, moved from Astro to kay, my Bun framework, and measured as they deploy behind nginx. About 3x the requests per second on a content page, less memory, a smaller deploy, earlier paints. The costs: more JavaScript, and slower builds."
+  bluesky: "Two small business sites moved from Astro to kay, my Bun framework: about 3x the requests per second on a content page, less memory, a smaller deploy, earlier paints. The costs: more JavaScript per page, and slower builds."
+  mastodon: "Two small business sites, a cattery and a house painter, moved from Astro to kay, my Bun framework, and measured as they deploy behind nginx. About 3x the requests per second on a content page, less memory, a smaller deploy and earlier paints. The costs: more JavaScript per page, and builds up to three times slower, as kay encodes AVIF and WebP copies of every image. #Astro #Bun #WebDev"
+  reddit:
+    title: "Two Astro sites moved to my own Bun framework, measured as they deploy, losses included"
+    body: "I build kay, a Bun web framework, and moved two small business sites to it from Astro, a cattery and a house painter, both measured behind nginx with HTTP/2, TLS and brotli. kay serves about 3x the requests per second on a content page, as it serves them prerendered and already compressed, with less memory, a smaller deploy and earlier paints on a phone. Where it loses: more JavaScript per page, a heavier painter site on phones, and slower builds, as it encodes AVIF and WebP copies of every image."
+    subreddits: []
 ---
 
-The [kay post](/posts/introducing-kay) measures kay on a products page and on a coding agent's build. A products page only goes so far, so here are two small business sites moved to kay from Astro: a cattery and a house painter. Each was built and served as it deploys, Astro's standalone server under Bun against kay's one executable, both behind nginx with HTTP/2, TLS and brotli, on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+Two small business sites, a cattery and a house painter, ran on Astro, which already ships next to no JavaScript. Moved to [kay](/posts/introducing-kay), they serve more requests for less memory, paint sooner and deploy smaller, and they ship more JavaScript and build slower. Each was built and served as it deploys, Astro's standalone server under Bun against kay's one executable, both behind nginx with HTTP/2, TLS and brotli, on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 <Stats
   items={[
@@ -63,8 +71,7 @@ kay serves those pages prerendered and already compressed, so nginx spends about
   source="dist and production node_modules against one executable"
 />
 
-- **Lighter images**, served as AVIF at the width drawn: 52 against 143 KB and 37 against 161 KB per page on desktop, 114 against 143 KB and 106 against 185 KB on a phone.
-- **Faster paints.** kay inlines each page's styles, leaving no stylesheet to wait for: on a phone the first paint lands at 0.66 and 0.69 s instead of 1.51 and 1.30 s, the largest at 1.69 and 0.84 s instead of 2.45 and 1.31 s.
+kay serves images as AVIF at the width drawn: 52 against 143 KB and 37 against 161 KB per page on desktop, 114 against 143 KB and 106 against 185 KB on a phone. It also inlines each page's styles, leaving no stylesheet to wait for: on a phone the first paint lands at 0.66 and 0.69 s instead of 1.51 and 1.30 s, the largest at 1.69 and 0.84 s instead of 2.45 and 1.31 s.
 
 <BarChart
   title="JS shipped per page, brotli"
@@ -80,12 +87,14 @@ kay serves those pages prerendered and already compressed, so nginx spends about
   source="average over every page"
 />
 
-- **More JavaScript.** The painter's site shipped only a few plain scripts on Astro, inlined in its pages.
-- **A heavier painter site on phones.** A phone downloads 147 KB per page against 87 KB, mostly fonts (107 against 35 KB) and that script.
-- **Slower builds.** A clean `kay build` encodes an AVIF and a WebP copy of every image, which `astro build` does not: 6.9 against 2.2 s on the cattery and 3.7 against 2.0 s on the painter, the cattery's build peaking at 2.0 GB against 1.0.
+On Astro, the painter's site shipped only a few plain scripts, inlined in its pages. On kay, a phone downloads 147 KB per page of it against 87 KB, mostly fonts (107 against 35 KB) and that script.
+
+A clean `kay build` encodes an AVIF and a WebP copy of every image, which `astro build` does not: 6.9 against 2.2 s on the cattery and 3.7 against 2.0 s on the painter, the cattery's build peaking at 2.0 GB of memory against 1.0.
 
 <Note title="How it was measured">
 
 kay 1.54.2 on Bun 1.4.3, headless Chromium 151 and nginx 1.30.5 set up as in production, both sides in one sitting. Paints are medians of 5 cold loads per page under Lighthouse's throttling; load is 32 clients for 5 s per URL; builds are the median of 3 clean runs. The sites' code is private, so the record is [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), every figure with its conditions.
 
 </Note>
+
+The other ports: [a SvelteKit site](/posts/ported-from-sveltekit) and [an Elysia and Solid app](/posts/ported-from-solid).

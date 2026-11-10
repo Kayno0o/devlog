@@ -4,13 +4,29 @@ description: Why I built my own web framework on Bun, how a .kay file becomes HT
 date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
+social:
+  x: "I built kay, a Bun web framework: one .kay file per component, a pug-like template, pages rendered to plain HTML, and JavaScript only for the islands. A SvelteKit site moved to it spends 88% less server CPU per visitor. Still experimental, so expect breaking changes."
+  bluesky: "I built kay, a Bun web framework: one .kay file per component, a pug-like template, plain HTML from the server and JavaScript only for the islands. A SvelteKit site moved to it spends 88% less server CPU per visitor. Still experimental."
+  mastodon: "I built kay, a web framework on Bun: one .kay file per component, TypeScript fences then a pug-like template, pages rendered to plain HTML, and JavaScript only for the islands. A SvelteKit site moved to it spends 88% less server CPU per visitor, and four ported sites lost 16 to 40% of their code. It is a one-person project and still breaks between minors. #Bun #JavaScript #WebDev"
+  reddit:
+    title: "kay, a Bun web framework with pug-like templates, server-rendered pages and islands"
+    body: "I built kay because I wanted Astro's islands, Solid's signals, Svelte's compiler and pug's templates in one framework, built and tested by Bun alone. A .kay file is one component: TypeScript fences, then an indented template, typed end to end. Pages render to plain HTML and only the islands ship JavaScript. The post compares one component in six frameworks and benchmarks a products page against them. It is a one-person project and a minor version may still break your code, so it is for side projects for now."
+    subreddits: []
 ---
 
 Yes, another JavaScript framework. In my defense, it is the one I wanted to use.
 
 kay runs on Bun and Elysia. A `.kay` file is one component: TypeScript fences, then a pug-like indented template. Pages render to plain HTML on the server, and only the interactive parts, the islands, ship JavaScript. It is still experimental, so expect breaking changes for a while.
 
-## What a component looks like
+<Stats
+  items={[
+    {"value": "-88%", "label": "server CPU per visitor, a SvelteKit site moved to kay"},
+    {"value": "-16 to -40%", "label": "lines of code, four sites moved to kay"},
+    {"value": "13K vs 17K to 34K", "label": "tokens a coding agent writes for one site, kay against five others"}
+  ]}
+/>
+
+## A component's server and browser code share one file
 
 The same page in kay, in the three it borrows from, and in Next.js and Nuxt, each passing its own checker:
 
@@ -175,7 +191,7 @@ The page script runs on the server and again in the browser, so the server-only 
 
 </Tabs>
 
-## Why I built it
+## One framework instead of Astro with Solid inside
 
 I care about speed everywhere: how fast a page loads and runs, how fast the server answers, how fast a build or a test run finishes, and how little the server needs, in memory and in what it takes to deploy.
 
@@ -188,7 +204,7 @@ For a while I used Astro with SolidJS inside: fast pages for little code, at the
 - **SolidJS**: signals and fine-grained updates, no virtual DOM.
 - **Svelte and SvelteKit**: a compiler doing the work ahead of time, file-based routes with layouts, typed form actions.
 
-## How it works
+## One compile, two outputs: HTML for the server, DOM for the browser
 
 1. The compiler reads a `.kay` file once and emits two twins: an HTML string builder for the server and a DOM builder for the browser.
 2. The server renders every page to a string. A static page gets no hydration markers and no JavaScript bundle.
@@ -197,9 +213,9 @@ For a while I used Astro with SolidJS inside: fast pages for little code, at the
 
 Bun does everything underneath: the server, the bundler, the test runner and the database driver, and a whole site compiles into a single executable. Every build type-checks the project first, templates included, so a broken prop or a mistyped link never ships.
 
-## A synthetic bench
+## The products page bench, with kay beside the five
 
-The same products page and the same data for each framework, each written the way its own docs and its js-framework-benchmark entry write it. kay, SolidJS and Svelte are timed behind the same Elysia server, Astro and Nuxt through their own request handlers, and Next.js through its own HTTP server. Every bench in this post ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+The [products page bench](/posts/five-frameworks) again, with kay in it: the same page and the same data for each framework, each written the way its own docs and its js-framework-benchmark entry write it. kay, SolidJS and Svelte are timed behind the same Elysia server, Astro and Nuxt through their own request handlers, and Next.js through its own HTTP server, all on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 <BarChart
   title="Main-thread script on load, products page"
@@ -341,19 +357,11 @@ kay 1.82.0, solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 and Nuxt
 
 </Note>
 
-## Real sites, ported to kay
+## Four real sites moved to kay, losses included
 
-Four real sites moved to kay: one from SvelteKit, about 3,000 lines over 22 components, two small business sites from Astro, and a small signed-in app from Elysia and Solid, each measured as it deploys against the version it replaced. What kay loses there: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro, more layout shift on phones and a slower build than Elysia and Solid.
+A products page only goes so far, so four real sites moved to kay, each measured as it deploys against the version it replaced: [a SvelteKit site](/posts/ported-from-sveltekit) of about 3,000 lines over 22 components, [two small business sites from Astro](/posts/ported-from-astro), and [a small signed-in app from Elysia and Solid](/posts/ported-from-solid). What kay loses there: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro, more layout shift on phones and a slower build than Elysia and Solid.
 
-<Stats
-  items={[
-    {"value": "-88%", "label": "server CPU per visitor, from SvelteKit"},
-    {"value": "2.9 to 3.3x", "label": "requests per second on a content page, from Astro"},
-    {"value": "-16 to -40%", "label": "lines of code"}
-  ]}
-/>
-
-## Built for LLMs too
+## Written to be easy for a coding agent
 
 kay is meant to be as easy for a coding agent to write as for me:
 
@@ -362,96 +370,15 @@ kay is meant to be as easy for a coding agent to write as for me:
 - Typed end to end, templates included: `kay check` points at the `.kay` line, so an agent fixes its own mistakes without a browser.
 - The whole reference ships as `llms.txt` and one file per topic, read on demand instead of searched for.
 
-To check that, Claude Opus 5.5 built the same small site in each framework: a book catalog read from Markdown files, a tag filter that runs in the browser, a favorite button, and a contact form checked on the server and in the browser that also works without JavaScript. Each run starts from the framework's own starter with its docs in the project, in a sandbox with no browser and no network but `bun add`, and a hidden suite of browser tests grades the site.
+To check that, Claude Opus 5.5 built the same small site in kay and in five other frameworks, five times each, graded by browser tests it never saw. It read more of kay's docs than of any other framework's, and wrote less code: [what kay costs a coding agent](/posts/agent-bench) has every measure, and the site it built, running.
 
-<Note title="The site kay's agent built, running">
-
-<Embed src="/llm-bench/bookshelf/books" title="The Bookshelf site kay's agent built" />
-
-</Note>
-
-Filter its books, open one, mark it a favorite. It is the run of median cost, exported as static files, without its contact form, since that needs a server. Styling was free and not graded: kay's agents wrote none, where the others wrote about a hundred lines of CSS in a typical run, so the line counts below leave styles out.
-
-<Stats items={[{"value":"13K vs 17K to 34K","label":"tokens written, kay against the others"}]} />
-
-<BarChart
-  title="Time to build the site"
-  unit="min"
-  better="lower"
-  digits={1}
-  rows={[
-    {"label": "Astro", "value": 2.6, "range": [2.5, 3.6]},
-    {"label": "kay", "value": 3.4, "range": [1.8, 4.7]},
-    {"label": "SvelteKit", "value": 4.5, "range": [3.3, 12.4]},
-    {"label": "Next.js", "value": 5.9, "range": [4.8, 8.5]},
-    {"label": "Nuxt", "value": 7.9, "range": [4.3, 9.5]},
-    {"label": "SolidStart", "value": 9.3, "range": [6.5, 12.9]}
-  ]}
-  bench="llm"
-/>
-
-<BarChart
-  title="Lines of code written, tests and styles left out"
-  unit="lines"
-  better="lower"
-  digits={0}
-  rows={[
-    {"label": "kay", "value": 323, "range": [227, 336]},
-    {"label": "Nuxt", "value": 444, "range": [437, 476]},
-    {"label": "Astro", "value": 463, "range": [440, 491]},
-    {"label": "SvelteKit", "value": 472, "range": [455, 518]},
-    {"label": "SolidStart", "value": 537, "range": [523, 549]},
-    {"label": "Next.js", "value": 616, "range": [537, 636]}
-  ]}
-  bench="llm"
-/>
-
-<BarChart
-  title="Cost of the site, API prices"
-  unit="USD"
-  better="lower"
-  digits={2}
-  rows={[
-    {"label": "Astro", "value": 0.78, "range": [0.75, 1.12]},
-    {"label": "kay", "value": 0.95, "range": [0.78, 1.54]},
-    {"label": "Nuxt", "value": 1.46, "range": [0.91, 1.8]},
-    {"label": "SvelteKit", "value": 1.52, "range": [1.23, 2.22]},
-    {"label": "Next.js", "value": 1.87, "range": [1.37, 2.85]},
-    {"label": "SolidStart", "value": 1.94, "range": [1.86, 2.79]}
-  ]}
-  bench="llm"
-/>
-
-<BarChart
-  title="Docs read"
-  unit="K characters"
-  digits={0}
-  rows={[
-    {"label": "Nuxt", "value": 14, "range": [8, 22]},
-    {"label": "Astro", "value": 29, "range": [8, 38]},
-    {"label": "SolidStart", "value": 52, "range": [26, 64]},
-    {"label": "Next.js", "value": 84, "range": [70, 114]},
-    {"label": "SvelteKit", "value": 89, "range": [49, 103]},
-    {"label": "kay", "value": 93, "range": [77, 107]}
-  ]}
-  bench="llm"
-/>
-
-kay is the one framework the model learns on the spot, from the docs and the package in the project, where it comes in having seen plenty of the others, and every call after those reads pays for them again.
-
-<Note title="How it was measured">
-
-kay 1.51.0, its runs a week after SvelteKit's, SolidStart's and Astro's and a few hours after Nuxt's and Next.js's, with the same model and Claude Code, Opus 5.5 at high effort. A run passes when the starter's own `check`, the build and every acceptance test pass; every framework passed all 5 of its runs, and every figure is the median of those runs. Cost is at API prices, as Claude Code reports it. How a run is set up, kept apart from the others and graded is in the [five frameworks post](/posts/five-frameworks); the spec, the prompt, the starters and every run are in [bench/llm](https://github.com/Kayno0o/devlog/blob/main/bench/llm/results/full-opus-1.51/results.md).
-
-</Note>
-
-## Should you use it?
+## Use it for a side project, not for anything that pages you at night
 
 For a side project, a personal site or a small business site, if you like what you saw above: go for it, and tell me what breaks. For anything you would be paged for at night, not yet. kay is a one-person project, it has no ecosystem to speak of, and a minor version may still break your code: the tilde in its version range is there for a reason. Read the changelog before every bump, or enjoy the surprise.
 
-## Try it
+## kay installs from my own registry, not npm
 
-kay is published to my own registry, not npm. Tell Bun where the `@kaynooo` scope lives once, in `~/.bunfig.toml`:
+Tell Bun where the `@kaynooo` scope lives once, in `~/.bunfig.toml`:
 
 ```toml
 [install.scopes]

@@ -1,12 +1,20 @@
 ---
 title: "A SvelteKit site, moved to kay"
-description: "A real SvelteKit site ported to kay and measured against the version it replaced: server load, paints, builds, memory and the dev server, what kay loses included."
+description: "A real SvelteKit site ported to kay and measured against the version it replaced, in production and in the dev server, losses included."
 date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
+social:
+  x: "I moved a SvelteKit site, about 3,000 lines over 22 components, to kay, my Bun framework. It spends 88% less server CPU per visitor, and a phone paints a content page in 356 ms instead of 752. The costs: more memory at rest, and style edits show later in dev."
+  bluesky: "A SvelteKit site of about 3,000 lines, moved to kay, my Bun framework: 88% less server CPU per visitor, and a phone paints in 356 ms instead of 752. The costs: more memory at rest, and style edits show later in the dev server."
+  mastodon: "I moved a SvelteKit site, about 3,000 lines over 22 components, to kay, my Bun framework, and measured both in one sitting. kay spends 88% less server CPU per visitor, and a phone paints a content page in 356 ms instead of 752. The costs: more memory at rest, and style edits show later in the dev server. #Svelte #Bun #WebDev"
+  reddit:
+    title: "I moved a 3,000-line SvelteKit site to my own Bun framework and measured both, losses included"
+    body: "I build kay, a Bun web framework, and moved a real SvelteKit site to it: a home page and content pages, 22 components. Measured in one sitting on one machine: 88% less server CPU per visitor, a first paint on a phone at 356 ms instead of 752, and a smaller Docker image. Where kay loses: more memory at rest, and the dev server shows template and style edits later than Vite."
+    subreddits: []
 ---
 
-The [kay post](/posts/introducing-kay) measures kay on a products page and on a coding agent's build. A products page only goes so far, so here is a real site moved to kay from SvelteKit: a home page and content pages, about 3,000 lines over 22 Svelte components. Both versions were measured in one sitting on one desktop, a Ryzen 5 7600 with 12 threads on Linux, runs interleaved, over loopback: the ratios carry over, the absolute numbers are optimistic.
+This site ran on SvelteKit: a home page and content pages, about 3,000 lines over 22 Svelte components. Moved to [kay](/posts/introducing-kay), it serves pages for a fraction of the CPU and paints sooner on a phone, and it holds more memory at rest and shows style edits later in development. Both versions were measured in one sitting on one desktop, a Ryzen 5 7600 with 12 threads on Linux, runs interleaved, over loopback: the ratios carry over, the absolute numbers are optimistic.
 
 <Stats
   items={[
@@ -59,7 +67,7 @@ The home page is prerendered, and its contact form, the one part that differs pe
   source="oha, 64 connections for 10 s, 2 rounds, kay's slower round"
 />
 
-Most of that gap is prerendering, not rendering speed: when kay 1.16 rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
+Most of that gap is prerendering, not rendering speed: back when kay rendered the whole page per request, as SvelteKit does, it served it at about twice SvelteKit's rate.
 
 <BarChart
   title="Requests per second, content page"
@@ -104,9 +112,9 @@ Under load, kay peaks at 92 MiB of memory against SvelteKit's 134 to 136. The ho
   source="RSS after start"
 />
 
-Inlining has a price: the phone paint above comes from inlining the stylesheet, which this port turned on before kay 1.46 made it the default for stylesheets compressing under about 14 KB: with it linked, kay 1.14 painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
+The phone paint above comes from inlining the stylesheet, which kay does by default for a stylesheet compressing under about 14 KB. With it linked, an earlier kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
 
-## In development
+## The dev server loads pages sooner and shows style edits later
 
 <BarChart
   title="First load of the home page, dev server"
@@ -134,11 +142,14 @@ Inlining has a price: the phone paint above comes from inlining the stylesheet, 
   source="file write to the page showing it, median of 14 edits"
 />
 
-- **kay loads pages faster.** It starts in 915 ms with cold caches against Vite's 1,258, and serves a bundled client, 24 requests for the home page against Vite's 166 modules, so the home page answers in 381 ms from a warm start against 1,741. Its processes hold 239 MiB against Vite's 400.
-- **Vite shows template and style edits sooner.** kay takes a template or server code edit in without restarting its server, but a style edit shows in 71 ms against Vite's 34. kay shows a server code edit in 59 ms with the page's state kept, which SvelteKit only shows after a manual reload.
+kay's dev server starts in 915 ms with cold caches against Vite's 1,258, and serves a bundled client: 24 requests for the home page against Vite's 166 modules, so the home page answers in 381 ms from a warm start against 1,741. Its processes hold 239 MiB against Vite's 400.
+
+Vite shows a style edit in 34 ms, kay in 71. kay takes a template or server code edit in without restarting, and shows a server code edit in 59 ms with the page's state kept, which SvelteKit only shows after a manual reload.
 
 <Note title="How it was measured">
 
 kay 1.60.1 on Bun 1.4.3, the dev server included. Paints come from Playwright under Lighthouse's phone and desktop presets, median of 3 runs; builds from hyperfine, median of 3 cold runs; the server from oha, 10 s at 64 connections, two rounds. The site's code is private, so the record is [bench/sveltekit-port.md](https://github.com/Kayno0o/devlog/blob/main/bench/sveltekit-port.md), every figure with its conditions.
 
 </Note>
+
+The other ports: [two Astro sites](/posts/ported-from-astro) and [an Elysia and Solid app](/posts/ported-from-solid).
