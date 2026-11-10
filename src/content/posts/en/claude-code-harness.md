@@ -59,6 +59,21 @@ The second fix is a tool, `ask`. Claude asks with a recommended answer for each 
 
 They survive a compaction too: the summary keeps them, and the next prompt hands every open question and action back. And when Claude ends a turn without listing what is still open, the list is appended after its answer.
 
+## A skill is tested on a subagent before I keep it
+
+Skills and agents answer no mistake of Claude's. They hold a workflow in place, so a plan, a debugging session or a review goes the same way every time.
+
+A skill is a page of instructions Claude loads when a task matches its description: writing a plan, debugging a failure, asking for a review. I have 19, and one of them is about writing the others. It treats a skill as code under test.
+
+Before the skill exists, a subagent gets the task with nothing to guide it, and Claude notes where it goes wrong and the excuse it gives for it. The skill is written against those failures only, then the same scenario runs again with the skill loaded. A loophole the second run finds gets closed and tested again. A rule no agent was seen breaking does not go in.
+
+## Searches and reviews go to agents that change nothing
+
+An agent is a subagent with its own instructions, tools and model. I have two, both on Sonnet, both without an edit tool and told to leave the working tree alone.
+
+- **explorer** answers one question about a codebase: where something lives, which files touch it. It returns its conclusion, a `path:line` for each fact, and only the excerpts the caller is about to edit. The files it read on the way never enter the main session's context.
+- **code-reviewer** is handed the requirements word for word and the commits made for them. It returns a verdict for each requirement, whatever the diff holds that nobody asked for, and its issues by severity. It reports and never fixes: the session that wrote the code applies the findings in a follow-up commit, which a low-effort variant of the reviewer checks against those findings alone.
+
 ## Smaller mods fix smaller habits
 
 - **guards** also refuses commands I never want run: anything on a remote server, a push I did not ask for, `git stash`. The command-line side of that, and the incidents behind it, are in [the CLIs I built for Claude](/posts/agent-clis).
@@ -66,10 +81,10 @@ They survive a compaction too: the summary keeps them, and the next prompt hands
 - **git-facts** adds the branch and the last commit to my prompt, only when they changed since the last one.
 - **commit-titles** appends the title of each commit Claude made to its answer, so I see what landed without asking.
 - **prompt-fold** folds a pasted log over 150 lines through `out` before Claude reads it.
-- After four read-only calls in a row, a nudge suggests handing the search to an explorer subagent, which reads the files and returns only its conclusion.
+- After four read-only calls in a row, a nudge suggests handing the search to the explorer.
 
 ## Every rule costs a round trip
 
-A rule handed over before a call costs one refused call and a retry. A turn sent back for a missing check costs a full check, even after a one-line change. Matching my replies to open questions calls a small model on each prompt that might answer one. And the hooks themselves are code to maintain: the guards mod alone is about 2,000 lines, 900 of them a shell parser, so a rule reads a command the way bash would rather than by grepping it.
+A rule handed over before a call costs one refused call and a retry. A turn sent back for a missing check costs a full check, even after a one-line change. Matching my replies to open questions calls a small model on each prompt that might answer one. A skill costs its subagent runs before it has taught anything. And the hooks themselves are code to maintain: the guards mod alone is about 2,000 lines, 900 of them a shell parser, so a rule reads a command the way bash would rather than by grepping it.
 
 The mods live in my dotfiles, which are private. The command-line tools they lean on are public, in [the CLI post](/posts/agent-clis).
