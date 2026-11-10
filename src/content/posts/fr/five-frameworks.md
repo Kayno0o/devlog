@@ -1,5 +1,5 @@
 ---
-title: "Une page produits dans Next.js, Nuxt, Astro, Svelte, Solid"
+title: "Une page en Next.js, Nuxt, Astro, Svelte et Solid"
 description: "La même page produits dans cinq frameworks, chronométrée dans le navigateur, sur le serveur et au build, avec le code que chacun demande à écrire."
 date: 2026-10-19
 updated: 2026-11-10

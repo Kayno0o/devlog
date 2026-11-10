@@ -1,5 +1,5 @@
 ---
-title: "One products page in Next.js, Nuxt, Astro, Svelte and Solid"
+title: "One page in Next.js, Nuxt, Astro, Svelte and Solid"
 description: "The same products page in five frameworks, timed in the browser, on the server and at build time, with the code each one takes to write."
 date: 2026-10-19
 updated: 2026-11-10
