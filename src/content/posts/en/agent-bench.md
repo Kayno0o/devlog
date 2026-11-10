@@ -1,20 +1,20 @@
 ---
 title: "What kay costs a coding agent"
 description: "The coding-agent bench, with kay beside SvelteKit, SolidStart, Astro, Nuxt and Next.js: what a framework learned from its docs alone costs."
-date: 2026-10-20
+date: 2026-11-10T11:00:00Z
 tags: [kay, benchmarks, llm]
-draft: true
+draft: false
 social:
   x: "A model learned Next.js and Svelte from years of code on the web, and kay, my Bun framework, from 39 doc files in the project. Building the same site, Claude Opus 5.5 read more docs for kay than for five other frameworks, and wrote 13K tokens against 17K to 34K."
   bluesky: "A model learns kay, my Bun framework, from 39 doc files in the project, not from the web. Building the same site in six frameworks, Claude Opus 5.5 read the most docs for kay, then wrote 13K tokens against 17K to 34K, and passed every test."
   mastodon: "Claude Opus 5.5 built the same site in kay, my Bun framework, and in five others, five times each, graded by browser tests it never saw. With kay it read the most docs, as it knows kay only from 39 files in the project, then wrote 13K tokens against 17K to 34K, the fewest lines, and its own tests in 4 runs of 5. #Bun #LLM #WebDev"
   reddit:
     title: "What a framework the model never saw costs a coding agent: kay against SvelteKit, SolidStart, Astro, Nuxt and Next.js"
-    body: "I build kay, a Bun web framework, so the model knows it only from the docs it ships, 39 files in the project. Claude Opus 5.5 built the same site in kay and five other frameworks, five times each, sandboxed, graded by a hidden browser suite. With kay it read the most docs and paid for them in context, then wrote fewer tokens and fewer lines than with any other, and wrote its own tests in 4 of 5 runs. All 30 runs passed."
+    body: "I build kay, a Bun web framework, so the model knows it only from the docs it ships, 39 files in the project. Claude Opus 5.5 built the same site in kay and five other frameworks, five times each, sandboxed, graded by a hidden browser suite. With kay it read the most docs, then wrote fewer tokens and fewer lines than with any other, and wrote its own tests in 4 of 5 runs. All 30 runs passed."
     subreddits: []
 ---
 
-Every other framework in the [coding-agent bench](/posts/coding-agent-bench) comes with years of code and answers on the web that the model learned from. kay comes with its docs, 39 files the agent finds in the project, and its package. So Claude Opus 5.5 built the same site in kay five times, beside the other five frameworks: it read more docs for kay than for any of them, and wrote less.
+Every other framework in the [coding-agent bench](/posts/coding-agent-bench) comes with years of code and answers on the web that the model learned from. kay has only its docs, 39 files in the project, and its package. So Claude Opus 5.5 built the same site in kay five times, beside the other five frameworks: it read more docs for kay than for any of them, and wrote less.
 
 <Stats
   items={[
@@ -66,8 +66,6 @@ Each chart shows each framework's median over its runs, with the lowest and high
   ]}
   bench="llm"
 />
-
-Those reads fill the context, and every call after them pays for them again.
 
 <BarChart
   title="Lines of code written, tests and styles left out"

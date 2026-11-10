@@ -1,9 +1,9 @@
 ---
 title: "A SvelteKit site, moved to kay"
 description: "A real SvelteKit site ported to kay and measured against the version it replaced, in production and in the dev server, losses included."
-date: 2026-10-20
+date: 2026-11-10T10:30:00Z
 tags: [kay, benchmarks]
-draft: true
+draft: false
 social:
   x: "I moved a SvelteKit site, about 3,000 lines over 22 components, to kay, my Bun framework. It spends 88% less server CPU per visitor, and a phone paints a content page in 356 ms instead of 752. The costs: more memory at rest, and style edits show later in dev."
   bluesky: "A SvelteKit site of about 3,000 lines, moved to kay, my Bun framework: 88% less server CPU per visitor, and a phone paints in 356 ms instead of 752. The costs: more memory at rest, and style edits show later in the dev server."
@@ -24,6 +24,8 @@ This site ran on SvelteKit: a home page and content pages, about 3,000 lines ove
     {"value": "-16%", "label": "lines of code"}
   ]}
 />
+
+## Phones paint sooner, on less JavaScript
 
 <BarChart
   title="First paint on a phone, content page"
@@ -50,7 +52,11 @@ This site ran on SvelteKit: a home page and content pages, about 3,000 lines ove
   source="every file the build writes"
 />
 
-A page loads only what its islands need of it: 13 KB on a content page.
+A page loads only what its islands need of it: 13 KB on a content page. The home page a phone downloads drops from 706 to 543 KB, mostly images: kay serves AVIF at the width drawn.
+
+That phone paint comes from inlining the stylesheet, which kay does by default for a stylesheet compressing under about 14 KB. With it linked, an earlier kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
+
+## Prerendered pages serve for a fraction of the CPU
 
 The home page is prerendered, and its contact form, the one part that differs per visitor, is a deferred server island: the browser fetches it about a screen before it scrolls into view, while kay serves the page itself from memory.
 
@@ -84,6 +90,8 @@ Most of that gap is prerendering, not rendering speed: back when kay rendered th
 
 kay's build keeps the content pages too, as they take nothing from the request, so they are served from memory as well. Only the 404 is still rendered per request, at 1.2 times SvelteKit's rate for less CPU.
 
+## Builds are faster, and memory at rest is higher
+
 <BarChart
   title="Build, cold caches"
   unit="s"
@@ -96,8 +104,6 @@ kay's build keeps the content pages too, as they take nothing from the request, 
   bench="sveltekit"
   source="hyperfine, median of 3 runs"
 />
-
-Under load, kay peaks at 92 MiB of memory against SvelteKit's 134 to 136. The home page a phone downloads drops from 706 to 543 KB, mostly images: kay serves AVIF at the width drawn.
 
 <BarChart
   title="Server memory at rest"
@@ -112,7 +118,7 @@ Under load, kay peaks at 92 MiB of memory against SvelteKit's 134 to 136. The ho
   source="RSS after start"
 />
 
-The phone paint above comes from inlining the stylesheet, which kay does by default for a stylesheet compressing under about 14 KB. With it linked, an earlier kay painted 85 to 140 ms behind SvelteKit. Inlining costs about 2 KB per page, and the stylesheet is no longer cached between pages.
+Under load, kay peaks at 92 MiB of memory against SvelteKit's 134 to 136.
 
 ## The dev server loads pages sooner and shows style edits later
 
@@ -130,13 +136,15 @@ The phone paint above comes from inlining the stylesheet, which kay does by defa
 />
 
 <BarChart
-  title="Template edit to screen, dev server"
+  title="Edit to screen, dev server"
   unit="ms"
   better="lower"
   digits={0}
   rows={[
-    {"label": "SvelteKit", "value": 34},
-    {"label": "kay", "value": 47}
+    {"label": "SvelteKit", "value": 34, "group": "template edit"},
+    {"label": "kay", "value": 47, "group": "template edit"},
+    {"label": "SvelteKit", "value": 34, "group": "style edit"},
+    {"label": "kay", "value": 71, "group": "style edit"}
   ]}
   bench="sveltekit"
   source="file write to the page showing it, median of 14 edits"
@@ -144,7 +152,7 @@ The phone paint above comes from inlining the stylesheet, which kay does by defa
 
 kay's dev server starts in 915 ms with cold caches against Vite's 1,258, and serves a bundled client: 24 requests for the home page against Vite's 166 modules, so the home page answers in 381 ms from a warm start against 1,741. Its processes hold 239 MiB against Vite's 400.
 
-Vite shows a style edit in 34 ms, kay in 71. kay takes a template or server code edit in without restarting, and shows a server code edit in 59 ms with the page's state kept, which SvelteKit only shows after a manual reload.
+kay takes a template or server code edit in without restarting, and shows a server code edit in 59 ms with the page's state kept, which SvelteKit only shows after a manual reload.
 
 <Note title="How it was measured">
 

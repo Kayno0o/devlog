@@ -1,12 +1,12 @@
 ---
 title: "Ce que kay coûte à un agent de code"
 description: "Le benchmark d'agent de code, avec kay face à SvelteKit, SolidStart, Astro, Nuxt et Next.js : ce que coûte un framework appris dans sa seule doc."
-date: 2026-10-20
+date: 2026-11-10T11:00:00Z
 tags: [kay, benchmarks, llm]
-draft: true
+draft: false
 ---
 
-Chaque autre framework du [benchmark d'agent de code](/posts/coding-agent-bench) vient avec des années de code et de réponses sur le web dont le modèle a appris. kay vient avec sa documentation, 39 fichiers que l'agent trouve dans le projet, et son paquet. Alors Claude Opus 5.5 a construit le même site dans kay cinq fois, à côté des cinq autres frameworks : il a lu plus de documentation pour kay que pour n'importe lequel d'entre eux, et a écrit moins.
+Chaque autre framework du [benchmark d'agent de code](/posts/coding-agent-bench) vient avec des années de code et de réponses sur le web, dont le modèle s'est nourri. kay n'a que sa documentation, 39 fichiers dans le projet, et son paquet. Alors Claude Opus 5.5 a construit le même site dans kay cinq fois, à côté des cinq autres frameworks : il a lu plus de documentation pour kay que pour n'importe lequel d'entre eux, et a écrit moins.
 
 <Stats
   items={[
@@ -58,8 +58,6 @@ Chaque graphique montre la médiane de chaque framework sur ses runs, avec le pl
   ]}
   bench="llm"
 />
-
-Ces lectures remplissent le contexte, et chaque appel qui suit les paie de nouveau.
 
 <BarChart
   title="Lignes de code écrites, hors tests et styles"

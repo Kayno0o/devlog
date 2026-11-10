@@ -1,9 +1,9 @@
 ---
 title: "Une app Elysia et Solid, passée à kay"
 description: "Une app avec connexion, portée d'Elysia et Solid 2 vers kay, mesurée telle qu'elle se déploie : charge, rendus, mémoire, builds, code, pertes comprises."
-date: 2026-10-20
+date: 2026-11-10T10:10:00Z
 tags: [kay, benchmarks]
-draft: true
+draft: false
 ---
 
 Cette app tournait sur une pile maison : une API Elysia, des islands Solid 2 au-dessus d'un rendu serveur fait à la main, et des sessions JWT. Elle est privée et compte exactement deux utilisateurs, qui se connectent avec Discord pour noter des cartes de profil, ce qui n'a jamais empêché personne de la tester en charge. Passée à [kay](/posts/introducing-kay), avec une connexion par kayjs-auth, elle rend chaque page pour une fraction du CPU et s'affiche bien plus tôt, mais la mise en page bouge davantage sur mobile et le build est plus lent.
@@ -18,6 +18,8 @@ Chaque côté a été construit et servi comme il se déploie, le serveur Elysia
     {"value": "-64 %", "label": "taille déployée"}
   ]}
 />
+
+## Chaque page coûte une fraction du CPU de l'ancien serveur
 
 <BarChart
   title="Requêtes par seconde"
@@ -35,6 +37,8 @@ Chaque côté a été construit et servi comme il se déploie, le serveur Elysia
 />
 
 Les deux pages montrent les données de la personne connectée, donc aucune n'est prérendue : c'est du rendu, pour un quart à moins d'un tiers du CPU de l'ancien serveur par requête. nginx passe environ 50 µs sur chacune au lieu de 374 à 427, car kay compresse la page lui-même là où l'ancien serveur laissait ce travail à nginx.
+
+## Les mobiles affichent plus tôt, et la mise en page bouge davantage
 
 <BarChart
   title="Rendus sur mobile"
@@ -70,6 +74,8 @@ kay rend toute la page sur le serveur et inline ses styles, si bien qu'un mobile
 
 La mise en page bouge davantage sur mobile, 0,119 contre 0,019. La page étant affichée depuis le HTML du serveur, les polices web arrivent une fois son texte à l'écran et le redistribuent. La police de repli aux métriques ajustées de kay doit masquer ce changement, mais c'est Arial via `local()`, qui ne se charge jamais sur une machine sans Arial, comme celle du benchmark et probablement Android. L'ancien côté ne dessinait ces sections qu'après l'hydratation, une fois les polices arrivées. Sur ordinateur, elle bouge moins, 0,007 contre 0,017, depuis que le portage réserve la place de l'image de la carte.
 
+## Le serveur occupe moins de mémoire et démarre plus vite
+
 <BarChart
   title="Mémoire du serveur après charge"
   unit="Mo"
@@ -84,6 +90,8 @@ La mise en page bouge davantage sur mobile, 0,119 contre 0,019. La page étant a
 />
 
 Une fois démarré, avant toute charge, kay occupe 71 Mo contre 121, et il répond à sa première requête 41,5 ms après son lancement au lieu de 297.
+
+## Le build est plus lent, les tests plus courts
 
 <BarChart
   title="Build, depuis zéro"

@@ -91,7 +91,7 @@ L'island d'Astro est exactement le même tableau Solid que l'app SolidJS, et auc
   bench="syntheticNeutral"
 />
 
-Le rendu est mesuré dans le processus, donc Next.js n'y figure pas : chacun de ses rendus paierait un aller-retour réseau que les autres n'ont pas.
+Le rendu est mesuré dans le processus, donc Next.js n'y figure pas : chacun de ses rendus paierait un aller-retour réseau que les autres n'ont pas.
 
 ## Un nombre de lignes mesure surtout le formateur
 
@@ -111,7 +111,7 @@ Le rendu est mesuré dans le processus, donc Next.js n'y figure pas : chacun de 
   source="sans les espaces ni les commentaires, ni la glue serveur du benchmark"
 />
 
-Le code est donc compté en caractères : Prettier seul fait passer l'app Svelte de 70 à 130 lignes.
+Le code est donc compté en caractères : Prettier seul fait passer l'app Svelte de 70 à 130 lignes.
 
 ## Un build sans serveur reste petit
 
@@ -149,7 +149,7 @@ Le build de Next.js inclut la vérification de types qu'il fait et que les autre
 
 <Note title="Comment c'est mesuré">
 
-solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 et Nuxt 4.6.2, sur Bun 1.4.4 et Chromium 151 headless. SolidJS et Svelte tournent derrière le même serveur Elysia, Astro et Nuxt derrière leurs propres gestionnaires de requêtes, et Next.js derrière son propre serveur HTTP. Chaque chiffre est la médiane de trois passes complètes du benchmark. Dans une passe, un chargement de page est la médiane de 10 chargements à froid, une opération sur le tableau la médiane de 10 runs après 2 d'échauffement, et le rendu serveur est mesuré dans le processus par mitata. Les builds de production partent de zéro ; leur taille est ce que chacun déploie, sans ses dépendances d'exécution ni les source maps. Le code est compté en caractères, hors espaces et commentaires : pages, layouts, composants et config, sans le fichier qui branche chaque app au benchmark. Formaté par Prettier, cloc 2.10 compte 122 lignes pour Nuxt, 130 pour Svelte, 175 pour Astro, 182 pour SolidJS et 211 pour Next.js.
+solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 et Nuxt 4.6.2, sur Bun 1.4.4 et Chromium 151 headless. SolidJS et Svelte tournent derrière le même serveur Elysia, Astro et Nuxt derrière leurs propres gestionnaires de requêtes, et Next.js derrière son propre serveur HTTP. Chaque chiffre est la médiane de trois passes complètes du benchmark. Dans une passe, un chargement de page est la médiane de 10 chargements à froid, une opération sur le tableau la médiane de 10 runs après 2 d'échauffement, et le rendu serveur est mesuré dans le processus par mitata. Les builds de production partent de zéro ; leur taille est ce que chacun déploie, sans ses dépendances d'exécution ni les source maps. Le code est compté en caractères, hors espaces et commentaires : pages, layouts, composants et config, sans le fichier qui branche chaque app au benchmark. Formaté par Prettier, cloc 2.10 compte 122 lignes pour Nuxt, 130 pour Svelte, 175 pour Astro, 182 pour SolidJS et 211 pour Next.js.
 
 </Note>
 

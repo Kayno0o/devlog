@@ -1,9 +1,9 @@
 ---
 title: "kayjs : rapide à exécuter, simple à écrire"
 description: "Pourquoi j'ai construit mon propre framework web sur Bun, comment un fichier .kay devient du HTML et des islands, et ce qu'il coûte face à cinq autres."
-date: 2026-10-20
+date: 2026-11-10T12:00:00Z
 tags: [kay, benchmarks]
-draft: true
+draft: false
 ---
 
 Oui, encore un framework JavaScript. Pour ma défense, c'est celui que j'avais envie d'utiliser.
@@ -205,9 +205,9 @@ Pendant un temps, j'ai utilisé Astro avec SolidJS dedans : des pages rapides p
 
 Bun fait tout en dessous : le serveur, le bundler, le lanceur de tests et le driver de base de données, et un site entier se compile en un seul exécutable. Chaque build vérifie d'abord les types du projet, templates compris, si bien qu'une prop cassée ou un lien mal tapé n'arrive jamais en production.
 
-## Le benchmark de la page de produits, avec kay à côté des cinq
+## kay mène au chargement, au rendu et au code, pas au build ni au poids du JS
 
-Le [benchmark de la page de produits](/posts/five-frameworks) à nouveau, avec kay dedans : la même page et les mêmes données pour chaque framework, chacun écrit comme le font sa propre documentation et son entrée du js-framework-benchmark. kay, SolidJS et Svelte sont chronométrés derrière le même serveur Elysia, Astro et Nuxt à travers leurs propres gestionnaires de requêtes, et Next.js à travers son propre serveur HTTP, le tout sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
+Le [benchmark de la page de produits](/posts/five-frameworks) à nouveau, avec kay dedans : la même page et les mêmes données pour chaque framework, chacun écrit comme le font sa propre documentation et son entrée du js-framework-benchmark. kay, SolidJS et Svelte sont chronométrés derrière le même serveur Elysia, Astro et Nuxt à travers leurs propres gestionnaires de requêtes, et Next.js à travers son propre serveur HTTP, le tout sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
 
 <BarChart
   title="Script du thread principal au chargement, page produits"
@@ -224,7 +224,7 @@ Le [benchmark de la page de produits](/posts/five-frameworks) à nouveau, avec k
   bench="synthetic"
 />
 
-kay n'hydrate que ses islands, et Astro ses deux islands Solid. SolidJS, Svelte et Nuxt hydratent toute la page, et renvoient donc aussi ses données en JSON, et Next.js envoie le payload de ses composants en flux avec la page.
+kay n'hydrate que ses islands, et Astro ses deux islands Solid. SolidJS, Svelte et Nuxt hydratent toute la page et renvoient donc aussi ses données en JSON ; Next.js envoie le payload de ses composants en flux avec la page.
 
 <BarChart
   title="HTML envoyé, page produits, gzip"
@@ -351,7 +351,7 @@ kay 1.82.0, solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 et Nuxt 
 
 ## Quatre vrais sites passés à kay, pertes comprises
 
-Une page de produits ne va pas très loin, alors quatre vrais sites sont passés à kay, chacun mesuré tel qu'il se déploie face à la version qu'il remplace : [un site SvelteKit](/posts/ported-from-sveltekit) d'environ 3 000 lignes sur 22 composants, [deux petits sites d'entreprise depuis Astro](/posts/ported-from-astro), et [une petite app avec connexion depuis Elysia et Solid](/posts/ported-from-solid). Ce que kay y perd : des modifications de template et de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro, plus de décalage de mise en page sur mobile et un build plus lent qu'Elysia et Solid.
+Une page de produits ne va pas très loin, alors quatre vrais sites sont passés à kay, chacun mesuré tel qu'il se déploie face à la version qu'il remplace : [un site SvelteKit](/posts/ported-from-sveltekit) d'environ 3 000 lignes sur 22 composants, [deux petits sites d'entreprise depuis Astro](/posts/ported-from-astro), et [une petite app avec connexion depuis Elysia et Solid](/posts/ported-from-solid). Ce que kay y perd : des modifications de template et de style plus lentes à apparaître en développement, plus de mémoire au repos que SvelteKit, plus de JavaScript et des builds plus lents qu'Astro, plus de décalage de mise en page sur mobile et un build plus lent qu'Elysia et Solid.
 
 ## Écrit pour être facile à manier par un agent de code
 
@@ -362,7 +362,7 @@ kay est conçu pour être aussi facile à écrire pour un agent de code que pour
 - Typé de bout en bout, templates compris : `kay check` pointe la ligne du `.kay`, si bien qu'un agent corrige ses propres erreurs sans navigateur.
 - Toute la référence est fournie en `llms.txt` et un fichier par sujet, lus à la demande plutôt que cherchés.
 
-Pour le vérifier, Claude Opus 5.5 a construit le même petit site dans kay et dans cinq autres frameworks, cinq fois chacun, noté par des tests navigateur qu'il n'a jamais vus. Il a lu plus de documentation de kay que de celle de n'importe quel autre framework, et écrit moins de code : [ce que kay coûte à un agent de code](/posts/agent-bench) donne chaque mesure, et le site qu'il a construit, en fonctionnement.
+Pour le vérifier, Claude Opus 5.5 a construit le même petit site dans kay et dans cinq autres frameworks, cinq fois chacun, noté par des tests navigateur qu'il n'a jamais vus. Il a lu plus de documentation de kay que de celle de n'importe quel autre framework, et écrit moins de code : [ce que kay coûte à un agent de code](/posts/agent-bench) donne chaque mesure, et le site qu'il a construit, en fonctionnement.
 
 ## À utiliser pour un projet annexe, pas pour ce qui vous réveille la nuit
 

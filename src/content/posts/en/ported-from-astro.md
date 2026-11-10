@@ -1,9 +1,9 @@
 ---
 title: "Two Astro sites, moved to kay"
 description: "Two small business sites ported from Astro to kay and measured as they deploy: load, paints, images, memory and builds, losses included."
-date: 2026-10-20
+date: 2026-11-10T10:20:00Z
 tags: [kay, benchmarks]
-draft: true
+draft: false
 social:
   x: "Two small business sites, moved from Astro to kay, my Bun framework, and measured as they deploy behind nginx. About 3x the requests per second on a content page, less memory, a smaller deploy, earlier paints. The costs: more JavaScript, and slower builds."
   bluesky: "Two small business sites moved from Astro to kay, my Bun framework: about 3x the requests per second on a content page, less memory, a smaller deploy, earlier paints. The costs: more JavaScript per page, and slower builds."
@@ -24,6 +24,8 @@ Two small business sites, a cattery and a house painter, ran on Astro, which alr
   ]}
 />
 
+## Pages serve faster, from less memory and a smaller deploy
+
 <BarChart
   title="Requests per second, a content page"
   unit="req/s"
@@ -39,7 +41,7 @@ Two small business sites, a cattery and a house painter, ran on Astro, which alr
   source="32 clients through nginx for 5 s"
 />
 
-kay serves those pages prerendered and already compressed, so nginx spends about 24 µs on each instead of 470 to 540, and both sit near the load client's own ceiling of about 40,000 a second. Both sites load their contact form as a deferred server island, so every page but the cattery's home is prerendered. That home page, rendered on each request, serves at about Astro's rate for a third of its CPU, nginx's included, as kay compresses it itself.
+kay serves those pages prerendered and already compressed, so nginx spends about 24 µs on each instead of 470 to 540, and both kay sites sit near the load client's own ceiling of about 40,000 a second. Both sites load their contact form as a deferred server island, so every page but the cattery's home is prerendered. That home page, rendered on each request, serves at about Astro's rate for a third of its CPU, nginx's included, as kay compresses it itself.
 
 <BarChart
   title="Server memory after load"
@@ -71,7 +73,11 @@ kay serves those pages prerendered and already compressed, so nginx spends about
   source="dist and production node_modules against one executable"
 />
 
-kay serves images as AVIF at the width drawn: 52 against 143 KB and 37 against 161 KB per page on desktop, 114 against 143 KB and 106 against 185 KB on a phone. It also inlines each page's styles, leaving no stylesheet to wait for: on a phone the first paint lands at 0.66 and 0.69 s instead of 1.51 and 1.30 s, the largest at 1.69 and 0.84 s instead of 2.45 and 1.31 s.
+## Phones paint sooner, on lighter images and no stylesheet
+
+kay serves images as AVIF at the width drawn, so a page's images weigh 52 against 143 KB and 37 against 161 KB on desktop, 114 against 143 KB and 106 against 185 KB on a phone, the cattery first. It also inlines each page's styles, leaving no stylesheet to wait for: on a phone the first paint lands at 0.66 and 0.69 s instead of 1.51 and 1.30 s, the largest paint at 1.69 and 0.84 s instead of 2.45 and 1.31 s.
+
+## kay ships more JavaScript and builds slower
 
 <BarChart
   title="JS shipped per page, brotli"
@@ -87,7 +93,7 @@ kay serves images as AVIF at the width drawn: 52 against 143 KB and 37 against 1
   source="average over every page"
 />
 
-On Astro, the painter's site shipped only a few plain scripts, inlined in its pages. On kay, a phone downloads 147 KB per page of it against 87 KB, mostly fonts (107 against 35 KB) and that script.
+On Astro, the painter's site shipped only a few plain scripts, inlined in its pages. What a phone transfers per page of that site is 147 KB on kay against 87 KB on Astro, mostly fonts (107 against 35 KB) and kay's script.
 
 A clean `kay build` encodes an AVIF and a WebP copy of every image, which `astro build` does not: 6.9 against 2.2 s on the cattery and 3.7 against 2.0 s on the painter, the cattery's build peaking at 2.0 GB of memory against 1.0.
 

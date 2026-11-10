@@ -1,9 +1,9 @@
 ---
 title: "Deux sites Astro, passés à kay"
 description: "Deux sites d'entreprise portés d'Astro vers kay et mesurés tels qu'ils se déploient : charge, affichages, images, mémoire et builds, pertes comprises."
-date: 2026-10-20
+date: 2026-11-10T10:20:00Z
 tags: [kay, benchmarks]
-draft: true
+draft: false
 ---
 
 Deux petits sites d'entreprise, un élevage de chats et un peintre en bâtiment, tournaient sur Astro, qui n'envoie déjà presque pas de JavaScript. Passés à [kay](/posts/introducing-kay), ils servent plus de requêtes pour moins de mémoire, s'affichent plus tôt et se déploient plus petits, mais ils envoient plus de JavaScript et se construisent plus lentement. Chacun a été construit et servi comme il se déploie, le serveur autonome d'Astro sous Bun contre l'unique exécutable de kay, tous deux derrière nginx avec HTTP/2, TLS et brotli, sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
@@ -15,6 +15,8 @@ Deux petits sites d'entreprise, un élevage de chats et un peintre en bâtiment,
     {"value": "-11 à -74 %", "label": "HTML et CSS par page"}
   ]}
 />
+
+## Les pages sont servies plus vite, avec moins de mémoire et un déploiement plus léger
 
 <BarChart
   title="Requêtes par seconde, une page de contenu"
@@ -31,7 +33,7 @@ Deux petits sites d'entreprise, un élevage de chats et un peintre en bâtiment,
   source="32 clients via nginx pendant 5 s"
 />
 
-kay sert ces pages prérendues et déjà compressées, si bien que nginx passe environ 24 µs sur chacune au lieu de 470 à 540, et tous deux frôlent le plafond du client de charge lui-même, environ 40 000 par seconde. Les deux sites chargent leur formulaire de contact comme une server island différée, donc toutes les pages sauf l'accueil de l'élevage sont prérendues. Cet accueil, rendu à chaque requête, est servi à peu près au rythme d'Astro pour un tiers de son CPU, nginx compris, car kay le compresse lui-même.
+kay sert ces pages prérendues et déjà compressées, si bien que nginx passe environ 24 µs sur chacune au lieu de 470 à 540, et les deux sites sur kay frôlent le plafond du client de charge lui-même, environ 40 000 par seconde. Les deux sites chargent leur formulaire de contact comme une server island différée, donc toutes les pages sauf l'accueil de l'élevage sont prérendues. Cet accueil, rendu à chaque requête, est servi à peu près au rythme d'Astro pour un tiers de son CPU, nginx compris, car kay le compresse lui-même.
 
 <BarChart
   title="Mémoire du serveur après charge"
@@ -63,7 +65,11 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
   source="dist et node_modules de production contre un seul exécutable"
 />
 
-kay sert les images en AVIF à la largeur affichée : 52 contre 143 Ko et 37 contre 161 Ko par page sur ordinateur, 114 contre 143 Ko et 106 contre 185 Ko sur mobile. Il inline aussi les styles de chaque page, sans feuille de style à attendre : sur mobile le premier rendu arrive à 0,66 et 0,69 s au lieu de 1,51 et 1,30 s, le plus grand à 1,69 et 0,84 s au lieu de 2,45 et 1,31 s.
+## Les mobiles affichent plus tôt, avec des images plus légères et sans feuille de style
+
+kay sert les images en AVIF à la largeur affichée, si bien que les images d'une page pèsent 52 contre 143 Ko et 37 contre 161 Ko sur ordinateur, 114 contre 143 Ko et 106 contre 185 Ko sur mobile, l'élevage d'abord. Il inline aussi les styles de chaque page, sans feuille de style à attendre : sur mobile le premier rendu arrive à 0,66 et 0,69 s au lieu de 1,51 et 1,30 s, le plus grand rendu à 1,69 et 0,84 s au lieu de 2,45 et 1,31 s.
+
+## kay envoie plus de JavaScript et son build est plus lent
 
 <BarChart
   title="JS envoyé par page, brotli"
@@ -79,7 +85,7 @@ kay sert les images en AVIF à la largeur affichée : 52 contre 143 Ko et 37 co
   source="moyenne sur toutes les pages"
 />
 
-Sur Astro, le site du peintre n'envoyait que quelques scripts simples, inlinés dans ses pages. Sur kay, un mobile télécharge 147 Ko par page contre 87, surtout des polices (107 contre 35 Ko) et ce script.
+Sur Astro, le site du peintre n'envoyait que quelques scripts simples, inlinés dans ses pages. Un mobile transfère 147 Ko par page de ce site sur kay contre 87 Ko sur Astro, surtout des polices (107 contre 35 Ko) et le script de kay.
 
 Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image, ce que `astro build` ne fait pas : 6,9 contre 2,2 s sur l'élevage et 3,7 contre 2,0 s sur le peintre, le build de l'élevage culminant à 2,0 Go de mémoire contre 1,0.
 

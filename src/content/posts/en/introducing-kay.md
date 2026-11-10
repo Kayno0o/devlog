@@ -1,9 +1,9 @@
 ---
 title: "kayjs: fast to run, easy to write"
 description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte, Astro, Next.js and Nuxt.
-date: 2026-10-20
+date: 2026-11-10T12:00:00Z
 tags: [kay, benchmarks]
-draft: true
+draft: false
 social:
   x: "I built kay, a Bun web framework: one .kay file per component, a pug-like template, pages rendered to plain HTML, and JavaScript only for the islands. A SvelteKit site moved to it spends 88% less server CPU per visitor. Still experimental, so expect breaking changes."
   bluesky: "I built kay, a Bun web framework: one .kay file per component, a pug-like template, plain HTML from the server and JavaScript only for the islands. A SvelteKit site moved to it spends 88% less server CPU per visitor. Still experimental."
@@ -213,7 +213,7 @@ For a while I used Astro with SolidJS inside: fast pages for little code, at the
 
 Bun does everything underneath: the server, the bundler, the test runner and the database driver, and a whole site compiles into a single executable. Every build type-checks the project first, templates included, so a broken prop or a mistyped link never ships.
 
-## The products page bench, with kay beside the five
+## kay leads on load, rendering and code, not on build or JS size
 
 The [products page bench](/posts/five-frameworks) again, with kay in it: the same page and the same data for each framework, each written the way its own docs and its js-framework-benchmark entry write it. kay, SolidJS and Svelte are timed behind the same Elysia server, Astro and Nuxt through their own request handlers, and Next.js through its own HTTP server, all on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 

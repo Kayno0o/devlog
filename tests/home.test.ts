@@ -3,12 +3,14 @@ import { testSite } from 'kay/test'
 
 const site = await testSite()
 
-it('lists the posts, leaving drafts out', async () => {
+it('lists the posts, newest first', async () => {
   const home = await site.visit('/')
+  const dates = home.find('.timeline time').map(time => time.attributes.datetime ?? '')
 
   expect(home.status).toBe(200)
   expect(home.links()).toContain('/posts/five-frameworks')
-  expect(home.links()).not.toContain('/posts/introducing-kay')
+  expect(dates.length).toBeGreaterThan(1)
+  expect(dates).toEqual(dates.toSorted().toReversed())
 })
 
 it('names its author, and gives contact links in the footer', async () => {
