@@ -22,11 +22,7 @@ Les appels `test(` et `it(` dans les fichiers de test des dix apps et du shell a
 
 </Note>
 
-<Note title="Capture d'écran à venir : le ciel">
-
-Le `/sky` d'atlas, avec chaque app en corps autour de la Terre et le panneau de hubble ouvert.
-
-</Note>
+![Le ciel d'atlas sur un téléphone : relay, selene, hubble, lyra et pulsar sur leurs orbites autour d'une Terre en fil de fer](./img/orbit-sky.png)
 
 ## Chaque app fait un seul travail
 

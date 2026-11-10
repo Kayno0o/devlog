@@ -30,11 +30,7 @@ The apps I host for myself live in one monorepo called orbit, and every one of t
 
 </Note>
 
-<Note title="Screenshot to come: the sky">
-
-atlas's `/sky`, with each app as a body around Earth and hubble's panel open.
-
-</Note>
+![atlas's sky on a phone: relay, selene, hubble, lyra and pulsar on their orbits around a wireframe Earth](./img/orbit-sky.png)
 
 ## Each app does one job
 
