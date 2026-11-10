@@ -70,12 +70,13 @@ Le hook repère les commits en lisant ce que git a affiché, donc un commit fait
 
 ## L'essayer
 
-Les mods sont sur [GitHub](https://github.com/Kayno0o/herdr-mods), avec un README en français. Ils demandent [Herdr](https://herdr.dev) et Claude Code :
+Les mods sont sur [GitHub](https://github.com/Kayno0o/herdr-mods). Ils demandent Linux, [Herdr](https://herdr.dev), Claude Code, Bun et git :
 
 ```sh
-git clone https://github.com/Kayno0o/herdr-mods
+git clone https://github.com/Kayno0o/herdr-mods.git
 cd herdr-mods
+bun install
 bun run setup
 ```
 
-`setup` installe les deux mods, la touche Ctrl+Shift+R, le hook de commit et le skill de revue, et télécharge le Chromium utilisé par les shoots.
+`setup` installe les deux mods, la touche Ctrl+Shift+R, le hook de commit et le skill de revue, et télécharge le Chromium utilisé par les shoots. Le dépôt reste là où il a été cloné, puisque les mods pointent dedans.

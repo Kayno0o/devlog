@@ -78,12 +78,13 @@ The hook spots commits by reading what git printed, so a commit made by a tool t
 
 ## Try it
 
-The mods are on [GitHub](https://github.com/Kayno0o/herdr-mods), with a README in French. They need [Herdr](https://herdr.dev) and Claude Code:
+The mods are on [GitHub](https://github.com/Kayno0o/herdr-mods). They need Linux, [Herdr](https://herdr.dev), Claude Code, Bun and git:
 
 ```sh
-git clone https://github.com/Kayno0o/herdr-mods
+git clone https://github.com/Kayno0o/herdr-mods.git
 cd herdr-mods
+bun install
 bun run setup
 ```
 
-`setup` installs both mods, the Ctrl+Shift+R key, the commit hook and the review skill, and downloads the Chromium the shoots use.
+`setup` installs both mods, the Ctrl+Shift+R key, the commit hook and the review skill, and downloads the Chromium the shoots use. The checkout stays where it is, since the mods point into it.
