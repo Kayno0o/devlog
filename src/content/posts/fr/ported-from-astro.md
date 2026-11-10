@@ -1,12 +1,12 @@
 ---
 title: "Deux sites Astro, passés à kay"
-description: "Deux petits sites d'entreprise portés d'Astro vers kay et mesurés tels qu'ils se déploient : charge serveur, affichages, images, builds et mémoire, ce que kay perd compris."
+description: "Deux sites d'entreprise portés d'Astro vers kay et mesurés tels qu'ils se déploient : charge, affichages, images, mémoire et builds, pertes comprises."
 date: 2026-10-20
 tags: [kay, benchmarks]
 draft: true
 ---
 
-L'[article sur kay](/posts/introducing-kay) mesure kay sur une page de produits et sur le build d'un agent de code. Une page de produits ne mène pas bien loin, alors voici deux petits sites d'entreprise passés d'Astro à kay : un élevage de chats et un peintre en bâtiment. Chacun a été construit et servi comme il se déploie, le serveur autonome d'Astro sous Bun contre l'unique exécutable de kay, tous deux derrière nginx avec HTTP/2, TLS et brotli, sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
+Deux petits sites d'entreprise, un élevage de chats et un peintre en bâtiment, tournaient sur Astro, qui n'envoie déjà presque pas de JavaScript. Passés à [kay](/posts/introducing-kay), ils servent plus de requêtes pour moins de mémoire, s'affichent plus tôt et se déploient plus petits, mais ils envoient plus de JavaScript et se construisent plus lentement. Chacun a été construit et servi comme il se déploie, le serveur autonome d'Astro sous Bun contre l'unique exécutable de kay, tous deux derrière nginx avec HTTP/2, TLS et brotli, sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux.
 
 <Stats
   items={[
@@ -63,8 +63,7 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
   source="dist et node_modules de production contre un seul exécutable"
 />
 
-- **Des images plus légères**, servies en AVIF à la largeur affichée : 52 contre 143 Ko et 37 contre 161 Ko par page sur ordinateur, 114 contre 143 Ko et 106 contre 185 Ko sur mobile.
-- **Des rendus plus rapides.** kay inline les styles de chaque page, sans feuille de style à attendre : sur mobile le premier rendu arrive à 0,66 et 0,69 s au lieu de 1,51 et 1,30 s, le plus grand à 1,69 et 0,84 s au lieu de 2,45 et 1,31 s.
+kay sert les images en AVIF à la largeur affichée : 52 contre 143 Ko et 37 contre 161 Ko par page sur ordinateur, 114 contre 143 Ko et 106 contre 185 Ko sur mobile. Il inline aussi les styles de chaque page, sans feuille de style à attendre : sur mobile le premier rendu arrive à 0,66 et 0,69 s au lieu de 1,51 et 1,30 s, le plus grand à 1,69 et 0,84 s au lieu de 2,45 et 1,31 s.
 
 <BarChart
   title="JS envoyé par page, brotli"
@@ -80,12 +79,14 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
   source="moyenne sur toutes les pages"
 />
 
-- **Plus de JavaScript.** Le site du peintre n'envoyait sur Astro que quelques scripts simples, inlinés dans ses pages.
-- **Un site de peintre plus lourd sur mobile.** Un mobile télécharge 147 Ko par page contre 87, surtout des polices (107 contre 35 Ko) et ce script.
-- **Des builds plus lents.** Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image, ce que `astro build` ne fait pas : 6,9 contre 2,2 s sur l'élevage et 3,7 contre 2,0 s sur le peintre, le build de l'élevage culminant à 2,0 Go contre 1,0.
+Sur Astro, le site du peintre n'envoyait que quelques scripts simples, inlinés dans ses pages. Sur kay, un mobile télécharge 147 Ko par page contre 87, surtout des polices (107 contre 35 Ko) et ce script.
+
+Un `kay build` propre encode une copie AVIF et une copie WebP de chaque image, ce que `astro build` ne fait pas : 6,9 contre 2,2 s sur l'élevage et 3,7 contre 2,0 s sur le peintre, le build de l'élevage culminant à 2,0 Go de mémoire contre 1,0.
 
 <Note title="Comment c'est mesuré">
 
 kay 1.54.2 sur Bun 1.4.3, Chromium 151 headless et nginx 1.30.5 configuré comme en production, les deux côtés en une seule séance. Les rendus sont des médianes de 5 chargements à froid par page sous la limitation de Lighthouse ; la charge est de 32 clients pendant 5 s par URL ; les builds sont la médiane de 3 exécutions propres. Le code des sites est privé, donc le relevé est [bench/astro-ports.md](https://github.com/Kayno0o/devlog/blob/main/bench/astro-ports.md), chaque chiffre avec ses conditions.
 
 </Note>
+
+Les autres portages : [un site SvelteKit](/posts/ported-from-sveltekit) et [une app Elysia et Solid](/posts/ported-from-solid).
