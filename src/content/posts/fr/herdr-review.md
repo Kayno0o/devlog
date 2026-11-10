@@ -64,6 +64,12 @@ Les cartes de deux projets, l'une avec son contexte déplié, et une commande re
 
 </Note>
 
+## La barre d'état lit la machine où tourne un espace
+
+Un espace Herdr peut vivre sur une autre machine que celle devant laquelle je suis. La barre d'état affiche le CPU et la RAM de la machine de l'espace affiché. Toutes les trois secondes, tant que la fenêtre est active, elle y lance un seul `cat /proc/stat /proc/meminfo` : le chiffre du CPU est la part occupée entre deux relevés, donc le premier passage n'affiche que la RAM, sous la forme `9.4/31G`. Les deux chiffres passent à l'ambre à 70 % et au rouge à 90 %.
+
+Le panneau des questions et la barre d'état sont des mods de mes dotfiles, absents du dépôt public ci-dessous.
+
 ## La boîte fait confiance à la sortie de git
 
 Le hook repère les commits en lisant ce que git a affiché, donc un commit fait par un outil qui affiche autre chose passe inaperçu jusqu'à l'ouverture de l'onglet Review, qui range les commits non poussés. Un shoot n'annule pas les migrations, c'est pourquoi il tourne sur une copie jetable de la pile, jamais celle sur laquelle je travaille. Le panneau git est une copie du panneau des changements de Herdr, donc un correctif en amont ne l'atteint pas. Et `bun run setup` doit être relancé après chaque pull.

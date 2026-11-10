@@ -72,6 +72,12 @@ Two projects' cards, one with its context unfolded, and a handed command with it
 
 </Note>
 
+## The status bar reads the machine a space runs on
+
+A Herdr space can live on another machine than the one I sit at. The status bar shows the CPU and RAM of whichever machine the shown space is on. Every three seconds, while the window is active, it runs one `cat /proc/stat /proc/meminfo` there: the CPU figure is the busy share between two samples, so the first tick draws the RAM alone, as `9.4/31G`. Both figures turn amber at 70% and red at 90%.
+
+The questions panel and the status bar are mods in my dotfiles, not in the public repo below.
+
 ## The inbox trusts git's output
 
 The hook spots commits by reading what git printed, so a commit made by a tool that prints something else is missed until the Review tab opens and files the unpushed ones. A shoot does not roll back migrations, which is why it runs on a throwaway copy of the stack, never the one I work on. The git panel is a copy of Herdr's own changes panel, so a fix upstream does not reach it. And `bun run setup` has to run again after each pull.
