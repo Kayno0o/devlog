@@ -13,8 +13,8 @@ export default defineConfig({
   // Chakra Petch for headings and share cards, IBM Plex Sans for text, JetBrains Mono for dates, units and code: the orbit apps' faces.
   fonts: [
     { fontsource: '@fontsource/chakra-petch', weights: [600] },
+    // No italic face: the browser slants the regular one, which saves every page a 24 KB file.
     { fontsource: '@fontsource/ibm-plex-sans', weights: [400, 600] },
-    { fontsource: '@fontsource/ibm-plex-sans', weights: [400], styles: ['italic'] },
     { fontsource: '@fontsource/jetbrains-mono', weights: [400] },
   ],
   images: { card: { font: { family: 'Chakra Petch', weight: 600 }, background: '#090c13', color: '#dbe0ea' } },
