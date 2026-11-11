@@ -1,12 +1,12 @@
 ---
-title: "Mon app à deux utilisateurs, testée en charge"
+title: "Même app, 40 % de code en moins : d'Elysia à kay"
 description: "J'ai porté une de mes apps d'Elysia et Solid 2 vers kay, mesurée telle qu'elle se déploie : charge, rendus, mémoire, builds, et ce qui a empiré."
 date: 2026-11-10T10:10:00Z
 tags: [kay, benchmarks]
 draft: false
 ---
 
-Cette app tournait sur une pile maison : une API Elysia, des islands Solid 2 au-dessus d'un rendu serveur fait à la main, et des sessions JWT. Elle est privée et compte exactement deux utilisateurs, qui se connectent avec Discord pour noter des cartes de profil, ce qui n'a jamais empêché personne de la tester en charge. Passée à [kay](/posts/introducing-kay), avec une connexion par kayjs-auth, elle rend chaque page pour une fraction du CPU et s'affiche bien plus tôt, mais la mise en page bouge davantage sur mobile et le build est plus lent.
+Cette app tournait sur une pile maison : une API Elysia, des islands Solid 2 au-dessus d'un rendu serveur fait à la main, et des sessions JWT. Elle est privée : ses utilisateurs se connectent avec Discord pour noter des cartes de profil. Passée à [kay](/posts/introducing-kay), avec une connexion par kayjs-auth, elle rend chaque page pour une fraction du CPU et s'affiche bien plus tôt, mais la mise en page bouge davantage sur mobile et le build est plus lent.
 
 Chaque côté a été construit et servi comme il se déploie, le serveur Elysia sous Bun contre l'unique exécutable de kay, tous deux derrière nginx avec HTTP/2, TLS et brotli, sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux. Chacun lit sa propre base Postgres, remplie à l'identique, et toutes les pages sauf celle de connexion sont mesurées connecté.
 

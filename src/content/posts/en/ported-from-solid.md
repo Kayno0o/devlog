@@ -1,20 +1,20 @@
 ---
-title: "My two-user app, load tested on kay anyway"
+title: "Same app, 40% less code: Elysia and Solid to kay"
 description: "I ported a signed-in app of mine from Elysia and Solid 2 to kay and measured it as it deploys: load, paints, memory, builds, and what got worse."
 date: 2026-11-10T10:10:00Z
 tags: [kay, benchmarks]
 draft: false
 social:
-  x: "My Elysia and Solid 2 app has exactly two users, which never stopped me from load testing it. Moved to kay, my Bun framework: 40% less code, a 7x faster cold start, and 73% fewer bytes for a phone. The cost: more layout shift on phones."
-  bluesky: "My Elysia + Solid 2 app has exactly two users, which never stopped me from load testing it. Moved to kay, my Bun framework: 40% less code, a 7x faster cold start, 73% fewer bytes for a phone. The cost: more layout shift on phones."
-  mastodon: "My Elysia + Solid 2 app has exactly two users, which never stopped me from load testing it. Moved to kay, my Bun framework, it has 40% less code, starts 7x faster, and a phone downloads 73% fewer bytes. The cost: more layout shift on phones, as the web fonts reflow text the server already painted, and a slower build. #SolidJS #Bun #WebDev"
+  x: "I moved my Elysia and Solid 2 app to kay, my Bun framework: 40% less code, a 7x faster cold start, and 73% fewer bytes for a phone. The cost: more layout shift on phones."
+  bluesky: "I moved my Elysia + Solid 2 app to kay, my Bun framework: 40% less code, a 7x faster cold start, 73% fewer bytes for a phone. The cost: more layout shift on phones."
+  mastodon: "I moved my Elysia + Solid 2 app to kay, my Bun framework, and it has 40% less code, starts 7x faster, and a phone downloads 73% fewer bytes. The cost: more layout shift on phones, as the web fonts reflow text the server already painted, and a slower build. #SolidJS #Bun #WebDev"
   reddit:
     title: "I moved a signed-in Elysia and Solid 2 app to my own Bun framework and measured both, losses included"
     body: "I build kay, a Bun web framework, and moved an app of mine to it from an Elysia API with Solid 2 islands and a hand-rolled server rendering tier. Both measured as they deploy, behind nginx, signed in: 40% less code, a 7x faster cold start, 73% fewer bytes a phone downloads, and a smaller deploy. Where kay loses: more layout shift on phones, as web fonts reflow the text the server painted, and a slower build, though still under a second."
     subreddits: []
 ---
 
-This app ran on a stack of my own: an Elysia API, Solid 2 islands over a hand-rolled server rendering tier, and JWT sessions. It is private and has exactly two users, who sign in with Discord to rate profile cards, which has never stopped anyone from load testing it. Moved to [kay](/posts/introducing-kay), signing in through kayjs-auth, it renders every page for a fraction of the CPU and paints much sooner, and it shifts more on a phone and builds slower.
+This app ran on a stack of my own: an Elysia API, Solid 2 islands over a hand-rolled server rendering tier, and JWT sessions. It is private: its users sign in with Discord to rate profile cards. Moved to [kay](/posts/introducing-kay), signing in through kayjs-auth, it renders every page for a fraction of the CPU and paints much sooner, and it shifts more on a phone and builds slower.
 
 Each side was built and served as it deploys, the Elysia server under Bun against kay's one executable, both behind nginx with HTTP/2, TLS and brotli, on one desktop, a Ryzen 5 7600 with 12 threads on Linux. Each reads its own Postgres, seeded alike, and every page but the sign-in page is measured signed in.
 

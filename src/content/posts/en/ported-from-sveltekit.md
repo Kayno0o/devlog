@@ -1,5 +1,5 @@
 ---
-title: "Leaving SvelteKit: less CPU, more memory at rest"
+title: "My SvelteKit site on kay: 88% less CPU per visitor"
 description: "I ported a real SvelteKit site to kay and measured it against the version it replaced, in production and in the dev server, with what got worse."
 date: 2026-11-10T10:30:00Z
 tags: [kay, benchmarks]
