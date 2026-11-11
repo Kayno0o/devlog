@@ -1,13 +1,13 @@
 ---
-title: "Une page en Next.js, Nuxt, Astro, Svelte et Solid"
-description: "La même page produits dans cinq frameworks, chronométrée dans le navigateur, sur le serveur et au build, avec le code que chacun demande à écrire."
+title: "Une page, cinq frameworks : aucun ne gagne partout"
+description: "J'ai chronométré la même page produits en Next.js, Nuxt, Astro, Svelte et Solid : navigateur, serveur et build, avec le code que chacun demande."
 date: 2026-10-19
 updated: 2026-11-10
 tags: [benchmarks]
 draft: false
 ---
 
-La même page de produits, à partir des mêmes données, dans Next.js, Nuxt, Astro, Svelte et SolidJS, chronométrée dans le navigateur, sur le serveur et au build. Aucun framework ne gagne sur tous les tableaux, et les raisons tiennent à la façon dont chacun rend et hydrate. Chaque page est écrite comme le feraient la doc du framework et son entrée du js-framework-benchmark, et tout a tourné sur la même machine, un Ryzen 5 7600 (12 threads) sous Linux.
+J'ai chronométré la même page de produits, à partir des mêmes données, dans Next.js, Nuxt, Astro, Svelte et SolidJS, dans le navigateur, sur le serveur et au build. Aucun framework ne gagne sur tous les tableaux, et les raisons tiennent à la façon dont chacun rend et hydrate. Chaque page est écrite comme le feraient la doc du framework et son entrée du js-framework-benchmark, et tout a tourné sur la même machine, un Ryzen 5 7600 (12 threads) sous Linux.
 
 ## Hydrater toute la page envoie ses données deux fois
 

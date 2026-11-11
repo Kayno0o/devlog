@@ -22,7 +22,7 @@ export default defineMessages({
   },
   about: {
     title: 'À propos',
-    description: 'Kévyn, développeur full-stack à Bordeaux : comment je suis tombé dans le code, et ce qui compte pour moi.',
+    description: 'Moi c\'est Kévyn, développeur full-stack à Bordeaux : comment je suis tombé dans le code, et ce qui compte pour moi.',
     intro: 'Moi c\'est Kévyn, développeur full-stack à Bordeaux. Je fais des applications web pour gagner ma vie, et des mods Minecraft, des outils et des projets <godot>Godot</godot> pour le plaisir.',
     origins: {
       title: 'Comment j\'en suis arrivé là',

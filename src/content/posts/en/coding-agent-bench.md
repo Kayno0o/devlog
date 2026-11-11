@@ -1,6 +1,6 @@
 ---
-title: "What a web framework costs a coding agent"
-description: "Claude built the same site in SvelteKit, SolidStart, Astro, Nuxt and Next.js, on Opus and on Sonnet, graded by browser tests it never saw."
+title: "I had Claude build one site in five frameworks"
+description: "I had Claude build the same site in SvelteKit, SolidStart, Astro, Nuxt and Next.js, on Opus and on Sonnet, graded by browser tests it never saw."
 date: 2026-10-19
 updated: 2026-11-10
 tags: [benchmarks, llm]
@@ -15,7 +15,7 @@ social:
     subreddits: []
 ---
 
-When a coding agent builds a site, the framework decides much of the bill: tokens, time, turns, docs read, failed checks, lines of code. So Claude built the same small site in SvelteKit, SolidStart, Astro, Nuxt and Next.js, five times each on Opus 5.5 and five times on the cheaper Sonnet 5.5, and a browser test suite it never saw graded every run. A framework an agent writes cheaply and correctly is one I can hand work to.
+When a coding agent builds a site, the framework decides much of the bill: tokens, time, turns, docs read, failed checks, lines of code. So I had Claude build the same small site in SvelteKit, SolidStart, Astro, Nuxt and Next.js, five times each on Opus 5.5 and five times on the cheaper Sonnet 5.5, and a browser test suite it never saw graded every run. A framework an agent writes cheaply and correctly is one I can hand work to.
 
 <Stats
   items={[

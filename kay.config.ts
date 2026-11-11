@@ -24,8 +24,8 @@ export default defineConfig({
     name: 'devlog',
     titleTemplate: '%s | devlog',
     description: {
-      en: 'Notes on the software Kévyn builds: how it works, what it costs, and the benchmarks behind it.',
-      fr: 'Notes sur les logiciels que Kévyn construit : comment ils marchent, ce qu\'ils coûtent, et les benchmarks derrière.',
+      en: 'My devlog: notes on the software I build, how it works, what it costs, and the benchmarks I ran to find out.',
+      fr: 'Mon devlog : des notes sur les logiciels que je construis, comment ils marchent, ce qu\'ils coûtent, et les benchmarks lancés pour le savoir.',
     },
   },
 })

@@ -1,13 +1,13 @@
 ---
-title: "Ce que coûte un framework web à un agent de code"
-description: "Claude a construit le même site avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, sur Opus et Sonnet, noté par des tests qu'il n'a jamais vus."
+title: "J'ai fait bâtir un site à Claude en cinq frameworks"
+description: "J'ai fait construire le même site à Claude avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, sur Opus et Sonnet, noté par des tests qu'il n'a jamais vus."
 date: 2026-10-19
 updated: 2026-11-10
 tags: [benchmarks, llm]
 draft: false
 ---
 
-Quand un agent de code construit un site, le framework pèse lourd dans la facture : tokens, temps, tours, doc lue, vérifications échouées, lignes de code. Claude a donc construit le même petit site avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, cinq fois chacun sur Opus 5.5 et cinq fois sur Sonnet 5.5, moins cher, et une suite de tests de navigateur qu'il n'a jamais vue a noté chaque run. Un framework qu'un agent écrit correctement et pour pas cher, c'est un framework auquel je peux confier du travail.
+Quand un agent de code construit un site, le framework pèse lourd dans la facture : tokens, temps, tours, doc lue, vérifications échouées, lignes de code. J'ai donc fait construire à Claude le même petit site avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, cinq fois chacun sur Opus 5.5 et cinq fois sur Sonnet 5.5, moins cher, et une suite de tests de navigateur qu'il n'a jamais vue a noté chaque run. Un framework qu'un agent écrit correctement et pour pas cher, c'est un framework auquel je peux confier du travail.
 
 <Stats
   items={[

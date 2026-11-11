@@ -1,6 +1,6 @@
 ---
-title: "One page in Next.js, Nuxt, Astro, Svelte and Solid"
-description: "The same products page in five frameworks, timed in the browser, on the server and at build time, with the code each one takes to write."
+title: "I timed one page in five frameworks. None wins all"
+description: "I timed the same products page in Next.js, Nuxt, Astro, Svelte and Solid, in the browser, on the server and at build, with the code each one takes."
 date: 2026-10-19
 updated: 2026-11-10
 tags: [benchmarks]
@@ -15,7 +15,7 @@ social:
     subreddits: []
 ---
 
-The same products page, from the same data, in Next.js, Nuxt, Astro, Svelte and SolidJS, timed in the browser, on the server and at build time. No framework comes out ahead on all of them, and the reasons are in how each one renders and hydrates. Each page is written the way the framework's own docs and its js-framework-benchmark entry would write it, and everything ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
+I timed the same products page, from the same data, in Next.js, Nuxt, Astro, Svelte and SolidJS, in the browser, on the server and at build time. No framework comes out ahead on all of them, and the reasons are in how each one renders and hydrates. Each page is written the way the framework's own docs and its js-framework-benchmark entry would write it, and everything ran on one desktop, a Ryzen 5 7600 with 12 threads on Linux.
 
 ## Hydrating a whole page sends its data twice
 

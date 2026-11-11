@@ -1,6 +1,6 @@
 ---
-title: "Deux sites Astro, passés à kay"
-description: "Deux sites d'entreprise portés d'Astro vers kay et mesurés tels qu'ils se déploient : charge, affichages, images, mémoire et builds, pertes comprises."
+title: "J'ai passé deux sites Astro à kay, pertes incluses"
+description: "J'ai porté deux sites d'entreprise d'Astro vers kay, mesurés tels qu'ils se déploient : charge, affichages, images, mémoire, builds, et ce qui a empiré."
 date: 2026-11-10T10:20:00Z
 tags: [kay, benchmarks]
 draft: false

@@ -1,6 +1,6 @@
 ---
-title: "An Elysia and Solid app, moved to kay"
-description: "A signed-in app ported from an Elysia API and Solid 2 islands to kay, measured as it deploys: load, paints, memory, builds and code, losses included."
+title: "I moved my Solid app to kay, losses included"
+description: "I ported a signed-in app of mine from Elysia and Solid 2 to kay and measured it as it deploys: load, paints, memory, builds, and what got worse."
 date: 2026-11-10T10:10:00Z
 tags: [kay, benchmarks]
 draft: false

@@ -25,10 +25,10 @@ it('describes the site in each page\'s language, a page\'s own description repla
   const french = await site.visit('/fr')
   const about = await site.visit('/fr/about')
 
-  expect(home.meta('description')).toStartWith('Notes on the software')
-  expect(french.meta('description')).toStartWith('Notes sur les logiciels')
+  expect(home.meta('description')).toStartWith('My devlog')
+  expect(french.meta('description')).toStartWith('Mon devlog')
   expect(about.find('meta[name="description"]').map(({ attributes }) => attributes.content)).toEqual([about.meta('description')])
-  expect(about.meta('description')).toStartWith('Kévyn, développeur')
+  expect(about.meta('description')).toStartWith('Moi c\'est Kévyn')
 })
 
 it('links each page to its copy in the other language', async () => {

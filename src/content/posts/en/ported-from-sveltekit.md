@@ -1,6 +1,6 @@
 ---
-title: "A SvelteKit site, moved to kay"
-description: "A real SvelteKit site ported to kay and measured against the version it replaced, in production and in the dev server, losses included."
+title: "I moved a SvelteKit site to kay, losses included"
+description: "I ported a real SvelteKit site to kay and measured it against the version it replaced, in production and in the dev server, with what got worse."
 date: 2026-11-10T10:30:00Z
 tags: [kay, benchmarks]
 draft: false

@@ -1,6 +1,6 @@
 ---
-title: "Ce que kay coûte à un agent de code"
-description: "Le benchmark d'agent de code, avec kay face à SvelteKit, SolidStart, Astro, Nuxt et Next.js : ce que coûte un framework appris dans sa seule doc."
+title: "Claude n'avait jamais vu kay, il y a écrit moins"
+description: "J'ai passé kay à mon benchmark d'agent de code, face à SvelteKit, SolidStart, Astro, Nuxt et Next.js : ce que coûte un framework appris dans sa seule doc."
 date: 2026-11-10T11:00:00Z
 tags: [kay, benchmarks, llm]
 draft: false
