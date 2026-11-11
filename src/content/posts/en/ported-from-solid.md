@@ -1,7 +1,7 @@
 ---
 title: "Same app, 40% less code: Elysia and Solid to kay"
 description: "I ported a signed-in app of mine from Elysia and Solid 2 to kay and measured it as it deploys: load, paints, memory, builds, and what got worse."
-date: 2026-11-10T10:10:00Z
+date: 2026-10-19T10:10:00Z
 tags: [kay, benchmarks]
 draft: false
 social:

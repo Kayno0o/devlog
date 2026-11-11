@@ -1,7 +1,7 @@
 ---
 title: "Already lean on Astro, three times faster on kay"
 description: "I ported two small business sites from Astro to kay and measured them as they deploy: load, paints, images, memory, builds, and what got worse."
-date: 2026-11-10T10:20:00Z
+date: 2026-10-18T10:20:00Z
 tags: [kay, benchmarks]
 draft: false
 social:

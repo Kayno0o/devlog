@@ -1,7 +1,7 @@
 ---
 title: "kayjs : oui, encore un framework JavaScript"
 description: "Pourquoi j'ai construit mon propre framework web sur Bun, comment un fichier .kay devient du HTML et des islands, et ce qu'il coûte face à cinq autres."
-date: 2026-11-10T12:00:00Z
+date: 2026-10-28T12:00:00Z
 tags: [kay, benchmarks]
 draft: false
 ---

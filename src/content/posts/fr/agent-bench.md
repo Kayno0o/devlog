@@ -1,7 +1,7 @@
 ---
 title: "Claude n'avait jamais vu kay, il y a écrit moins"
 description: "J'ai passé kay à mon benchmark d'agent de code, face à SvelteKit, SolidStart, Astro, Nuxt et Next.js : ce que coûte un framework appris dans sa seule doc."
-date: 2026-11-10T11:00:00Z
+date: 2026-10-17T11:00:00Z
 tags: [kay, benchmarks, llm]
 draft: false
 ---

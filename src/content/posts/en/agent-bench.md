@@ -1,7 +1,7 @@
 ---
 title: "Claude had never seen kay. It wrote less code in it"
 description: "I ran my coding-agent bench on kay, beside SvelteKit, SolidStart, Astro, Nuxt and Next.js: what a framework learned from its docs alone costs."
-date: 2026-11-10T11:00:00Z
+date: 2026-10-17T11:00:00Z
 tags: [kay, benchmarks, llm]
 draft: false
 social:

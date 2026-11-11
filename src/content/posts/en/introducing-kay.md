@@ -1,7 +1,7 @@
 ---
 title: "kayjs: yes, another JavaScript framework"
 description: Why I built my own web framework on Bun, how a .kay file becomes HTML and islands, and what it costs next to SolidJS, Svelte, Astro, Next.js and Nuxt.
-date: 2026-11-10T12:00:00Z
+date: 2026-10-28T12:00:00Z
 tags: [kay, benchmarks]
 draft: false
 social:
