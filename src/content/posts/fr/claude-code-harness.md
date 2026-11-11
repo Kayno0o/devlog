@@ -1,5 +1,5 @@
 ---
-title: "Les règles de Claude Code, au moment de s'appliquer"
+title: "Claude oublie mes règles, des hooks les lui rendent"
 description: "Comment je garde Claude Code sur mes conventions après une compaction : un CLAUDE.md court, des mémoires servies par des hooks, des questions visibles."
 date: 2026-11-10
 tags: [llm, claude-code]

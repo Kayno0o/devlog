@@ -1,5 +1,5 @@
 ---
-title: "Dix apps auto-hébergées, un shell et un login"
+title: "Dix apps auto-hébergées, un login, un ciel en carte"
 description: "Notes, RSS, un assistant vocal, une bibliothèque de docs et six autres tournent sur mon serveur en apps kay qui partagent un cadre, un login et leurs API."
 date: 2026-11-10
 tags: [kay, self-hosting]

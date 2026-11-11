@@ -1,5 +1,5 @@
 ---
-title: "Type matchups on my keyboard's screen, mid-battle"
+title: "My keyboard's screen shows what beats this Temtem"
 description: "My Temtem companion shows what a foe is weak and strong against on my keyboard's screen, and a web app keeps my box and builds a team for the area ahead."
 date: 2026-11-10
 tags: [games, kay]

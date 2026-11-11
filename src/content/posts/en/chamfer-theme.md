@@ -1,5 +1,5 @@
 ---
-title: "A desktop theme where every colour is a state"
+title: "A desktop themed like a cockpit: colour means state"
 description: "Chamfer themes my KDE desktop and ten terminal apps from one generator. In its Cockpit palette the chrome is grey, and anything coloured wants attention."
 date: 2026-11-10
 tags: [design, linux]

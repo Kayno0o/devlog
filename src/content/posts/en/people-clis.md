@@ -1,5 +1,5 @@
 ---
-title: "Six CLIs for people, and the kit they share"
+title: "53 CLIs that all fail the same way, on purpose"
 description: "arc, dl, gloss, pick, probe and proc each do one job with a safe default, and one small kit makes all 53 of my CLIs parse, help and fail the same way."
 date: 2026-11-10
 tags: [cli, bun]

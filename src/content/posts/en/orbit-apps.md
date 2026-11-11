@@ -1,5 +1,5 @@
 ---
-title: "Ten self-hosted apps on one shell and one login"
+title: "Ten self-hosted apps, one login, a sky to map them"
 description: "Notes, RSS, a voice assistant, a docs library and six more run on my server as kay apps that share one frame, sit behind one login and call each other."
 date: 2026-11-10
 tags: [kay, self-hosting]

@@ -1,5 +1,5 @@
 ---
-title: "Six CLI pour les humains, et leur kit commun"
+title: "53 CLI qui échouent toutes pareil, et c'est voulu"
 description: "arc, dl, gloss, pick, probe et proc font chacun un travail avec un défaut sûr, et un petit kit fait que mes 53 CLI lisent, aident et échouent pareil."
 date: 2026-11-10
 tags: [cli, bun]

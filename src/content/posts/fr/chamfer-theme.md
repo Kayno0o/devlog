@@ -1,5 +1,5 @@
 ---
-title: "Un thème de bureau où chaque couleur est un état"
+title: "Un bureau façon cockpit : la couleur dit l'état"
 description: "Chamfer habille mon bureau KDE et dix applis de terminal depuis un seul générateur. Dans Cockpit, le décor est gris et la couleur réclame l'attention."
 date: 2026-11-10
 tags: [design, linux]

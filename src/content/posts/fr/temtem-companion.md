@@ -1,5 +1,5 @@
 ---
-title: "Les affinités Temtem sur l'écran de mon clavier"
+title: "L'écran de mon clavier me dit ce qui bat ce Temtem"
 description: "Mon compagnon Temtem affiche sur le clavier les faiblesses d'un adversaire en plein combat, et une app web compose une équipe pour la zone suivante."
 date: 2026-11-10
 tags: [games, kay]

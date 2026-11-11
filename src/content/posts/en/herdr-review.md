@@ -1,5 +1,5 @@
 ---
-title: "A review inbox for every commit Claude makes"
+title: "Claude commits all day. I review it from one inbox"
 description: "Two Herdr mods file each commit Claude Code makes into a review inbox, one diff per ticket, and paste my notes back into the Claude that wrote the code."
 date: 2026-11-10
 tags: [llm, claude-code]

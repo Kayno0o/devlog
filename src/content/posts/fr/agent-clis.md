@@ -1,5 +1,5 @@
 ---
-title: "Quatre erreurs de Claude et les CLI qui les évitent"
+title: "Claude a affiché mes secrets : il a eu ses CLI"
 description: "Claude Code a affiché mes secrets, cassé un stash et surchargé ma machine. Chaque erreur est devenue une règle qu'un hook applique, avec une commande sûre."
 date: 2026-11-10
 tags: [llm, cli]
