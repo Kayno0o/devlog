@@ -8,11 +8,7 @@ draft: true
 
 Claude Code commit après chaque tâche, dans plusieurs terminaux à la fois, et c'est à moi de relire chacun de ces commits. Deux mods font maintenant la plomberie : chaque commit de Claude atterrit dans une boîte de revue, les commits d'un ticket se lisent comme un seul diff, et mes notes retournent au Claude qui a écrit le code.
 
-<Note title="Capture d'écran à venir : l'onglet Review">
-
-La colonne de la boîte avec les tickets, les commits isolés et le groupe approuvé, le diff net d'un ticket côte à côte, deux notes ancrées sur des lignes.
-
-</Note>
+![L'onglet Review : une boîte de deux tickets et un commit isolé, les trois commits d'un ticket en un seul diff avec sa capture, et deux notes sur des lignes, l'une de Claude et l'autre de moi](./img/herdr-review-tab.png)
 
 ## Herdr faisait déjà ce que j'étais en train de construire
 
@@ -48,21 +44,13 @@ Une étape en échec prend quand même sa capture, puisque l'image montre souven
 
 Le second mod remplace le panneau des changements de Herdr par un graphe du dépôt du panneau actif : une voie par branche, le travail non commité en première ligne, et les fichiers et le diff de la ligne que je choisis. Un clic droit sur un commit, une branche ou un tag propose ce que git permet, du cherry-pick au reset. Une ligne de ticket dans le corps d'un commit devient un lien vers son ticket Forgejo, et un ticket s'ouvre dans l'onglet Review.
 
-<Note title="Capture d'écran à venir : le graphe git">
-
-Le panneau du graphe à côté d'un terminal Claude, quelques branches sur leurs voies, le menu du clic droit sur un commit.
-
-</Note>
+![Le panneau du graphe git : le travail non commité en première ligne, une branche fusionnée sur sa propre voie, un tag, et le diff du fichier modifié en dessous](./img/herdr-git-graph.png)
 
 ## Les questions ouvertes de Claude tiennent dans un panneau
 
 Mes sessions Claude posent leurs questions sans attendre la réponse, comme l'explique [l'article sur le harness](/posts/claude-code-harness). Les labels de Herdr les sortent de chaque terminal, et un panneau les liste sous forme de cartes groupées par projet, chacune avec sa réponse recommandée. Accepter envoie la recommandation à ce Claude, une zone de réponse envoie tout le reste. Une commande que Claude me remet s'affiche avec un bouton de copie et une zone pour coller sa sortie en retour.
 
-<Note title="Capture d'écran à venir : le panneau des questions">
-
-Les cartes de deux projets, l'une avec son contexte déplié, et une commande remise avec son bouton de copie.
-
-</Note>
+![Le panneau des questions : deux questions de deux sessions Claude, chacune avec sa réponse recommandée et une zone de réponse, et une commande remise avec son bouton de copie](./img/herdr-questions.png)
 
 ## La barre d'état lit la machine où tourne un espace
 

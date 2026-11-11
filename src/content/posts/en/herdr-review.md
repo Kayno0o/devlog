@@ -16,11 +16,7 @@ social:
 
 Claude Code commits after every task, in several terminals at once, and every one of those commits is mine to review. Two mods now do the plumbing: each commit Claude makes lands in a review inbox, a ticket's commits read as one diff, and my notes go back to the Claude that wrote the code.
 
-<Note title="Screenshot to come: the Review tab">
-
-The inbox rail with tickets, the loose commits and the approved group, a ticket's net diff side by side, two notes anchored to lines.
-
-</Note>
+![The Review tab: an inbox of two tickets and one loose commit, a ticket's three commits as one diff with its screenshot, and two notes on lines, one from Claude and one from me](./img/herdr-review-tab.png)
 
 ## Herdr already did what I was building
 
@@ -56,21 +52,13 @@ A failed step still takes its screenshot, since the image usually shows why. A r
 
 The second mod replaces Herdr's changes panel with a graph of the focused pane's repo: one lane per branch, the uncommitted work as the top row, and the files and diff of whichever row I pick. A right-click on a commit, a branch or a tag offers what git would, from cherry-pick to reset. A ticket line in a commit body becomes a link to its Forgejo issue, and a ticket opens in the Review tab.
 
-<Note title="Screenshot to come: the git graph">
-
-The graph panel beside a Claude terminal, a few branches on their lanes, the right-click menu on a commit.
-
-</Note>
+![The git graph panel: the uncommitted work as the top row, a merged branch on its own lane, a tag, and the diff of the changed file below](./img/herdr-git-graph.png)
 
 ## Claude's open questions sit in a panel
 
 My Claude sessions ask their questions without waiting for the answer, as [the harness post](/posts/claude-code-harness) explains. Herdr's labels carry them out of each terminal, and a panel lists them as cards grouped by project, each with its recommended answer. Accept sends the recommendation to that Claude, a reply box sends anything else. A command Claude hands me shows with a copy button and a box to paste its output back.
 
-<Note title="Screenshot to come: the questions panel">
-
-Two projects' cards, one with its context unfolded, and a handed command with its copy button.
-
-</Note>
+![The questions panel: two questions from two Claude sessions, each with its recommended answer and a reply box, and a handed command with its copy button](./img/herdr-questions.png)
 
 ## The status bar reads the machine a space runs on
 
