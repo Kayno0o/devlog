@@ -67,7 +67,47 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
 
 ## Les mobiles affichent plus tôt, avec des images plus légères et sans feuille de style
 
-kay sert les images en AVIF à la largeur affichée, si bien que les images d'une page pèsent 52 contre 143 Ko et 37 contre 161 Ko sur ordinateur, 114 contre 143 Ko et 106 contre 185 Ko sur mobile, l'élevage d'abord. Il inline aussi les styles de chaque page, sans feuille de style à attendre : sur mobile le premier rendu arrive à 0,66 et 0,69 s au lieu de 1,51 et 1,30 s, le plus grand rendu à 1,69 et 0,84 s au lieu de 2,45 et 1,31 s.
+kay sert les images en AVIF à la largeur affichée :
+
+<BarChart
+  title="Images par page"
+  unit="Ko"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "kay, peintre", "value": 36.5, "group": "ordinateur"},
+    {"label": "kay, élevage", "value": 52.2, "group": "ordinateur"},
+    {"label": "Astro, élevage", "value": 142.5, "group": "ordinateur"},
+    {"label": "Astro, peintre", "value": 160.8, "group": "ordinateur"},
+    {"label": "kay, peintre", "value": 105.5, "group": "mobile"},
+    {"label": "kay, élevage", "value": 113.9, "group": "mobile"},
+    {"label": "Astro, élevage", "value": 142.5, "group": "mobile"},
+    {"label": "Astro, peintre", "value": 185.3, "group": "mobile"}
+  ]}
+  bench="astro"
+  source="moyenne sur toutes les pages, servies à 1280 px sur ordinateur et à 390 px en 3x sur mobile"
+/>
+
+Il inline aussi les styles de chaque page, sans feuille de style à attendre :
+
+<BarChart
+  title="Rendus sur mobile"
+  unit="ms"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "kay, élevage", "value": 660, "group": "premier rendu"},
+    {"label": "kay, peintre", "value": 687, "group": "premier rendu"},
+    {"label": "Astro, peintre", "value": 1301, "group": "premier rendu"},
+    {"label": "Astro, élevage", "value": 1508, "group": "premier rendu"},
+    {"label": "kay, peintre", "value": 838, "group": "plus grand rendu"},
+    {"label": "Astro, peintre", "value": 1306, "group": "plus grand rendu"},
+    {"label": "kay, élevage", "value": 1690, "group": "plus grand rendu"},
+    {"label": "Astro, élevage", "value": 2452, "group": "plus grand rendu"}
+  ]}
+  bench="astro"
+  source="limitation de Lighthouse, médiane de 5 chargements à froid par page"
+/>
 
 ## Astro envoie moins de JavaScript et son build est plus rapide
 

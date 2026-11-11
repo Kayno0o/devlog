@@ -75,7 +75,47 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 ## Phones paint sooner, on lighter images and no stylesheet
 
-kay serves images as AVIF at the width drawn, so a page's images weigh 52 against 143 KB and 37 against 161 KB on desktop, 114 against 143 KB and 106 against 185 KB on a phone, the cattery first. It also inlines each page's styles, leaving no stylesheet to wait for: on a phone the first paint lands at 0.66 and 0.69 s instead of 1.51 and 1.30 s, the largest paint at 1.69 and 0.84 s instead of 2.45 and 1.31 s.
+kay serves images as AVIF at the width drawn:
+
+<BarChart
+  title="Images per page"
+  unit="KB"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "kay, painter", "value": 36.5, "group": "desktop"},
+    {"label": "kay, cattery", "value": 52.2, "group": "desktop"},
+    {"label": "Astro, cattery", "value": 142.5, "group": "desktop"},
+    {"label": "Astro, painter", "value": 160.8, "group": "desktop"},
+    {"label": "kay, painter", "value": 105.5, "group": "phone"},
+    {"label": "kay, cattery", "value": 113.9, "group": "phone"},
+    {"label": "Astro, cattery", "value": 142.5, "group": "phone"},
+    {"label": "Astro, painter", "value": 185.3, "group": "phone"}
+  ]}
+  bench="astro"
+  source="average over every page, as served at 1280 px on a desktop and 390 px at 3x on a phone"
+/>
+
+It also inlines each page's styles, leaving no stylesheet to wait for:
+
+<BarChart
+  title="Paints on a phone"
+  unit="ms"
+  better="lower"
+  digits={0}
+  rows={[
+    {"label": "kay, cattery", "value": 660, "group": "first paint"},
+    {"label": "kay, painter", "value": 687, "group": "first paint"},
+    {"label": "Astro, painter", "value": 1301, "group": "first paint"},
+    {"label": "Astro, cattery", "value": 1508, "group": "first paint"},
+    {"label": "kay, painter", "value": 838, "group": "largest paint"},
+    {"label": "Astro, painter", "value": 1306, "group": "largest paint"},
+    {"label": "kay, cattery", "value": 1690, "group": "largest paint"},
+    {"label": "Astro, cattery", "value": 2452, "group": "largest paint"}
+  ]}
+  bench="astro"
+  source="Lighthouse's throttling, median of 5 cold loads per page"
+/>
 
 ## Astro ships less JavaScript and builds faster
 
