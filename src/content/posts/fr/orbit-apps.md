@@ -32,7 +32,7 @@ Les appels `test(` et `it(` dans les fichiers de test des dix apps et du shell a
 - **selene** est un assistant domestique qu'on interroge par texte ou par la voix. Il allume les lumières, lit la météo, mon agenda, les prochains trams et trains, et les alertes de hubble.
 - **pallas** est une bibliothèque de docs, des livres hors ligne plus des docs `llms.txt` en direct, avec un chat de recherche qui répond avec des citations numérotées.
 - **vulcan** est une boîte à outils d'une page par outil. Ses avatars en pixels et ses QR codes sont ouverts sans le login, donc n'importe quel site peut les intégrer.
-- **hubble** scanne les dépôts, les images en cours d'exécution et l'hôte à la recherche de vulnérabilités connues et de runtimes en fin de vie, et c'est le seul endroit qui envoie des alertes.
+- **hubble** scanne les repos, les images en cours d'exécution et l'hôte à la recherche de vulnérabilités connues et de runtimes en fin de vie, et c'est le seul endroit qui envoie des alertes.
 - **relay** gère les sites nginx placés devant tout le reste : certificats, login, trafic, bans et vérifications de disponibilité.
 - **ceres** démarre, arrête et redémarre les stacks Docker du serveur depuis une page, et journalise chaque action.
 - **atlas** est le tableau de bord, et la carte de toutes les autres.
@@ -63,7 +63,7 @@ selene utilise la même voix : whisper transforme ce que je dis en texte, et la
 
 Le `/sky` d'atlas dessine les apps en three.js comme des corps autour d'une Terre en fil de fer, chacun choisi pour son nom. hubble est un télescope spatial en orbite basse, relay un satellite de communication dont les antennes font face à la Terre, selene la Lune. pallas culbute sur l'orbite la plus raide, comme l'astéroïde Pallas, et vulcan est une planète en fusion sur la plus serrée, d'après la planète qu'on a crue tourner à l'intérieur de l'orbite de Mercure.
 
-L'état en direct change la façon dont un corps pulse : le débit de requêtes de relay, les alertes de hubble, le nombre d'articles non lus de pulsar. Chaque dépôt avec du code sur mon Forgejo est une étoile, toujours au même endroit à chaque visite. Survoler un corps arrête son orbite et verrouille un réticule dessus, un clic y envoie la caméra et ouvre son panneau, et la liste à côté du canvas est faite de simples liens qui marchent sans JavaScript.
+L'état en direct change la façon dont un corps pulse : le débit de requêtes de relay, les alertes de hubble, le nombre d'articles non lus de pulsar. Chaque repo avec du code sur mon Forgejo est une étoile, toujours au même endroit à chaque visite. Survoler un corps arrête son orbite et verrouille un réticule dessus, un clic y envoie la caméra et ouvre son panneau, et la liste à côté du canvas est faite de simples liens qui marchent sans JavaScript.
 
 ## Toutes les apps passent à un nouveau kay en même temps
 

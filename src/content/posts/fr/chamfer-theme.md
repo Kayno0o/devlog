@@ -33,7 +33,7 @@ L'ancien Chamfer suivait les conventions de couleur du guide de la FAA pour les 
 - **Lavande**, `#b9a3de` : la sélection, comme le contour de la fenêtre active, le panneau actif et la pastille de mode de nvim.
 - **Cyan**, `#7cc4e8`, la couleur d'info des apps : une cible, comme la branche git, les liens et la base d'un rebase dans lazygit.
 - **Vert**, `#7fd8a6`, leur succès : normal ou terminé, comme les fichiers indexés.
-- **Ambre**, `#e6c07b`, leur avertissement : prudence, comme les fichiers modifiés, les commits à pousser et un voyant qui a quelque chose à faire.
+- **Ambre**, `#e6c07b`, leur avertissement : prudence, comme les fichiers modifiés, les commits à push et un voyant qui a quelque chose à faire.
 - **Rouge**, `#ff6b6b`, leur danger : agir maintenant, comme une commande échouée, un conflit ou une unité en échec.
 
 Chaque app choisit son propre accent, donc la sélection devait être l'un d'eux. C'est la lavande de relay, à 70° de teinte du cyan des cibles ; la pervenche de hubble, l'autre candidate, n'en est qu'à 46° et se lirait comme une cible.

@@ -18,9 +18,9 @@ J'avais construit la même base sur tmux, environ 1 100 lignes de scripts. Herd
 
 ## Chaque commit de Claude atterrit dans une boîte
 
-Un hook de Claude Code lit la sortie de chaque commande shell à la recherche de la ligne que git affiche après un commit. Il repère aussi les commandes qui commitent en silence, un rebase, un cherry-pick ou un revert, et suit les `cd` et `git -C` pour trouver le dépôt. Chaque commit trouvé entre dans la boîte du projet avec le terminal d'où il vient. Le hook sort toujours avec 0, donc une revue ne peut jamais bloquer un commit.
+Un hook de Claude Code lit la sortie de chaque commande shell à la recherche de la ligne que git affiche après un commit. Il repère aussi les commandes qui commitent en silence, un rebase, un cherry-pick ou un revert, et suit les `cd` et `git -C` pour trouver le repo. Chaque commit trouvé entre dans la boîte du projet avec le terminal d'où il vient. Le hook sort toujours avec 0, donc une revue ne peut jamais bloquer un commit.
 
-Ouvrir l'onglet Review range aussi les commits non poussés de la branche datant des deux dernières semaines, ce qui rattrape ceux que j'ai faits à la main.
+Ouvrir l'onglet Review range aussi les commits non pushés de la branche datant des deux dernières semaines, ce qui rattrape ceux que j'ai faits à la main.
 
 ## Les commits d'un ticket se lisent comme un seul diff
 
@@ -36,15 +36,15 @@ Claude peut aussi relire un ticket lui-même et laisser des notes, mais approuve
 
 ## Les écrans modifiés sont photographiés avant et après
 
-Pour un ticket qui change une page, Claude écrit un court scénario Playwright : une route, les étapes pour atteindre l'état voulu, une taille de fenêtre. `review shoot` met la pile au parent du premier commit du ticket, prend les captures, la met au dernier commit, en prend de nouvelles, et place les deux images dans l'en-tête du ticket. Chaque projet a un preset pour sa connexion et ses étapes d'installation et de migration, exécutées seulement quand leurs fichiers ont changé.
+Pour un ticket qui change une page, Claude écrit un court scénario Playwright : une route, les étapes pour atteindre l'état voulu, une taille de fenêtre. `review shoot` met la stack au parent du premier commit du ticket, prend les captures, la met au dernier commit, en prend de nouvelles, et place les deux images dans l'en-tête du ticket. Chaque projet a un preset pour sa connexion et ses étapes d'installation et de migration, exécutées seulement quand leurs fichiers ont changé.
 
-Une étape en échec prend quand même sa capture, puisque l'image montre souvent pourquoi. Une exécution qui échoue à cause de la pile, et non du scénario, est relancée jusqu'à trois fois.
+Une étape en échec prend quand même sa capture, puisque l'image montre souvent pourquoi. Une exécution qui échoue à cause de la stack, et non du scénario, est relancée jusqu'à trois fois.
 
 ## Le panneau des changements est devenu un graphe de commits
 
-Le second mod remplace le panneau des changements de Herdr par un graphe du dépôt du panneau actif : une voie par branche, le travail non commité en première ligne, et les fichiers et le diff de la ligne que je choisis. Un clic droit sur un commit, une branche ou un tag propose ce que git permet, du cherry-pick au reset. Une ligne de ticket dans le corps d'un commit devient un lien vers son ticket Forgejo, et un ticket s'ouvre dans l'onglet Review.
+Le second mod remplace le panneau des changements de Herdr par un graphe du repo du panneau actif : une voie par branche, le travail non commité en première ligne, et les fichiers et le diff de la ligne que je choisis. Un clic droit sur un commit, une branche ou un tag propose ce que git permet, du cherry-pick au reset. Une ligne de ticket dans le corps d'un commit devient un lien vers son ticket Forgejo, et un ticket s'ouvre dans l'onglet Review.
 
-![Le panneau du graphe git : le travail non commité en première ligne, une branche fusionnée sur sa propre voie, un tag, et le diff du fichier modifié en dessous](./img/herdr-git-graph.png)
+![Le panneau du graphe git : le travail non commité en première ligne, une branche mergée sur sa propre voie, un tag, et le diff du fichier modifié en dessous](./img/herdr-git-graph.png)
 
 ## Les questions ouvertes de Claude tiennent dans un panneau
 
@@ -56,11 +56,11 @@ Mes sessions Claude posent leurs questions sans attendre la réponse, comme l'ex
 
 Un espace Herdr peut vivre sur une autre machine que celle devant laquelle je suis. La barre d'état affiche le CPU et la RAM de la machine de l'espace affiché. Toutes les trois secondes, tant que la fenêtre est active, elle y lance un seul `cat /proc/stat /proc/meminfo` : le chiffre du CPU est la part occupée entre deux relevés, donc le premier passage n'affiche que la RAM, sous la forme `9.4/31G`. Les deux chiffres passent à l'ambre à 70 % et au rouge à 90 %.
 
-Le panneau des questions et la barre d'état sont des mods de mes dotfiles, absents du dépôt public ci-dessous.
+Le panneau des questions et la barre d'état sont des mods de mes dotfiles, absents du repo public ci-dessous.
 
 ## La boîte fait confiance à la sortie de git
 
-Le hook repère les commits en lisant ce que git a affiché, donc un commit fait par un outil qui affiche autre chose passe inaperçu jusqu'à l'ouverture de l'onglet Review, qui range les commits non poussés. Un shoot n'annule pas les migrations, c'est pourquoi il tourne sur une copie jetable de la pile, jamais celle sur laquelle je travaille. Le panneau git est une copie du panneau des changements de Herdr, donc un correctif en amont ne l'atteint pas. Et `bun run setup` doit être relancé après chaque pull.
+Le hook repère les commits en lisant ce que git a affiché, donc un commit fait par un outil qui affiche autre chose passe inaperçu jusqu'à l'ouverture de l'onglet Review, qui range les commits non pushés. Un shoot n'annule pas les migrations, c'est pourquoi il tourne sur une copie jetable de la stack, jamais celle sur laquelle je travaille. Le panneau git est une copie du panneau des changements de Herdr, donc un correctif en amont ne l'atteint pas. Et `bun run setup` doit être relancé après chaque pull.
 
 ## L'essayer
 
@@ -73,4 +73,4 @@ bun install
 bun run setup
 ```
 
-`setup` installe les deux mods, la touche Ctrl+Shift+R, le hook de commit et le skill de revue, et télécharge le Chromium utilisé par les shoots. Le dépôt reste là où il a été cloné, puisque les mods pointent dedans.
+`setup` installe les deux mods, la touche Ctrl+Shift+R, le hook de commit et le skill de revue, et télécharge le Chromium utilisé par les shoots. Le repo reste là où il a été cloné, puisque les mods pointent dedans.

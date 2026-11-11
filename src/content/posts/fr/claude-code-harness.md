@@ -43,7 +43,7 @@ The rule this call falls under, to check what was just done against it:
 
 Chaque mémoire n'est servie qu'une fois par conversation, et une mémoire que Claude a lue de lui-même compte aussi. Une compaction vide cette liste, et c'est tout l'intérêt : ce que le résumé a laissé tomber revient la prochaine fois qu'un appel en a besoin.
 
-Le même mod empêche un tour de se terminer quand il ne devrait pas. Si Claude a modifié du code sans lancer de vérification, le tour lui est renvoyé avec la règle de validation du dépôt. Si les fichiers qu'il a modifiés ne sont toujours pas commités, il est renvoyé une deuxième fois.
+Le même mod empêche un tour de se terminer quand il ne devrait pas. Si Claude a modifié du code sans lancer de vérification, le tour lui est renvoyé avec la règle de validation du repo. Si les fichiers qu'il a modifiés ne sont toujours pas commités, il est renvoyé une deuxième fois.
 
 ## Les questions restent au-dessus du prompt jusqu'à la réponse
 
@@ -61,7 +61,7 @@ Avant que le skill existe, un sous-agent reçoit la tâche sans rien pour le gui
 
 ## Recherches et revues vont à des agents qui ne modifient rien
 
-Un agent est un sous-agent avec ses propres instructions, ses outils et son modèle. J'en ai deux, tous deux sur Sonnet, sans outil d'édition, avec la consigne de ne pas toucher à l'arbre de travail.
+Un agent est un sous-agent avec ses propres instructions, ses outils et son modèle. J'en ai deux, tous deux sur Sonnet, sans outil d'édition, avec la consigne de ne pas toucher au working tree.
 
 - **explorer** répond à une question sur une base de code : où se trouve telle chose, quels fichiers y touchent. Il renvoie sa conclusion, un `chemin:ligne` par fait, et seulement les extraits que l'appelant s'apprête à modifier. Les fichiers qu'il a lus en chemin n'entrent jamais dans le contexte de la session principale.
 - **code-reviewer** reçoit les exigences mot pour mot et les commits faits pour elles. Il renvoie un verdict par exigence, ce que le diff contient que personne n'a demandé, et ses remarques par gravité. Il rapporte et ne corrige jamais : la session qui a écrit le code applique les remarques dans un commit de suivi, qu'une variante du relecteur à faible effort vérifie au regard de ces seules remarques.

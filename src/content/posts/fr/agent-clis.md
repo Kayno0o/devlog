@@ -23,7 +23,7 @@ remote: Remote servers are off limits (no SSH, no deploys, no remote commands). 
 
 La première règle vient de mon fichier `.env` affiché dans la session, où chaque message suivant l'emportait avec lui. La règle `env` refuse désormais toute commande qui lit, modifie ou affiche un fichier d'environnement ou l'environnement entier, et le hook refuse sur ces fichiers les outils Read, Edit et Write de Claude lui-même.
 
-À la place, Claude a `ev`. `ev list` montre chaque clé avec sa valeur masquée, `ev set` lit la valeur sur l'entrée standard pour qu'elle n'apparaisse jamais dans la commande, et `ev cp` copie une clé d'un fichier à l'autre sans l'afficher. Pour tout le reste, il y a `ev redact`, qui masque les formats de jetons connus, les mots de passe dans les URL et les valeurs des fichiers d'environnement du dossier dans toute sortie qu'on lui passe : `docker compose config | ev redact`. Lancé en `git diff --cached | ev redact --check`, il indique où se trouve un secret avant qu'il ne soit commité.
+À la place, Claude a `ev`. `ev list` montre chaque clé avec sa valeur masquée, `ev set` lit la valeur sur l'entrée standard pour qu'elle n'apparaisse jamais dans la commande, et `ev cp` copie une clé d'un fichier à l'autre sans l'afficher. Pour tout le reste, il y a `ev redact`, qui masque les formats de tokens connus, les mots de passe dans les URL et les valeurs des fichiers d'environnement du dossier dans toute sortie qu'on lui passe : `docker compose config | ev redact`. Lancé en `git diff --cached | ev redact --check`, il indique où se trouve un secret avant qu'il ne soit commité.
 
 ## Un worktree temporaire a remplacé git stash
 
@@ -34,7 +34,7 @@ $ guard check 'git stash'
 git: Never `git stash`: a pop with nothing saved applies someone else's old stash. To prove a test fails without your change, `base proof --keep <test> -- <cmd>` runs it at HEAD in a temporary worktree and again here; `base -- <cmd>` runs any command at HEAD (`--ref <rev>` another commit), the working tree untouched. To set edits aside before a cherry-pick, a rebase or a checkout, commit them with `gc` first, or do the other work in `git worktree add`.
 ```
 
-`base proof` répond à la question par laquelle le refus commence : il ne sort avec 0 que si la commande échoue sur HEAD et passe dans l'arbre de travail. Mes fichiers ne bougent jamais.
+`base proof` répond à la question par laquelle le refus commence : il ne sort avec 0 que si la commande échoue sur HEAD et passe dans le working tree. Mes fichiers ne bougent jamais.
 
 ## Les tâches lourdes attendent un créneau
 
@@ -48,22 +48,22 @@ La quatrième n'était pas un accident. `ft` ramène les tickets et la CI de mon
 
 ## Les autres outils ne réduisent la sortie que sur une chaîne bavarde
 
-Je m'attendais à ce que les outils qui façonnent la sortie économisent beaucoup de tokens. Sur le dépôt de ce blog, avec une erreur de type, une erreur de lint et un test en échec plantés exprès, la moitié d'entre eux n'économisent rien :
+Je m'attendais à ce que les outils qui façonnent la sortie économisent beaucoup de tokens. Sur le repo de ce blog, avec une erreur de type, une erreur de lint et un test en échec plantés exprès, la moitié d'entre eux n'économisent rien :
 
 <Stats
   items={[
-    {"value": "-47 %", "label": "caractères pour l'état du dépôt, gst face à git status et git log"},
+    {"value": "-47 %", "label": "caractères pour l'état du repo, gst face à git status et git log"},
     {"value": "-62 %", "label": "caractères pour une fonction, src peek face à la lecture du fichier entier"},
     {"value": "+13 %", "label": "caractères pour typage, lint et tests, check face aux trois scripts"},
     {"value": "0 %", "label": "caractères pour un build en échec, out face au script de build"}
   ]}
 />
 
-Le vérificateur et le linter de kay, comme `bun test`, n'affichent déjà que ce qui échoue ; Bun le fait quand Claude Code le lance. `check` n'ajoute alors que le chemin de chaque journal complet, et `out` ne trouve rien à replier. Sur ce dépôt, leur gain est un appel au lieu de trois et les journaux complets gardés sur disque, pas des tokens. Sur une chaîne plus bavarde, une suite de tests PHP ou un vérificateur de types Vue, c'est là que le repli paie.
+Le vérificateur et le linter de kay, comme `bun test`, n'affichent déjà que ce qui échoue ; Bun le fait quand Claude Code le lance. `check` n'ajoute alors que le chemin de chaque journal complet, et `out` ne trouve rien à replier. Sur ce repo, leur gain est un appel au lieu de trois et les journaux complets gardés sur disque, pas des tokens. Sur une chaîne plus bavarde, une suite de tests PHP ou un vérificateur de types Vue, c'est là que le repli paie.
 
 <Note title="Comment c'est mesuré">
 
-Une exécution de chaque commande depuis Claude Code le 10 novembre 2026, sur une copie de ce dépôt avec kay 1.94.0 et Bun 1.4.4, sorties standard et d'erreur comptées ensemble en caractères. gst 0.16.1, peek 0.15.1 (désormais `src peek`), check 0.20.1, out 0.14.5. Les échecs plantés, les commandes et les comptes sont dans [bench/agent-clis.md](https://github.com/Kayno0o/devlog/blob/main/bench/agent-clis.md).
+Une exécution de chaque commande depuis Claude Code le 10 novembre 2026, sur une copie de ce repo avec kay 1.94.0 et Bun 1.4.4, sorties standard et d'erreur comptées ensemble en caractères. gst 0.16.1, peek 0.15.1 (désormais `src peek`), check 0.20.1, out 0.14.5. Les échecs plantés, les commandes et les comptes sont dans [bench/agent-clis.md](https://github.com/Kayno0o/devlog/blob/main/bench/agent-clis.md).
 
 </Note>
 

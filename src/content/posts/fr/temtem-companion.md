@@ -59,4 +59,4 @@ La même touche la ferme, et une règle KWin la garde au-dessus du jeu, qui doit
 
 ## Les données restent privées
 
-Le jeu de données vient d'une API communautaire épinglée à un commit, d'un wiki et d'une carte de fans des positions des PNJ, environ 4,3 Mo embarqués dans le dépôt. Une partie n'a aucune licence, ce qui convient à une app que je suis seul à utiliser et pas à une app publique, donc l'app reste derrière mon login. L'OCR lit aussi les plaques à des positions mesurées sur l'écran de combat du jeu, donc une refonte de cet écran veut dire les mesurer de nouveau.
+Le jeu de données vient d'une API communautaire épinglée à un commit, d'un wiki et d'une carte de fans des positions des PNJ, environ 4,3 Mo embarqués dans le repo. Une partie n'a aucune licence, ce qui convient à une app que je suis seul à utiliser et pas à une app publique, donc l'app reste derrière mon login. L'OCR lit aussi les plaques à des positions mesurées sur l'écran de combat du jeu, donc une refonte de cet écran veut dire les mesurer de nouveau.
