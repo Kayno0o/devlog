@@ -357,9 +357,9 @@ kay 1.82.0, solid-js 1.9.17, Svelte 5.57.1, Astro 7.3.8, Next.js 16.4.3 and Nuxt
 
 </Note>
 
-## Four real sites moved to kay, losses included
+## Four real sites serve faster on kay
 
-A products page only goes so far, so four real sites moved to kay, each measured as it deploys against the version it replaced: [a SvelteKit site](/posts/ported-from-sveltekit) of about 3,000 lines over 22 components, [two small business sites from Astro](/posts/ported-from-astro), and [a small signed-in app from Elysia and Solid](/posts/ported-from-solid). What kay loses there: slower template and style edits in the dev server, more memory at rest than SvelteKit, more JavaScript and slower builds than Astro, more layout shift on phones and a slower build than Elysia and Solid.
+A products page only goes so far, so four real sites moved to kay, each measured as it deploys against the version it replaced: [a SvelteKit site](/posts/ported-from-sveltekit) of about 3,000 lines over 22 components, [two small business sites from Astro](/posts/ported-from-astro), and [a small signed-in app from Elysia and Solid](/posts/ported-from-solid). All four serve their pages with less server work and paint sooner on a phone. The old stacks keep a few wins: Astro ships less JavaScript and builds faster, Elysia and Solid shift the layout less on phones and build faster too, and SvelteKit holds less memory at rest and shows template and style edits sooner in its dev server.
 
 ## Written to be easy for a coding agent
 

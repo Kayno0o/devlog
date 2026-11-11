@@ -6,7 +6,7 @@ tags: [kay, benchmarks]
 draft: false
 ---
 
-Cette app tournait sur une pile maison : une API Elysia, des islands Solid 2 au-dessus d'un rendu serveur fait à la main, et des sessions JWT. Elle est privée : ses utilisateurs se connectent avec Discord pour noter des cartes de profil. Passée à [kay](/posts/introducing-kay), avec une connexion par kayjs-auth, elle rend chaque page pour une fraction du CPU et s'affiche bien plus tôt, mais la mise en page bouge davantage sur mobile et le build est plus lent.
+Cette app tournait sur une stack maison : une API Elysia, des islands Solid 2 au-dessus d'un rendu serveur fait à la main, et des sessions JWT. Elle est privée : ses utilisateurs se connectent avec Discord pour noter des cartes de profil. Passée à [kay](/posts/introducing-kay), avec une connexion par kayjs-auth, elle rend chaque page pour une fraction du CPU et s'affiche bien plus tôt, mais la mise en page bouge davantage sur mobile et le build est plus lent.
 
 Chaque côté a été construit et servi comme il se déploie, le serveur Elysia sous Bun contre l'unique exécutable de kay, tous deux derrière nginx avec HTTP/2, TLS et brotli, sur une seule machine de bureau, un Ryzen 5 7600 à 12 threads sous Linux. Chacun lit sa propre base Postgres, remplie à l'identique, et toutes les pages sauf celle de connexion sont mesurées connecté.
 
@@ -38,7 +38,7 @@ Chaque côté a été construit et servi comme il se déploie, le serveur Elysia
 
 Les deux pages montrent les données de la personne connectée, donc aucune n'est prérendue : c'est du rendu, pour un quart à moins d'un tiers du CPU de l'ancien serveur par requête. nginx passe environ 50 µs sur chacune au lieu de 374 à 427, car kay compresse la page lui-même là où l'ancien serveur laissait ce travail à nginx.
 
-## Les mobiles affichent plus tôt, et la mise en page bouge davantage
+## Les mobiles affichent plus tôt, et la mise en page de l'ancienne app bougeait moins
 
 <BarChart
   title="Rendus sur mobile"
@@ -91,7 +91,7 @@ La mise en page bouge davantage sur mobile, 0,119 contre 0,019. La page étant a
 
 Une fois démarré, avant toute charge, kay occupe 71 Mo contre 121, et il répond à sa première requête 41,5 ms après son lancement au lieu de 297.
 
-## Le build est plus lent, les tests plus courts
+## Les tests sont plus courts, et l'ancien build était plus rapide
 
 <BarChart
   title="Build, depuis zéro"

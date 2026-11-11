@@ -77,7 +77,7 @@ kay serves those pages prerendered and already compressed, so nginx spends about
 
 kay serves images as AVIF at the width drawn, so a page's images weigh 52 against 143 KB and 37 against 161 KB on desktop, 114 against 143 KB and 106 against 185 KB on a phone, the cattery first. It also inlines each page's styles, leaving no stylesheet to wait for: on a phone the first paint lands at 0.66 and 0.69 s instead of 1.51 and 1.30 s, the largest paint at 1.69 and 0.84 s instead of 2.45 and 1.31 s.
 
-## kay ships more JavaScript and builds slower
+## Astro ships less JavaScript and builds faster
 
 <BarChart
   title="JS shipped per page, brotli"

@@ -69,7 +69,7 @@ kay sert ces pages prérendues et déjà compressées, si bien que nginx passe e
 
 kay sert les images en AVIF à la largeur affichée, si bien que les images d'une page pèsent 52 contre 143 Ko et 37 contre 161 Ko sur ordinateur, 114 contre 143 Ko et 106 contre 185 Ko sur mobile, l'élevage d'abord. Il inline aussi les styles de chaque page, sans feuille de style à attendre : sur mobile le premier rendu arrive à 0,66 et 0,69 s au lieu de 1,51 et 1,30 s, le plus grand rendu à 1,69 et 0,84 s au lieu de 2,45 et 1,31 s.
 
-## kay envoie plus de JavaScript et son build est plus lent
+## Astro envoie moins de JavaScript et son build est plus rapide
 
 <BarChart
   title="JS envoyé par page, brotli"

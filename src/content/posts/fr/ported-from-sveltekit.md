@@ -82,7 +82,7 @@ L'essentiel de cet écart vient du prérendu, pas de la vitesse de rendu : à l
 
 Le build de kay garde aussi les pages de contenu, qui ne prennent rien de la requête, si bien qu'elles sont servies elles aussi depuis la mémoire. Seule la 404 est encore rendue à chaque requête, à 1,2 fois le débit de SvelteKit pour moins de CPU.
 
-## Les builds sont plus rapides, et la mémoire au repos plus haute
+## Les builds sont plus rapides, et SvelteKit occupe moins de mémoire au repos
 
 <BarChart
   title="Build, caches froids"
@@ -112,7 +112,7 @@ Le build de kay garde aussi les pages de contenu, qui ne prennent rien de la req
 
 Sous charge, kay culmine à 92 Mio de mémoire contre 134 à 136 pour SvelteKit.
 
-## Le serveur de dev charge les pages plus tôt et affiche les modifications de style plus tard
+## Le serveur de dev charge les pages plus tôt, et celui de SvelteKit affiche les modifications de style en premier
 
 <BarChart
   title="Premier chargement de la page d'accueil, serveur de dev"

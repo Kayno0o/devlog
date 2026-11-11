@@ -90,7 +90,7 @@ Most of that gap is prerendering, not rendering speed: back when kay rendered th
 
 kay's build keeps the content pages too, as they take nothing from the request, so they are served from memory as well. Only the 404 is still rendered per request, at 1.2 times SvelteKit's rate for less CPU.
 
-## Builds are faster, and memory at rest is higher
+## Builds are faster, and SvelteKit holds less memory at rest
 
 <BarChart
   title="Build, cold caches"
@@ -120,7 +120,7 @@ kay's build keeps the content pages too, as they take nothing from the request, 
 
 Under load, kay peaks at 92 MiB of memory against SvelteKit's 134 to 136.
 
-## The dev server loads pages sooner and shows style edits later
+## The dev server loads pages sooner, and SvelteKit's shows style edits first
 
 <BarChart
   title="First load of the home page, dev server"

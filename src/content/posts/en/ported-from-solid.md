@@ -46,7 +46,7 @@ Each side was built and served as it deploys, the Elysia server under Bun agains
 
 Both pages show the signed-in person's own data, so neither is prerendered: this is rendering, at a quarter to under a third of the old server's CPU per request. nginx spends about 50 µs on each instead of 374 to 427, as kay compresses the page itself where the old server left that to nginx.
 
-## Phones paint sooner, and the layout shifts more
+## Phones paint sooner, and the old app's layout shifted less
 
 <BarChart
   title="Paints on a phone"
@@ -99,7 +99,7 @@ The layout shifts more on a phone, 0.119 against 0.019. With the page painted fr
 
 Once started, before any load, kay holds 71 MB against 121, and it answers its first request 41.5 ms after spawning instead of 297.
 
-## The build is slower, the tests shorter
+## The tests are shorter, and the old build was faster
 
 <BarChart
   title="Build, clean"
