@@ -1,5 +1,5 @@
 ---
-title: "I moved my Solid app to kay, losses included"
+title: "My two-user app, load tested on kay anyway"
 description: "I ported a signed-in app of mine from Elysia and Solid 2 to kay and measured it as it deploys: load, paints, memory, builds, and what got worse."
 date: 2026-11-10T10:10:00Z
 tags: [kay, benchmarks]

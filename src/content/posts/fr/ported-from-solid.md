@@ -1,5 +1,5 @@
 ---
-title: "J'ai passé mon app Solid à kay, pertes incluses"
+title: "Mon app à deux utilisateurs, testée en charge"
 description: "J'ai porté une de mes apps d'Elysia et Solid 2 vers kay, mesurée telle qu'elle se déploie : charge, rendus, mémoire, builds, et ce qui a empiré."
 date: 2026-11-10T10:10:00Z
 tags: [kay, benchmarks]

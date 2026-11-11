@@ -1,5 +1,5 @@
 ---
-title: "53 CLIs that all fail the same way, on purpose"
+title: "53 CLIs that behave as one"
 description: "arc, dl, gloss, pick, probe and proc each do one job with a safe default, and one small kit makes all 53 of my CLIs parse, help and fail the same way."
 date: 2026-11-10
 tags: [cli, bun]
@@ -80,13 +80,9 @@ No theme changes what is printed off a terminal, where the marks read `ok:`, `no
 
 Each command imports its module only when it runs, so `--help`, completion and a typo answer without loading any of them. Every bin also prints its own completion script for fish, bash and zsh, and the kit's usage log keeps the names of the flags I use, never their values.
 
-## The kit is one more thing to release
-
-The kit is bundled into each bin at build, so a fix to it reaches a bin only when that bin is released again. And the bins run on Bun only.
-
 ## Try it
 
-Each bin installs on its own:
+The bins run on Bun only, and each one installs on its own:
 
 ```sh
 bun install -g @kaynooo/cli-arc @kaynooo/cli-dl @kaynooo/cli-gloss

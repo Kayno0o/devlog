@@ -1,5 +1,5 @@
 ---
-title: "I timed one page in five frameworks. None wins all"
+title: "Five frameworks, one page, no winner"
 description: "I timed the same products page in Next.js, Nuxt, Astro, Svelte and Solid, in the browser, on the server and at build, with the code each one takes."
 date: 2026-10-19
 updated: 2026-11-10

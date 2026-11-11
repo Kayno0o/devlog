@@ -1,5 +1,5 @@
 ---
-title: "Claude forgets my rules, so hooks hand them back"
+title: "Compaction made Claude forget. Hooks remind it"
 description: "How I keep Claude Code on my conventions after a compaction: a short CLAUDE.md, hooks handing over memories as calls need them, questions kept on screen."
 date: 2026-11-10
 tags: [llm, claude-code]

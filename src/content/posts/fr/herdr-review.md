@@ -1,5 +1,5 @@
 ---
-title: "Claude commite sans arrêt, je relis dans une boîte"
+title: "Claude commite, je laisse des notes, Claude corrige"
 description: "Deux mods Herdr rangent chaque commit de Claude Code dans une boîte de revue, un diff par ticket, et collent mes notes dans le Claude qui a écrit le code."
 date: 2026-11-10
 tags: [llm, claude-code]

@@ -1,5 +1,5 @@
 ---
-title: "J'ai passé un site SvelteKit à kay, pertes incluses"
+title: "Quitter SvelteKit : moins de CPU, plus de mémoire"
 description: "J'ai porté un vrai site SvelteKit vers kay et l'ai mesuré contre la version qu'il remplace, en production et en développement, avec ce qui a empiré."
 date: 2026-11-10T10:30:00Z
 tags: [kay, benchmarks]

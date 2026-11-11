@@ -1,5 +1,5 @@
 ---
-title: "53 CLI qui échouent toutes pareil, et c'est voulu"
+title: "53 CLI qui se comportent comme une seule"
 description: "arc, dl, gloss, pick, probe et proc font chacun un travail avec un défaut sûr, et un petit kit fait que mes 53 CLI lisent, aident et échouent pareil."
 date: 2026-11-10
 tags: [cli, bun]
@@ -72,13 +72,9 @@ Aucun thème ne change ce qui s'affiche hors d'un terminal, où les marques se l
 
 Chaque commande n'importe son module que quand elle s'exécute, donc `--help`, la complétion et une faute de frappe répondent sans en charger aucune. Chaque bin affiche aussi son propre script de complétion pour fish, bash et zsh, et le journal d'usage du kit garde les noms des drapeaux que j'utilise, jamais leurs valeurs.
 
-## Le kit est une chose de plus à publier
-
-Le kit est embarqué dans chaque bin au build, donc un correctif du kit n'arrive dans un bin que quand ce bin est republié. Et les bins ne tournent que sur Bun.
-
 ## À essayer
 
-Chaque bin s'installe séparément :
+Les bins ne tournent que sur Bun, et chacun s'installe séparément :
 
 ```sh
 bun install -g @kaynooo/cli-arc @kaynooo/cli-dl @kaynooo/cli-gloss

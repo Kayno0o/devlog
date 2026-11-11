@@ -1,5 +1,5 @@
 ---
-title: "Une page, cinq frameworks : aucun ne gagne partout"
+title: "Cinq frameworks, une page, aucun gagnant"
 description: "J'ai chronométré la même page produits en Next.js, Nuxt, Astro, Svelte et Solid : navigateur, serveur et build, avec le code que chacun demande."
 date: 2026-10-19
 updated: 2026-11-10

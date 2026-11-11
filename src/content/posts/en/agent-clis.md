@@ -1,5 +1,5 @@
 ---
-title: "Claude printed my secrets, so I built it safer CLIs"
+title: "Claude printed my secrets. Now it has its own CLIs"
 description: "Claude Code printed my secrets, broke a stash and overloaded my machine. Each is now a rule a hook enforces, and a command that does the job safely."
 date: 2026-11-10
 tags: [llm, cli]

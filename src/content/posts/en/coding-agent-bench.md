@@ -1,5 +1,5 @@
 ---
-title: "I had Claude build one site in five frameworks"
+title: "Every bug Claude shipped was one page load away"
 description: "I had Claude build the same site in SvelteKit, SolidStart, Astro, Nuxt and Next.js, on Opus and on Sonnet, graded by browser tests it never saw."
 date: 2026-10-19
 updated: 2026-11-10

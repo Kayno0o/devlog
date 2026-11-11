@@ -1,5 +1,5 @@
 ---
-title: "J'ai fait bâtir un site à Claude en cinq frameworks"
+title: "Chaque bug de Claude tenait à un rechargement"
 description: "J'ai fait construire le même site à Claude avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, sur Opus et Sonnet, noté par des tests qu'il n'a jamais vus."
 date: 2026-10-19
 updated: 2026-11-10
