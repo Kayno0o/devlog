@@ -8,7 +8,7 @@ Measured on 10 November 2026 on a copy of this repo at e9a3102 (kay 1.94.0, Bun 
 - a lint error: an unused `const unused = 1` in `src/frameworks.ts`;
 - a failing test: `tests/home.test.ts` expecting status 201.
 
-Bins: gst 0.16.1 (`@kaynooo/cli-git`), peek 0.15.1 (`@kaynooo/cli-code`), check 0.20.1 (`@kaynooo/cli-check`), out 0.14.5 (`@kaynooo/cli-out`).
+Bins: gst 0.16.1 (`@kaynooo/cli-git`), peek 0.15.1 (`@kaynooo/cli-code`, now `src peek`), check 0.20.1 (`@kaynooo/cli-check`), out 0.14.5 (`@kaynooo/cli-out`).
 
 Each command ran once with stdout and stderr captured together, counted with `wc -c`.
 

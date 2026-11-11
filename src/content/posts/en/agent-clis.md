@@ -31,7 +31,7 @@ remote: Remote servers are off limits (no SSH, no deploys, no remote commands). 
 
 The first rule came from my `.env` file printed into the session, where every later message carried it along. The `env` rule now refuses any command that reads, edits or prints an env file or the whole environment, and the hook refuses Claude's own Read, Edit and Write tools on one.
 
-What Claude gets instead is `ev`. `ev list` shows every key with its value masked, `ev set` takes the value on stdin so it never appears in the command, and `ev cp` copies a key from one file to another without printing it. For everything else there is `redact`, which masks known token formats, URL passwords and the values of the folder's own env files in any output piped through it: `docker compose config | redact`. Run as `git diff --cached | redact --check`, it lists where a secret sits before it gets committed.
+What Claude gets instead is `ev`. `ev list` shows every key with its value masked, `ev set` takes the value on stdin so it never appears in the command, and `ev cp` copies a key from one file to another without printing it. For everything else there is `ev redact`, which masks known token formats, URL passwords and the values of the folder's own env files in any output piped through it: `docker compose config | ev redact`. Run as `git diff --cached | ev redact --check`, it lists where a secret sits before it gets committed.
 
 ## A temporary worktree replaced git stash
 
@@ -39,10 +39,10 @@ The second rule came from a stash and its pop that left my uncommitted changes b
 
 ```
 $ guard check 'git stash'
-git: Never `git stash`: a pop with nothing saved applies someone else's old stash. To prove a test fails without your change, `proof --keep <test> -- <cmd>` runs it at HEAD in a temporary worktree and again here; `base -- <cmd>` runs any command at HEAD (`--ref <rev>` another commit), the working tree untouched. To set edits aside before a cherry-pick, a rebase or a checkout, commit them with `gc` first, or do the other work in `git worktree add`.
+git: Never `git stash`: a pop with nothing saved applies someone else's old stash. To prove a test fails without your change, `base proof --keep <test> -- <cmd>` runs it at HEAD in a temporary worktree and again here; `base -- <cmd>` runs any command at HEAD (`--ref <rev>` another commit), the working tree untouched. To set edits aside before a cherry-pick, a rebase or a checkout, commit them with `gc` first, or do the other work in `git worktree add`.
 ```
 
-`proof` answers the question the refusal starts with: it exits 0 only when the command fails at HEAD and passes in the working tree. My files never move.
+`base proof` answers the question the refusal starts with: it exits 0 only when the command fails at HEAD and passes in the working tree. My files never move.
 
 ## Heavy jobs wait for a slot
 
@@ -61,7 +61,7 @@ I expected the bins that shape output to save a lot of tokens. On this blog's ow
 <Stats
   items={[
     {"value": "-47%", "label": "characters for the repo's state, gst against git status and git log"},
-    {"value": "-62%", "label": "characters for one function, peek against reading its whole file"},
+    {"value": "-62%", "label": "characters for one function, src peek against reading its whole file"},
     {"value": "+13%", "label": "characters for typecheck, lint and test, check against the three scripts"},
     {"value": "0%", "label": "characters for a failed build, out against the build script"}
   ]}
@@ -71,7 +71,7 @@ kay's checker and linter and `bun test` already print only what failed; Bun does
 
 <Note title="How it was measured">
 
-One run of each command from Claude Code on 10 November 2026, on a copy of this repo with kay 1.94.0 and Bun 1.4.4, stdout and stderr counted together in characters. gst 0.16.1, peek 0.15.1, check 0.20.1, out 0.14.5. The planted failures, the commands and the counts are in [bench/agent-clis.md](https://github.com/Kayno0o/devlog/blob/main/bench/agent-clis.md).
+One run of each command from Claude Code on 10 November 2026, on a copy of this repo with kay 1.94.0 and Bun 1.4.4, stdout and stderr counted together in characters. gst 0.16.1, peek 0.15.1 (now `src peek`), check 0.20.1, out 0.14.5. The planted failures, the commands and the counts are in [bench/agent-clis.md](https://github.com/Kayno0o/devlog/blob/main/bench/agent-clis.md).
 
 </Note>
 

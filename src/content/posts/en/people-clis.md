@@ -1,24 +1,24 @@
 ---
-title: "53 CLIs that behave as one"
-description: "arc, dl, gloss, pick, probe and proc each do one job with a safe default, and one small kit makes all 53 of my CLIs parse, help and fail the same way."
+title: "41 CLIs that behave as one"
+description: "arc, dl, gloss, pick, probe and proc each do one job with a safe default, and one small kit makes all 41 of my CLIs parse, help and fail the same way."
 date: 2026-11-10
 tags: [cli, bun]
 draft: true
 social:
-  x: "53 small CLIs, one kit: every bin exits 0 when clean, 1 on a finding, 2 when it could not check, and a test holds each command to that table. -n is always a count, -t always a timeout, and --help loads none of the commands."
-  bluesky: "53 small CLIs, one kit: every bin exits 0 when clean, 1 on a finding, 2 when it could not check, and a test holds each command to that table. -n is always a count, -t always a timeout, and --help loads none of the commands."
-  mastodon: "I write small CLIs on Bun, 53 bins so far, all on one kit: every bin exits 0 when clean, 1 on a finding, 2 when it could not check, and a test walks every command to hold it to that table. -n is always a count, -t a timeout, output changes for a terminal, a pipe or an agent. The post covers six I built for myself: arc, dl, gloss, pick, probe and proc. #Bun #CLI #TypeScript"
+  x: "41 small CLIs, one kit: every bin exits 0 when clean, 1 on a finding, 2 when it could not check, and a test holds each command to that table. -n is always a count, -t always a timeout, and --help loads none of the commands."
+  bluesky: "41 small CLIs, one kit: every bin exits 0 when clean, 1 on a finding, 2 when it could not check, and a test holds each command to that table. -n is always a count, -t always a timeout, and --help loads none of the commands."
+  mastodon: "I write small CLIs on Bun, 41 bins so far, all on one kit: every bin exits 0 when clean, 1 on a finding, 2 when it could not check, and a test walks every command to hold it to that table. -n is always a count, -t a timeout, output changes for a terminal, a pipe or an agent. The post covers six I built for myself: arc, dl, gloss, pick, probe and proc. #Bun #CLI #TypeScript"
   reddit:
-    title: "One kit behind 53 small Bun CLIs: shared exit codes, flags and output modes"
+    title: "One kit behind 41 small Bun CLIs: shared exit codes, flags and output modes"
     body: "I build small CLIs on Bun. They all sit on one kit, so every bin parses, helps and fails the same way: one exit-code table that a test holds every command to, flags that mean the same thing everywhere, and output that changes for a terminal, a CI log, a pipe or a coding agent. The post covers six bins made for people rather than agents (an archiver that verifies before deleting, a downloader that checks before running, a man-page explainer, a fuzzy picker, an HTTP probe and a /proc inspector) and what the kit costs."
     subreddits: []
 ---
 
-Most of my command-line tools were written for Claude Code, and [that post](/posts/agent-clis) covers them. Six were written for me, typed by hand in a terminal. All of them, 53 bins across 27 packages, sit on one small kit, so they parse, help and fail the same way.
+Most of my command-line tools were written for Claude Code, and [that post](/posts/agent-clis) covers them. Six were written for me, typed by hand in a terminal. All of them, 41 bins across 27 packages, sit on one small kit, so they parse, help and fail the same way.
 
 <Stats
   items={[
-    {"value": "53", "label": "bins on one kit, published on npm as @kaynooo/cli-*"},
+    {"value": "41", "label": "bins on one kit, published on npm as @kaynooo/cli-*"},
     {"value": "0, 1, 2", "label": "the exit codes every bin shares: clean, a finding, could not check"},
     {"value": "229", "label": "test files, one of them walking every command of every bin"}
   ]}
@@ -31,7 +31,7 @@ Most of my command-line tools were written for Claude Code, and [that post](/pos
 - **gloss** explains a command line from the local man pages. It reads no network and runs nothing it explains.
 - **pick** is a fuzzy picker: lines on stdin, the chosen one on stdout. It draws on stderr and reads keys from `/dev/tty`, so a pipe carries only the choice.
 - **probe** shows a site's HTTP version, redirect chain, timings, certificate and headers in one call. `--dns` compares the system resolver with three public ones and the zone's own nameservers, and it warns when a certificate has under 14 days left.
-- **proc** reads a process from `/proc`, with its environment hidden unless asked and secrets masked even then. `ports 3000` says who listens on a port, and `ports 3000 --kill` refuses pid 1, another user's process, its own ancestors, and a container's port, where it prints the `docker stop` to run instead.
+- **proc** reads processes from `/proc`. `proc pid` shows one, its environment hidden unless asked and secrets masked even then. `proc ports 3000` says who listens on a port, and `proc ports 3000 --kill` refuses pid 1, another user's process, its own ancestors, and a container's port, where it prints the `docker stop` to run instead.
 
 ```
 $ gloss 'tar -xzvf site.tgz -C /srv'

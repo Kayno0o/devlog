@@ -1,16 +1,16 @@
 ---
-title: "53 CLI qui se comportent comme une seule"
-description: "arc, dl, gloss, pick, probe et proc font chacun un travail avec un défaut sûr, et un petit kit fait que mes 53 CLI lisent, aident et échouent pareil."
+title: "41 CLI qui se comportent comme une seule"
+description: "arc, dl, gloss, pick, probe et proc font chacun un travail avec un défaut sûr, et un petit kit fait que mes 41 CLI lisent, aident et échouent pareil."
 date: 2026-11-10
 tags: [cli, bun]
 draft: true
 ---
 
-La plupart de mes outils en ligne de commande ont été écrits pour Claude Code, et [cet article](/posts/agent-clis) les raconte. Six ont été écrits pour moi, tapés à la main dans un terminal. Tous, 53 bins répartis sur 27 paquets, reposent sur un même petit kit, donc ils lisent leurs arguments, affichent leur aide et échouent de la même façon.
+La plupart de mes outils en ligne de commande ont été écrits pour Claude Code, et [cet article](/posts/agent-clis) les raconte. Six ont été écrits pour moi, tapés à la main dans un terminal. Tous, 41 bins répartis sur 27 paquets, reposent sur un même petit kit, donc ils lisent leurs arguments, affichent leur aide et échouent de la même façon.
 
 <Stats
   items={[
-    {"value": "53", "label": "bins sur un seul kit, publiés sur npm sous @kaynooo/cli-*"},
+    {"value": "41", "label": "bins sur un seul kit, publiés sur npm sous @kaynooo/cli-*"},
     {"value": "0, 1, 2", "label": "les codes de sortie communs à tous les bins : propre, un constat, vérification impossible"},
     {"value": "229", "label": "fichiers de test, dont un qui parcourt chaque commande de chaque bin"}
   ]}
@@ -23,7 +23,7 @@ La plupart de mes outils en ligne de commande ont été écrits pour Claude Code
 - **gloss** explique une ligne de commande à partir des pages de man locales. Il n'utilise pas le réseau et n'exécute rien de ce qu'il explique.
 - **pick** est un sélecteur flou : des lignes sur stdin, la ligne choisie sur stdout. Il dessine sur stderr et lit les touches depuis `/dev/tty`, donc un pipe ne transporte que le choix.
 - **probe** montre en un appel la version HTTP d'un site, sa chaîne de redirections, ses temps, son certificat et ses en-têtes. `--dns` compare le résolveur du système à trois résolveurs publics et aux serveurs de noms de la zone, et prévient quand un certificat expire dans moins de 14 jours.
-- **proc** lit un processus depuis `/proc`, son environnement caché sauf demande et ses secrets masqués même alors. `ports 3000` dit qui écoute sur un port, et `ports 3000 --kill` refuse le pid 1, le processus d'un autre utilisateur, ses propres ancêtres et le port d'un conteneur, où il affiche à la place le `docker stop` à lancer.
+- **proc** lit les processus depuis `/proc`. `proc pid` en montre un, son environnement caché sauf demande et ses secrets masqués même alors. `proc ports 3000` dit qui écoute sur un port, et `proc ports 3000 --kill` refuse le pid 1, le processus d'un autre utilisateur, ses propres ancêtres et le port d'un conteneur, où il affiche à la place le `docker stop` à lancer.
 
 ```
 $ gloss 'tar -xzvf site.tgz -C /srv'
