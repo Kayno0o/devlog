@@ -12,7 +12,9 @@ const cardImage = post.data.tags.includes('kay') ? kayCard : undefined
 --- script
 import { t } from 'kay/i18n'
 import ArrowLeft from '~icons/tabler/arrow-left'
+import ArrowRight from '~icons/tabler/arrow-right'
 import Pencil from '~icons/tabler/pencil'
+import X from '~icons/tabler/x'
 import PostMeta from '../../components/post-meta.kay'
 import Toc from '../../components/toc.kay'
 import '../../post.css'
@@ -38,3 +40,14 @@ article.relative.mx-auto.max-w-2xl
     a.inline-flex.items-center.gap-1(href={`https://github.com/Kayno0o/devlog/blob/main/${post.file}`})
       Pencil.size-4
       | {t('post.suggestFix')}
+// post.js fills it with the image clicked, and steps through the post's images.
+dialog.gallery(aria-label={t('post.gallery')})
+  figure.gallery-figure
+  .gallery-bar
+    button.gallery-step(type="button" data-step="-1" aria-label={t('post.previousImage')})
+      ArrowLeft.size-5
+    span.gallery-count
+    button.gallery-step(type="button" data-step="1" aria-label={t('post.nextImage')})
+      ArrowRight.size-5
+    button.gallery-close(type="button" aria-label={t('post.closeImage')})
+      X.size-5

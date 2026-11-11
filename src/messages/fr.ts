@@ -54,6 +54,10 @@ export default defineMessages({
     readingTime: '{minutes} min de lecture',
     contents: 'Sommaire',
     suggestFix: 'Proposer une correction',
+    gallery: 'Images de l\'article',
+    previousImage: 'Image précédente',
+    nextImage: 'Image suivante',
+    closeImage: 'Fermer',
   },
   chart: {
     better: {

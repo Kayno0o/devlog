@@ -57,4 +57,50 @@
       @apply rounded-tl-none;
     }
   }
+
+  /* post.js wraps each image of the prose in it, to open the image in the gallery. */
+  .gallery-open {
+    @apply block w-full cursor-zoom-in;
+  }
+
+  .gallery {
+    @apply m-0 h-dvh max-h-none w-full max-w-none bg-base p-4 text-text;
+
+    &[open] {
+      @apply flex flex-col gap-4;
+    }
+  }
+
+  .gallery-figure {
+    @apply flex min-h-0 flex-1 cursor-zoom-out flex-col items-center justify-center gap-3;
+
+    & img {
+      @apply h-auto max-h-[calc(100dvh-8rem)] w-auto max-w-full rounded border border-border;
+    }
+
+    & figcaption {
+      @apply max-w-2xl text-center text-sm text-subtext;
+    }
+  }
+
+  .gallery-bar {
+    @apply flex items-center justify-center gap-2;
+
+    & button {
+      @apply inline-flex rounded border border-border p-2 text-subtext hover:bg-surface hover:text-text;
+    }
+  }
+
+  .gallery-count {
+    @apply min-w-16 text-center font-mono text-sm text-muted tabular-nums;
+  }
+
+  .gallery-close {
+    @apply ml-4;
+  }
+}
+
+/* The page behind the gallery does not scroll. */
+html:has(.gallery[open]) {
+  overflow: hidden;
 }
