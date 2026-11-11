@@ -58,13 +58,13 @@ Les invites suivent la même règle : hors d'un terminal, une invite échoue to
 
 ## Chaque bin dessine avec les mêmes marques
 
-Un seul thème porte les couleurs et les glyphes avec lesquels chaque bin dessine. Une ligne d'état commence par l'une de quatre marques, un ✓ vert, un › atténué, un ▲ jaune ou un ✗ rouge, et un mot d'état reçoit l'un de cinq badges, les mêmes dans chaque bin :
+Un seul thème porte les couleurs et les glyphes avec lesquels chaque bin dessine. Une ligne d'état commence par l'une de quatre marques, un ✓ vert, un › atténué, un ▲ jaune ou un ✗ rouge, et un mot d'état reçoit l'un de cinq badges, les mêmes dans chaque bin :
 
 ```
 ✓ success   ✗ failure   ● running   ○ waiting   - skipped
 ```
 
-Les couleurs par défaut sont des noms ANSI, pas des valeurs fixes : c'est la palette du terminal qui décide de ce qu'est le vert, et les bins suivent [mon thème de bureau](/posts/chamfer-theme) sans savoir qu'il existe. Le kit fournit quatre préréglages : celui par défaut, un contraste élevé, `mono` avec seulement le gras et l'atténué, et `ascii` pour un terminal sans les glyphes. Un `theme.json` dans mon dossier de configuration ou dans un projet restyle tous les bins d'un coup. C'est du JSON seulement, de 64 Kio au plus, si bien que le fichier de thème d'un projet ne peut jamais rien exécuter.
+Les couleurs par défaut sont des noms ANSI, pas des valeurs fixes : c'est la palette du terminal qui décide de ce qu'est le vert, et les bins suivent [mon thème de bureau](/posts/chamfer-theme) sans savoir qu'il existe. Le kit fournit quatre préréglages : celui par défaut, un contraste élevé, `mono` avec seulement le gras et l'atténué, et `ascii` pour un terminal sans les glyphes. Un `theme.json` dans mon dossier de configuration ou dans un projet restyle tous les bins d'un coup. C'est du JSON seulement, de 64 Kio au plus, si bien que le fichier de thème d'un projet ne peut jamais rien exécuter.
 
 Aucun thème ne change ce qui s'affiche hors d'un terminal, où les marques se lisent `ok:`, `note:`, `warning:` et `error:`.
 

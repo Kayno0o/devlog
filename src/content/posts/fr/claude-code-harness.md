@@ -55,7 +55,7 @@ Elles survivent aussi à une compaction : le résumé les garde, et le prompt s
 
 Les skills et les agents ne répondent à aucune erreur de Claude. Ils tiennent un workflow en place, pour qu'un plan, une session de débogage ou une revue se déroule de la même façon à chaque fois.
 
-Un skill est une page d'instructions que Claude charge quand une tâche correspond à sa description : écrire un plan, déboguer un échec, demander une revue. J'en ai 19, et l'un d'eux sert à écrire les autres. Il traite un skill comme du code sous test.
+Un skill est une page d'instructions que Claude charge quand une tâche correspond à sa description : écrire un plan, déboguer un échec, demander une revue. J'en ai 19, et l'un d'eux sert à écrire les autres. Il traite un skill comme du code sous test.
 
 Avant que le skill existe, un sous-agent reçoit la tâche sans rien pour le guider, et Claude note où il se trompe et l'excuse qu'il se donne. Le skill est écrit contre ces échecs-là seulement, puis le même scénario est rejoué avec le skill chargé. Une faille que ce second passage révèle est comblée et testée à son tour. Une règle qu'aucun agent n'a été vu enfreindre n'y entre pas.
 
@@ -63,8 +63,8 @@ Avant que le skill existe, un sous-agent reçoit la tâche sans rien pour le gui
 
 Un agent est un sous-agent avec ses propres instructions, ses outils et son modèle. J'en ai deux, tous deux sur Sonnet, sans outil d'édition, avec la consigne de ne pas toucher à l'arbre de travail.
 
-- **explorer** répond à une question sur une base de code : où se trouve telle chose, quels fichiers y touchent. Il renvoie sa conclusion, un `chemin:ligne` par fait, et seulement les extraits que l'appelant s'apprête à modifier. Les fichiers qu'il a lus en chemin n'entrent jamais dans le contexte de la session principale.
-- **code-reviewer** reçoit les exigences mot pour mot et les commits faits pour elles. Il renvoie un verdict par exigence, ce que le diff contient que personne n'a demandé, et ses remarques par gravité. Il rapporte et ne corrige jamais : la session qui a écrit le code applique les remarques dans un commit de suivi, qu'une variante du relecteur à faible effort vérifie au regard de ces seules remarques.
+- **explorer** répond à une question sur une base de code : où se trouve telle chose, quels fichiers y touchent. Il renvoie sa conclusion, un `chemin:ligne` par fait, et seulement les extraits que l'appelant s'apprête à modifier. Les fichiers qu'il a lus en chemin n'entrent jamais dans le contexte de la session principale.
+- **code-reviewer** reçoit les exigences mot pour mot et les commits faits pour elles. Il renvoie un verdict par exigence, ce que le diff contient que personne n'a demandé, et ses remarques par gravité. Il rapporte et ne corrige jamais : la session qui a écrit le code applique les remarques dans un commit de suivi, qu'une variante du relecteur à faible effort vérifie au regard de ces seules remarques.
 
 ## De plus petits mods corrigent de plus petites habitudes
 
