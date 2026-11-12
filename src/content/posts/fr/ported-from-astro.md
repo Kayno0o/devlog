@@ -1,6 +1,6 @@
 ---
 title: "Légers sous Astro, trois fois plus rapides sur kay"
-description: "J'ai porté deux sites d'entreprise d'Astro vers kay, mesurés tels qu'ils se déploient : charge, affichages, images, mémoire, builds, et ce qui a empiré."
+description: "J'ai porté deux sites d'entreprise d'Astro vers kay, mesurés tels qu'ils se déploient : charge, affichages, images, mémoire et builds."
 date: 2026-10-18T10:20:00Z
 tags: [kay, benchmarks]
 draft: false

@@ -1,6 +1,6 @@
 ---
 title: "My SvelteKit site on kay: 88% less CPU per visitor"
-description: "I ported a real SvelteKit site to kay and measured it against the version it replaced, in production and in the dev server, with what got worse."
+description: "I ported a real SvelteKit site to kay and measured it against the version it replaced, in production and in the dev server."
 date: 2026-10-20T10:30:00Z
 tags: [kay, benchmarks]
 draft: false

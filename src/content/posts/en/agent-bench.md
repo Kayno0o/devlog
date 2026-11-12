@@ -1,6 +1,6 @@
 ---
-title: "Claude had never seen kay. It wrote less code in it"
-description: "I ran my coding-agent bench on kay, beside SvelteKit, SolidStart, Astro, Nuxt and Next.js: what a framework learned from its docs alone costs."
+title: "Claude never saw my framework, yet thought less"
+description: "I ran my coding-agent bench on kay, my framework, beside SvelteKit, SolidStart, Astro, Nuxt and Next.js: what learning from docs alone costs in tokens."
 date: 2026-10-17T11:00:00Z
 tags: [kay, benchmarks, llm]
 draft: false

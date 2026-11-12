@@ -1,6 +1,6 @@
 ---
-title: "Chaque bug de Claude tenait à un rechargement"
-description: "J'ai fait construire le même site à Claude avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, sur Opus et Sonnet, noté par des tests qu'il n'a jamais vus."
+title: "Ce que coûtent cinq frameworks à un agent de code"
+description: "J'ai fait construire le même site à Claude avec SvelteKit, SolidStart, Astro, Nuxt et Next.js, sur Opus et Sonnet, noté par des tests dans un navigateur."
 date: 2026-10-19
 updated: 2026-11-10
 tags: [benchmarks, llm]
