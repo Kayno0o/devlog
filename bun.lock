@@ -9,13 +9,12 @@
         "@fontsource/ibm-plex-sans": "^5.3.0",
         "@fontsource/jetbrains-mono": "^5.3.0",
         "elysia": "^1.4.30",
-        "kay": "npm:@kaynooo/kayjs@~1.102.0",
+        "kay": "npm:@kaynooo/kayjs@~1.102.1",
         "shiki": "^4.5.0",
       },
       "devDependencies": {
         "@iconify-json/simple-icons": "^1.2.99",
         "@iconify-json/tabler": "^1.2.41",
-        "@kaynooo/cli-kit": "0.41.2",
         "@kaynooo/eslint": "8.0.3",
         "@types/bun": "^1.4.2",
         "bun-plugin-tailwind": "^0.1.2",
@@ -529,7 +528,7 @@
 
     "katex": ["katex@0.16.47", "", { "dependencies": { "commander": "^8.3.0" }, "bin": { "katex": "cli.js" } }, "sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg=="],
 
-    "kay": ["@kaynooo/kayjs@1.102.0", "https://git.kaynooo.fr/api/packages/kaynooo/npm/%40kaynooo%2Fkayjs/-/1.102.0/kayjs-1.102.0.tgz", { "dependencies": { "@jsquash/avif": "2.1.1", "@kaynooo/utils": "^3.1.0", "@resvg/resvg-js": "^2.6.2", "devalue": "^6.0.3", "elysia": "^1.4.31", "marked": "~18.1.2", "oxc-parser": "^0.155.0" }, "peerDependencies": { "@happy-dom/global-registrator": "^20.14.6 || ^21.0.3", "@kaynooo/pg-orm": "^7.0.0 || ^8.0.0", "@types/bun": "^1.4.4", "axe-core": "^4.14.0", "typescript7": "npm:typescript@^7.0.2" }, "bin": { "kay": "src/cli.ts", "tsgo": "src/tsgo.ts" } }, "sha512-oiMA71/M/8doCAgjb2piNELGYhxspB0cmH8sfjN3Kd1GbKSoFUFFUO9Yeg8RFDK76IbYTnVIv+laJdtGYlJHtQ=="],
+    "kay": ["@kaynooo/kayjs@1.102.1", "https://git.kaynooo.fr/api/packages/kaynooo/npm/%40kaynooo%2Fkayjs/-/1.102.1/kayjs-1.102.1.tgz", { "dependencies": { "@jsquash/avif": "2.1.1", "@kaynooo/cli-kit": "0.41.2", "@kaynooo/utils": "^3.1.0", "@resvg/resvg-js": "^2.6.2", "devalue": "^6.0.3", "elysia": "^1.4.31", "marked": "~18.1.2", "oxc-parser": "^0.155.0" }, "peerDependencies": { "@happy-dom/global-registrator": "^20.14.6 || ^21.0.3", "@kaynooo/pg-orm": "^7.0.0 || ^8.0.0", "@types/bun": "^1.4.4", "axe-core": "^4.14.0", "typescript7": "npm:typescript@^7.0.2" }, "bin": { "kay": "src/cli.ts", "tsgo": "src/tsgo.ts" } }, "sha512-BA0y9E+fpeRmMhqAZQNJX67/pD1H7YsS/tIQm7F1ztudBEWwFoAGDbVP5OJUHEToBZMpYZazqS6sDZO1rSmBIw=="],
 
     "keyv": ["keyv@5.6.0", "", { "dependencies": { "@keyv/serialize": "^1.1.1" } }, "sha512-CYDD3SOtsHtyXeEORYRx2qBtpDJFjRTGXUtmNEMGyzYOKj1TE3tycdlho7kA1Ufx9OYWZzg52QFBGALTirzDSw=="],
 
